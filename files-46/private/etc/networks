@@ -1,0 +1,11 @@
+#
+# NeXT customer networks
+# NOTE: This file is never consulted if NetInfo or Yellow Pages is running
+#
+loopback	127		loopback-net software-loopback-net
+next-default	192.42.172		NeXTether ethernet localnet
+#
+# Internet networks
+#
+arpanet		10		arpa
+ucb-ether	46		ucbether

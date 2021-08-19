@@ -1,0 +1,7 @@
+stty erase "^?" intr "^C" kill "^U" -decctlq
+echo "erase ^? intr ^C kill ^U"
+PATH=/etc:/usr/etc:/usr/ucb:/bin:/usr/bin:/usr/local/bin:/usr/sybase/bin:/LocalApps:/NextApps:/NextAdmin:/NextDeveloper/Demos
+TERM=`tset - -Q`
+HOME=/
+export PATH TERM HOME
+umask 022

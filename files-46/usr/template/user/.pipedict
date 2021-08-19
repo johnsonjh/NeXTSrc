@@ -1,0 +1,4 @@
+Indent	I	indent -st
+Sort	sort
+Time	date
+Eval		bc

@@ -1,0 +1,5 @@
+#
+# Standard csh login profile
+# csh will source this file before the home .login
+# NOTE: csh will source this file even if -f flag set
+#

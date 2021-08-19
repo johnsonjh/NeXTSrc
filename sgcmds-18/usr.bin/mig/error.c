@@ -1,0 +1,104 @@
+/*************************************************************
+ * ABSTRACT:
+ *	Routines to print out error messages.
+ *  Exports variables;
+ *	errors - the total number of errors encountered
+ *  Exports routines:
+ *	fatal, warn, error, unix_error_string, set_program_name
+ *
+ *	$Header: error.c,v 1.1 89/06/08 14:18:56 mmeyer Locked $
+ *
+ * HISTORY
+ * 07-Apr-89  Richard Draves (rpd) at Carnegie-Mellon University
+ *	Extensive revamping.  Added polymorphic arguments.
+ *	Allow multiple variable-sized inline arguments in messages.
+ *
+ * 28-May-87  Richard Draves (rpd) at Carnegie-Mellon University
+ *	Created.
+ *************************************************************/
+
+#include <stdio.h>
+#include <varargs.h>
+#include "global.h"
+#include "error.h"
+
+extern int yylineno;
+extern char *yyinname;
+
+static char *program;
+int errors = 0;
+
+/*ARGSUSED*/
+/*VARARGS1*/
+void
+fatal(format, va_alist)
+    char *format;
+    va_dcl
+{
+    va_list pvar;
+    va_start(pvar);
+    fprintf(stderr, "%s: fatal: ", program);
+    _doprnt(format, pvar, stderr);
+    fprintf(stderr, "\n");
+    va_end(pvar);
+    exit(1);
+}
+
+/*ARGSUSED*/
+/*VARARGS1*/
+void
+warn(format, va_alist)
+    char *format;
+    va_dcl
+{
+    va_list pvar;
+    va_start(pvar);
+    if (!BeQuiet && (errors == 0))
+    {
+	fprintf(stderr, "\"%s\", line %d: warning: ", yyinname, yylineno-1);
+	_doprnt(format, pvar, stderr);
+	fprintf(stderr, "\n");
+    }
+    va_end(pvar);
+}
+
+/*ARGSUSED*/
+/*VARARGS1*/
+void
+error(format, va_alist)
+    char *format;
+    va_dcl
+{
+    va_list pvar;
+    va_start(pvar);
+    fprintf(stderr, "\"%s\", line %d: ", yyinname, yylineno-1);
+    _doprnt(format, pvar, stderr);
+    fprintf(stderr, "\n");
+    va_end(pvar);
+    errors++;
+}
+
+char *
+unix_error_string(error)
+    int error;
+{
+    extern int sys_nerr;
+    extern char *sys_errlist[];
+    static char buffer[256];
+    char *error_mess;
+
+    if ((0 <= error) && (error < sys_nerr))
+	error_mess = sys_errlist[error];
+    else
+	error_mess = "strange errno";
+
+    sprintf(buffer, "%s (%d)", error_mess, error);
+    return buffer;
+}
+
+void
+set_program_name(name)
+    char *name;
+{
+    program = name;
+}

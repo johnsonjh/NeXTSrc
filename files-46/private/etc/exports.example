@@ -1,0 +1,14 @@
+#
+#  Example exports file for an NFS server
+#
+#  If you want to export your local filesystems to NFS clients, edit
+#  this file, move it to /etc/exports and reboot your system.
+#  Documentation on this file can be found with "man exports"
+#
+#  These entries allow this machine to act as a diskless server for
+#  the machines "CLIENT1" and "CLIENT2".  To make it work, change
+#  "CLIENT1" and "CLIENT2" to the hostnames of the diskless machines.
+#
+/ -access=CLIENT1:CLIENT2
+/clients/CLIENT1 -access=CLIENT1,root=CLIENT1
+/clients/CLIENT2 -access=CLIENT2,root=CLIENT2

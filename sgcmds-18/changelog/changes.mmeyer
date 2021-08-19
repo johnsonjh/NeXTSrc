@@ -1,0 +1,6 @@
+CHANGES FOR SGCMDS-10
+usr.ucb/Makefile	Removed /usr/ucb/grep
+bin/Makefile		Added tar to SGCMDS project
+usr.bin/find/find.c	Fixed -sizeX option to find.
+usr.local/Makefile	Added bin directory
+usr.local/bin/*		Added striplib and stripfile to SGCMDS project.

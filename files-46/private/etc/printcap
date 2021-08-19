@@ -1,0 +1,66 @@
+#
+#	/etc/printcap
+#
+# PostScript printer driven by TranScript software
+# PostScript and TranScript are trademarks of Adobe Systems 
+# Incorporated
+#
+# NOTE: This file is never consulted by printing software if NetInfo
+# is running.
+#
+# np is a local NeXT printer
+# 
+#np|LocalPrinter:\
+#	:lp=/dev/null:\
+#	:sd=/usr/spool/NeXT/Local_Printer:\
+#	:re:mf:\
+#	:if=/usr/lib/NextPrinter/npcomm:\
+#	:ty=NeXT 400 dpi Laser Printer:
+#
+# netnp is a NeXT printer on machine remotehost.
+# The logical /etc/hosts.equiv file on remotehost must allow your
+# machine to talk to remotehost.  You might have to reboot after
+# changing that file for it to take effect.
+#
+#NetNextPrinter|netnp:\
+#	:lp=:rm=remotehost:rp=np:sd=/usr/spool/NeXT/Local_Printer:\
+#	:ty=NeXT 400 dpi Laser Printer:
+#
+# lp is a LaserWriter on serial port a.  You might have to check
+# the transmision rate is right for the device. 
+# The spool file need not be /usr/spool/lw, but it must exist
+# (mkdir it) and it is best to have each printer have its own
+# spool file.  Copy the directory permissions and owner/group of 
+# the existing ones:      drwxrwx---   daemon   daemon
+# NEEDS null modem cable between NeXT cube and printer.
+#
+# LaserWriter is a trademark of Apple Computer, Inc.
+#
+#LaserWriter|lw:\
+#	:lp=/dev/ttya:\
+#	:sd=/usr/spool/lw:\
+#	:tr=^D:\
+#	:lf=/usr/adm/lw-log:\
+#	:af=/usr/adm/lw.acct:\
+#	:br#9600:rw:\
+#	:fc#0000374:\
+#	:fs#0000003:\
+#	:xc#0:\
+#	:xs#0040040:\
+#	:mx#0:sf:sb:\
+#	:if=/usr/lib/transcript/psif:\
+#	:of=/usr/lib/transcript/psof:\
+#	:gf=/usr/lib/transcript/psof:\
+#	:nf=/usr/lib/transcript/psnf:\
+#	:tf=/usr/lib/transcript/psnf:\
+#	:vf=/usr/lib/transcript/pstf:\
+#	:gf=/usr/lib/transcript/pscf:\
+#	:df=/usr/lib/transcript/psgf:\
+#	:ty=LaserWriter:
+#
+# netlw is a LaserWriter printer on the net somewhere.  The hosts.equiv
+# comment in the netnp section above applies here too.  The
+# printcap file on remotehost must have a PostScript entry.
+#NetLaserWriter|netlw:\
+#	:lp=:rm=remotehost:rp=PostScript:sd=/usr/spool/lpd:pl#66:\
+#	:ty=LaserWriter:

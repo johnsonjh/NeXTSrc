@@ -1,0 +1,40 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    mmeyer:1.1; strict;
+comment  @ * @;
+
+
+1.1
+date     89.06.08.14.19.22;  author mmeyer;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/*
+ * HISTORY
+ * 07-Apr-89  Richard Draves (rpd) at Carnegie-Mellon University
+ *	Extensive revamping.  Added polymorphic arguments.
+ *	Allow multiple variable-sized inline arguments in messages.
+ *
+ * 27-May-87  Richard Draves (rpd) at Carnegie-Mellon University
+ *	Created.
+ */
+
+extern void LookFileName();
+extern void LookString();
+extern void LookQString();
+extern void LookNormal();
+@

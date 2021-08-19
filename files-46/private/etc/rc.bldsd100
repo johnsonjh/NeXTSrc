@@ -1,0 +1,105 @@
+#
+# This rc script is used to continue the loading of a hard disk from floppies
+# As the last step of the loading process, this script will be replaced by the
+# standard /etc/rc script.
+#
+HOME=/; export HOME
+PATH=/etc:/usr/etc:/bin:/usr/bin:/usr/ucb; export PATH
+FD=fd
+FLOPPYS="Floppy1 Floppy2 Floppy3 Floppy4 Floppy5 Floppy6 Floppy7 Floppy8"
+error=0
+for floppy in $FLOPPYS
+do
+	if [ ! -f /tmp/${floppy}_loaded ]
+	then
+		msg="Please"
+		floppyInserted=0
+		while [ $floppyInserted -eq 0 ]
+		do
+			( echo Please insert floppy labelled \"$floppy\" >/dev/console )
+			fbshow -S -B -E -s 3 "$msg" "Insert floppy" -f Helvetica-BoldOblique "$floppy"
+			set `getdisk $FD $floppy`
+			case $1 in
+			RIGHT)
+				floppyInserted=1
+				( echo Checking disk ) >/dev/console
+				fbshow -A -B -E -s 2 "Checking" -f Helvetica-BoldOblique "$floppy"
+				fsck -p $3			 >/dev/console 2>&1
+				case $? in
+					0)
+						;;
+					4)
+						(echo "Floppy fixed - continuing.")	>/dev/console
+						;;
+					8)
+						(echo "Floppy damaged.")		>/dev/console
+						error=1
+						;;
+					12)
+						(echo "Floppy check interrupted.")		>/dev/console
+						fbshow -B -E -s 3 "Disk" "Load" "Interrupted"
+						sleep 10
+						halt -e
+						exit 1
+						;;
+					*)
+						(echo "Unknown error in floppy fsck.")	>/dev/console
+						error=1
+						;;
+				esac
+				if [ $error -eq 0 ]
+				then
+					mount $4 /mnta >/dev/console 2>&1
+					error=$?
+					if [ $error -eq 0 ]
+					then
+						( echo Loading floppy \"$floppy\" " ..."  >/dev/console )
+						fbshow -A -B -E -s 3 "Loading" "floppy" -f Helvetica-BoldOblique "$floppy"
+						( cd /mnta; tar cf - . ) | ( cd /; tar xfpB - && touch /tmp/${floppy}_loaded )
+						if [ ! -f /tmp/${floppy}_loaded ]
+						then
+							error=1
+						fi
+						sync
+						umount $4 >/dev/console 2>&1
+					fi
+				fi
+				;;
+			WRONG)
+				( echo Incorrect floppy inserted >/dev/console )
+				msg="That was ${2}!"
+				;;
+			INTERRUPTED)
+				( echo Disk load interrupted >/dev/console )
+				fbshow -B -E -s 3 "Disk" "Load" "Interrupted"
+				sleep 10
+				halt -e
+				exit 1
+				;;
+			*)
+				error=3
+				;;
+			esac
+			if [ $error -ne 0 ]
+			then
+				( echo "Bad Floppy: Unable to load hard disk" >/dev/console)
+				fbshow -B -E -s 3 "Bad Floppy!" "Unable to Load" "Hard Disk"
+				sleep 10
+				halt -e
+				exit 1
+			fi
+			disk -e $3 >/dev/console 2>&1
+		done
+	fi
+done
+# Prepare to reboot running the InstallApp
+rm /etc/rc
+cp /etc/rc.standard /etc/rc
+cp /etc/rc.boot.standard /etc/rc.boot
+cp /etc/ttys.installer /etc/ttys
+fbshow -B -E -s 4 "Base System" "Build Complete," "Rebooting" "Hard Disk..."
+sync
+reboot sd
+halt -e
+exit 1
+

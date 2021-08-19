@@ -1,0 +1,9 @@
+#
+# Default .login file for root
+#
+
+# initialize the terminal parameters
+set noglob; eval `tset -Q -s`; unset noglob
+set term=$TERM
+stty decctlq intr "^C" erase "^?" kill "^U"
+stty -tabs

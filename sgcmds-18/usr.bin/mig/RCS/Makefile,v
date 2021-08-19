@@ -1,0 +1,37 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    mmeyer:1.1; strict;
+comment  @# @;
+
+
+1.1
+date     89.06.08.14.18.48;  author mmeyer;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@PRODUCT =
+PRODUCTS = mig migcom
+
+# These actions will be done first when building the .NEW product.
+# If this is unnecessary leave it blank, but don't delete this.
+
+$(PRODUCT).NEWfirst:
+
+# The rest of the work is done by the standard common makefile
+MAKEINCDIR = /usr/lib/Makefiles
+include $(MAKEINCDIR)/Makeinc.common
+@

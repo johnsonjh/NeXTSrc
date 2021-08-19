@@ -1,0 +1,4 @@
+0,15,30,45 * * * *	root /usr/lib/atrun
+0 2 * * *	root	/bin/sh /usr/adm/daily >/usr/adm/daily.log 2>&1
+30 3 * * 6	root	/bin/sh /usr/adm/weekly >/usr/adm/weekly.log 2>&1
+30 5 1 * *	root	/bin/sh /usr/adm/monthly >/usr/adm/monthly.log 2>&1

@@ -1,0 +1,11 @@
+octags.c is the old version between leffler's addition
+of yacc/lex info and our addition of object types,
+kept here just in case.
+cltags.c is ctags that knows a little about "cleo" too (for LFL).
+
+ex_cmdsub.c fixes a trivial bug in 'vi'; now, if vi finds a tag like
+	foo foo.c ...
+in, say, /usr/bleagh/tags, it knows to look for /usr/bleagh/foo.c
+as well as foo.c.  it goes in /usr/src/ucb/ex/ex_cmdsub.c.
+
+Mike Hawley

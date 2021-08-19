@@ -1,0 +1,72 @@
+Makefile	1.1 04/06/88 14:51:22
+date and time created 88/04/06 14:51:22 by corbin
+
+rpc_clntout.c	1.2 05/08/88 16:16:05
+Added SUN's SID to file.
+
+rpc_clntout.c	1.1 04/11/88 18:09:01
+date and time created 88/04/11 18:09:01 by corbin
+
+rpc_cout.c	1.2 05/08/88 16:16:07
+Added SUN's SID to file.
+
+rpc_cout.c	1.1 04/11/88 18:09:02
+date and time created 88/04/11 18:09:02 by corbin
+
+rpc_hout.c	1.3 08/01/88 14:11:01
+REL_ALIAS was being incorrectly written.
+
+rpc_hout.c	1.2 05/08/88 16:16:10
+Added SUN's SID to file.
+
+rpc_hout.c	1.1 04/11/88 18:09:03
+date and time created 88/04/11 18:09:03 by corbin
+
+rpc_main.c	1.2 05/08/88 16:16:12
+Added SUN's SID to file.
+
+rpc_main.c	1.1 04/11/88 18:09:05
+date and time created 88/04/11 18:09:05 by corbin
+
+rpc_parse.c	1.2 05/08/88 16:16:16
+Added SUN's SID to file.
+
+rpc_parse.c	1.1 04/11/88 18:09:06
+date and time created 88/04/11 18:09:06 by corbin
+
+rpc_parse.h	1.2 05/08/88 16:16:29
+Added SUN's SID to file.
+
+rpc_parse.h	1.1 04/11/88 18:09:12
+date and time created 88/04/11 18:09:12 by corbin
+
+rpc_scan.c	1.2 05/08/88 16:16:19
+Added SUN's SID to file.
+
+rpc_scan.c	1.1 04/11/88 18:09:08
+date and time created 88/04/11 18:09:08 by corbin
+
+rpc_scan.h	1.2 05/08/88 16:16:31
+Added SUN's SID to file.
+
+rpc_scan.h	1.1 04/11/88 18:09:13
+date and time created 88/04/11 18:09:13 by corbin
+
+rpc_svcout.c	1.2 05/08/88 16:16:23
+Added SUN's SID to file.
+
+rpc_svcout.c	1.1 04/11/88 18:09:09
+date and time created 88/04/11 18:09:09 by corbin
+
+rpc_util.c	1.2 05/08/88 16:16:26
+Added SUN's SID to file.
+
+rpc_util.c	1.1 04/11/88 18:09:10
+date and time created 88/04/11 18:09:10 by corbin
+
+rpc_util.h	1.2 05/08/88 16:16:33
+Added SUN's SID to file.
+
+rpc_util.h	1.1 04/11/88 18:09:15
+date and time created 88/04/11 18:09:15 by corbin
+

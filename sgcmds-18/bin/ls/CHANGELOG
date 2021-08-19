@@ -1,0 +1,4 @@
+1-14-89 btaylor@NeXT.COM
+	Put code in to recognize nfs automounter symlinks (with the sticky
+	bit on), and never follow them (or else you inadvertently cause
+	a mount to happen).

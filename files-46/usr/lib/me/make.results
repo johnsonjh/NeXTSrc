@@ -1,0 +1,51 @@
+	/release/sun_root/bin/make machine=next DOVERS=ALWAYS SRCROOT=/rele\
+	ase/NeXT_root LCLROOT=/os/osdev/NeXT_root DSTROOT=/release/NeXT_roo\
+	t local
+for i in tmac.e acm.me chars.me deltext.me eqn.me  float.me footnote.me index.me local.me null.me  refer.me sh.me tbl.me thesis.me;  do  rm -f _mac_tmp_;  sed -e '/%beginstrip%/{'  -e 'h'  -e 's/.*/.\\" This version has had comments stripped; an unstripped version is available./p'  -e 'g'  -e '}'  -e '/%beginstrip%/,$s/[. 	][ 	]*\\".*//'  -e '/^$/d'  -e '/\\n@/d' $i > _mac_tmp_;  install -m 0444 _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/$i;  done
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/tmac.e
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/tmac.e
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/acm.me
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/acm.me
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/chars.me
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/chars.me
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/deltext.me
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/deltext.me
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/eqn.me
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/eqn.me
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/float.me
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/float.me
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/footnote.me
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/footnote.me
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/index.me
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/index.me
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/local.me
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/local.me
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/null.me
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/null.me
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/refer.me
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/refer.me
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/sh.me
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/sh.me
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/tbl.me
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/tbl.me
+	/release/sun_root/usr/bin/install -u -m 0444 _mac_tmp_ /os/osdev/Ne\
+	XT_root/usr/lib/me/me/thesis.me
+cp _mac_tmp_ /os/osdev/NeXT_root/usr/lib/me/me/thesis.me
+mv -f /os/osdev/NeXT_root/usr/lib/me/me/tmac.e /os/osdev/NeXT_root/usr/lib/me/tmac/tmac.e
+install -c -m 0444 revisions /os/osdev/NeXT_root/usr/lib/me/me/revisions
+	/release/sun_root/usr/bin/install -u -c -m 0444 revisions /os/osdev\
+	/NeXT_root/usr/lib/me/me/revisions
+cp revisions /os/osdev/NeXT_root/usr/lib/me/me/revisions

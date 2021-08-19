@@ -1,0 +1,92 @@
+#
+# This script mounts and initializes the internal swapdisk which we mount
+# on /tmp.
+#
+NEWSWAPDIR=/private/swapdisk/vm
+NEWSWAPFILE=$NEWSWAPDIR/swapfile
+
+# Find out which devices to check.
+DRIVES=`echo /dev/sd?a | sed -e 's/\/dev\///g'`
+
+useswap=0
+for SWAPDEV in $DRIVES
+do
+	/usr/etc/checkswap -f /dev/r${SWAPDEV}
+	swapstatus=$?
+	case $swapstatus in
+	    0)
+		break;
+		;;
+	    1)
+#		(echo "No valid label on swapdisk.")		>/dev/console
+		;;
+	    2)
+#		(echo "/dev/$SWAPDEV is not a swapdisk!")	>/dev/console
+		;;
+	    3)
+		if [ $1x = autobootx ]
+		then
+			/usr/etc/fsck -p /dev/r${SWAPDEV} >/dev/console 2>&1 \
+				&& useswap=1
+		else
+			useswap=1
+		fi
+		break
+		;;
+	    *)
+		(echo "Unknown error from checkswap, error=$swapstatus") \
+								>/dev/console
+		;;
+	esac
+done
+
+# We have a swap disk, set things up to use it.
+if [ $useswap -eq 1 ]
+then
+	# Mount the swapdisk
+	fbshow -A -B -E -s 2 "Mounting" "Swapdisk..."
+	/usr/etc/mount -o rw,noquota,noauto /dev/${SWAPDEV} /private/swapdisk \
+							>/dev/console 2>&1
+
+	# Set up swapping on it
+	if [ ! -d $NEWSWAPDIR ]
+	then
+		(echo "Creating vm directory on swapdisk")	>/dev/console
+		mkdir $NEWSWAPDIR
+		chmod 755 $NEWSWAPDIR
+	fi
+	if [ ! -f $NEWSWAPFILE ]
+	then
+		(echo "Creating swapfile on swapdisk")		>/dev/console
+		touch $NEWSWAPFILE
+		chmod 1600 $NEWSWAPFILE
+	fi
+	/usr/etc/mach_swapon -v -o prefer,lowat=16777216,hiwat=31457280 \
+						$NEWSWAPFILE >/dev/console 2>&1
+
+	# Make sure there is a tmp directory
+	if [ ! -d /private/swapdisk/tmp ]
+	then
+		(echo "Creating tmp directory on swapdisk")	>/dev/console
+		mkdir /private/swapdisk/tmp
+		chmod 1777 /private/swapdisk/tmp
+	fi
+
+	# Point /private/tmp to it
+	if [ ! -h /private/tmp ]
+	then
+		(echo "Linking /private/tmp to /private/swapdisk/tmp") \
+								>/dev/console
+		rm -rf /private/tmp
+		(cd /private; ln -s swapdisk/tmp)
+	fi
+else
+	# Make sure /private/tmp is a directory
+	if [ ! -d /private/tmp ]
+	then
+		(echo "Creating /private/tmp directory")	>/dev/console
+		rm -f /private/tmp
+		mkdir /private/tmp
+		chmod 1777 /private/tmp
+	fi
+fi

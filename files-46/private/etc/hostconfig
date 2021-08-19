@@ -1,0 +1,24 @@
+#
+# /etc/hostconfig
+#
+# This file sets up shell variables used by the various rc scripts to
+# configure the host.  Edit this file instead of rc.boot.
+#
+# Warning:  This is sourced by /bin/sh.  Make sure there are no spaces
+#	    on either side of the "=".
+#
+# There are some special keywords used by rc.boot and the programs it
+# calls:
+#
+#	-AUTOMATIC-	Configure automatically
+#	-YES-		Turn a feature on
+#	-NO-		Leave a feature off or do not configure
+#
+HOSTNAME=-AUTOMATIC-
+INETADDR=-AUTOMATIC-
+ROUTER=-NO-
+IPNETMASK=
+IPBROADCAST=-AUTOMATIC-
+NETMASTER=-NO-
+YPDOMAIN=-NO-
+TIME=-AUTOMATIC-

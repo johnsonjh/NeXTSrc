@@ -1,0 +1,46 @@
+#
+# Please note that all "echo" commands are in parentheses so that
+# the main shell does not open a terminal and get its process group set.
+#
+HOME=/; export HOME
+PATH=/etc:/usr/etc:/bin:/usr/bin:/usr/ucb; export PATH
+
+(
+	(
+		echo "Building hard disk"
+		echo "This will DESTROY current contents of hard disk!"
+		echo "Type 'y' if ok, anything else will abort"
+		fbshow -S -B -E -s 4 "Building Hard Disk..." -f Helvetica-BoldOblique "DESTROYS contents!" -f Helvetica "Type 'y' RETURN if ok" "Type 'n' RETURN to  abort"
+		read resp
+		if [ ${resp}x = yx ]
+		then
+			exit 0
+		else
+			exit 1
+		fi
+	) < /dev/console > /dev/console 2>&1
+)
+if [ $? -ne 0 ]
+then
+	(echo "Load of hard disk aborted" > /dev/console)
+	fbshow -B -E -s 2 "Load" "aborted"
+	halt -e
+	exit 1
+fi
+(echo Building disk.... >/dev/console)
+fbshow -A -B -E -s 2 "Building" "Disk..."
+( builddisk -q -s fd_to_sd sd0 > /dev/console 2>&1 )
+fbshow -B -E -s 4 "Initial Build" "Complete," "Booting" "Hard Disk..."
+sync
+reboot sd
+halt -e
+exit 1
+
+
+
+
+
+
+
+
+

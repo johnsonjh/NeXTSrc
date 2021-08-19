@@ -1,0 +1,18 @@
+#
+# You probably do NOT want to edit this file, because it is only read 
+# during bootstrap or if YP is enabled. Please use either UserManager or nu
+# instead.
+#
+wheel:*:0:root,me
+nogroup:*:-2:
+daemon:*:1:daemon
+sys:*:2:
+bin:*:3:
+uucp:*:4:
+kmem:*:5:
+news:*:6:
+ingres:*:7:
+tty:*:8:
+operator:*:9:
+staff:*:10:root,me
+other:*:20:

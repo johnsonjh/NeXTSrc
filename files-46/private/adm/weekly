@@ -1,0 +1,39 @@
+#
+# /usr/adm/weekly
+#
+# This /bin/sh script is run once a week by cron.  Put any housekeeping
+# commands in here, like pruning of log files
+#
+
+# Trim the /usr/adm logfiles
+cd /usr/adm
+for i in hourly.log daily.log weekly.log monthly.log lpd-errs aculog
+do
+	if [ -r $i ]
+	then
+		cp -p $i $i.old
+		tail -200 $i.old > $i
+	fi
+done
+
+# Trim the /usr/spool/uucp logfiles
+cd /usr/spool/uucp
+for i in LOGFILE SYSLOG ERRLOG
+do
+	if [ -r $i ]
+	then
+		cp -p $i $i.old
+		tail -200 $i.old > $i
+	fi
+done
+
+# Trim the /usr/spool/mqueue logfiles
+cd /usr/spool/mqueue
+for i in syslog
+do
+	if [ -r $i ]
+	then
+		cp -p $i $i.old
+		tail -200 $i.old > $i 
+	fi
+done

@@ -1,0 +1,10 @@
+#
+#	DO NOT DELETE THIS FILE, IT IS REQUIRED FOR BOOTING
+#
+#	This file contains information used to mount local hard disks.  
+#	Consult your system administration and networking manual
+#	for information on adding local disks.  Information on the format
+#	of entries in this file can also be found in the fstab man page,
+#	search for fstab in Digital Librarian.
+#
+/dev/sd0a / 4.3 rw,noquota,noauto 0 1

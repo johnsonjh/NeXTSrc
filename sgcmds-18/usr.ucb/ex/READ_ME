@@ -1,0 +1,44 @@
+What you have here is a hacked up version of the 4.3BSD vi with suitable
+mods to make it work on SUNOS (a hacked-up 4.2BSD kernel).  Notable
+additions to this version are:
+
+	:W -- a command which unlinks a file before writing it
+		handy for the break_link function of the SGS tools
+	:pf -- print the file stack - this version stacks files whenever
+		you tag or :e to another file; :pf shows the stack
+	:e^ -- pop the file stack and edit that file
+	:pp -- pop the file stack, but continue to edit the current file
+
+Note that the 4.3BSD version of vi is somewhat more careful about
+sourceing .exrc files (it won't source them unless you own them,
+"set sourceany" to get the old insecure behavior of 4.2BSD vi.
+
+Also note that the vi "modeline" stuff must be explicitly turned
+on via "set modeline"
+If you have questions about this hacked version see mike.
+
+Mike
+
+**********************
+
+This is version 3 of the editor. It is too large to fit on a pdp-11
+unless you have overlay code. (Such code is available for v7 unix on 2bsd.)
+
+Version 2.13 corresponds to version 3 without the enhancements in 3.
+There is no reason to use 2.13 unless you have a pdp-11 that does not have
+overlay software, since 3 contains all the bug fixes and some new features.
+
+Special installation notes for this version.
+2) The include file varargs.h should be installed, as the printf here needs it.
+3) The include file local/uparm.h should be installed, as ex_tune.h needs it.
+   The contents of this include file can be modified if you wish to place
+   the editor in a nonstandard location.
+
+Conditional compilation flags:
+	-DTRACE		for debugging (wont then fit on an 11)
+	-DVFORK		for UCB Vax/Unix with the vfork system call.
+	-DCHDIR		compile in undocumented old chdir (cd) command
+	-DLISP		compile in lisp hacks
+	-DUCVISUAL	compile in code to handle \ escapes for visual on
+			upper case only terminals.  gross.
+	-DCRYPT		-x option to edit encrypted files

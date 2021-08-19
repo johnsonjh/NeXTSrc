@@ -1,0 +1,183 @@
+################# make all for usr.bin ###################
+================= make all for basename =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ basename.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c basename.c
+vers_string -c basename > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o basename.NEW basename.o   vers.o -lsys_s
+================= make all for find =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ find.c bigram.c code.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c find.c
+vers_string -c find > find_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c find_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o find.NEW find.o find_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c bigram.c
+vers_string -c bigram > bigram_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c bigram_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o bigram.NEW bigram.o bigram_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c code.c
+vers_string -c code > code_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c code_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o code.NEW code.o code_vers.o -lsys_s
+================= make all for install =================
+sed -e "s/#PROGRAM.*/#`vers_string install`/"  <install.csh >install.NEW
+================= make all for join =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ join.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c join.c
+vers_string -c join > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o join.NEW join.o   vers.o -lsys_s
+================= make all for lex =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ header.c lmain.c sub1.c sub2.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c header.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c lmain.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c sub1.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c sub2.c
+yacc  parser.y
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c y.tab.c
+rm -f y.tab.c
+mv  y.tab.o parser.o
+vers_string -c lex > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o lex.NEW header.o lmain.o sub1.o sub2.o parser.o  vers.o -lsys_s
+================= make all for lorder =================
+sed -e "s/#PROGRAM.*/#`vers_string lorder`/"  <lorder.sh >lorder.NEW
+================= make all for m4 =================
+yacc  m4y.y
+mv  y.tab.c m4y.c
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ m4.c  m4y.c |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c m4.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c m4y.c
+vers_string -c m4 > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o m4.NEW m4.o m4y.o  vers.o -lsys_s
+================= make all for refer =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ addbib.c annobib.c deliv1.c deliv2.c flagger.c glue1.c glue2.c  glue3.c glue4.c glue5.c hunt1.c hunt2.c hunt3.c hunt5.c hunt6.c  hunt7.c hunt8.c hunt9.c inv1.c inv2.c inv3.c inv5.v inv6.c  kaiser.c lookbib.c mkey1.c mkey2.c mkey3.c refer0.c refer1.c  refer2.c refer3.c refer4.c refer5.c refer6.c refer7.c refer8.c  shell.c sortbib.c thash.c tick.c types.c what1.c what2.c what3.c  what4.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c mkey1.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c mkey2.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c mkey3.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c deliv2.c
+vers_string -c mkey > mkey_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c mkey_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o mkey.NEW mkey1.o mkey2.o mkey3.o deliv2.o mkey_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c inv1.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c inv2.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c inv3.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c inv5.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c inv6.c
+vers_string -c inv > inv_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c inv_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o inv.NEW inv1.o inv2.o inv3.o inv5.o inv6.o deliv2.o inv_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c hunt1.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c hunt2.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c hunt3.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c hunt5.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c hunt6.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c hunt7.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c hunt8.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c hunt9.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c glue4.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c glue5.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c refer3.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c shell.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c tick.c
+vers_string -c hunt > hunt_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c hunt_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o hunt.NEW hunt1.o hunt2.o hunt3.o hunt5.o hunt6.o hunt7.o hunt8.o  hunt9.o glue4.o glue5.o refer3.o shell.o deliv2.o tick.o hunt_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c refer0.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c refer1.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c refer2.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c refer4.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c refer5.c
+refer5.c: In function putsig:
+refer5.c:108: warning: unknown escape sequence `\%'
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c refer6.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c refer7.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c refer8.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c glue1.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c glue2.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c glue3.c
+vers_string -c refer > refer_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c refer_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o refer.NEW refer0.o refer1.o refer2.o refer4.o refer5.o refer6.o  refer7.o refer8.o glue1.o glue2.o glue3.o glue4.o glue5.o mkey3.o  hunt2.o hunt3.o hunt5.o hunt6.o hunt7.o hunt8.o hunt9.o  deliv2.o shell.o refer_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c addbib.c
+vers_string -c addbib > addbib_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c addbib_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o addbib.NEW addbib.o addbib_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c lookbib.c
+vers_string -c lookbib > lookbib_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c lookbib_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o lookbib.NEW lookbib.o lookbib_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c sortbib.c
+vers_string -c sortbib > sortbib_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c sortbib_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o sortbib.NEW sortbib.o sortbib_vers.o -lsys_s
+================= make all for rpcgen =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ rpc_clntout.c rpc_cout.c rpc_hout.c rpc_main.c rpc_parse.c  rpc_scan.c rpc_svcout.c rpc_util.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc_clntout.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc_cout.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc_hout.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc_main.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc_parse.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc_scan.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc_svcout.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc_util.c
+vers_string -c rpcgen > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o rpcgen.NEW rpc_clntout.o rpc_cout.o rpc_hout.o rpc_main.o rpc_parse.o  rpc_scan.o rpc_svcout.o rpc_util.o   vers.o -lsys_s
+================= make all for sort =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ sort.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c sort.c
+vers_string -c sort > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o sort.NEW sort.o   vers.o -lsys_s
+================= make all for touch =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ touch.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c touch.c
+vers_string -c touch > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o touch.NEW touch.o   vers.o -lsys_s
+================= make all for tr =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ tr.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c tr.c
+vers_string -c tr > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o tr.NEW tr.o   vers.o -lsys_s
+================= make all for tsort =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ tsort.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c tsort.c
+vers_string -c tsort > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o tsort.NEW tsort.o   vers.o -lsys_s
+================= make all for uniq =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ uniq.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uniq.c
+vers_string -c uniq > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o uniq.NEW uniq.o   vers.o -lsys_s
+================= make all for vers_string =================
+rm -f vers_string.NEW
+sed -e "s/#PROGRAM.*/#`vers_string vers_string`/"  <vers_string.csh >vers_string.NEW
+================= make all for yacc =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ -DWORD32 y1.c y2.c y3.c y4.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DWORD32 -c y1.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DWORD32 -c y2.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DWORD32 -c y3.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DWORD32 -c y4.c
+vers_string -c yacc > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DWORD32 -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DWORD32 -o yacc.NEW y1.o y2.o y3.o y4.o   vers.o -lsys_s
+################# make all for usr.bin done ###################

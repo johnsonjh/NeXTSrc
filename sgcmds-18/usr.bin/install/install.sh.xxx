@@ -1,0 +1,148 @@
+#! /bin/sh
+#
+#	@(#)install.sh	4.5	(Berkeley)	10/12/83
+#
+######################################################################
+# HISTORY
+# 07-Feb-86  Glenn Marcy (gm0w) at Carnegie-Mellon University
+#	Added code to post message to local bboard if not reinstalled.
+#
+# 08-Dec-85  Glenn Marcy (gm0w) at Carnegie-Mellon University
+#	Added -r option to run ranlib on file.  Added -q option for
+#	non-interactive installations.  Doesn't post a bboard message
+#	and doesn't do a reinstall.
+#
+# 20-Nov-85  Glenn Marcy (gm0w) at Carnegie-Mellon University
+#	Added questions after installation for reinstalling file into
+#	distribution directory and posting a cs-unix bboard message.
+#	The default for the former is no and the latter is yes.
+#
+# 25-Aug-85  Glenn Marcy (gm0w) at Carnegie-Mellon University
+#	Changed default owner and group to cs.  Removed explicit
+#	locations from programs that should be executed from PATH.
+#	Preceded the remaining explicit file references with "BASEDIR",
+#	which will be replaced by the Makefile when installed to the
+#	appropriate value.  Added -l switch to create links to the
+#	destination file.
+#
+# 16-Apr-82  Mike Accetta (mja) at Carnegie-Mellon University
+#	Changed to strip comments from csh or sh command scripts
+#	during installation under the ""-xc"" and ""-xs"" options
+#	respectively.
+#
+######################################################################
+umask 022
+cmd=mv
+strip=""
+ranlib=""
+quick=""
+chmod="chmod 755"
+chown="/etc/chown -f OWNER"
+chgrp="/bin/chgrp -f OWNER"
+links=""
+while true ; do
+	case $1 in
+		-s )	strip="strip"
+			shift
+			;;
+		-r )	ranlib="ranlib"
+			shift
+			;;
+		-q )	quick="quick"
+			shift
+			;;
+		-c )	cmd="cp"
+			shift
+			;;
+		-m )	chmod="chmod $2"
+			shift
+			shift
+			;;
+		-o )	chown="/etc/chown -f $2"
+			shift
+			shift
+			;;
+		-g )	chgrp="/bin/chgrp -f $2"
+			shift
+			shift
+			;;
+		-xc )	cmd="sed"
+			comments='/^[ 	]*#/d'
+			shift
+			;;
+		-xs )	cmd="sed"
+			comments='/^[ 	]*[#:]/d'
+			shift
+			;;
+		-l )	links="$links $2"
+			shift
+			shift
+			;;
+		* )	break
+			;;
+	esac
+done
+
+if [ ! ${2-""} ]
+then	echo "install: no destination specified"
+	exit 1
+fi
+if [ ${3-""} ]
+then	echo "install: too many files specified -> $*"
+	exit 1
+fi
+if [ $1 = $2 -o $2 = . ]
+then	echo "install: can't move $1 onto itself"
+	exit 1
+fi
+if [ '!' -f $1 ]
+then	echo "install: can't open $1"
+	exit 1
+fi
+if [ -d $2 ]
+then	file=$2/$1
+else	file=$2
+fi
+if [ "$cmd" = "sed" ]
+then	echo sed -e '<strip comments>' $1 ">$file"
+	sed -e '1s;^#!;&;p' -e "$comments" $1 >$file
+else	echo $cmd $1 $file
+	$cmd $1 $file
+fi
+if [ $strip ]
+then	$strip $file
+fi
+if [ $ranlib ]
+then	echo $ranlib $file
+	$ranlib $file
+fi
+echo $chown $file
+$chown $file
+echo $chgrp $file
+$chgrp $file
+echo $chmod $file
+$chmod $file
+for i in $links
+do
+	echo ln $file $i
+	rm -f $i
+	ln $file $i
+done
+if [ '!' -d /dist/root ]
+then	quick="quick"
+fi
+if [ "$quick" != "quick" ]
+then	echo -n "reinstall in distribution directory ? [no] "
+	read ans
+	bb="local"
+	if [ "$ans" = "y" -o "$ans" = "yes" ]
+	then	reinstall -y $file $links
+		bb="cs-unix"
+	fi
+	echo -n "post $bb bboard message ? [yes] "
+	read ans
+	if [ "$ans" != "n" -a "$ans" != "no" ]
+	then	post -subject $file $bb
+	fi
+fi
+exit 0

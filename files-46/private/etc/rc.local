@@ -1,0 +1,16 @@
+#
+# This script is for augmenting the standard system startup commands. It is 
+# executed automatically by the system during boot up. 
+#
+# In its released form, this script basically does nothing. You may customize
+# it to your heart's content.
+#
+
+# Read in configuration information
+. /etc/hostconfig
+
+(echo -n 'local daemons:')					>/dev/console
+#
+# Run your own commands here
+#
+(echo '.')							>/dev/console

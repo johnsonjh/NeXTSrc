@@ -1,0 +1,16 @@
+#
+# /usr/adm/daily
+#
+# This /bin/sh script is run once a day by cron.  Put any housekeeping
+# commands in here, like pruning of log files
+#
+
+# Trim the messages logfile
+cp -p /usr/adm/messages /usr/adm/messages.old
+tail -200 /usr/adm/messages.old > /usr/adm/messages
+
+# Remove old preserve files
+find /private/preserve -mtime +7 -a -exec rm -f {} \;
+
+# Clean out old .nfs files.
+find / -name .nfs\* -mtime +7 -exec rm -f {} \; -o -fstype nfs -prune

@@ -1,0 +1,9 @@
+Enscript File		enscript -2r $file
+Word Count		wc $file
+Grep Source	G	egrep -n "$selection" Makefile makefile *.{c,h,l,y,m,s,ps,psw,pswm,lm,ym}
+Grep Include		egrep -n "$selection" /usr/include/*.h /usr/include/*/*.h
+Make.o		make $stripped.o
+
+
+
+

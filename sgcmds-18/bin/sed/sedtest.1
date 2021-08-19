@@ -1,0 +1,12 @@
+#!/bin/sh -x
+echo "Testing sed.  Should see four lines"
+echo '
+    one
+    two
+    three
+    four' | ./sed.NEW -n 's/NeVeR FiNd So DoNt BrAnCh/&/
+		    t
+		    s/./&/p
+		    '
+echo "End sed test 1."
+

@@ -1,0 +1,5 @@
+#
+# Standard csh cshrc profile
+# csh will source this file before the home .cshrc
+# NOTE: csh will source this file even if -f flag is set
+#

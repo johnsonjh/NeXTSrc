@@ -1,0 +1,34 @@
+323a324,327
+> #ifdef NeXT_MOD
+> 	char *s;
+> 	int exok;
+> #else
+324a329
+> #endif NeXT_MOD
+343a349,352
+> #ifdef NeXT_MOD
+> 		exok = (sindex(q->shbp, "$(MAKE)") != NULL)
+> 		    || (sindex(q->shbp, "${MAKE}") != NULL);
+> #else
+344a354
+> #endif NeXT_MOD
+356,368d365
+< 
+< 		exok = sindex(q->shbp, "${MAKE}");
+< 		(void) subst(q->shbp, string2);
+< 		fixname(string2, string);
+< 		ign = ignerr;
+< 		nopr = NO;
+< 		for (s = string; *s == '-' || *s == '@'; ++s)
+< 			if (*s == '-')
+< 				ign = YES;
+< 			else
+< 				nopr = YES;
+< 		if (docom1(s, ign, nopr, exok) && !ign)
+< 			return 1;
+376a374,376
+> #ifdef NeXT_MOD
+> 	int exok;
+> #else
+377a378
+> #endif NeXT_MOD

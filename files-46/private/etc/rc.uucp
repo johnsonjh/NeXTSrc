@@ -1,0 +1,12 @@
+#
+# Have your "rc.local" file exec this script to start up UUCP.
+# NOTE: UUCP is not supported in this release.
+#
+if [ -d /usr/spool/uucp ]; then
+	chmod +w /usr/spool/uucp/LOG.*
+	rm -f LOG.0
+	if [ -f /usr/lib/uucp/uucico ]; then
+		/usr/lib/uucp/uucico -r1 &
+		(echo -n ' uucp')				>/dev/console
+	fi
+fi

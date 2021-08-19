@@ -1,0 +1,3 @@
+sgcmds-18
+
+Modified mig to accept -p argument to specify 2 byte padding (rather than default 4 byte).

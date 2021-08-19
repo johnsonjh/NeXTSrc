@@ -1,0 +1,15 @@
+#
+# /usr/adm/monthly
+#
+# This /bin/sh script is run once a month by cron.  Put any housekeeping
+# commands in here, like pruning of log files
+#
+
+# Trim the lastlog
+cp -p /usr/adm/lastlog /usr/adm/lastlog.old
+cat /dev/null > /usr/adm/lastlog
+
+# Trim wtmp
+cp -p /usr/adm/wtmp /usr/adm/wtmp.old
+cat /dev/null > /usr/adm/wtmp
+

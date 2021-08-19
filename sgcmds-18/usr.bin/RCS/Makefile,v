@@ -1,0 +1,98 @@
+head     1.4;
+access   ;
+symbols  ;
+locks    osdev:1.4;
+comment  @# @;
+
+
+1.4
+date     89.06.19.15.42.51;  author osdev;  state Exp;
+branches ;
+next     1.3;
+
+1.3
+date     89.06.19.14.05.06;  author osdev;  state Exp;
+branches ;
+next     1.2;
+
+1.2
+date     89.06.15.12.12.52;  author osdev;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.06.15.12.10.32;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@original version
+@
+
+
+1.4
+log
+@Added mig.
+@
+text
+@DIR=	usr.bin
+
+SUBDIR=	basename find install join lex lorder m4 md mig refer rpcgen  \
+	sort touch tr tsort uniq vers_string yacc 
+
+all clean depend tags: ALWAYS
+	@@echo '#################' make $@@ for $(DIR) '###################'
+	@@for i in ${SUBDIR}; \
+	do \
+		echo ================= make $@@ for $$i =================; \
+		(cd $$i; ${MAKE} $@@ || exit 1); \
+	done
+	@@echo '#################' make $@@ for $(DIR) done '###################'
+
+install: ALWAYS
+	@@echo '#################' make $@@ for $(DIR) '###################'
+	@@CWD=`pwd`; cd ${DSTROOT}; DSTROOT=`pwd`; cd $$CWD; \
+	for i in ${SUBDIR}; \
+	do \
+		echo ================= make $@@ for $$i =================; \
+		(cd $$i; ${MAKE} DSTROOT=$$DSTROOT $@@ || exit 1); \
+	done
+	@@echo '#################' make $@@ for $(DIR) done '###################'
+
+ALWAYS:
+@
+
+
+1.3
+log
+@Added md.
+@
+text
+@d3 1
+a3 1
+SUBDIR=	basename find install join lex lorder m4 md refer rpcgen  \
+@
+
+
+1.2
+log
+@New commands from the CMDS project
+@
+text
+@d3 1
+a3 1
+SUBDIR=	basename find install join lex lorder m4 refer rpcgen  \
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 2
+a4 2
+SUBDIR=	basename find install join lorder refer rpcgen  \
+	sort touch tr tsort uniq yacc
+@

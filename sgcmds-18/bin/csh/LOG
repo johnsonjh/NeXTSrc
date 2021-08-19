@@ -1,0 +1,41 @@
+rm -f Makedep
+cc -M -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ dosetpath.c fold.c getbool.c printf.c prstab.c salloc.c  setpath.c sh.c sh.char.c sh.dir.c sh.dol.c sh.err.c sh.exec.c  sh.exp.c sh.file.c sh.func.c sh.glob.c sh.hist.c sh.init.c sh.lex.c  sh.misc.c sh.parse.c sh.print.c sh.proc.c sh.sem.c sh.set.c  sh.time.c skipto.c stablk.c stlmatch.c tenex.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c dosetpath.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c fold.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c getbool.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c printf.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c prstab.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c salloc.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c setpath.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.c
+sh.c: In function main:
+sh.c:190: warning: assignment between incompatible pointer types
+sh.c:193: warning: assignment between incompatible pointer types
+sh.c: In function srcunit:
+sh.c:601: warning: `srcunit' was declared implicitly `extern' and later `static'
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.char.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.dir.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.dol.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.err.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.exec.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.exp.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.file.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.func.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.glob.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.hist.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.init.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.lex.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.misc.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.parse.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.print.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.proc.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.sem.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.set.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c sh.time.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c skipto.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c stablk.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c stlmatch.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c tenex.c
+vers_string -c csh > vers.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -c vers.c
+cc -g -O -fwritable-strings -DNeXT_MOD -DTELL -DVFORK -DCMUCS -D__STRICT_BSD__ -o csh.NEW dosetpath.o fold.o getbool.o printf.o prstab.o salloc.o  setpath.o sh.o sh.char.o sh.dir.o sh.dol.o sh.err.o sh.exec.o  sh.exp.o sh.file.o sh.func.o sh.glob.o sh.hist.o sh.init.o sh.lex.o  sh.misc.o sh.parse.o sh.print.o sh.proc.o sh.sem.o sh.set.o  sh.time.o skipto.o stablk.o stlmatch.o tenex.o   vers.o -lsys_s -ltermcap

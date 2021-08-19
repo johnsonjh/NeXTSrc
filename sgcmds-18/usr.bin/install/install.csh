@@ -1,0 +1,239 @@
+#!/bin/csh -f
+#PROGRAM: save a place for the version string
+umask 022
+set path=($path /etc)
+set cmd="cp -p"
+set links
+set quick
+set symlink
+set link="ln"
+while (1)
+	switch ($1)
+	case -s:
+		set strip="strip"
+		shift
+		breaksw
+	case -sX:
+		set strip="strip -X"
+		shift
+		breaksw
+	case -sx:
+		set strip="strip -x"
+		shift
+		breaksw
+	case -sA:
+		set strip="strip -A"
+		shift
+		breaksw
+	case -sS:
+		set strip="strip -S"
+		shift
+		breaksw
+	case -sSd:
+		set strip="strip -S -d $2"
+		shift
+		shift
+		breaksw
+	case -sgg:
+		set strip="strip -gg"
+		shift
+		breaksw
+	case -r:
+		set ranlib="ranlib"
+		shift
+		breaksw
+	case -q:
+		set quick="quick"
+		shift
+		breaksw
+	case -c:
+		set cmd="cp -p"
+		shift
+		breaksw
+	case -d:
+		set cmp="cmp"
+		shift
+		breaksw
+	case -v:
+		set vecho="echo"
+		shift
+		breaksw
+	case -m:
+		set chmod="chmod $2"
+		shift
+		shift
+		breaksw
+	case -o:
+		set chown="chown -f $2"
+		shift
+		shift
+		breaksw
+	case -g:
+		set chgrp="chgrp -f $2"
+		shift
+		shift
+		breaksw
+	case -xc:
+		set cmd="sed"
+		set comments='/^[ 	]*#/d'
+		shift
+		breaksw
+	case -xs:
+		set cmd="sed"
+		set comments='/^[ 	]*[#:]/d'
+		shift
+		breaksw
+	case -l:
+		set links="$links $2"
+		shift
+		shift
+		breaksw
+	case -u:
+		set unlink="rm -f"
+		shift
+		breaksw
+	case -V:	
+		set stamp="vers_string -f"
+		set link="symlink -r -f"
+		shift
+		breaksw
+	case -S:
+		set save=1
+		shift
+		breaksw
+	default:
+		break
+		breaksw
+	endsw
+end
+#
+if ( $#argv < 2 ) then
+	echo "install: no destination specified"
+	exit(1)
+endif
+set dest=$argv[$#argv]
+#
+if ( $#argv > 2 ) then
+	if ( ! -d $dest ) then
+		echo "usage: install f1 f2 or f1 f2 ... dir"
+		exit(1)
+	endif
+endif
+#
+if (  $1 == $dest ||  $dest == .  ) then
+	echo "install: can't move $1 onto itself"
+	exit(1)
+endif
+#
+foreach j ($argv)
+	if ( $j == $dest) break
+	if ( ! -f $j ) then
+		echo "install: can't open $j"
+		exit(1)
+	endif
+	if ( -d $dest ) then
+		set file=$dest/$j
+	else
+		set file=$dest
+	endif
+	if ( $?stamp ) then
+		set symlink=$file
+		set file=`$stamp $file`
+	endif
+	if ( "$cmd" == "sed" ) then
+		if ( -e $file && $?save ) then
+			rm -f $file.old
+			mv $file $file.old
+		endif
+		if ( $?unlink ) then
+			$unlink $file
+		endif
+		if ($?vecho) then
+			echo sed -e '<strip comments>' $j ">$file"
+		endif
+		# keep the first two comment lines if they're #! and #PROG
+		sed -e '1s;^#\!;&;p' -e '2s;^#PROG;&;p' -e "$comments" $j >$file
+	else if ( $?cmp ) then
+		echo -n CMP $j $file
+		if ( { cmp -s $j $file } ) then
+			echo ';'
+		else
+			if ( -e $file && $?save ) then
+				rm -f $file.old
+				mv $file $file.old
+			endif
+			if ( $?unlink ) then
+				$unlink $file
+			endif
+			echo " THEN" $cmd
+			$cmd $j $file
+		endif
+	else
+		if ( -e $file && $?save ) then
+			rm -f $file.old
+			mv $file $file.old
+		endif
+		if ( $?unlink ) then
+			$unlink $file
+		endif
+		if ($?vecho) then
+			echo $cmd $j $file
+		endif
+		$cmd $j $file
+	endif
+	if ( $?strip ) then
+		if ($?vecho) then
+			echo $strip $file
+		endif
+		$strip $file
+	endif
+	if ( $?ranlib ) then
+		if ($?vecho) then
+			echo $ranlib $file
+		endif
+		$ranlib $file
+	endif
+	if ( $?chmod ) then
+		if ($?vecho) then
+			echo $chmod $file
+		endif
+		$chmod $file
+	endif
+	if ( $?chown ) then
+		if ($?vecho) then
+			echo $chown $file
+		endif
+		$chown $file
+	endif
+	if ( $?chgrp ) then
+		if ($?vecho) then
+			echo $chgrp $file
+		endif
+		$chgrp $file
+	endif
+end
+#
+foreach i ( $symlink $links )
+	if ($?vecho) then
+		echo $link $file $i
+	endif
+	rm -f $i
+	$link $file $i
+end
+#
+#if ( $quick != "quick") then
+#	echo -n "reinstall in distibution directory ? [no] "
+#	set ans = $<
+#	echo $ans
+#	set bb="local"
+#	if ( $ans == "y" || $ans == "yes") then
+#	 	reinstall $file $links
+#		set bb="mach"
+#	endif
+#	echo -n "post $bb bboard message ? [yes] "
+#	set ans = $<
+#	if ( "$ans" != "n" && "$ans" != "no" ) then
+#		post -subject $file $bb
+#	endif
+#endif
+exit

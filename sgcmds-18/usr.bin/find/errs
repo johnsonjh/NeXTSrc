@@ -1,0 +1,31 @@
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c find.c
+find.c: In function getunum:
+find.c:671: `name' undeclared (first use this function)
+find.c:671: (Each undeclared identifier is reported only once
+find.c:671: for each function it appears in.)
+find.c:671: `fname' undeclared (first use this function)
+find.c:671: `pfstype' undeclared (first use this function)
+find.c:671: `pfsnum' undeclared (first use this function)
+find.c:671: `exlist' undeclared (first use this function)
+find.c:672: parse error before `struct'
+find.c:751: `p' undeclared (first use this function)
+find.c:752: parse error before `register'
+find.c:759: parse error before `register'
+find.c:802: parse error before `register'
+find.c:810: `rp' undeclared (first use this function)
+find.c:810: `c' undeclared (first use this function)
+find.c:811: parse error before `register'
+find.c:833: `x' undeclared (first use this function)
+find.c:833: `fl' undeclared (first use this function)
+find.c:834: parse error before `{'
+find.c:841: `errno' undeclared (first use this function)
+find.c:843: `statb' undeclared (first use this function)
+find.c:819: duplicate label `again'
+find.c:849: `devtty' undeclared (first use this function)
+find.c:850: `str' undeclared (first use this function)
+find.c:855: `f' undeclared (first use this function)
+find.c: In function check_chdir:
+find.c:1328: warning: assignment between incompatible pointer types
+find.c:1329: `errno' undeclared (first use this function)
+*** Exit 1
+Stop.

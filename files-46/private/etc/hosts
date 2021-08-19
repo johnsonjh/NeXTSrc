@@ -1,0 +1,26 @@
+#
+# NOTE: This file is never consulted if NetInfo or Yellow Pages is running.
+#
+#
+# To do anything on the network, you need to assign an address to your
+# machine.  This default host table will get you started.  "myhost"
+# can be used for the first machine on the network, and client[1-8]
+# can be used for subsequent machines.  You must make sure that no two
+# machines have the same address.  If you need to add more machines
+# just keep adding entries.  Each digit in the four digit number must
+# be between 1 and 254 inclusive.
+#
+192.42.172.1	myhost
+192.42.172.2	client1
+192.42.172.3	client2
+192.42.172.4	client3
+192.42.172.5	client4
+192.42.172.6	client5
+192.42.172.7	client6
+192.42.172.8	client7
+192.42.172.9	client8
+#
+# This is the reserved address for the loopback interface.  Don't muck
+# with it.
+#
+127.0.0.1	localhost

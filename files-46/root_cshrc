@@ -1,0 +1,21 @@
+#
+# Default .cshrc file for root.
+#
+
+# set up the path
+set path=(/etc /usr/etc /usr/ucb /bin /usr/bin /usr/local/bin /usr/sybase/bin /LocalApps /NextApps /NextAdmin /NextDeveloper/Demos)
+
+# umask will disable write privileges for group and other users
+umask 022
+
+#
+if ( ${?prompt} ) then
+	set host=`hostname`
+	set prompt="${host}# "
+	# number of commands to remember
+	set history=100
+	# some default aliases
+	alias ls ls -F
+	alias mail /usr/ucb/Mail
+endif
+

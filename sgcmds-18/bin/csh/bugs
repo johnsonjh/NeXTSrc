@@ -1,0 +1,8 @@
+
+no way to insert a real tab in the input stream
+
+.bindings is not sourced in dumb mode... Why?
+
+~joe does not work after a filenamelist is executed with a ~user as
+   part of it.  Is fixed by echoing ~joe -twice-.
+

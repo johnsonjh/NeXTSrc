@@ -1,0 +1,272 @@
+#
+# Please note that all "echo" commands are in parentheses so that
+# the main shell does not open a terminal and get its process group set.
+#
+HOME=/; export HOME
+PATH=/etc:/usr/etc:/bin:/usr/bin
+
+#
+# Determine if the network is up. 
+# Used later on when deciding if various daemons should run
+#
+if (ifconfig en0 | grep UP) > /dev/null 2>&1; then
+	NETWORKUP=-YES-
+else
+	NETWORKUP=-NO-
+fi
+
+# Print out a meaningful message
+if  [ $1x = autobootx ]
+then
+	(echo Automatic reboot in progress...)			>/dev/console
+else
+	(echo Multiuser startup in progress...)			>/dev/console
+fi
+
+# Output the date for reference
+date 								>/dev/console
+
+# Mount swapdisk
+sh /etc/rc.swap $1
+
+# Mount local filesystems
+mount -at 4.3						>/dev/console 2>&1
+
+fbshow -A -B -E -s 3 "Checking" "System" "Files..."
+
+# Attempt to rationally recover the passwd file if needed
+if [ -s /etc/ptmp ]
+then
+	if [ -s /etc/passwd ]
+	then
+		(echo 'passwd file conflict with ptmp')		>/dev/console
+		ls -l /etc/passwd /etc/ptmp			>/dev/console
+		(echo 'moving ptmp to ptmp.save')		>/dev/console
+		mv -f /etc/ptmp /etc/ptmp.save
+	else
+		(echo 'passwd file recovered from ptmp') 	>/dev/console
+		mv /etc/ptmp /etc/passwd
+	fi
+elif [ -r /etc/ptmp ]
+then
+	(echo 'removing passwd lock file')			>/dev/console
+	/bin/rm -f /etc/ptmp
+fi
+
+# Startup swapping
+/usr/etc/mach_swapon -av				>/dev/console 2>&1
+
+/bin/rm -f /etc/nologin
+(echo 'Clearing ptys')					>/dev/console
+/usr/etc/chown root.tty /dev/tty[pqrs]*
+/bin/chmod 666 /dev/tty[pqrs]*
+
+# Recover files being edited by {ex,vi.e}
+				(echo preserving editor files) 	>/dev/console
+(cd /tmp; /usr/lib/ex3.7preserve -a)
+				(echo clearing /tmp) 		>/dev/console
+(cd /tmp; find . ! -name . ! -name lost+found ! -name quotas \
+	-exec rm -r - {} \; )
+
+# Clear empty subdirectories of /Net
+(cd /private/Net; find . ! -name . -type d -exec rmdir {} \; ) 
+
+# Clear symlinks too
+(cd /private/Net; find . ! -name . -type l -exec rm {} \; ) 
+
+# Syslog must be started before daemons launched from rc.local
+(echo -n starting early daemons:)				>/dev/console
+if [ -f /usr/etc/syslogd -a -f /etc/syslog.conf ]; then
+	/bin/rm -f /dev/log
+	/usr/etc/syslogd  && (echo -n ' syslogd')		>/dev/console
+fi
+(echo '.')							>/dev/console
+
+# Read in configuration information
+. /etc/hostconfig
+
+# Set up YP domain
+if [ "${YPDOMAIN=-NO-}" != "-NO-" ]
+then
+	(echo "Setting YP domainname to $YPDOMAIN")		>/dev/console
+	domainname $YPDOMAIN				>/dev/console 2>&1
+else
+	(echo "Skipping setting domainname")			>/dev/console
+fi
+
+# Rpc and net services are the minimal programs that allow us to
+# effectively use the network.
+(echo -n 'starting rpc and net services:')			>/dev/console
+if [ -f /usr/etc/nmserver ]; then
+	/usr/etc/nmserver &				>/dev/console 2>&1
+	(echo -n ' nmserver')					>/dev/console
+fi
+if [ -f /usr/etc/portmap ]; then
+	/usr/etc/portmap && (echo -n ' portmap') 		>/dev/console
+fi
+
+# Start up the netinfo daemon
+if [ -f /usr/etc/nibindd ]; then
+	/usr/etc/nibindd && (echo -n ' netinfo')	>/dev/console 2>&1
+fi
+
+# If we are in a YP domain, start up the appropiate services
+if [ "$YPDOMAIN" != "-NO-" ]; then
+	if [ -f /usr/etc/ypserv -a -d /etc/yp/$YPDOMAIN ]; then
+# If you are running the Internet domain name server (named) comment out
+# the next line and uncomment the line after it.
+		/usr/etc/ypserv && (echo -n ' ypserv')		>/dev/console
+#		/usr/etc/ypserv -i && (echo -n ' ypserv')	>/dev/console
+	fi
+	if [ -f /usr/etc/ypbind ]; then
+		/usr/etc/ypbind && (echo -n ' ypbind')		>/dev/console
+	fi
+fi
+#
+# The lookup daemon is required by the system for doing system-specific
+# netinfo lookups: users, hosts, mounts, etc.
+#
+if [ -f /usr/etc/nibindd -a -f /usr/etc/lookupd ]; then
+	/usr/etc/lookupd && (echo -n ' lookupd')		>/dev/console
+fi
+
+# IP routing
+case ${ROUTER=-NO-} in
+    -ROUTED-)
+	if [ -f /usr/etc/routed -a $NETWORKUP = "-YES-" ]; then
+		/usr/etc/routed && (echo -n ' routed')		>/dev/console
+	fi
+	;;
+    -NO-)
+	;;
+    *)
+	if [ -f /usr/etc/route ]; then
+		/usr/etc/route add default $ROUTER 1	>/dev/console 2>&1
+	fi
+	;;
+esac
+if [ -f /usr/etc/biod -a $NETWORKUP = "-YES-" ]; then
+	/usr/etc/biod 4 && (echo -n ' biod')	 		>/dev/console
+fi
+(echo '.')							>/dev/console
+
+#
+# Check for proper Time Service setup, start before using NFS.
+#
+case ${TIME=-AUTOMATIC-} in
+    -AUTOMATIC-)
+	if [ -f /usr/etc/ntpd -a $NETWORKUP = "-YES-" ]; then
+	    /usr/etc/ntp -F 			>/dev/console
+	    /usr/etc/ntpd && (echo -n ' ntpd')	>/dev/console
+	fi
+	;;
+    -NO-)
+	;;
+    *)
+	;;
+esac
+
+#
+#
+# Now mount remote filesystems
+fbshow -A -B -E -s 3 "Mounting" "File" "Systems..."
+mount -vat nfs 						>/dev/console 2>&1
+#
+fbshow -A -B -E -s 3 "Starting" "System" "Services..."
+#
+# Network daemons provide service to the outside world
+(echo -n starting network daemons:)				>/dev/console
+if [ -f /usr/etc/inetd ]; then
+	/usr/etc/inetd && (echo -n ' inetd')			>/dev/console
+fi
+if [ -f /usr/lib/sendmail -a -f /etc/sendmail/sendmail.cf ]; then
+	(cd /usr/spool/mqueue; rm -f nf* lf*)
+	/usr/lib/sendmail -bd -q1h && (echo -n ' sendmail')	>/dev/console
+fi
+if [ -f /usr/lib/lpd ]; then
+	rm -f /dev/printer
+	/usr/lib/lpd && (echo -n ' printer')			>/dev/console
+fi
+(echo '.')							>/dev/console
+
+# NeXT services support the application environment
+(echo -n 'starting NeXT services:')				>/dev/console
+if [ -f /usr/etc/pbs ]; then
+	/usr/etc/pbs &&	(echo -n ' pbs')			>/dev/console
+fi
+if [ -f /usr/etc/autodiskmount ]; then
+	/usr/etc/autodiskmount &
+	(echo -n ' autodiskmount')				>/dev/console
+fi
+if [ -f /usr/lib/NextPrinter/npd ]; then
+	/usr/lib/NextPrinter/npd && (echo -n ' npd')		>/dev/console
+fi
+if [ -f /usr/lib/NextPrinter/exec_faxes ]; then
+	/usr/lib/NextPrinter/exec_faxes && (echo -n ' exec_faxes')	>/dev/console
+fi
+(echo '.')							>/dev/console
+
+# Fileservice daemons are needed to export filesystems
+(echo -n 'fileserver daemons:')					>/dev/console
+
+if [ -h /Net -o -f /Net ]; then
+	(echo "Warning: NeXT NFS automounter did not run.")	>/dev/console
+else
+	if [ -f /usr/etc/autonfsmount -a $NETWORKUP = "-YES-" ]; then
+		/usr/etc/autonfsmount	-tm 10 -tl 43200 \
+					-a /private -m /Net -fstab \
+		&& (echo -n ' autonfsmount') >/dev/console 2>&1
+	fi
+fi
+
+# if /etc/exports file exists become nfs server
+if [ -f /usr/etc/nfsd -a -f /etc/exports ]; then
+	/usr/etc/exportfs -a				>/dev/console 2>&1
+	/usr/etc/nfsd 4 && (echo -n ' nfsd')	 		>/dev/console
+	/usr/etc/rpc.mountd && (echo -n ' rpc.mountd')	>/dev/console 2>&1
+fi
+
+# if we are a Network Master become a BOOTP and BOOTPARAM server
+if [ "${NETMASTER=-NO-}" = "-YES-" ]
+then
+# if /etc/bootptab file exists, become a BOOTP server
+	if [ -f /usr/etc/bootpd -a -f /etc/bootptab ]; then
+		/usr/etc/bootpd && (echo -n ' bootpd')		>/dev/console
+	fi
+
+# if /etc/bootparams file exists, become a bootparam server
+	if [ -f /usr/etc/rpc.bootparamd ]; then
+		/usr/etc/rpc.bootparamd && \
+		(echo -n ' rpc.bootparamd')			>/dev/console
+	fi
+fi
+(echo '.')							>/dev/console
+
+#
+# rc.local is for augmenting startup commands
+#
+if [ -f /etc/rc.local ]; then
+	sh /etc/rc.local $1
+fi
+
+# Unlock tip lines in case it is not done in rc.local
+if [ -d /usr/spool/uucp ]; then
+	rm -f /usr/spool/uucp/LCK.*
+	rm -f /usr/spool/uucp/LCK/LCK.*
+fi
+
+# standard daemons that should always run
+(echo -n starting standard daemons:)				>/dev/console
+update && (echo -n ' update')					>/dev/console
+cron && (echo -n ' cron')					>/dev/console
+
+# accton is here for historical reasons
+#if [ -f /usr/adm/acct ]; then
+#	accton /usr/adm/acct && (echo -n ' accounting')		>/dev/console
+#fi
+(echo '.')							>/dev/console
+
+# Output the date again for monitoring
+date								>/dev/console
+exit 0
+

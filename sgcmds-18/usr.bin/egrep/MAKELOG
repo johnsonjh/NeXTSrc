@@ -1,0 +1,10 @@
+yacc  egrep.y
+
+conflicts: 2 shift/reduce
+mv  y.tab.c egrep.c
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__   egrep.c |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c egrep.c
+vers_string -c egrep > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o egrep.NEW  egrep.o  vers.o -lsys_s

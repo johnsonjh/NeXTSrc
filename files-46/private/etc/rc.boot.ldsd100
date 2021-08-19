@@ -1,0 +1,88 @@
+#
+# This script sets up the machine enough to run single-user
+#
+# Please note that all "echo" commands are in parentheses so that
+# the main shell does not open a terminal and get its process group set.
+#
+HOME=/; export HOME
+PATH=/etc:/usr/etc:/bin:/usr/bin:/usr/ucb; export PATH
+
+#
+# Default swapfile
+#
+swapfile=/private/vm/swapfile
+
+#
+# We must fsck here before we touch anything in the filesystems
+#
+fsckerror=0
+
+# Output the date for reference
+date								>/dev/console
+
+if [ $1x = singleuserx ]
+then
+	(echo "Singleuser boot -- fsck not done")		>/dev/console
+	if [ ! -f $swapfile ]
+	then
+		(echo "No default swapfile present!")		>/dev/console
+	fi
+else
+	fbshow -A -B -E -s 2 "Checking" "Disks..."
+	(echo Checking disks)				>/dev/console
+	fsck -p			 >/dev/console 2>&1
+	case $? in
+	    0)
+		;;
+	    4)
+		(echo "Root fixed - rebooting.")	>/dev/console
+		fbshow -B -E -s 2 "Disk Fixed" "Rebooting"
+		/usr/etc/reboot -q -n
+		;;
+	    8)
+		(echo "Reboot failed...help!")		>/dev/console
+		fbshow -B -E -s 2 "Reboot" "Failed"
+		fsckerror=1
+		;;
+	    12)
+		(echo "Reboot interrupted.")		>/dev/console
+		fbshow -B -E -s 2 "Reboot" "Interrupted"
+		fsckerror=1
+		;;
+	    *)
+		(echo "Unknown error in reboot fsck.")	>/dev/console
+		fbshow -B -E -s 2 "Fatal Error" "in Disk Check"
+		fsckerror=1
+		;;
+	esac
+	if [ ! -f $swapfile ]
+	then
+		(echo -n "Creating default swapfile")		>/dev/console
+		fbshow -B -E -s 3 "No Swapfile" "Will Create" "and Reboot"
+		touch $swapfile
+		chmod 1600 $swapfile
+		(echo " - rebooting")				>/dev/console
+		reboot -q
+	fi
+fi
+
+# Fake mount entries for root and private filesystems and then mount up
+# the read-only software distribution
+(echo "Faking root mount entries")				>/dev/console
+> /etc/mtab
+mount -f /
+
+sync
+
+# Exit with error if failed above
+# Note that ifconfig exits 1 if the error is a show stopper and -1 if it
+# is not.
+if [ $fsckerror -ne 0 ]
+then
+	exit 1
+fi
+exit 0
+
+
+
+

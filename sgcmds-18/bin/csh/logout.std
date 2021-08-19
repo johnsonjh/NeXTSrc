@@ -1,0 +1,4 @@
+#
+# Standard csh logout profile
+# csh will source this file before the home .logout
+#

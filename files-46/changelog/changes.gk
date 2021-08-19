@@ -1,0 +1,11 @@
+Changes for files-31
+
+private/etc/rc			Removed launch of kern_loader
+private/etc/bootstrap.conf	Moved this file from cmds/usr.etc/mach_init
+private/etc/Makefile		Install bootstrap.conf mode 644 in /private/etc
+
+Changes for files-33
+
+private/etc/rc			Removed launch of snd_register.
+private/etc/bootstrap.conf	Don't export Service service.
+private/etc/kern_loader.conf	Added NextDimension to startup.

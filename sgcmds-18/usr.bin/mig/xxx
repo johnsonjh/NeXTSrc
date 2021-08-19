@@ -1,0 +1,20 @@
+if [ -n "" ]; then make .install ; fi;
+for i in `echo mig migcom`; do echo ======= make $i.install =======; make -f $i.mk PRODUCT=$i MAKEFILE=$i.mk $i.install; done;
+======= make mig.install =======
+if [ `expr mig : '.*\.a' + 1 ` -ne 1 ] ; then if [ -f mig.NEW ] ; then ar ru mig.NEW           ; else ar q mig.NEW           ; fi elif [ -n "" ] ; then cp  mig.NEW; elif [ -n "mig.sh" ] ; then cp mig.sh mig.NEW; else cc -O -MD  -o mig.NEW            ; fi
+if [ -n "" ]; then mkdirs -m 755 /tmp/;  install -m 444   /tmp/;  fi
+if [ -n "" ]; then mkdirs -m 755 /tmp/;  install -m 444     /tmp/;  fi
+if [ -n "mig_errors.h" ]; then  mkdirs -m 755 /tmp//usr/include;  install -m 444  mig_errors.h /tmp//usr/include;  fi
+cp: /tmp//usr/include/mig_errors.h: Permission denied
+mkdirs -m 755 /tmp//usr/bin
+install -c mig.NEW /tmp//usr/bin/mig
+cp: /tmp//usr/bin/mig: Permission denied
+======= make migcom.install =======
+if [ `expr migcom : '.*\.a' + 1 ` -ne 1 ] ; then if [ -f migcom.NEW ] ; then ar ru migcom.NEW  parser.o lexxer.o mig.o		 error.o string.o type.o routine.o	 statement.o global.o			 header.o user.o server.o utils.o         ; else ar q migcom.NEW  parser.o lexxer.o mig.o		 error.o string.o type.o routine.o	 statement.o global.o			 header.o user.o server.o utils.o         ; fi elif [ -n "" ] ; then cp  migcom.NEW; elif [ -n "" ] ; then cp  migcom.NEW; else cc -O -MD -DNeXT_MOD  -o migcom.NEW  parser.o lexxer.o mig.o		 error.o string.o type.o routine.o	 statement.o global.o			 header.o user.o server.o utils.o          -ll -lsys_s; fi
+if [ -n "" ]; then mkdirs -m 755 /tmp//usr/man;  install -m 444   /tmp//usr/man;  fi
+if [ -n "" ]; then mkdirs -m 755 /tmp/;  install -m 444     /tmp/;  fi
+if [ -n "" ]; then  mkdirs -m 755 /tmp//;  install -m 444   /tmp//;  fi
+mkdirs -m 755 /tmp//usr/lib
+install -s -c -d migcom.NEW /tmp//usr/lib/migcom
+CMP migcom.NEW /tmp//usr/lib/migcom THEN cp -p
+CWD=`pwd`; cd /tmp; DSTROOT=`pwd`; cd $CWD;  for i in `echo `;  do  echo ================= make install for $i =================;  (cd $i; make DSTROOT=$DSTROOT install);  done
