@@ -1,0 +1,44 @@
+
+The following files need changing in order to make uucp/tip/kermit more 'Turn-Key'.
+
+1) Add to passwd and netinfo database. The password is "NeXTPoll".
+
+Unext:H2spIt5egkfUA:4:4:Sample UUCP Polling account:/usr/spool/uucp:/usr/lib/uucp/uucico
+
+	Risk:	LOW
+
+
+
+
+2) Change the following line in /etc/sendmail/sendmail.cf to invoke a uucp poll
+immediately after email is queued. This attempts to keep in line with the policy
+of having things happen when the user expects them.
+
+change line 259 of /etc/sendmail/sendmail.cf from:
+	A=uux - -r $h!rmail ($u)
+to:
+	A=uux - $h!rmail ($u)
+
+	Risk: LOW
+
+
+
+
+
+3) Since these are expected to be single user machines, there is little reason
+to protect the modem ports. This makes the installation of customer programs like
+kermit easier and does not require that they run priviledged.
+
+Change /dev/MAKEDEV:
+/dev/MAKEDEV:60:	/usr/etc/mknod cua	c 11 192; chmod 600 cua ; chown uucp cua
+/dev/MAKEDEV:61:	/usr/etc/mknod cub	c 11 193; chmod 600 cub ; chown uucp cub
+
+Too:
+/dev/MAKEDEV:60:	/usr/etc/mknod cua	c 11 192; chmod 666 cua ; chown uucp cua
+/dev/MAKEDEV:61:	/usr/etc/mknod cub	c 11 193; chmod 666 cub ; chown uucp cub
+
+	Risk: LOW
+
+
+
+

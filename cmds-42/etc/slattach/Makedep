@@ -1,0 +1,10 @@
+slattach.o: slattach.c /usr/include/stdio.h /usr/include/sys/param.h
+slattach.o: /usr/include/sys/features.h /usr/include/machine/machparam.h
+slattach.o: /usr/include/sys/assert.h /usr/include/next/vm_param.h
+slattach.o: /usr/include/sys/types.h /usr/include/next/eventc.h
+slattach.o: /usr/include/sys/signal.h /usr/include/machine/signal.h
+slattach.o: /usr/include/sys/types.h /usr/include/sgtty.h
+slattach.o: /usr/include/sys/ioctl.h /usr/include/sys/ttychars.h
+slattach.o: /usr/include/sys/ttydev.h /usr/include/sys/socket.h
+slattach.o: /usr/include/netinet/in.h /usr/include/net/if.h
+slattach.o: /usr/include/net/if_arp.h /usr/include/netdb.h /usr/include/fcntl.h

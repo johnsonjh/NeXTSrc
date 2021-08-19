@@ -1,0 +1,767 @@
+################# make all for CMDS ###################
+================= make all for bin =================
+################# make all for bin ###################
+================= make all for dd =================
+================= make all for df =================
+================= make all for diff =================
+================= make all for domainname =================
+================= make all for du =================
+================= make all for echo =================
+================= make all for false =================
+================= make all for grep =================
+================= make all for hostid =================
+================= make all for kill =================
+================= make all for login =================
+================= make all for mail =================
+================= make all for mt =================
+================= make all for nice =================
+================= make all for od =================
+================= make all for pagesize =================
+================= make all for passwd =================
+================= make all for pr =================
+================= make all for ps =================
+cd STD_OBJS; make -f ../Makefile TYPE="STD" ps
+`ps' is up to date.
+================= make all for rmail =================
+================= make all for rmdir =================
+================= make all for stty =================
+cd STD_OBJS; make -f ../Makefile TYPE="STD" stty
+`stty' is up to date.
+================= make all for su =================
+================= make all for sync =================
+================= make all for tee =================
+================= make all for test =================
+================= make all for time =================
+================= make all for tp =================
+================= make all for true =================
+================= make all for wall =================
+================= make all for who =================
+================= make all for write =================
+################# make all for bin done ###################
+================= make all for etc =================
+################# make all for etc ###################
+================= make all for ac =================
+================= make all for accton =================
+================= make all for arp =================
+================= make all for autodiskmount =================
+================= make all for biod =================
+================= make all for bootpd =================
+================= make all for builddisk =================
+================= make all for catman =================
+================= make all for clri =================
+================= make all for comsat =================
+================= make all for cron =================
+================= make all for dcheck =================
+================= make all for disk =================
+================= make all for dmesg =================
+================= make all for dump =================
+================= make all for dumpfs =================
+================= make all for edquota =================
+================= make all for fbshow =================
+cd STD_OBJS; make -f ../Makefile TYPE="STD" fbshow mkfont
+`fbshow' is up to date.
+`mkfont' is up to date.
+================= make all for fdform =================
+================= make all for fingerd =================
+================= make all for fsck =================
+cd STD_OBJS; make -f ../Makefile TYPE="STD" fsck
+`fsck' is up to date.
+================= make all for fsirand =================
+================= make all for ftpd =================
+================= make all for getdisk =================
+cd STD_OBJS; make -f ../Makefile TYPE="STD" getdisk
+`getdisk' is up to date.
+================= make all for gettable =================
+================= make all for getty =================
+================= make all for halt =================
+================= make all for htable =================
+================= make all for icheck =================
+================= make all for ifconfig =================
+================= make all for inetd =================
+================= make all for init =================
+================= make all for kgmon =================
+================= make all for mkfs =================
+================= make all for mkhosts =================
+================= make all for mklost+found =================
+================= make all for mknod =================
+================= make all for mkpasswd =================
+================= make all for mkproto =================
+================= make all for mount =================
+================= make all for named =================
+================= make all for ncheck =================
+================= make all for newclient =================
+================= make all for newfs =================
+================= make all for nfsd =================
+================= make all for nppower =================
+================= make all for nslookup =================
+================= make all for nu =================
+================= make all for ping =================
+================= make all for portmap =================
+================= make all for quot =================
+================= make all for quotacheck =================
+================= make all for quotaon =================
+================= make all for reboot =================
+================= make all for renice =================
+================= make all for repquota =================
+================= make all for restore =================
+================= make all for rexecd =================
+================= make all for rlogind =================
+================= make all for rmt =================
+================= make all for route =================
+================= make all for routed =================
+================= make all for rshd =================
+================= make all for rwhod =================
+================= make all for sa =================
+================= make all for scsimodes =================
+================= make all for shutdown =================
+================= make all for snd_register =================
+================= make all for syslogd =================
+================= make all for talkd =================
+================= make all for telnetd =================
+================= make all for tftpd =================
+================= make all for timed =================
+================= make all for tunefs =================
+================= make all for tzone =================
+================= make all for umount =================
+================= make all for update =================
+================= make all for vipw =================
+================= make all for vmmprint =================
+================= make all for vmoprint =================
+================= make all for ypbind =================
+================= make all for zprint =================
+################# make all for etc done ###################
+================= make all for usr.ucb =================
+################# make all for usr.ucb ###################
+================= make all for Mail =================
+================= make all for apply =================
+================= make all for biff =================
+================= make all for checknr =================
+================= make all for clear =================
+================= make all for colcrt =================
+================= make all for colrm =================
+================= make all for compress =================
+================= make all for error =================
+================= make all for expand =================
+================= make all for finger =================
+================= make all for fold =================
+================= make all for from =================
+================= make all for ftp =================
+================= make all for groups =================
+================= make all for head =================
+================= make all for indent =================
+================= make all for last =================
+================= make all for lastcomm =================
+================= make all for leave =================
+================= make all for lock =================
+================= make all for logger =================
+================= make all for man =================
+================= make all for mkstr =================
+================= make all for more =================
+================= make all for msgs =================
+================= make all for netstat =================
+================= make all for printenv =================
+================= make all for quota =================
+================= make all for rcp =================
+================= make all for rdate =================
+================= make all for rdist =================
+================= make all for rlogin =================
+================= make all for rsh =================
+================= make all for rup =================
+================= make all for ruptime =================
+================= make all for rusers =================
+================= make all for rwho =================
+================= make all for script =================
+================= make all for sendmail =================
+################# make all for usr.ucb/sendmail ###################
+================= make all for aux =================
+================= make all for cf =================
+================= make all for lib =================
+================= make all for src =================
+################# make all for usr.ucb/sendmail done ###################
+================= make all for soelim =================
+================= make all for sysline =================
+================= make all for tail =================
+================= make all for talk =================
+================= make all for tcopy =================
+================= make all for telnet =================
+================= make all for tftp =================
+================= make all for traceroute =================
+================= make all for tset =================
+================= make all for ul =================
+================= make all for unexpand =================
+================= make all for unifdef =================
+================= make all for users =================
+================= make all for vgrind =================
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c regexp.c
+vers_string -c vfontedpr > vfontedpr_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vfontedpr_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o vfontedpr.NEW vfontedpr.o vgrindefs.o regexp.o vfontedpr_vers.o -lsys_s
+================= make all for w =================
+================= make all for wc =================
+================= make all for what =================
+================= make all for whereis =================
+================= make all for which =================
+================= make all for whoami =================
+================= make all for whois =================
+================= make all for xstr =================
+================= make all for yes =================
+################# make all for usr.ucb done ###################
+================= make all for usr.bin =================
+################# make all for usr.bin ###################
+================= make all for ar11 =================
+================= make all for at =================
+================= make all for bc =================
+================= make all for bm =================
+================= make all for cal =================
+================= make all for calendar =================
+================= make all for cb =================
+================= make all for checkeq =================
+================= make all for col =================
+================= make all for comm =================
+================= make all for crypt =================
+================= make all for dc =================
+================= make all for deroff =================
+================= make all for diction =================
+================= make all for diff3 =================
+================= make all for egrep =================
+================= make all for eqn =================
+================= make all for fgrep =================
+================= make all for hostinfo =================
+if [ -n "hostinfo" ]; then make hostinfo.all ; fi;
+if [ `expr hostinfo : '.*\.a' + 1 ` -ne 1 ] ; then if [ -f hostinfo.NEW ] ; then ar ru hostinfo.NEW  hostinfo.o         ; else ar q hostinfo.NEW  hostinfo.o         ; fi elif [ -n "" ] ; then cp  hostinfo.NEW; elif [ -n "" ] ; then cp  hostinfo.NEW; else cc -O -MD -object -o hostinfo.NEW  hostinfo.o          -lsys_s; fi
+for i in `echo `; do echo ======= make $i.all =======; make -f $i.mk PRODUCT=$i MAKEFILE=$i.mk $i.all; done;
+CWD=`pwd`; cd ; DSTROOT=`pwd`; cd $CWD;  for i in `echo `;  do  echo ================= make all for $i =================;  (cd $i; make DSTROOT=$DSTROOT all);  done
+================= make all for iostat =================
+================= make all for less =================
+================= make all for look =================
+================= make all for mesg =================
+================= make all for neqn =================
+================= make all for nohup =================
+================= make all for nroff =================
+cd term; make
+================= make all for ptx =================
+================= make all for ratfor =================
+================= make all for rcs =================
+################# make all for usr.bin/rcs ###################
+================= make all for src =================
+################# make all for usr.bin/rcs done ###################
+================= make all for rev =================
+================= make all for shar =================
+================= make all for sleep =================
+================= make all for spell =================
+================= make all for spline =================
+================= make all for split =================
+================= make all for struct =================
+================= make all for sum =================
+================= make all for tabs =================
+================= make all for tbl =================
+================= make all for tc =================
+================= make all for tip =================
+cd aculib; make
+`aculib.a' is up to date.
+================= make all for tk =================
+================= make all for troff =================
+================= make all for tty =================
+================= make all for units =================
+================= make all for uucp =================
+cd aculib; make 
+`aculib.a' is up to date.
+================= make all for vm_stat =================
+================= make all for wh =================
+================= make all for xargs =================
+================= make all for xsend =================
+================= make all for ypcat =================
+================= make all for ypmatch =================
+================= make all for yppasswd =================
+================= make all for ypwhich =================
+################# make all for usr.bin done ###################
+================= make all for usr.etc =================
+################# make all for usr.etc ###################
+================= make all for autonfsmount =================
+================= make all for checkswap =================
+================= make all for exportfs =================
+================= make all for mach_init =================
+cd STD_OBJS; make -f ../Makefile TYPE="STD" mach_init
+cc   -o mach_init bootstrap.o error_log.o lists.o parser.o rpc_services.o   bootstrapServer.o bootstrapUser.o vers.o -lc_static
+================= make all for mach_swapon =================
+rm -f Makedep
+cc -M  mach_swapon.c swent.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g  -c mach_swapon.c
+cc -O -g  -c swent.c
+vers_string -c mach_swapon > vers.c
+cc -O -g  -c vers.c
+cc -object -O -g  -o mach_swapon.NEW mach_swapon.o swent.o   vers.o -lsys_s
+================= make all for mkfile =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ mkfile.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c mkfile.c
+vers_string -c mkfile > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o mkfile.NEW mkfile.o   vers.o -lsys_s
+================= make all for nfsstat =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ nfsstat.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c nfsstat.c
+vers_string -c nfsstat > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o nfsstat.NEW nfsstat.o   vers.o -lsys_s
+================= make all for nmserver =================
+cd build; make default
+cc -O -g -MD -I. -I../server  -bsd -c ../server/nmserver.c
+md -u Makedep -d nmserver.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/dispatcher.c
+md -u Makedep -d dispatcher.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/lock_queue.c
+md -u Makedep -d lock_queue.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/mem.c
+md -u Makedep -d mem.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/nm_extra.c
+md -u Makedep -d nm_extra.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/rwlock.c
+md -u Makedep -d rwlock.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/sbuf.c
+md -u Makedep -d sbuf.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/timer.c
+md -u Makedep -d timer.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/uid.c
+md -u Makedep -d uid.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/crypt.c
+md -u Makedep -d crypt.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/crypt_multperm.c
+md -u Makedep -d crypt_multperm.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/crypt_newdes.c
+md -u Makedep -d crypt_newdes.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/crypt_xor.c
+md -u Makedep -d crypt_xor.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/multperm.c
+md -u Makedep -d multperm.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/ipc.c
+md -u Makedep -d ipc.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/ipc_block.c
+md -u Makedep -d ipc_block.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/ipc_msg.c
+md -u Makedep -d ipc_msg.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/ipc_rpc.c
+md -u Makedep -d ipc_rpc.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/ipc_exception.c
+md -u Makedep -d ipc_exception.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/ipc_swap.c
+md -u Makedep -d ipc_swap.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/keyman.c
+md -u Makedep -d keyman.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/km_procs.c
+md -u Makedep -d km_procs.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/km_utils.c
+md -u Makedep -d km_utils.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/netname.c
+md -u Makedep -d netname.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/nn_handler.c
+md -u Makedep -d nn_handler.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/nn_procs.c
+md -u Makedep -d nn_procs.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/portrec.c
+md -u Makedep -d portrec.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/portcheck.c
+md -u Makedep -d portcheck.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/pc_handler.c
+md -u Makedep -d pc_handler.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/pc_startup.c
+md -u Makedep -d pc_startup.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/portsearch.c
+md -u Makedep -d portsearch.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/ps_auth.c
+md -u Makedep -d ps_auth.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/portops.c
+md -u Makedep -d portops.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/po_message.c
+md -u Makedep -d po_message.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/po_notify.c
+md -u Makedep -d po_notify.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/po_utils.c
+md -u Makedep -d po_utils.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/datagram.c
+md -u Makedep -d datagram.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/deltat.c
+md -u Makedep -d deltat.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/deltat_handler.c
+md -u Makedep -d deltat_handler.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/deltat_send.c
+md -u Makedep -d deltat_send.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/deltat_utils.c
+md -u Makedep -d deltat_utils.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/srr.c
+md -u Makedep -d srr.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/srr_handler.c
+md -u Makedep -d srr_handler.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/srr_utils.c
+md -u Makedep -d srr_utils.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/netipc.c
+md -u Makedep -d netipc.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/network.c
+md -u Makedep -d network.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/transport.c
+md -u Makedep -d transport.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/nm_init.c
+md -u Makedep -d nm_init.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/logstat.c
+md -u Makedep -d logstat.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/ls_rec.c
+md -u Makedep -d ls_rec.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/vmtp2.c
+md -u Makedep -d vmtp2.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/nm_enable.c
+md -u Makedep -d nm_enable.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/crypt_des.c
+md -u Makedep -d crypt_des.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/des.c
+md -u Makedep -d des.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/tcp.c
+../server/tcp.c: In function tcp_init:
+../server/tcp.c:1513: warning: argument passing between incompatible pointer types
+../server/tcp.c:1521: warning: assignment between incompatible pointer types
+md -u Makedep -d tcp.d
+cc -O -g -MD -I. -I../server  -bsd -c ../server/cam_stuff.c
+md -u Makedep -d cam_stuff.d
+mig -MD -I. -I../server  -DMIG -DNMSERVER ../server/km.defs  -server km_server.c  -user km_user.c
+cc -O -g -MD -I. -I../server  -bsd -c km_server.c
+md -u Makedep -d km_server.d
+mig -MD -I. -I../server  -DMIG -DNMSERVER  /usr/include/servers/netname.defs  -server netname_server.c  -user netname_user.c
+cc -O -g -MD -I. -I../server  -bsd -c netname_server.c
+md -u Makedep -d netname_server.d
+mig -MD -I. -I../server  -DMIG -DNMSERVER ../server/logstat.defs  -server logstat_server.c  -user logstat_user.c
+cc -O -g -MD -I. -I../server  -bsd -c logstat_server.c
+md -u Makedep -d logstat_server.d
+cc  -o nmserver nmserver.o dispatcher.o lock_queue.o mem.o nm_extra.o rwlock.o sbuf.o timer.o uid.o  crypt.o crypt_multperm.o crypt_newdes.o crypt_xor.o multperm.o  ipc.o ipc_block.o ipc_msg.o ipc_rpc.o ipc_exception.o ipc_swap.o  keyman.o km_procs.o km_utils.o  netname.o nn_handler.o nn_procs.o  portrec.o portcheck.o pc_handler.o pc_startup.o portsearch.o ps_auth.o  portops.o po_message.o po_notify.o po_utils.o  datagram.o deltat.o deltat_handler.o deltat_send.o deltat_utils.o  srr.o srr_handler.o srr_utils.o netipc.o network.o transport.o  nm_init.o logstat.o ls_rec.o vmtp2.o nm_enable.o crypt_des.o des.o  tcp.o cam_stuff.o km_server.o netname_server.o logstat_server.o -lcs -lsys_s
+cd build; make utilprog
+cc -O -g -MD -I. -I../server  -bsd -c ../utils/nmcontrol.c
+../utils/nmcontrol.c: In function genericportstat:
+../utils/nmcontrol.c:739: warning: argument passing between incompatible pointer types
+md -u Makedep -d nmcontrol.d
+cc -O -g -MD -I. -I../server  -bsd -c logstat_user.c
+ld  -o nmcontrol /lib/crt0.o nmcontrol.o logstat_user.o ls_rec.o -lcs -lsys_s
+cc -O -g -MD -I. -I../server  -bsd -c ../utils/nmxlog.c
+md -u Makedep -d nmxlog.d
+ld  -o nmxlog /lib/crt0.o nmxlog.o -lcs -lsys_s
+cc -O -g -MD -I. -I../server  -bsd -c ../utils/nmtest.c
+../utils/nmtest.c: In function initialize:
+../utils/nmtest.c:727: warning: argument passing between incompatible pointer types
+md -u Makedep -d nmtest.d
+ld  -o nmtest /lib/crt0.o nmtest.o -lcs -lsys_s
+cc -O -g -MD -I. -I../server  -bsd -c ../utils/nmtime.c
+../utils/nmtime.c: In function genericwrite:
+../utils/nmtime.c:510: warning: argument passing between incompatible pointer types
+../utils/nmtime.c:546: warning: argument passing of integer from pointer lacks a cast
+../utils/nmtime.c: In function echostart:
+../utils/nmtime.c:629: warning: argument passing of integer from pointer lacks a cast
+md -u Makedep -d nmtime.d
+ld  -o nmtime /lib/crt0.o nmtime.o -lcs -lsys_s
+================= make all for ntp =================
+################# make all for usr.etc/ntp ###################
+================= make all for ntp =================
+rm -f Makedep
+cc -M -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  ntp.c ntpsubs.c    |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  -c ntp.c
+cc -O -g -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  -c ntpsubs.c
+vers_string -c ntp > vers.c
+cc -O -g -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  -c vers.c
+cc -O -g -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  -o ntp.NEW ntp.o ntpsubs.o    vers.o -lsys_s
+================= make all for ntpd =================
+rm -f Makedep
+cc -M -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  ntpd.c ntpsubs.c ntp_proto.c ntp_sock.c ntp_adjust.c  read_local.c read_psti.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -g -O -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  -c ntpd.c
+ntpd.c: In function main:
+ntpd.c:378: warning: argument passing between incompatible pointer types
+ntpd.c:379: warning: argument passing between incompatible pointer types
+ntpd.c:380: warning: argument passing between incompatible pointer types
+ntpd.c: In function query_mode:
+ntpd.c:1796: warning: argument passing between incompatible pointer types
+cc -g -O -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  -c ntpsubs.c
+cc -g -O -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  -c ntp_proto.c
+ntp_proto.c: In function transmit:
+ntp_proto.c:209: warning: argument passing between incompatible pointer types
+cc -g -O -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  -c ntp_sock.c
+cc -g -O -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  -c ntp_adjust.c
+cc -g -O -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  -c read_local.c
+cc -g -O -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  -c read_psti.c
+vers_string -c ntpd > vers.c
+cc -g -O -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  -c vers.c
+cc -g -O -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG   -DNeXT_MOD -D__STRICT_BSD__  -o ntpd.NEW ntpd.o ntpsubs.o ntp_proto.o ntp_sock.o ntp_adjust.o  read_local.o read_psti.o   vers.o -lsys_s
+================= make all for ntpdc =================
+rm -f Makedep
+cc -M -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG  -DSETTICKADJ -DDEBUG -DREFCLOCK -DNeXT_MOD -D__STRICT_BSD__  ntpdc.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG  -DSETTICKADJ -DDEBUG -DREFCLOCK -DNeXT_MOD -D__STRICT_BSD__  -c ntpdc.c
+vers_string -c ntpdc > vers.c
+cc -O -g -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG  -DSETTICKADJ -DDEBUG -DREFCLOCK -DNeXT_MOD -D__STRICT_BSD__  -c vers.c
+cc -O -g -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG  -DSETTICKADJ -DDEBUG -DREFCLOCK -DNeXT_MOD -D__STRICT_BSD__  -o ntpdc.NEW ntpdc.o   vers.o -lsys_s
+================= make all for ntest =================
+rm -f Makedep
+cc -M -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG  -DSETTICKADJ -DDEBUG -DREFCLOCK -DNeXT_MOD -D__STRICT_BSD__  ntest.c ntpsubs.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG  -DSETTICKADJ -DDEBUG -DREFCLOCK -DNeXT_MOD -D__STRICT_BSD__  -c ntest.c
+cc -O -g -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG  -DSETTICKADJ -DDEBUG -DREFCLOCK -DNeXT_MOD -D__STRICT_BSD__  -c ntpsubs.c
+vers_string -c ntest > vers.c
+cc -O -g -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG  -DSETTICKADJ -DDEBUG -DREFCLOCK -DNeXT_MOD -D__STRICT_BSD__  -c vers.c
+cc -O -g -fwritable-strings -I../h -DSUN_FLT_BUG -DGENERIC_UNS_BUG  -DSETTICKADJ -DDEBUG -DREFCLOCK -DNeXT_MOD -D__STRICT_BSD__  -o ntest.NEW ntest.o ntpsubs.o   vers.o -lsys_s
+################# make all for usr.etc/ntp done ###################
+================= make all for rpc.rexd =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc mount_nfs.c on.c rexd.c under.c unix_login.c where.c where_main.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -c under.c
+under.c: In function runcmd:
+under.c:99: warning: argument passing of pointer from integer lacks a cast
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -c mount_nfs.c
+vers_string -c under > under_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -c under_vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -o under.NEW under.o mount_nfs.o under_vers.o -lsys_s -lrpcsvc
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -c where_main.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -c where.c
+vers_string -c where > where_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -c where_vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -o where.NEW where_main.o where.o where_vers.o -lsys_s -lrpcsvc
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -c on.c
+vers_string -c on > on_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -c on_vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -o on.NEW on.o where.o on_vers.o -lsys_s -lrpcsvc -ltermcap
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -c rexd.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -c unix_login.c
+vers_string -c rexd > rexd_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -c rexd_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I/usr/include/rpcsvc -o rpc.rexd.NEW rexd.o mount_nfs.o unix_login.o rexd_vers.o -lsys_s -lrpcsvc
+================= make all for rpc.bootparamd =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ -I. bootparam_svc.c bootparam_subr.c bootparam_lib.c bootparam_xdr.c  getent.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -c bootparam_svc.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -c bootparam_subr.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -c bootparam_lib.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -c bootparam_xdr.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -c getent.c
+vers_string -c rpc.bootparamd > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -o rpc.bootparamd.NEW bootparam_svc.o bootparam_subr.o bootparam_lib.o bootparam_xdr.o  getent.o   vers.o -lsys_s
+================= make all for rpc.lockd =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG prot_freeall.c prot_main.c prot_lock.c prot_pklm.c             prot_pnlm.c prot_msg.c prot_proc.c prot_libr.c prot_alloc.c    prot_priv.c prot_share.c tcp.c udp.c xdr_nlm.c xdr_klm.c       xdr_sm.c sm_monitor.c hash.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c prot_freeall.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c prot_main.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c prot_lock.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c prot_pklm.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c prot_pnlm.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c prot_msg.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c prot_proc.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c prot_libr.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c prot_alloc.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c prot_priv.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c prot_share.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c tcp.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c udp.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c xdr_nlm.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c xdr_klm.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c xdr_sm.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c sm_monitor.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c hash.c
+vers_string -c rpc.lockd > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -o rpc.lockd.NEW prot_freeall.o prot_main.o prot_lock.o prot_pklm.o             prot_pnlm.o prot_msg.o prot_proc.o prot_libr.o prot_alloc.o    prot_priv.o prot_share.o tcp.o udp.o xdr_nlm.o xdr_klm.o       xdr_sm.o sm_monitor.o hash.o   vers.o -lsys_s -lrpcsvc
+================= make all for rpc.mountd =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ -I. rpc.mountd.c issubdir.c exportent.c strtok.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -g -O -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -c rpc.mountd.c
+rpc.mountd.c: In function mount:
+rpc.mountd.c:334: warning: assignment of pointer from integer lacks a cast
+rpc.mountd.c:353: warning: assignment of pointer from integer lacks a cast
+rpc.mountd.c:361: warning: assignment of pointer from integer lacks a cast
+rpc.mountd.c: In function export:
+rpc.mountd.c:530: warning: assignment of pointer from integer lacks a cast
+rpc.mountd.c: In function rmtab_load:
+rpc.mountd.c:674: warning: assignment of pointer from integer lacks a cast
+rpc.mountd.c:678: warning: assignment of pointer from integer lacks a cast
+cc -g -O -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -c issubdir.c
+cc -g -O -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -c exportent.c
+cc -g -O -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -c strtok.c
+vers_string -c rpc.mountd > vers.c
+cc -g -O -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -c vers.c
+cc -object -g -O -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -o rpc.mountd.NEW rpc.mountd.o issubdir.o exportent.o strtok.o   vers.o -lsys_s -lrpcsvc
+================= make all for rpc.pcnfsd =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ rpc.pcnfsd.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc.pcnfsd.c
+vers_string -c rpc.pcnfsd > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o rpc.pcnfsd.NEW rpc.pcnfsd.o   vers.o -lsys_s -lrpcsvc
+================= make all for rpc.rquotad =================
+rm -f Makedep
+cc -M -DNeXT_MOD -DNeXT_NFS -D__STRICT_BSD__ rpc.rquotad.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -DNeXT_NFS -D__STRICT_BSD__ -c rpc.rquotad.c
+vers_string -c rpc.rquotad > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -DNeXT_NFS -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -DNeXT_NFS -D__STRICT_BSD__ -o rpc.rquotad.NEW rpc.rquotad.o   vers.o -lsys_s -lrpcsvc
+================= make all for rpc.rstatd =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ rpc.rstatd.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc.rstatd.c
+rpc.rstatd.c: In function do_exit:
+rpc.rstatd.c:456: warning: `do_exit' was declared implicitly `extern' and later `static'
+vers_string -c rpc.rstatd > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o rpc.rstatd.NEW rpc.rstatd.o   vers.o -lsys_s -lrpcsvc
+================= make all for rpc.statd =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ sm_svc.c sm_proc.c sm_statd.c ../rpc.lockd/tcp.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c sm_svc.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c sm_proc.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c sm_statd.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c ../rpc.lockd/tcp.c
+vers_string -c rpc.statd > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o rpc.statd.NEW sm_svc.o sm_proc.o sm_statd.o tcp.o vers.o -lsys_s -lrpcsvc
+================= make all for rpc.rusersd =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ rpc.rusersd.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+rpc.rusersd.c:33: warning: nonuser redefined
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc.rusersd.c
+rpc.rusersd.c:33: warning: nonuser redefined
+vers_string -c rpc.rusersd > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o rpc.rusersd.NEW rpc.rusersd.o   vers.o -lsys_s -lrpcsvc
+================= make all for rpc.rwalld =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ rpc.rwalld.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc.rwalld.c
+vers_string -c rpc.rwalld > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o rpc.rwalld.NEW rpc.rwalld.o   vers.o -lsys_s -lrpcsvc
+================= make all for rpc.sprayd =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ rpc.sprayd.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc.sprayd.c
+vers_string -c rpc.sprayd > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o rpc.sprayd.NEW rpc.sprayd.o   vers.o -lsys_s -lrpcsvc
+================= make all for rpc.yppasswdd =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ rpc.yppasswdd.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpc.yppasswdd.c
+vers_string -c rpc.yppasswdd > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o rpc.yppasswdd.NEW rpc.yppasswdd.o   vers.o -lsys_s -lrpcsvc
+================= make all for rpcinfo =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ rpcinfo.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rpcinfo.c
+vers_string -c rpcinfo > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o rpcinfo.NEW rpcinfo.o   vers.o -lsys_s
+================= make all for rwall =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ rwall.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c rwall.c
+vers_string -c rwall > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o rwall.NEW rwall.o   vers.o -lsys_s -lrpcsvc
+================= make all for showmount =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ showmount.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c showmount.c
+vers_string -c showmount > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o showmount.NEW showmount.o   vers.o -lsys_s -lrpcsvc
+================= make all for spray =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ spray.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c spray.c
+vers_string -c spray > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o spray.NEW spray.o   vers.o -lsys_s -lrpcsvc
+================= make all for yp =================
+################# make all for usr.etc/yp ###################
+================= make all for makedbm =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ -I.. makedbm.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I.. -c makedbm.c
+vers_string -c makedbm > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I.. -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I.. -o makedbm.NEW makedbm.o   vers.o -lsys_s -ldbm
+================= make all for mkalias =================
+rm -f Makedep
+cc -M -I.. -DNeXT_MOD -D__STRICT_BSD__ mkalias.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -I.. -DNeXT_MOD -D__STRICT_BSD__ -c mkalias.c
+vers_string -c mkalias > vers.c
+cc -O -g -fwritable-strings -I.. -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -I.. -DNeXT_MOD -D__STRICT_BSD__ -o mkalias.NEW mkalias.o   vers.o -lsys_s -ldbm
+================= make all for revnetgroup =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ revnetgroup.c getgroup.c table.c util.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c revnetgroup.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c getgroup.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c table.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c util.c
+vers_string -c revnetgroup > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o revnetgroup.NEW revnetgroup.o getgroup.o table.o util.o   vers.o -lsys_s
+================= make all for scripts =================
+sed -e "s/#PROGRAM.*/#`vers_string ypinit`/"  <ypinit.sh >ypinit.NEW
+sed -e "s/#PROGRAM.*/#`vers_string ypxfr_1perday`/"  <ypxfr_1perday.sh >ypxfr_1perday.NEW
+sed -e "s/#PROGRAM.*/#`vers_string ypxfr_2perday`/"  <ypxfr_2perday.sh >ypxfr_2perday.NEW
+sed -e "s/#PROGRAM.*/#`vers_string ypxfr_1perhour`/"  <ypxfr_1perhour.sh >ypxfr_1perhour.NEW
+sed -e "s/#PROGRAM.*/#`vers_string make.script`/"  <make.script.Make >make.script.NEW
+================= make all for stdethers =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ stdethers.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c stdethers.c
+vers_string -c stdethers > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o stdethers.NEW stdethers.o   vers.o -lsys_s -ldbm
+================= make all for stdhosts =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ stdhosts.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c stdhosts.c
+vers_string -c stdhosts > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o stdhosts.NEW stdhosts.o   vers.o -lsys_s -ldbm
+================= make all for udpublickey =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ udpublickey.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c udpublickey.c
+vers_string -c udpublickey > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o udpublickey.NEW udpublickey.o   vers.o -lsys_s -ldbm
+================= make all for yppoll =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ yppoll.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c yppoll.c
+vers_string -c yppoll > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o yppoll.NEW yppoll.o   vers.o -lsys_s -ldbm
+================= make all for yppush =================
+rm -f Makedep
+cc -M -I../h -DNeXT_MOD -D__STRICT_BSD__ yppush.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -I../h -DNeXT_MOD -D__STRICT_BSD__ -c yppush.c
+vers_string -c yppush > vers.c
+cc -O -g -fwritable-strings -I../h -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -I../h -DNeXT_MOD -D__STRICT_BSD__ -o yppush.NEW yppush.o   vers.o -lsys_s -ldbm
+================= make all for ypset =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ ypset.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c ypset.c
+vers_string -c ypset > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -object -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o ypset.NEW ypset.o   vers.o -lsys_s -ldbm
+================= make all for ypxfr =================
+rm -f Makedep
+cc -M -I.. -DNeXT_MOD -D__STRICT_BSD__ ypxfr.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -I.. -DNeXT_MOD -D__STRICT_BSD__ -c ypxfr.c
+vers_string -c ypxfr > vers.c
+cc -O -g -fwritable-strings -I.. -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -I.. -DNeXT_MOD -D__STRICT_BSD__ -o ypxfr.NEW ypxfr.o   vers.o -lsys_s -ldbm
+################# make all for usr.etc/yp done ###################
+================= make all for ypserv =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ ypserv.c ypserv_ancil.c ypserv_map.c ypserv_proc.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c ypserv.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c ypserv_ancil.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c ypserv_map.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c ypserv_proc.c
+vers_string -c ypserv > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o ypserv.NEW ypserv.o ypserv_ancil.o ypserv_map.o ypserv_proc.o   vers.o -lsys_s -ldbm
+################# make all for usr.etc done ###################
+################# make all for CMDS done ###################

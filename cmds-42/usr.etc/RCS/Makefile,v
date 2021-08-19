@@ -1,0 +1,70 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    mmeyer:1.2; strict;
+comment  @# @;
+
+
+1.2
+date     89.06.02.00.18.43;  author mmeyer;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.06.01.10.08.19;  author mmeyer;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+1.2
+log
+@Added nmserver
+@
+text
+@DIR=	usr.etc
+
+SUBDIR=	autonfsmount exportfs mach_swapon mkfile nfsstat nmserver rexd      \
+	rpc.bootparamd rpc.mountd rpc.rquotad rpc.rstatd rpc.rusersd        \
+	rpc.rwalld rpc.sprayd rpc.yppasswdd rpcinfo rwall showmount         \
+	spray yp ypserv
+
+all clean depend tags: ALWAYS
+	@@echo '#################' make $@@ for $(DIR) '###################'
+	@@for i in ${SUBDIR}; \
+	do \
+		echo ================= make $@@ for $$i =================; \
+		(cd $$i; ${MAKE} $@@ || exit 1); \
+	done
+	@@echo '#################' make $@@ for $(DIR) done '###################'
+
+install: ALWAYS
+	@@echo '#################' make $@@ for $(DIR) '###################'
+	@@CWD=`pwd`; cd ${DSTROOT}; DSTROOT=`pwd`; cd $$CWD; \
+	for i in ${SUBDIR}; \
+	do \
+		echo ================= make $@@ for $$i =================; \
+		(cd $$i; ${MAKE} DSTROOT=$$DSTROOT $@@ || exit 1); \
+	done
+	@@echo '#################' make $@@ for $(DIR) done '###################'
+
+ALWAYS:
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 3
+a5 3
+SUBDIR=	autonfsmount exportfs mach_swapon mkfile nfsstat rexd rpc.bootparamd \
+	rpc.mountd rpc.rquotad rpc.rstatd rpc.rusersd \
+	rpc.rwalld rpc.sprayd rpc.yppasswdd rpcinfo rwall showmount \
+@

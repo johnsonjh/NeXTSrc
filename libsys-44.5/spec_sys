@@ -1,0 +1,2808 @@
+#
+## The shared library specification file for libsys
+##
+#target /usr/shlib/libsys_s.B.shlib
+#address __TEXT 0x05000000
+#address __DATA 0x04010000
+## The minor version is now set on the command line
+## via -minor_version `vers_string -n`
+
+##
+## This is the branch table.  Symbols in it MUST remain in the same numbered
+## slot from version to version so that the versions are compatible.  Symbols
+## with ranges get assigned the HIGHEST slot.  So if new symbol is added and
+## a slot is taken from a symbol with a range of slots the orignial symbol must
+## remain using the HIGHEST slot.
+##
+## If you add a new routine, insert it at the end of the list in one of the
+## slots taken by a .empty_slot.  If you remove an old routine you WILL BREAK
+## ALL programs that use it but if you feel you can do this change its slot
+## to .empty_slot and don't reuse it (leave a comment to what it was).
+##
+
+#branch
+## libc
+	__atexit			0
+	__authenticate			1
+	__checkhost			2
+	__cleanup			3
+	__dbltopdfp			4
+	__doprnt			5
+	__doscan			6
+	__exit				7
+	__f_morefiles			8
+	__filbuf			9
+	__findiop			10
+	__fixunsdfdi			11
+	__fixunsdfsi			12
+	__flsbuf			13
+	__fwalk				14
+	__gfmt				15 # was __gfmt
+	__longjmp			16
+	__lu_setport			17
+	__nettoa			18
+	__pdfptodbl			19
+	__res_close			20
+	__rpc_dtablesize		21
+	__seterr_reply			22
+	__setjmp			23
+	.empty_slot			24
+##  24 was _setminbrk
+	__sigtramp			25
+	__strout			26
+	__svcauth_null			27
+	__svcauth_short			28
+	__svcauth_unix			29
+	__validuser			30
+	__xdr_ypbind_oldsetdom		31
+	__xdr_yprequest			32
+	__xdr_ypresponse		33
+	__yp_dobind			34
+	_abort				35
+	_abs				36
+	_accept				37
+	_access				38
+	_acct				39
+	_addexportent			40
+	_addmntent			41
+	_adjtime			42
+	_alarm				43
+	_alias_endent			44
+	_alias_getbyname		45
+	_alias_getent			46
+	_alias_setent			47
+	_alloc_stack			48
+	_alloca				49
+	_alphasort			50
+	_asctime			51
+	_async_daemon			52
+	_atexit				53
+	_atof				54
+	_atoi				55
+	_atol				56
+	_authnone_create		57
+	_authunix_create		58
+	_authunix_create_default	59
+	_backref			60
+	_bcmp				61
+	_bcopy				62
+	_bind				63
+	_bindresvport			64
+	_bootp_getbyether		65
+	_bootp_getbyip			66
+	_bootparams_getbyname		67
+	_brk				68
+	_bsd_sprintf			69
+	_bsd_vsprintf			70
+	_bsearch			71
+	_bzero				72
+	_calloc				73
+	_callrpc			74
+	_catch_exception_raise		75
+	_cclass				76
+	_cfree				77
+	_chdir				78
+	_chmod				79
+	_chown				80
+	_chroot				81
+	_clearerr			82
+	_clnt_broadcast			83
+	_clnt_create			84
+	_clnt_pcreateerror		85
+	_clnt_perrno			86
+	_clnt_perror			87
+	_clnt_spcreateerror		88
+	_clnt_sperrno			89
+	_clnt_sperror			90
+	_clnt_syslog			91
+	_clntraw_create			92
+	_clnttcp_create			93
+	_clntudp_bufcreate		94
+	_clntudp_create			95
+	_clock				96
+	_close				97
+	_closedir			98
+	_closelog			99
+	_compat_init			100
+	_cond_broadcast			101
+	_cond_signal			102
+	_condition_wait			103
+	_connect			104
+	_convert_ts_to_tv		105
+	_cproc_create			106
+	_cproc_init			107
+	_cproc_setup			108
+	_xxx_cpu_control		109
+## _cpu_control is obsolete
+	_creat				110
+	_crypt				111
+	_cthread_body			112
+	_cthread_count			113
+	_cthread_detach			114
+	_cthread_exit			115
+	_cthread_fork			116
+	_cthread_init			117
+	_cthread_join			118
+	_cthread_limit			119
+	_cthread_name			120
+	_cthread_set_limit		121
+	_cthread_set_name		122
+	_cthread_set_self		123
+	_cthread_sp			124
+	_cthread_yield			125
+	_ctime				126
+	.empty_slot			127
+## ctimes is obsolete, no replacement
+	_dbm_close			128
+	_dbm_delete			129
+	_dbm_fetch			130
+	_dbm_firstkey			131
+	_dbm_forder			132
+	_dbm_nextkey			133
+	_dbm_open			134
+	_dbm_store			135
+	_difftime			136
+	_div				137
+	_dn_comp			138
+	_dn_expand			139
+	_dn_find			140
+	.empty_slot			141
+##
+## BIND 4.8 doesn't use dn_skip(); uses dn_skipname()
+##	_dn_skip			141
+##
+	_dup				142
+	_dup2				143
+	_ecvt				144
+	_encrypt			145
+	_endexportent			146
+	_endfsent			147
+	_endgrent			148
+	_endhostent			149
+	_endmntent			150
+	_endnetent			151
+	_endnetgrent			152
+	_endprotoent			153
+	_endpwent			154
+	_endrpcent			155
+	_endservent			156
+	_endttyent			157
+	_endusershell			158
+ 	_NXCreateZone			159
+ 	_NXCreateChildZone		160
+ 	_NXMergeZone			161
+ 	_NXZoneCalloc			162
+ 	_NXZoneFromPtr			163
+ 	_NXZonePtrInfo			164
+ 	_NXMallocCheck			165
+ 	_NXAddRegion			166
+ 	_NXRemoveRegion			167
+ 	_NXDefaultMallocZone		168
+ 	__NXMallocDumpFrees		169
+ 	__NXMallocDumpZones		170
+	_malloc_singlethreaded		171
+	_NXNameZone			172
+	_ether_aton			173
+	_ether_hostton			174
+	_ether_line			175
+	_ether_ntoa			176
+	_ether_ntohost			177
+	_exc_server			178
+	_exception_raise		179
+	_execl				180
+	_execle				181
+	_execlp				182
+	_execv				183
+	_execve				184
+	_execvp				185
+	_exit				186
+	_exportfs			187
+	_f_prealloc			188
+	_fabs				189
+	_fchmod				190
+	_fchown				191
+	_fclose				192
+	_fcntl				193
+	_fcvt				194
+	_fdopen				195
+	_feof				196
+	_ferror				197
+	_fflush				198
+	_ffs				199
+	_fgetc				200
+	_fgetpos			201
+	_fgets				202
+	_flock				203
+	_fopen				204
+	_fork				205
+	_fp_query			206
+	_fprintf			207
+	_fputc				208
+	_fputs				209
+	_fread				210
+	_free				211
+	_freopen			212
+	_frexp				213
+	_fscanf				214
+	_fseek				215
+	_fsetpos			216
+	_fstat				217
+	_fstatfs			218
+	_fsync				219
+	_ftell				220
+	_ftime				221
+	_ftruncate			222
+	_fwrite				223
+	_gcvt				224
+	_get_myaddress			225
+	_getc				226
+	_getchar			227
+	_getdirentries			228
+	_getdiskbydev			229
+	_getdiskbyname			230
+	_getdomainname			231
+	_getdtablesize			232
+	_getegid			233
+	_getenv				234
+	_geteuid			235
+	_getexportent			236
+	_getexportopt			237
+	_getfh				238
+	_getfsent			239
+	_getfsfile			240
+	_getfsspec			241
+	_getfstype			242
+	_getgid				243
+	_getgrent			244
+	_getgrgid			245
+	_getgrnam			246
+	_getgroups			247
+	_gethostbyaddr			248
+	_gethostbyname			249
+	_gethostent			250
+	_gethostid			251
+	_gethostname			252
+	_getitimer			253
+	_getlogin			254
+	_getmachheaders			255
+	_getmntent			256
+	_getnetbyaddr			257
+	_getnetbyname			258
+	_getnetent			259
+	_getnetgrent			260
+	_getopt				261
+	_getpagesize			262
+	_getpass			263
+	_getpeername			264
+	_getpgrp			265
+	_getpid				266
+	_getppid			267
+	_getpriority			268
+	_getprotobyname			269
+	_getprotobynumber		270
+	_getprotoent			271
+	_getpw				272
+	_getpwent			273
+	_getpwnam			274
+	_getpwuid			275
+	_getrlimit			276
+	_getrpcbyname			277
+	_getrpcbynumber			278
+	_getrpcent			279
+	_getrpcport			280
+	_getrusage			281
+	_gets				282
+	_getsectbyname			283
+	_getsectbynamefromheader	284
+	_getsectdata			285
+	_getsectdatafromheader		286
+	_getsectdatafromlib		287
+	_getsegbyname			288
+	_getservbyname			289
+	_getservbyport			290
+	_getservent			291
+	_getsockname			292
+	_getsockopt			293
+	_gettimeofday			294
+	_getttyent			295
+	_getttynam			296
+	_getuid				297
+	_getusershell			298
+	_getw				299
+	_getwd				300
+	_gmtime				301
+	_gtty				302
+	_hasmntopt			303
+	_xxx_host_info			304
+## _host_info is obsolete, new interface below
+	_htonl				305
+	_htons				306
+	_index				307
+	_inet_addr			308
+	_inet_lnaof			309
+	_inet_makeaddr			310
+	_inet_netof			311
+	_inet_network			312
+	_inet_ntoa			313
+	_init_process			314
+	_initgroups			315
+	_initstate			316
+	_innetgr			317
+	_insque				318
+	_ioctl				319
+	_isalnum			320
+	_isalpha			321
+	_isatty				322
+	_iscntrl			323
+	_isdigit			324
+	_isgraph			325
+	_isinf				326
+	_islower			327
+	_isnan				328
+	_isprint			329
+	_ispunct			330
+	_isspace			331
+	_isupper			332
+	_isxdigit			333
+	_kern_timestamp			334
+	_kill				335
+	_killpg				336
+	_labs				337
+	_ldexp				338
+	_ldiv				339
+	_link				340
+	_listen				341
+	_localeconv			342
+	_localtime			343
+	_longjmp			344
+	_longjmperror			345
+	.empty_slot			346-355	## used to be logstat interface
+	_lseek				356
+	_lstat				357
+	_mach_NeXT_exception		358
+	_mach_NeXT_exception_string	359
+	_mach_error			360
+	_mach_error_string		361
+	_mach_errormsg			362
+	_mach_exception			363
+	_mach_exception_string		364
+	_mach_init			365
+	_mach_ports_lookup		366
+	_mach_ports_register		367
+	_mach_swapon			368
+	_malloc				369
+	_malloc_debug			370
+	_malloc_error			371
+	_malloc_good_size		372
+	_malloc_size			373
+	_many_cast_args			374
+	_map_fd				375
+	_mblen				376
+	_mbstowcs			377
+	_mbtowc				378
+	_memccpy			379
+	_memchr				380
+	_memcmp				381
+	_memcpy				382
+	_memmove			383
+	_memset				384
+	_mig_dealloc_reply_port		385
+	_mig_get_reply_port		386
+	_mig_init			387
+	_mkdir				388
+	_mknod				389
+	_mkpwclear			390
+	_mkpwunclear			391
+	_mkstemp			392
+	_mktemp				393
+	_mktime				394
+	_mmap				395
+	_modf				396
+	_moncontrol			397
+	_mount				398
+	_msg_receive			399
+	_msg_receive_old		400
+	_msg_receive_trap		401
+	_msg_rpc			402
+	_msg_rpc_old			403
+	_msg_rpc_trap			404
+	_msg_send			405
+	_msg_send_old			406
+	_msg_send_trap			407
+	_mstats				408
+	_mutex_try_lock			409
+	_mutex_unlock_try		410
+	_mutex_wait_lock		411
+	_netipc_ignore			412
+	_netipc_listen			413
+	_netname_check_in		414
+	_netname_check_out		415
+	_netname_look_up		416
+	_netname_version		417
+	_nfssvc				418
+	_ni_addrtag			419
+	_ni_children			420
+	_ni_connect			421
+	_ni_create			422
+	_ni_createname			423
+	_ni_createprop			424
+	_ni_destroy			425
+	_ni_destroyname			426
+	_ni_destroyprop			427
+	_ni_entrylist_delete		428
+	_ni_entrylist_free		429
+	_ni_entrylist_insert		430
+	_ni_error			431
+	_ni_fancyopen			432
+	_ni_free			433
+	_ni_idlist_delete		434
+	_ni_idlist_dup			435
+	_ni_idlist_free			436
+	_ni_idlist_insert		437
+	_ni_list			438
+	_ni_listall			439
+	_ni_listprops			440
+	_ni_lookup			441
+	_ni_lookupprop			442
+	_ni_lookupread			443
+	_ni_name_dup			444
+	_ni_name_free			445
+	_ni_name_match			446
+	_ni_namelist_delete		447
+	_ni_namelist_dup		448
+	_ni_namelist_free		449
+	_ni_namelist_insert		450
+	_ni_namelist_match		451
+	_ni_needwrite			452
+	_ni_new				453
+	_ni_open			454
+	_ni_parent			455
+	_ni_pathsearch			456
+	_ni_prop_dup			457
+	_ni_prop_free			458
+	_ni_proplist_delete		459
+	_ni_proplist_dup		460
+	_ni_proplist_free		461
+	_ni_proplist_insert		462
+	_ni_proplist_list_free		463
+	_ni_proplist_match		464
+	_ni_read			465
+	_ni_readname			466
+	_ni_readprop			467
+	_ni_renameprop			468
+	_ni_resync			469
+	_ni_root			470
+	_ni_self			471
+	_ni_setabort			472
+	_ni_setpassword			473
+	_ni_setreadtimeout		474
+	_ni_setuser			475
+	_ni_setwritetimeout		476
+	_ni_statistics			477
+	_ni_write			478
+	_ni_writename			479
+	_ni_writename			480
+	_ni_writeprop			481
+	_nice				482
+	_nlist				483
+	_ns_addr			484
+	_ns_ntoa			485
+	_ntohl				486
+	_ntohs				487
+	_open				488
+	_opendir			489
+	_openlog			490
+	_p_cdname			491
+	_p_class			492
+	_p_query			493
+	_p_rr				494
+	_p_type				495
+	.empty_slot			496-501 ## used to be pager interface
+	_pause				502
+	_pclose				503
+	_perror				504
+	_pipe				505
+	_pmap_getmaps			506
+	_pmap_getport			507
+	_pmap_rmtcall			508
+	_pmap_set			509
+	_pmap_unset			510
+	_popen				511
+	_port_allocate			512
+	_port_deallocate		513
+	_port_disable			514
+	_port_enable			515
+	_port_extract_receive		516
+	_port_extract_send		517
+	_port_insert_receive		518
+	_port_insert_send		519
+	_port_names			520
+	_port_rename			521
+	_port_set_add			522
+	_port_set_allocate		523
+	_port_set_backlog		524
+	_port_set_backup		525
+	_port_set_deallocate		526
+	_port_set_remove		527
+	.empty_slot			528	# used to be _port_set_select
+	_port_set_status		529
+	_port_status			530
+	_port_type			531
+	_prdb_end			532
+	_prdb_get			533
+	_prdb_getbyname			534
+	_prdb_set			535
+	_printf				536
+	_profil				537
+	_psignal			538
+	_ptrace				539
+	_putc				540
+	_putchar			541
+	_putpwpasswd			542
+	_puts				543
+	_putw				544
+	_qsort				545
+	_quota				546
+	_quotactl			547
+	_raise				548
+	_rand				549
+	_random				550
+	_rcmd				551
+	_re_comp			552
+	_re_compile			553
+	_re_exec			554
+	_re_fold			555
+	_re_match			556
+	_read				557
+	_readdir			558
+	_readlink			559
+	_readv				560
+	_realloc			561
+	_reboot				562
+	_recmp				563
+	_recv				564
+	_recvfrom			565
+	_recvmsg			566
+	_registerrpc			567
+	_remexportent			568
+	_remove				569
+	_remque				570
+	_rename				571
+	_res_getlong			572
+	_res_getshort			573
+	_res_init			574
+	_res_mkquery			575
+	_res_putlong			576
+	_res_putshort			577
+	_res_send			578
+	_reset				579
+	_rewind				580
+	_rexec				581
+	_rindex				582
+	_rmdir				583
+	_rpause				584
+	_rresvport			585
+	_rstrtok			586
+	_ruserok			587
+	_ruserpass			588
+	_sbrk				589
+	_scandir			590
+	_scanf				591
+	_seekdir			592
+	_select				593
+	_send				594
+	_sendmsg			595
+	_sendto				596
+	_service_checkin		597
+	_service_status			598
+	_setbuf				599
+	_setbuffer			600
+	_setdomainname			601
+	_setegid			602
+	_seteuid			603
+	_setexit			604
+	_setexportent			605
+	_setfsent			606
+	_setgid				607
+	_setgrent			608
+	_setgrfile			609
+	_setgroups			610
+	_sethostent			611
+	_sethostfile			612
+	_sethostid			613
+	_sethostname			614
+	_setitimer			615
+	_setjmp				616
+	_setkey				617
+	_setlinebuf			618
+	_setlocale			619
+	_setlogmask			620
+	_setmntent			621
+	_setnetent			622
+	_setnetgrent			623
+	_setpgrp			624
+	_setpriority			625
+	_setprotoent			626
+	_setpwent			627
+	_setpwfile			628
+	_setquota			629
+	_setregid			630
+	_setreuid			631
+	_setrgid			632
+	_setrlimit			633
+	_setrpcent			634
+	_setruid			635
+	_setservent			636
+	_setsockopt			637
+	_setstate			638
+	_settimeofday			639
+	_setttyent			640
+	_setuid				641
+	_setusershell			642
+	_setvbuf			643
+	_shutdown			644
+	_sigblock			645
+	_siginterrupt			646
+	_signal				647
+	_sigpause			648
+	_sigreturn			649
+	_sigsetmask			650
+	_sigstack			651
+	_sigvec				652
+	_sleep				653
+	_xxx_slot_info			654
+## _slot_info is obsolete, new interface below
+	_slot_name			655
+	_socket				656
+	_socketpair			657
+	_spin_lock			658
+	_spin_unlock			659
+	_sprintf			660
+	_srand				661
+	_srandom			662
+	_sscanf				663
+	_stack_init			664
+	_stat				665
+	_statfs				666
+	_strcat				667
+	_strcatn			668
+	_strchr				669
+	_strcmp				670
+	_strcmpn			671
+	_strcoll			672
+	_strcpy				673
+	_strcpyn			674
+	_strcspn			675
+	_strerror			676
+	_strftime			677
+	_strlen				678
+	_strncat			679
+	_strncmp			680
+	_strncpy			681
+	_strpbrk			682
+	_strrchr			683
+	_strspn				684
+	_strstr				685
+	_strtod				686
+	_strtok				687
+	_strtol				688
+	_strtoul			689
+	_stty				690
+	_svc_getreq			691
+	_svc_getreqset			692
+	_svc_register			693
+	_svc_run			694
+	_svc_sendreply			695
+	_svc_unregister			696
+	_svcerr_auth			697
+	_svcerr_decode			698
+	_svcerr_noproc			699
+	_svcerr_noprog			700
+	_svcerr_progvers		701
+	_svcerr_systemerr		702
+	_svcerr_weakauth		703
+	_svcfd_create			704
+	_svcraw_create			705
+	_svctcp_create			706
+	_svcudp_bufcreate		707
+	_svcudp_create			708
+	_svcudp_enablecache		709
+	_swab				710
+	_swapon				711
+	_swtch				712
+	_swtch_pri			713
+	_symlink			714
+	_sync				715
+	_syscall			716
+	_syslog				717
+	_system				718
+	_table				719
+	_task_by_pid			720
+	_task_by_unix_pid		721
+	_task_create			722
+	_task_get_special_port		723
+	_task_info			724
+	_task_notify			725
+	_task_resume			726
+	_task_self			727
+	_task_set_special_port		728
+	_task_suspend			729
+	_task_terminate			730
+	_task_threads			731
+	_tell				732
+	_telldir			733
+	_thread_abort			734
+	_thread_create			735
+	_thread_get_special_port	736
+	_thread_get_state		737
+	_thread_info			738
+	_thread_reply			739
+	_thread_resume			740
+	_thread_self			741
+	_thread_set_special_port	742
+	_thread_set_state		743
+	_thread_suspend			744
+	_thread_terminate		745
+	_time				746
+	_time_compare			747
+	_time_diff			748
+	_time_msec_to_timeval		749
+	_time_plus			750
+	_time_timeval_to_msec		751
+	_times				752
+	_timezone			753
+	_tmpfile			754
+	_tmpnam				755
+	_tolower			756
+	_toupper			757
+	_truncate			758
+	_ttyname			759
+	_ttyslot			760
+	_tzset				761
+	_tztab				762
+	_ualarm				763
+	_umask				764
+	_ungetc				765
+	_unix_pid			766
+	_unlink				767
+	_unmount			768
+	_ur_cthread_self		769
+	_usleep				770
+	_utime				771
+	_utimes				772
+	_v1prot_dofirst			773
+	_v1prot_donext			774
+	_va_end				775
+	_valloc				776
+	_vfork				777
+	_vfprintf			778
+	_vfree				779
+	_vhangup			780
+	_vlimit				781
+	_vm_allocate			782
+	_vm_allocate_with_pager		783
+	_vm_copy			784
+	_vm_deallocate			785
+	_vm_inherit			786
+	_vm_protect			787
+	_vm_read			788
+	_vm_region			789
+	_vm_statistics			790
+	_vm_write			791
+	_vprintf			792
+	_vsprintf			793
+	_vtimes				794
+	_wait				795
+	_wait3				796
+	_wcstombs			797
+	_wctomb				798
+	_write				799
+	_writev				800
+	_xdr_accepted_reply		801
+	_xdr_array			802
+	_xdr_authunix_parms		803
+	_xdr_bool			804
+	_xdr_bytes			805
+	_xdr_callhdr			806
+	_xdr_callmsg			807
+	_xdr_char			808
+	_xdr_datum			809
+	_xdr_double			810
+	_xdr_enum			811
+	_xdr_float			812
+	_xdr_free			813
+	_xdr_int			814
+	_xdr_long			815
+	_xdr_netobj			816
+	_xdr_ni_binding			817
+	_xdr_ni_children_res		818
+	_xdr_ni_children_stuff		819
+	_xdr_ni_create_args		820
+	_xdr_ni_create_res		821
+	_xdr_ni_create_stuff		822
+	_xdr_ni_createname_args		823
+	_xdr_ni_createprop_args		824
+	_xdr_ni_destroy_args		825
+	_xdr_ni_entry			826
+	_xdr_ni_entrylist		827
+	_xdr_ni_id			828
+	_xdr_ni_id_res			829
+	_xdr_ni_idlist			830
+	_xdr_ni_list_res		831
+	_xdr_ni_list_stuff		832
+	_xdr_ni_listall_res		833
+	_xdr_ni_listall_stuff		834
+	_xdr_ni_lookup_args		835
+	_xdr_ni_lookup_res		836
+	_xdr_ni_lookup_stuff		837
+	_xdr_ni_name			838
+	_xdr_ni_name_args		839
+	_xdr_ni_nameindex_args		840
+	_xdr_ni_namelist		841
+	_xdr_ni_namelist_res		842
+	_xdr_ni_namelist_stuff		843
+	_xdr_ni_object			844
+	_xdr_ni_object_list		845
+	_xdr_ni_object_node		846
+	_xdr_ni_parent_res		847
+	_xdr_ni_parent_stuff		848
+	_xdr_ni_prop_args		849
+	_xdr_ni_property		850
+	_xdr_ni_proplist		851
+	_xdr_ni_proplist_list		852
+	_xdr_ni_proplist_res		853
+	_xdr_ni_proplist_stuff		854
+	_xdr_ni_propname_args		855
+	_xdr_ni_readall_res		856
+	_xdr_ni_readall_stuff		857
+	_xdr_ni_readname_res		858
+	_xdr_ni_readname_stuff		859
+	_xdr_ni_rparent_res		860
+	_xdr_ni_status			861
+	_xdr_ni_writename_args		862
+	_xdr_ni_writeprop_args		863
+	_xdr_nibind_addrinfo		864
+	_xdr_nibind_bind_args		865
+	_xdr_nibind_clone_args		866
+	_xdr_nibind_getregister_res	867
+	_xdr_nibind_listreg_res		868
+	_xdr_nibind_registration	869
+	_xdr_opaque			870
+	_xdr_opaque_auth		871
+	_xdr_pmap			872
+	_xdr_pmaplist			873
+	_xdr_pointer			874
+	_xdr_reference			875
+	_xdr_rejected_reply		876
+	_xdr_replymsg			877
+	_xdr_rmtcall_args		878
+	_xdr_rmtcallres			879
+	_xdr_short			880
+	_xdr_string			881
+	_xdr_u_char			882
+	_xdr_u_int			883
+	_xdr_u_long			884
+	_xdr_u_short			885
+	_xdr_union			886
+	_xdr_vector			887
+	_xdr_void			888
+	_xdr_wrapstring			889
+	_xdr_yp_binding			890
+	_xdr_yp_inaddr			891
+	_xdr_ypall			892
+	_xdr_ypbind_resp		893
+	_xdr_ypbind_setdom		894
+	_xdr_ypdomain_wrap_string	895
+	_xdr_ypmap_parms		896
+	_xdr_ypmap_wrap_string		897
+	_xdr_ypmaplist			898
+	_xdr_ypmaplist_wrap_string	899
+	_xdr_ypowner_wrap_string	900
+	_xdr_yppushresp_xfr		901
+	_xdr_ypreq_key			902
+	_xdr_ypreq_nokey		903
+	_xdr_ypreq_xfr			904
+	_xdr_ypresp_key_val		905
+	_xdr_ypresp_maplist		906
+	_xdr_ypresp_master		907
+	_xdr_ypresp_order		908
+	_xdr_ypresp_val			909
+	_xdrmem_create			910
+	_xdrrec_create			911
+	_xdrrec_endofrecord		912
+	_xdrrec_eof			913
+	_xdrrec_skiprecord		914
+	_xdrstdio_create		915
+	_xprt_register			916
+	_xprt_unregister		917
+	_yp_all				918
+	_yp_bind			919
+	_yp_first			920
+	_yp_get_default_domain		921
+	_yp_master			922
+	_yp_match			923
+	_yp_next			924
+	_yp_order			925
+	_yp_unbind			926
+	_yperr_string			927
+	_ypprot_err			928
+	cerror				929
+	mcount				930
+##
+## LD-17 changes	
+##
+	_get_etext			931
+	_get_edata			932
+	_get_end			933
+## 
+## NFS 4.0 and BIND 4.8 changes	
+##
+	_des_setparity			934
+	_ecb_crypt			935
+	_lockf				936
+	_setgrjunk			937
+	_usingypmap			938
+	_xdr_des_block			939
+	__mnt				940
+	_fgetpwent			941
+	_key_decryptsession		942
+	_strcasecmp			943
+	_strncasecmp			944
+	_realpath			945
+	_wait4				946
+	_ustat				947
+	_getdents			948
+	_getnetname			949
+	_xdr_getcredres			950
+	_hostalias			951
+	_res_querydomain		952
+	_res_query			953
+	_xdr_netnamestr			954
+	_netname2host			955
+	_netname2user			956
+	_authdes_getucred		957
+	_key_gendes			958
+	_host2netname			959
+## libm
+	_acos				960
+	_acosh				961
+	_asin				962
+	_asinh				963
+	_atan				964
+	_atan2				965
+	_atanh				966
+	_cabs				967
+	_cbrt				968
+	_ceil				969
+	_copysign			970
+	_cos				971
+	_cosh				972
+	_drem				973
+	_erf				974
+	_erfc				975
+	_exp				976
+	_expm1				977
+	_finite				978
+	_floor				979
+	_fmod				980
+	_hypot				981
+	_j0				982
+	_j1				983
+	_jn				984
+	_lgamma				985
+	_log				986
+	_log10				987
+	_log1p				988
+	_logb				989
+	_pow				990
+	_rint				991
+	_scalb				992
+	_sin				993
+	_sinh				994
+	_sqrt				995
+	_tan				996
+	_tanh				997
+	_y0				998
+	_y1				999
+	_yn				1000
+	_cthread_priority		1001
+	_cthread_max_priority		1002
+	_cthread_abort			1003
+	.empty_slot			1004-1010
+## libobjc (runtime)
+	__objcInit			1011
+	__sel_registerName		1012
+	__strhash			1013
+	_class_addClassMethods		1014
+	_class_addInstanceMethods	1015
+	_class_createInstance		1016
+	_class_getClassMethod		1017
+	_class_getInstanceMethod	1018
+	_class_getInstanceVariable	1019
+	_class_getVersion		1020
+ 	_class_createInstanceFromZone	1021 # was _class_lookupMethod
+	_class_poseAs			1022
+	.empty_slot			1023 # was _class_respondsToMethod
+	_class_setVersion		1024
+	_objc_addClass			1025
+	_objc_addModule			1026
+	_objc_getClass			1027
+	_objc_getClasses		1028
+	_objc_getMetaClass		1029
+	_objc_getModules		1030
+	_objc_msgSend			1031
+	_objc_msgSendSuper		1032
+	_object_copy			1033
+	_object_dispose			1034
+	_object_getClassName		1035
+	_object_getIndexedIvars		1036
+	_object_realloc			1037
+	_object_setInstanceVariable	1038
+	_sel_getName			1039
+	_sel_getUid			1040
+	_sel_isMapped			1041
+	_object_getInstanceVariable	1042
+	_objc_getClassWithoutWarning	1043
+	_objc_msgSendv			1044
+	_method_getNumberOfArguments	1045 # was _SkipFirstType (briefly)
+	_method_getSizeOfArguments	1046 # was _SizeOfType (briefly)
+	_method_getArgumentInfo		1047 
+	_objc_loadModule		1048
+	_objc_unloadLastModule		1049
+	_class_removeMethods		1050
+	_NXCompareHashTables		1051
+## libobjc (classes)
+	_object_copyFromZone		1052
+	_object_reallocFromZone		1053
+	_objc_loadModules		1054
+	_objc_unloadModules		1055
+	_objc_setClassHandler           1056
+	.empty_slot			1057-1058
+##	_NXArchiveBitFields		1052
+##	_NXArchiveChar			1053
+##	_NXArchiveDouble		1054
+##	_NXArchiveFloat			1055
+##	_NXArchiveInt			1056
+##	_NXArchiveLong			1057
+##	_NXArchiveShort			1058
+	_NXCloseTypedStream		1059
+	_NXCopyHashTable		1060
+	_NXCopyStringBuffer		1061
+	_NXCountHashTable		1062
+	_NXCreateHashTable		1063
+	_NXEmptyHashTable		1064
+	_NXEndOfTypedStream		1065
+	_NXFlushTypedStream		1066
+	_NXFreeHashTable		1067
+	_NXFreeObjectBuffer		1068
+	_NXHashGet			1069
+	_NXHashInsert			1070
+	_NXHashInsertIfAbsent		1071
+	_NXHashMember			1072
+	_NXHashRemove			1073
+	_NXInitHashState		1074
+	_NXNextHashState		1075
+	_NXNoEffectFree			1076
+	_NXOpenTypedStream		1077
+	_NXOpenTypedStreamForFile	1078
+	_NXPtrHash			1079
+	_NXPtrIsEqual			1080
+	_NXReadArray			1081
+	_NXReadObject			1082
+	_NXReadObjectFromBuffer		1083
+	_NXReadType			1084
+	_NXReadTypes			1085
+	_NXReallyFree			1086
+	_NXStrHash			1087
+	_NXStrIsEqual			1088
+	_NXSystemVersion		1089
+	_NXTypedStreamClassVersion	1090
+	_NXResetHashTable		1091
+	_NXIsEqualHashTable		1092
+	_NXCopyStringBufferFromZone	1093
+	_NXCreateHashTableFromZone	1094
+	_NXSetTypedStreamZone		1095
+	_NXGetTypedStreamZone		1096
+	_NXReadObjectFromBufferWithZone	1097
+##	_NXUnarchiveBitFields		1091
+##	_NXUnarchiveChar		1092
+##	_NXUnarchiveDouble		1093
+##	_NXUnarchiveFloat		1094
+##	_NXUnarchiveInt			1095
+##	_NXUnarchiveLong		1096
+##	_NXUnarchiveShort		1097
+	_NXUniqueString			1098
+	_NXUniqueStringNoCopy		1099
+	_NXUniqueStringWithLength	1100
+	_NXWriteArray			1101
+	_NXWriteObject			1102
+	_NXWriteObjectReference		1103
+	_NXWriteRootObject		1104
+	_NXWriteRootObjectToBuffer	1105
+	_NXWriteType			1106
+	_NXWriteTypes			1107
+	.empty_slot			1108-1114
+##	__NXArchiveData			1108
+##	__NXIgnore			1109
+##	__NXReadObject			1110
+##	__NXReadSelf			1111
+##	__NXUnarchiveData		1112
+##	__NXWriteObject			1113
+##	__NXWriteSelf			1114
+## librld
+	_rld_load			1115
+	_rld_unload			1116
+	_rld_lookup			1117
+	_rld_unload_all			1118
+	_rld_address_func		1119
+	_rld_load_basefile		1120
+	_rld_load_from_memory		1121
+	.empty_slot			1122-1124
+## libsound
+	_SNDAcquire			1125
+	_SNDAlloc			1126
+	_SNDBootDSP			1127
+	_SNDBytesToSamples		1128
+	_SNDCompactSamples		1129
+	_SNDConvertSound		1130
+	_SNDCopySamples			1131
+	_SNDCopySound			1132
+	_SNDDeleteSamples		1133
+	_SNDFree			1134
+	_SNDGetDataPointer		1135
+	_SNDGetMute			1136
+	_SNDGetVolume			1137
+	_SNDInsertSamples		1138
+	_SNDModifyPriority		1139
+	_SNDMulaw			1140
+	_SNDPlaySoundfile		1141
+	_SNDRead			1142
+	_SNDReadDSPfile			1143
+	_SNDReadHeader			1144
+	_SNDReadSoundfile		1145
+	_SNDRelease			1146
+	_SNDReserve			1147
+	_SNDReset			1148
+	_SNDRunDSP			1149
+	_SNDSampleCount			1150
+	_SNDSamplesProcessed		1151
+	_SNDSamplesToBytes		1152
+	_SNDSetHost			1153
+	_SNDSetMute			1154
+	_SNDSetVolume			1155
+	_SNDSoundError			1156
+	_SNDStartPlaying		1157
+	_SNDStartRecording		1158
+	_SNDStop			1159
+	_SNDUnreserve			1160
+	_SNDWait			1161
+	_SNDWrite			1162
+	_SNDWriteHeader			1163
+	_SNDWriteSoundfile		1164
+	_SNDiMulaw			1165
+	_snddriver_dsp_boot		1166
+	_snddriver_dsp_host_cmd		1167
+	_snddriver_dsp_protocol		1168
+	_snddriver_dsp_read		1169
+	_snddriver_dsp_set_flags	1170
+	_snddriver_dsp_write		1171
+	_snddriver_dspcmd_req_condition	1172
+	_snddriver_dspcmd_req_err	1173
+	_snddriver_dspcmd_req_msg	1174
+	_snddriver_get_device_parms	1175
+	_snddriver_get_dsp_cmd_port	1176
+	_snddriver_get_volume		1177
+	_snddriver_reply_handler	1178
+	_snddriver_set_device_parms	1179
+	_snddriver_set_dsp_owner_port	1180
+	_snddriver_set_sndin_owner_port	1181
+	_snddriver_set_sndout_owner_port 1182
+	_snddriver_set_volume		1183
+	_snddriver_stream_control	1184
+	_snddriver_stream_nsamples	1185
+	_snddriver_stream_setup		1186
+	_snddriver_stream_start_reading	1187
+	_snddriver_stream_start_writing	1188
+	_SNDStartPlayingDSP		1189
+	_SNDSetCompressionOptions	1190
+	_SNDGetCompressionOptions	1191
+	_SNDSetFilter			1192
+	_SNDGetFilter			1193
+	_SNDUpdateDSPParameter		1194
+	_SNDCompressSound		1195
+	_snddriver_dsp_reset		1196
+	_snddriver_new_device_port	1197
+## libstreams
+	_NXAllocErrorData		1198
+	_NXChangeBuffer			1199
+	_NXClose			1200
+	_NXCloseMemory			1201
+	_NXDefaultExceptionRaiser	1202
+	_NXDefaultRead			1203
+	_NXDefaultWrite			1204
+	_NXFill				1205
+	_NXFlush			1206
+	_NXGetExceptionRaiser		1207
+	_NXGetMemoryBuffer		1208
+	_NXMapFile			1209
+	_NXOpenFile			1210
+	_NXOpenMemory			1211
+	_NXOpenPort			1212
+	_NXPrintf			1213
+	_NXSaveToFile			1214
+	_NXScanf			1215
+	_NXSeek				1216
+	_NXSetExceptionRaiser		1217
+	_NXStreamCreate			1218
+	_NXStreamDestroy		1219
+	_NXTell				1220
+	_NXUngetc			1221
+	_NXVPrintf			1222
+	_NXVScanf			1223
+	__NXAddAltHandler		1224
+	__NXAddHandler			1225
+	__NXRaiseError			1226
+	__NXRemoveAltHandler		1227
+	__NXRemoveHandler		1228
+	__NXStreamChangeBuffer		1229
+	__NXStreamFillBuffer		1230
+	__NXStreamFlushBuffer		1231
+	_NXRegisterPrintfProc		1232
+## Updated cthreads package
+	_NXStreamCreateFromZone		1233
+	_fork_mach_init			1234
+	_cthread_set_errno_self		1235
+	_cthread_errno			1236
+	__malloc_fork_prepare		1237
+	__malloc_fork_parent		1238
+	__malloc_fork_child		1239
+	_malloc_freezedry		1240
+	_malloc_jumpstart		1241
+## libdb
+	_NXResetErrorData		1242
+	_StrData			1243
+	_StrDatum			1244
+	_dbCat				1245
+	_dbClose			1246
+	_dbCompress			1247
+	_dbCreate			1248
+	_dbData				1249
+	_dbDelete			1250
+	_dbError			1251
+	_dbExists			1252
+	_dbExpand			1253
+	_dbFetch			1254
+	_dbFind				1255
+	_dbFirst			1256
+	_dbFlush			1257
+	_dbGet				1258
+	_dbInit				1259
+	_dbLock				1260
+	_dbNext				1261
+	_dbOpen				1262
+	_dbPrint			1263
+	_dbPrintKC			1264
+	_dbScan				1265
+	_dbSetCache			1266
+	_dbSetKey			1267
+	_dbStore			1268
+	_dbUnlink			1269
+	_dbUnlock			1270
+	_dbWaitLock			1271
+## 
+## NFS 4.0 
+##
+	_xdr_cryptkeyarg		1272
+	_dn_skipname			1273
+	_cbc_crypt			1274
+	__des_crypt			1275
+##
+## New netinfo entry
+##
+	_ni_pwdomain			1276
+##
+##
+##
+	.empty_slot			1277-1279
+	_clnt_broadcast_exp		1280
+	_vsyslog			1281
+##
+## The following _old_ routines are internal interfaces to be used only
+## by libc and lookupd. They remain in libc because there are people who
+## will "turn off" netinfo and want a 4.3-compatible system that reads
+## Unix files and uses Yellow Pages with no NetInfo. This particular
+## configuration isn't really supported, but for the short term we'll let
+## them do it. One day, these routines will be moved into lookupd and not
+## exported to anybody.
+##
+	__lu_running			1282
+	__old_addmntent			1283
+	__old_alias_endent		1284
+	__old_alias_getbyname		1285
+	__old_alias_getent		1286
+	__old_alias_setent		1287
+	__old_endgrent			1288
+	__old_endhostent		1289
+	__old_endmntent			1290
+	__old_endnetent			1291
+	__old_endnetgrent		1292
+	__old_endprotoent		1293
+	__old_endpwent			1294
+	__old_endrpcent			1295
+	__old_endservent		1296
+	__old_fgetgrent			1297
+	__old_getgrent			1298
+	__old_getgrgid			1299
+	__old_getgrnam			1300
+	__old_gethostbyaddr		1301
+	__old_gethostbyname		1302
+	__old_gethostent		1303
+	__old_getmntent			1304
+	__old_getnetbyaddr		1305
+	__old_getnetbyname		1306
+	__old_getnetent			1307
+	__old_getnetgrent		1308
+	__old_getprotobyname		1309
+	__old_getprotobynumber		1310
+	__old_getprotoent		1311
+	__old_getpwent			1312
+	__old_getpwnam			1313
+	__old_getpwuid			1314
+	__old_getrpcbyname		1315
+	__old_getrpcbynumber		1316
+	__old_getrpcent			1317
+	__old_getservbyname		1318
+	__old_getservbyport		1319
+	__old_getservent		1320
+	__old_innetgr			1321
+	__old_prdb_end			1322
+	__old_prdb_get			1323
+	__old_prdb_getbyname		1324
+	__old_prdb_set			1325
+	__old_setgrent			1326
+	__old_setgrfile			1327
+	__old_sethostent		1328
+	__old_sethostfile		1329
+	__old_setmntent			1330
+	__old_setnetent			1331
+	__old_setnetgrent		1332
+	__old_setprotoent		1333
+	__old_setpwent			1334
+	__old_setpwfile			1335
+	__old_setrpcent			1336
+	__old_setservent		1337
+	__res_gethostbyaddr		1338
+	__res_gethostbyname		1339
+	__res_running			1340
+## 
+## NFS 4.0 and BIND 4.8 changes	
+##
+	_res_search			1341
+	_key_setsecret			1342
+	__svcauth_des			1343
+	__openchild			1344
+	_xdr_cryptkeyres		1345
+	_key_encryptsession		1346
+	_xdr_keybuf			1347
+	_xdr_keystatus			1348
+	_xdr_unixcred			1349
+	_user2netname			1350
+##
+## Mach Interface changes
+##
+	_netport_init			1351
+	_netport_enter			1352
+	_netport_remove			1353
+	_host_self			1354
+	_host_priv_self			1355
+	_thread_switch			1356
+	_vm_synchronize			1357
+	.empty_slot			1358-1369	# future expansion
+## Mach Host Interface
+	_host_processors		1370
+	_host_processor_set_priv	1371
+	_host_info			1372
+	_processor_info			1373
+	_processor_start		1374
+	_processor_exit			1375
+	_processor_control		1376
+	_processor_set_default		1377
+	_processor_set_create		1378
+	_processor_set_destroy		1379
+	_processor_set_info		1380
+	_processor_assign		1381
+	_processor_get_assignment	1382
+	_thread_assign			1383
+	_thread_assign_default		1384
+	_thread_get_assignment		1385
+	_task_assign			1386
+	_task_assign_default		1387
+	_task_get_assignment		1388
+	_host_kernel_version		1389
+	_thread_priority		1390
+	_thread_max_priority		1391
+	_task_priority			1392
+	_processor_set_max_priority	1393
+	_thread_policy			1394
+	_processor_set_policy_enable	1395
+	_processor_set_policy_disable	1396
+	_processor_set_tasks		1397
+	_processor_set_threads		1398
+	_host_processor_sets		1399
+	.empty_slot			1400-1409	# expansion
+##
+## New bootstrap service calls
+##
+	_bootstrap_check_in		1410
+	_bootstrap_register		1411
+	_bootstrap_look_up		1412
+	_bootstrap_look_up_array	1413
+	_bootstrap_get_unpriv_port	1414
+	_bootstrap_status		1415
+	_bootstrap_info			1416
+	_bootstrap_subset		1417
+	_bootstrap_create_service	1418
+	.empty_slot			1419-1424	# expansion
+##
+## GNULIB
+##
+	___builtin_vec_new		1425
+	___set_new_handler		1426
+	_set_new_handler		1427
+	___builtin_delete		1428
+	___builtin_vec_delete		1429
+	___builtin_new			1430
+	___eprintf			1431
+	__adddi3			1432
+	__anddi3			1433
+	__ashldi3			1434
+	__ashrdi3			1435
+	__bdiv				1436
+	__cmpdi2			1437
+	__divdi3			1438
+	__fixdfdi			1439
+	__fixunsdfdi			1440
+	__fixunsdfsi			1441
+	__floatdidf			1442
+	__iordi3			1443
+	__lshldi3			1444
+	__lshrdi3			1445
+	__moddi3			1446
+	__muldi3			1447
+	__negdi2			1448
+	__one_cmpldi2			1449
+	__subdi3			1450
+	__ucmpdi2			1451
+	__udivdi3			1452
+	__umoddi3			1453
+	__xordi3			1454
+	__fixdfsi			1455
+	.empty_slot			1456-1464	# expansion
+## more libsound
+	_snddriver_dsp_dma_write	1465
+	_snddriver_dsp_dma_read		1466
+	_snddriver_dspcmd_abortdma	1467
+	.empty_slot 			1468
+	_SNDStartRecordingFile		1469
+	_snddriver_set_ramp		1470
+	_snddriver_dsp_read_data	1471
+	_snddriver_dsp_read_messages	1472
+	_snddriver_reset_dsp_owner	1473
+	_snddriver_reset_sndin_owner	1474
+	_snddriver_reset_sndout_owner	1475
+	_snddriver_set_sndout_bufsize	1476
+	_snddriver_set_sndout_bufcount	1477
+	_snddriver_stream_ndma		1478
+	.empty_slot			1479-1488	# expansion
+##
+## Branch table slots are a jmp	0x0:l instruction that is 6 bytes long. So to
+## not quite fill a 8192 byte page it takes 1350 slots plus the 90 byte shlib
+## header that goes before the branch table.  For future compatablity a second
+## page of branch table entries have been allocated.  This should only be used
+## when all the slots on the first page have been allocated because this will
+## cause yet another page in the working set of program using this.  But for
+## now if it is not used it only costs a page on the disk.  The entire second
+## page must not be used therefore the total size of the branch table object
+## must be equal to or greater than 2 pages.  The size is 2716 slots at 6 bytes
+## each plus a 90 byte header (for a shlib with this target name) rounded to a
+## 4 byte size (by the assembler) which is 16388 total bytes (4 bytes more than
+## 2 pages).
+	_monstartup			1489
+	_monitor			1490
+	_monoutput			1491
+	_moninit			1492
+	_monreset			1493
+	.empty_slot			1494-1520
+
+##
+## DEFAULTS
+##
+	_NXRegisterDefaults		1521
+	_NXGetDefaultValue		1522
+	_NXSetDefault			1523
+	_NXWriteDefault			1524
+	_NXWriteDefaults		1525
+	_NXRemoveDefault		1526
+	_NXReadDefault			1527
+	_NXUpdateDefaults		1528
+	_NXUpdateDefault		1529
+	_NXSetDefaultsUser		1530
+	_NXFilePathSearch		1531
+	_NXGetTempFilename		1532
+	.empty_slot			1533-1540
+##
+## International CTYPE functions
+##
+	_NXIsAlNum			1541
+	_NXIsAlpha			1542
+	_NXIsAscii			1543
+	_NXIsCntrl			1544
+	_NXIsDigit			1545
+	_NXIsGraph			1546
+	_NXIsLower			1547
+	_NXIsPrint			1548
+	_NXIsPunct			1549
+	_NXIsSpace			1550
+	_NXIsUpper			1551
+	_NXIsXDigit			1552
+	_NXToAscii			1553
+	_NXToLower			1554
+	_NXToUpper			1555
+	__NXToLower			1556
+	__NXToUpper			1557
+##
+## Expansion for international functions.
+## We may or may not decide to break libsys binary compatibility for the
+## international release, but its better to be on the safe side.
+##
+	.empty_slot			1558-1650
+		
+	.empty_slot			1651-2716 # rest of second page
+
+
+## These are the const global data symbols that are text symbols but do not have
+## branch table entries since they are really data.
+
+#nobranch_text
+## libc
+	__ctype_
+	_sys_errlist
+	_sys_nerr
+	_sys_siglist
+##libobjc
+	_NXPtrPrototype
+	_NXStrPrototype
+	_NXPtrStructKeyPrototype
+	_NXStrStructKeyPrototype
+
+## These are routines that are to be used but are global (typically because of
+## the lack of a needed level of scope just for the library).
+
+#private_externs
+## libc
+	___padding_sys_errlist 
+	__lookup_all
+	__lookup_buf 
+	__lookup_link 
+	__lookup_one 
+	__lookup_ooall 
+	__lu_port
+	__mach_data_padding
+	__ni_bind_2 
+	__ni_children_2 
+	__ni_crashed_2 
+	__ni_create_2 
+	__ni_createname_2 
+	__ni_createprop_2 
+	__ni_destroy_2 
+	__ni_destroyname_2 
+	__ni_destroyprop_2 
+	__ni_dup
+	__ni_list_2 
+	__ni_listall_2 
+	__ni_listprops_2 
+	__ni_lookup_2 
+	__ni_lookupread_2 
+	__ni_parent_2 
+	__ni_ping_2 
+	__ni_read_2
+	__ni_readall_2
+	__ni_readname_2 
+	__ni_readprop_2 
+	__ni_renameprop_2 
+	__ni_resync_2 
+	__ni_root_2 
+	__ni_rparent_2 
+	__ni_self_2 
+	__ni_statistics_2 	
+	__ni_write_2 
+	__ni_writename_2 	
+	__ni_writeprop_2 
+	__prdb_free_ent 
+	__rpc_comdata_padding
+	__threads_data_padding
+	__yp_data_padding
+	_lu_getnetgrent 
+	_xdr__lu_aliasent 
+	_xdr__lu_aliasent_ptr 
+	_xdr__lu_bootp_ent 
+	_xdr__lu_bootp_ent_ptr 
+	_xdr__lu_bootparams_ent 
+	_xdr__lu_bootparams_ent_ptr 
+	_xdr__lu_group 
+	_xdr__lu_group_ptr 
+	_xdr__lu_hostent 
+	_xdr__lu_hostent_ptr 
+	_xdr__lu_innetgr_args 
+	_xdr__lu_mntent 
+	_xdr__lu_mntent_ptr 
+	_xdr__lu_netent 
+	_xdr__lu_netent_ptr 
+	_xdr__lu_netgrent 
+	_xdr__lu_passwd 
+	_xdr__lu_passwd_ptr 
+	_xdr__lu_prdb_ent 
+	_xdr__lu_prdb_ent_ptr 
+	_xdr__lu_prdb_property 
+	_xdr__lu_protoent 
+	_xdr__lu_protoent_ptr 
+	_xdr__lu_rpcent 
+	_xdr__lu_rpcent_ptr 
+	_xdr__lu_servent 
+	_xdr__lu_servent_ptr 
+	_xdr__lu_string 
+	_old_next_minbrk
+	__old_next_minbrk
+	_old_next_curbrk
+	__old_next_curbrk
+
+	__sys_errlist_0 
+	__sys_errlist_E2BIG 
+	__sys_errlist_EACCES 
+	__sys_errlist_EADDRINUSE 
+	__sys_errlist_EADDRNOTAVAIL 
+	__sys_errlist_EAFNOSUPPORT 
+	__sys_errlist_EAGAIN 
+	__sys_errlist_EALREADY 
+	__sys_errlist_EBADF 
+	__sys_errlist_EBADMSG 
+	__sys_errlist_EBUSY 
+	__sys_errlist_ECHILD 
+	__sys_errlist_ECONNABORTED 
+	__sys_errlist_ECONNRESET 
+	__sys_errlist_EDEADLK 
+	__sys_errlist_EDESTADDRREQ 
+	__sys_errlist_EDEVERR 
+	__sys_errlist_EDOM 
+	__sys_errlist_EDQUOT 
+	__sys_errlist_EEXIST 
+	__sys_errlist_EFAULT 
+	__sys_errlist_EFBIG 
+	__sys_errlist_EHOSTDOWN 
+	__sys_errlist_EHOSTUNREACH 
+	__sys_errlist_EIDRM 
+	__sys_errlist_EINPROGRESS 
+	__sys_errlist_EINTR 
+	__sys_errlist_EINVAL 
+	__sys_errlist_EIO 
+	__sys_errlist_EISCONN 
+	__sys_errlist_EISDIR 
+	__sys_errlist_ELOOP 
+	__sys_errlist_EMFILE 
+	__sys_errlist_EMLINK 
+	__sys_errlist_EMSGSIZE 
+	__sys_errlist_ENAMETOOLONG 
+	__sys_errlist_ENETDOWN 
+	__sys_errlist_ENETRESET 
+	__sys_errlist_ENETUNREACH 
+	__sys_errlist_ENFILE 
+	__sys_errlist_ENOBUFS 
+	__sys_errlist_ENODEV 
+	__sys_errlist_ENOENT 
+	__sys_errlist_ENOEXEC 
+	__sys_errlist_ENOINIT 
+	__sys_errlist_ENOLCK 
+	__sys_errlist_ENOMEM 
+	__sys_errlist_ENOMSG 
+	__sys_errlist_ENOPROTOOPT 
+	__sys_errlist_ENOSPC 
+	__sys_errlist_ENOSR 
+	__sys_errlist_ENOSTR 
+	__sys_errlist_ENOTBLK 
+	__sys_errlist_ENOTCONN 
+	__sys_errlist_ENOTDIR 
+	__sys_errlist_ENOTEMPTY 
+	__sys_errlist_ENOTSOCK 
+	__sys_errlist_ENOTTY 
+	__sys_errlist_ENXIO 
+	__sys_errlist_EOPNOTSUPP 
+	__sys_errlist_EPERM 
+	__sys_errlist_EPFNOSUPPORT 
+	__sys_errlist_EPIPE 
+	__sys_errlist_EPROCLIM 
+	__sys_errlist_EPROTONOSUPPORT 
+	__sys_errlist_EPROTOTYPE 
+	__sys_errlist_EPWROFF 
+	__sys_errlist_ERANGE 
+	__sys_errlist_EREFUSED 
+	__sys_errlist_EREMOTE 
+	__sys_errlist_EROFS 
+	__sys_errlist_ESHUTDOWN 
+	__sys_errlist_ESOCKTNOSUPPORT 
+	__sys_errlist_ESPIPE 
+	__sys_errlist_ESRCH 
+	__sys_errlist_ESTALE 
+	__sys_errlist_ETIME 
+	__sys_errlist_ETIMEDOUT 
+	__sys_errlist_ETOOMANYREFS 
+	__sys_errlist_ETXTBSY 
+	__sys_errlist_EUSERS 
+	__sys_errlist_EWOULDBLOCK 
+	__sys_errlist_EXDEV 
+	__sys_errlist_EBADEXEC 
+
+	__sys_siglist_0 
+	__sys_siglist_SIGLOST 
+	__sys_siglist_SIGALRM 
+	__sys_siglist_SIGBUS 
+	__sys_siglist_SIGCHLD 
+	__sys_siglist_SIGCONT 
+	__sys_siglist_SIGEMT 
+	__sys_siglist_SIGFPE 
+	__sys_siglist_SIGHUP 
+	__sys_siglist_SIGILL 
+	__sys_siglist_SIGINT 
+	__sys_siglist_SIGIO 
+	__sys_siglist_SIGIOT 
+	__sys_siglist_SIGKILL 
+	__sys_siglist_SIGPIPE 
+	__sys_siglist_SIGPROF 
+	__sys_siglist_SIGQUIT 
+	__sys_siglist_SIGSEGV 
+	__sys_siglist_SIGSTOP 
+	__sys_siglist_SIGSYS 
+	__sys_siglist_SIGTERM 
+	__sys_siglist_SIGTRAP 
+	__sys_siglist_SIGTSTP 
+	__sys_siglist_SIGTTIN 
+	__sys_siglist_SIGTTOU 
+	__sys_siglist_SIGURG 
+	__sys_siglist_SIGUSR1 
+	__sys_siglist_SIGUSR2 
+	__sys_siglist_SIGVTALRM 
+	__sys_siglist_SIGWINCH 
+	__sys_siglist_SIGXCPU 
+	__sys_siglist_SIGXFSZ
+##cthreads internal
+	__cthread_fork_prepare
+	__cthread_fork_parent
+	__cthread_fork_child
+	__dealloc_stack
+	__cproc_fork_child
+	__stack_fork_child
+## International date strings
+	__strftime_clear_cache
+## International ctype(3) function table
+	__NX_CTypeTable_
+	__NX_ULTable_
+## libm
+	_exp__E
+	_log__L
+## libobjc
+	__cache_create
+	__cache_flush
+	__class_lookupMethodAndLoadCache
+	_class_lookupMethodInMethodList
+	_class_respondsToMethod
+	_class_lookupMethod
+	__objc_classPrintStats
+	__objc_class_respondsTo
+	__class_createInstance
+	__class_createInstanceFromZone
+	__objc_getZone
+	__objc_create_zone
+	__object_copy
+	__object_copyFromZone
+	__object_realloc
+	__object_reallocFromZone
+	__object_dispose
+	__objc_error
+	__objc_fatal
+	__objc_global_data_pad
+	__objc_msgCollectStats
+	__objc_msgPrintStats
+	__sel_getMaxUid
+	__sel_init
+	__sel_registerNameUseString
+	_gettime
+	_hashPtrStructKey
+	_hashStrStructKey
+	_isEqualPtrStructKey
+	_isEqualStrStructKey
+	_print_time
+	__class_map_seldefs
+	__objc_add_category
+	__objc_remove_category
+	___objc_error
+	__class_install_relationships
+	__sel_unloadSelectors
+## libstreams
+	__NXStreamsDataPad
+	__NXVerifyStream
+## libdb
+	__DB
+	__dbDirExtension
+	__dbLeafCount
+	__dbLeafExtension
+	__db_data_pad
+	__dbnewleaf
+	__dbstrbuf
+## librld
+	_allocate
+	_base_obj
+	_clean_objects
+	_cleanup
+	_cpusubtype
+	_cputype
+	_create_merged_section
+	_create_output_sections_array
+	_cstring_merge
+	_cstring_output
+	_cur_obj
+	_cur_set
+	_defaultsectalign
+	_define_comldsyms
+	_define_common_symbols
+	_entry_point_name
+	_error
+	_error_with_cur_obj
+	_errors
+	_fatal
+	_filetype
+	_fine_reloc_output_offset
+	_flush
+	_free_multiple_defs
+	_generic_reloc
+	_headerpad
+	_host_pagesize
+	_layout
+	_layout_merged_symbols
+	_load_map
+	_local_string_size
+	_lookup_merged_section
+	_lookup_merged_segment
+	_lookup_symbol
+	_mach_fatal
+	_merge
+	_merge_base_program
+	_merge_literal_sections
+	_merge_sections
+	_merge_symbols
+	_merged_segments
+	_merged_string_blocks
+	_merged_string_size
+	_merged_symbol_lists
+	_new_object_file
+	_new_set
+	_nlocal_symbols
+	_nmerged_symbols
+	_nobjects
+	_nreloc
+	_ntrace_syms
+	_nundef_syms
+	_obj_member_name 
+	_objects
+	_original_merged_segments
+	_output_addr
+	_output_literal_sections
+	_output_mach_header
+	_output_section
+	_output_sections
+	_output_size
+	_output_symtab_info
+	_output_thread_info
+	_outputfile
+	_pass2
+	_print
+	_print_obj_name
+	_print_whatsloaded 
+	_progname
+	_reallocate
+	_remove_merged_sections
+	_remove_merged_symbols
+	_remove_objects
+	_remove_set
+	_reset_merged_sections
+	_rld_get_current_header
+	_round
+	_save_reloc
+	_sectorder_detail
+	_seg1addr
+	_seg1addr_specified
+	_segalign
+	_seglinkedit
+	_sets
+	_strip_level
+	_system_error
+	_system_fatal
+	_trace
+	_trace_syms
+	_undef_syms
+	_vprint
+	_warning
+	_warning_with_cur_obj
+	_whyload
+	_free_sets
+	_output_local_symbols
+	_output_merged_symbols
+	_sect_object_symbols 
+	_strip_base_symbols
+	_address_func
+	_pass1
+	_delete_from_undefined_list
+	_free_undefined_list
+	_new_archive
+	_clean_archives
+	_undefined_list
+	_literal4_merge
+	_literal4_output
+	_literal8_merge
+	_literal8_output
+	_cstring_free
+	_zero_merged_sections_sizes
+	_literal4_free
+	_literal8_free
+	_literal_pointer_merge
+	_literal_pointer_output
+	_literal_pointer_free
+	_reduce_indr_symbols
+	_undef_bsearch
+	_reduce_indr_symbols
+	_add_last_object_file
+	_cstring_order
+	_get_cstring_from_sectorder
+	_get_hex_from_sectorder
+	_literal4_order
+	_literal8_order
+	_literal_pointer_order
+	_lookup_cstring
+	_lookup_literal4
+	_lookup_literal8
+	_remove_last_object_file
+	_link_edit_common_object
+##
+## Private library for 2.0
+##
+## libbtree
+##	__btreeCheckHint
+##	__btreeFileNewOffset
+##	__btreeFileFreeOffset
+##	__btreeFileMergeOffsetCache
+##	__btreeForwardExternal
+##	__btreeInsertExternal
+##	__btreePostOrderWalk
+##	__btreeRemoveExternal
+##	__btreeReverseExternal
+##	__btreeTraceCursor
+##	__btreeUpdateExternal
+
+
+## The objects that contain global const data are listed first then the objects
+## containing global data are listed next then all others (currently listed in
+## increasing bss size but the order is arbitrary).  The files that have any
+## global data CANNOT change in size or move in the list (if they do it will
+## be an incompatable library.
+#objects
+
+## const global data (these are in the text segment just after the branch table)
+	libc/shlib_obj/errlst.o		# text size = 484  data size = 0
+	libc/shlib_obj/siglist.o	# text size = 200  data size = 0
+	libc/shlib_obj/ctype_.o		# text size = 260  data size = 0
+
+## global data (the symbol __iob (in iob.o) to be first in the data segment
+	libc/shlib_obj/iob.o		# text size = 0 data size = 400
+	libc/shlib_obj/threads_data.o	# text size = 0 data size = 256
+	libc/shlib_obj/mach_data.o	# text size = 0 data size = 256
+	libc/shlib_obj/rpc_comdata.o	# text size = 0 data size = 256
+	libc/shlib_obj/sigcatch.o	# text size = 0 data size = 200
+	libc/shlib_obj/yp_data.o	# text size = 0 data size = 64
+	libc/shlib_obj/getopt_data.o	# text size = 0 data size = 16
+## In the 1.0 version this contined text = 0 and global data = 8 (the other 4
+## bytes were static data.  In order to not have global and static data in the
+## same file and for newer versions to be compatible with the 1.0 version the
+## 4 bytes of text added here were taken from libstreams/shlib_obj/globals.o
+## which use to have text = 512.
+	libc/shlib_obj/ctime_data.o	# text size = 4 data size = 8
+	libc/shlib_obj/errno.o		# text size = 0 data size = 4
+	libc/shlib_obj/ni_data.o	# text size = 0 data size = 4
+
+	pointers.o			# text size = 0 data size = 512
+
+	libm/shlib_obj/signgam.o	# text size = 0 data size = 4
+
+## See note above libc/shlib_obj/ctime_data.o
+	libstreams/shlib_obj/globals.o	# text size = 508 data size = 512
+
+	libdb/shlib_obj/dbGlobals.o	# text size = 512 data size = 512
+
+	libobjc/shlib_obj/objc-globaltext.o # text size = 512 data size = 0
+	libobjc/shlib_obj/objc-globaldata.o # text size = 0 data size = 512
+
+	libc/shlib_obj/res_data.o	    # text size = 0 data size = 324
+##
+## This had data inadvertantly added to it sometime in the past.
+##
+	libdb/shlib_obj/dbInit.o	    # text size = 0 data size = 40
+
+	libobjc/shlib_obj/HashTable.o
+	libobjc/shlib_obj/NXStringTable.o
+	libobjc/shlib_obj/List.o
+	libobjc/shlib_obj/Object.o
+	libobjc/shlib_obj/Storage.o
+	libobjc/shlib_obj/StreamTable.o
+	libobjc/shlib_obj/hashtable.o
+	libobjc/shlib_obj/objc-class.o
+	libobjc/shlib_obj/objc-msg.o
+	libobjc/shlib_obj/objc-runtime.o
+	libobjc/shlib_obj/objc-sel.o
+	libobjc/shlib_obj/objc-utils.o
+	libobjc/shlib_obj/typedstream.o
+	libobjc/shlib_obj/except.o
+	libobjc/shlib_obj/objc-load.o
+
+	librld/shlib_obj/cstring_literals.o
+	librld/shlib_obj/fvmlibs.o
+	librld/shlib_obj/generic_reloc.o
+	librld/shlib_obj/layout.o
+	librld/shlib_obj/ld.o
+	librld/shlib_obj/objects.o
+	librld/shlib_obj/pass1.o
+	librld/shlib_obj/pass2.o
+	librld/shlib_obj/rld.o
+	librld/shlib_obj/sections.o
+	librld/shlib_obj/sets.o
+	librld/shlib_obj/specs.o
+	librld/shlib_obj/symbols.o
+	librld/shlib_obj/4byte_literals.o
+	librld/shlib_obj/8byte_literals.o
+	librld/shlib_obj/literal_pointers.o
+
+##
+## Private library for 2.0
+##
+##	libbtree/shlib_obj/BTreeGlobals.o   # text size = 28 data size = 228
+##	libbtree/shlib_obj/BTree.o
+##	libbtree/shlib_obj/BTreeCursor.o
+##	libbtree/shlib_obj/BTreeFile.o
+##	libbtree/shlib_obj/BTreeFileOffset.o
+##	libbtree/shlib_obj/BTreePrivate.o
+##	libbtree/shlib_obj/BTreeStore.o
+##	libbtree/shlib_obj/BTreeStoreFile.o
+##	libbtree/shlib_obj/BTreeStoreMemory.o
+
+## bss size == 0
+	libm/shlib_obj/acosh.o
+	libm/shlib_obj/asincos.o
+	libm/shlib_obj/asinh.o
+	libm/shlib_obj/atan.o
+	libm/shlib_obj/atan2.o
+	libm/shlib_obj/atanh.o
+	libm/shlib_obj/cabs.o
+	libm/shlib_obj/cbrt.o
+	libm/shlib_obj/cosh.o
+	libm/shlib_obj/erf.o
+	libm/shlib_obj/exp.o
+	libm/shlib_obj/exp__E.o
+	libm/shlib_obj/expm1.o
+	libm/shlib_obj/floor.o
+	libm/shlib_obj/fmod.o
+	libm/shlib_obj/jn.o
+	libm/shlib_obj/lgamma.o
+	libm/shlib_obj/log.o
+	libm/shlib_obj/log10.o
+	libm/shlib_obj/log1p.o
+	libm/shlib_obj/log__L.o
+	libm/shlib_obj/pow.o
+	libm/shlib_obj/sinh.o
+	libm/shlib_obj/sqrt.o
+	libm/shlib_obj/support.o
+	libm/shlib_obj/tanh.o
+	libm/shlib_obj/trig.o
+## bss size == 16
+	libm/shlib_obj/j0.o
+	libm/shlib_obj/j1.o
+
+	libstreams/shlib_obj/file_funcs.o
+	libstreams/shlib_obj/indir_ops.o
+	libstreams/shlib_obj/ipc_funcs.o
+	libstreams/shlib_obj/memory_funcs.o
+	libstreams/shlib_obj/streams.o
+	libstreams/shlib_obj/streams_doprnt.o
+	libstreams/shlib_obj/streams_doscan.o
+	libstreams/shlib_obj/streams_internal.o
+
+	libsound/shlib_obj/accesssound.o
+	libsound/shlib_obj/convertsound.o
+	libsound/shlib_obj/editsound.o
+	libsound/shlib_obj/filesound.o
+	libsound/shlib_obj/performsound.o
+	libsound/shlib_obj/sounddriver.o
+	libsound/shlib_obj/sounderror.o
+	libsound/shlib_obj/utilsound.o
+
+	libdb/shlib_obj/db.o
+	libdb/shlib_obj/dbCat.o
+	libdb/shlib_obj/dbData.o
+	libdb/shlib_obj/dbError.o
+	libdb/shlib_obj/dbExists.o
+	libdb/shlib_obj/dbLock.o
+	libdb/shlib_obj/dbPrint.o
+	libdb/shlib_obj/dbUnlink.o
+	libdb/shlib_obj/defaults.o
+
+## ordered with increasing bss size
+## not used	libc/shlib_obj/csw.o
+	libc/shlib_obj/ipc.o
+	libc/shlib_obj/spin.o
+	libc/shlib_obj/unix.o
+	libc/shlib_obj/bsearch.o
+	libc/shlib_obj/getenv.o
+	libc/shlib_obj/mkstemp.o
+	libc/shlib_obj/mktemp.o
+	libc/shlib_obj/syscall.o
+	libc/shlib_obj/random.o
+	libc/shlib_obj/_setjmp.o
+	libc/shlib_obj/bsd_sprintf.o
+	libc/shlib_obj/bsd_vsprintf.o
+	libc/shlib_obj/cthreads_sync.o
+	libc/shlib_obj/seekdir.o
+	libc/shlib_obj/cprocs.o
+	libc/shlib_obj/bzero.o
+	libc/shlib_obj/fgets.o
+	libc/shlib_obj/fputc.o
+	libc/shlib_obj/ftell.o
+	libc/shlib_obj/putc.o
+	libc/shlib_obj/ts_convert.o
+	libc/shlib_obj/putchar.o
+	libc/shlib_obj/readdir.o
+	libc/shlib_obj/sprintf.o
+	libc/shlib_obj/swab.o
+	libc/shlib_obj/vsprintf.o
+	libc/shlib_obj/abs.o
+	libc/shlib_obj/cerror.o
+	libc/shlib_obj/htons.o
+	libc/shlib_obj/labs.o
+	libc/shlib_obj/ntohs.o
+	libc/shlib_obj/scanf.o
+	libc/shlib_obj/strftime.o
+	libc/shlib_obj/fprintf.o
+	libc/shlib_obj/putw.o
+	libc/shlib_obj/setvbuf.o
+	libc/shlib_obj/vfprintf.o
+	libc/shlib_obj/mach_u.o
+	libc/shlib_obj/mach_host_u.o
+	libc/shlib_obj/getmachhead.o
+	libc/shlib_obj/ttyslot.o
+	libc/shlib_obj/cthreads.o
+	libc/shlib_obj/clock.o
+	libc/shlib_obj/bcmp.o
+	libc/shlib_obj/fread.o
+	libc/shlib_obj/times.o
+	libc/shlib_obj/setjmp.o
+	libc/shlib_obj/sigvec.o
+	libc/shlib_obj/fdopen.o
+	libc/shlib_obj/exc_catcher.o
+	libc/shlib_obj/strlen.o
+	libc/shlib_obj/psignal.o
+	libc/shlib_obj/setbuffer.o
+	libc/shlib_obj/opendir.o
+	libc/shlib_obj/atoi.o
+	libc/shlib_obj/atol.o
+	libc/shlib_obj/system.o
+	libc/shlib_obj/perror.o
+	libc/shlib_obj/thread.o
+	libc/shlib_obj/errstrings.o
+	libc/shlib_obj/tmpfile.o
+	libc/shlib_obj/ungetc.o
+	libc/shlib_obj/mach_error.o
+	libc/shlib_obj/_dbltopdfp.o
+	libc/shlib_obj/_pdfptodbl.o
+	libc/shlib_obj/_exit.o
+	libc/shlib_obj/alloca.o
+	libc/shlib_obj/atof.o
+	libc/shlib_obj/cfree.o
+	libc/shlib_obj/clrerr.o
+	libc/shlib_obj/execl.o
+	libc/shlib_obj/getdtablesize.o
+	libc/shlib_obj/getegid.o
+	libc/shlib_obj/geteuid.o
+	libc/shlib_obj/getgid.o
+	libc/shlib_obj/getpagesize.o
+	libc/shlib_obj/getpid.o
+	libc/shlib_obj/getppid.o
+	libc/shlib_obj/getuid.o
+	libc/shlib_obj/remque.o
+	libc/shlib_obj/sync.o
+	libc/shlib_obj/fputs.o
+	libc/shlib_obj/exc_u.o
+	libc/shlib_obj/bootstrap_u.o
+	libc/shlib_obj/puts.o
+	libc/shlib_obj/fopen.o
+	libc/shlib_obj/freopen.o
+	libc/shlib_obj/initgroups.o
+	libc/shlib_obj/mach_init.o
+	libc/shlib_obj/fwrite.o
+	libc/shlib_obj/acct.o
+	libc/shlib_obj/async_daemon.o
+	libc/shlib_obj/chdir.o
+	libc/shlib_obj/chroot.o
+	libc/shlib_obj/close.o
+	libc/shlib_obj/feof.o
+	libc/shlib_obj/ferror.o
+	libc/shlib_obj/fsync.o
+	libc/shlib_obj/gethostid.o
+	libc/shlib_obj/getpgrp.o
+	libc/shlib_obj/isalnum.o
+	libc/shlib_obj/isalpha.o
+	libc/shlib_obj/iscntrl.o
+	libc/shlib_obj/isdigit.o
+	libc/shlib_obj/isgraph.o
+	libc/shlib_obj/islower.o
+	libc/shlib_obj/ispunct.o
+	libc/shlib_obj/isspace.o
+	libc/shlib_obj/isupper.o
+	libc/shlib_obj/isxdigit.o
+	libc/shlib_obj/pause.o
+	libc/shlib_obj/rpause.o
+	libc/shlib_obj/remove.o
+	libc/shlib_obj/rindex.o
+	libc/shlib_obj/setegid.o
+	libc/shlib_obj/seteuid.o
+	libc/shlib_obj/setgid.o
+	libc/shlib_obj/setrgid.o
+	libc/shlib_obj/setruid.o
+	libc/shlib_obj/setuid.o
+	libc/shlib_obj/sigblock.o
+	libc/shlib_obj/sigpause.o
+	libc/shlib_obj/sigreturn.o
+	libc/shlib_obj/sigsetmask.o
+	libc/shlib_obj/strcat.o
+	libc/shlib_obj/swapon.o
+	libc/shlib_obj/tell.o
+	libc/shlib_obj/umask.o
+	libc/shlib_obj/unlink.o
+	libc/shlib_obj/vhangup.o
+	libc/shlib_obj/bcopy.o
+	libc/shlib_obj/inet_network.o
+	libc/shlib_obj/memmove.o
+	libc/shlib_obj/doprnt.o
+	libc/shlib_obj/vtimes.o
+	libc/shlib_obj/exc_server.o
+	libc/shlib_obj/ndbm.o
+	libc/shlib_obj/execv.o
+	libc/shlib_obj/fabs.o
+	libc/shlib_obj/fsetpos.o
+	libc/shlib_obj/gtty.o
+	libc/shlib_obj/insque.o
+	libc/shlib_obj/isprint.o
+	libc/shlib_obj/nfssvc.o
+	libc/shlib_obj/pipe.o
+	libc/shlib_obj/raise.o
+	libc/shlib_obj/reboot.o
+	libc/shlib_obj/rmdir.o
+	libc/shlib_obj/sethostid.o
+	libc/shlib_obj/strcpy.o
+	libc/shlib_obj/strrchr.o
+	libc/shlib_obj/stty.o
+	libc/shlib_obj/telldir.o
+	libc/shlib_obj/unmount.o
+	libc/shlib_obj/wctomb.o
+	libc/shlib_obj/ffs.o
+	libc/shlib_obj/access.o
+	libc/shlib_obj/chmod.o
+	libc/shlib_obj/creat.o
+	libc/shlib_obj/difftime.o
+	libc/shlib_obj/dup.o
+	libc/shlib_obj/dup2.o
+	libc/shlib_obj/execle.o
+	libc/shlib_obj/fchmod.o
+	libc/shlib_obj/fstat.o
+	libc/shlib_obj/getgroups.o
+	libc/shlib_obj/gethostname.o
+	libc/shlib_obj/getitimer.o
+	libc/shlib_obj/getpriority.o
+	libc/shlib_obj/getrusage.o
+	libc/shlib_obj/gettimeofday.o
+	libc/shlib_obj/kill.o
+	libc/shlib_obj/link.o
+	libc/shlib_obj/listen.o
+	libc/shlib_obj/lstat.o
+	libc/shlib_obj/memcpy.o
+	libc/shlib_obj/setgroups.o
+	libc/shlib_obj/sethostname.o
+	libc/shlib_obj/setpgrp.o
+	libc/shlib_obj/setregid.o
+	libc/shlib_obj/setreuid.o
+	libc/shlib_obj/settimeofday.o
+	libc/shlib_obj/sigstack.o
+	libc/shlib_obj/stat.o
+	libc/shlib_obj/strchr.o
+	libc/shlib_obj/strncat.o
+	libc/shlib_obj/strncpy.o
+	libc/shlib_obj/symlink.o
+	libc/shlib_obj/tolower.o
+	libc/shlib_obj/toupper.o
+	libc/shlib_obj/wait.o
+	libc/shlib_obj/filbuf.o
+	libc/shlib_obj/scandir.o
+	libc/shlib_obj/mig_support.o
+	libc/shlib_obj/fseek.o
+	libc/shlib_obj/adjtime.o
+	libc/shlib_obj/fgetc.o
+	libc/shlib_obj/fgetpos.o
+	libc/shlib_obj/flock.o
+	libc/shlib_obj/fstatfs.o
+	libc/shlib_obj/ftruncate.o
+	libc/shlib_obj/getc.o
+	libc/shlib_obj/getdomainname.o
+	libc/shlib_obj/getfh.o
+	libc/shlib_obj/getrlimit.o
+	libc/shlib_obj/killpg.o
+	libc/shlib_obj/mkdir.o
+	libc/shlib_obj/rename.o
+	libc/shlib_obj/setdomainname.o
+	libc/shlib_obj/setquota.o
+	libc/shlib_obj/setrlimit.o
+	libc/shlib_obj/shutdown.o
+	libc/shlib_obj/statfs.o
+	libc/shlib_obj/truncate.o
+	libc/shlib_obj/utimes.o
+	libc/shlib_obj/inet_addr.o
+	libc/shlib_obj/mach_traps.o
+	libc/shlib_obj/strtol.o
+	libc/shlib_obj/strout.o
+	libc/shlib_obj/execvp.o
+	libc/shlib_obj/div.o
+	libc/shlib_obj/exit.o
+	libc/shlib_obj/fork.o
+	libc/shlib_obj/index.o
+	libc/shlib_obj/isatty.o
+	libc/shlib_obj/isinf.o
+	libc/shlib_obj/ldexp.o
+	libc/shlib_obj/ldiv.o
+	libc/shlib_obj/mblen.o
+	libc/shlib_obj/strncmp.o
+	libc/shlib_obj/getopt.o
+	libc/shlib_obj/accept.o
+	libc/shlib_obj/bind.o
+	libc/shlib_obj/chown.o
+	libc/shlib_obj/connect.o
+	libc/shlib_obj/execve.o
+	libc/shlib_obj/fchown.o
+	libc/shlib_obj/fcntl.o
+	libc/shlib_obj/frexp.o
+	libc/shlib_obj/getchar.o
+	libc/shlib_obj/ioctl.o
+	libc/shlib_obj/lseek.o
+	libc/shlib_obj/memcmp.o
+	libc/shlib_obj/mknod.o
+	libc/shlib_obj/open.o
+	libc/shlib_obj/printf.o
+	libc/shlib_obj/read.o
+	libc/shlib_obj/readlink.o
+	libc/shlib_obj/readv.o
+	libc/shlib_obj/recvmsg.o
+	libc/shlib_obj/sendmsg.o
+	libc/shlib_obj/setitimer.o
+	libc/shlib_obj/setjmperr.o
+	libc/shlib_obj/setpriority.o
+	libc/shlib_obj/socket.o
+	libc/shlib_obj/strcmp.o
+	libc/shlib_obj/utime.o
+	libc/shlib_obj/vprintf.o
+	libc/shlib_obj/write.o
+	libc/shlib_obj/writev.o
+	libc/shlib_obj/sched.o
+	libc/shlib_obj/cthreads_time.o
+	libc/shlib_obj/exportfs.o
+	libc/shlib_obj/getpeername.o
+	libc/shlib_obj/getsockname.o
+	libc/shlib_obj/mbstowcs.o
+	libc/shlib_obj/memchr.o
+	libc/shlib_obj/profil.o
+	libc/shlib_obj/quotactl.o
+	libc/shlib_obj/recv.o
+	libc/shlib_obj/send.o
+	libc/shlib_obj/getsecbyname.o
+	libc/shlib_obj/sigstrings.o
+	libc/shlib_obj/abort.o
+	libc/shlib_obj/getdirentries.o
+	libc/shlib_obj/getsockopt.o
+	libc/shlib_obj/mbtowc.o
+	libc/shlib_obj/memccpy.o
+	libc/shlib_obj/modf.o
+	libc/shlib_obj/mount.o
+	libc/shlib_obj/ptrace.o
+	libc/shlib_obj/quota.o
+	libc/shlib_obj/select.o
+	libc/shlib_obj/setsockopt.o
+	libc/shlib_obj/strcatn.o
+	libc/shlib_obj/time.o
+	libc/shlib_obj/wcstombs.o
+	libc/shlib_obj/msg.o
+##
+## Remove for compiler guys
+##	libc/shlib_obj/_fixunsdfsi.o
+##	libc/shlib_obj/_fixunsdfdi.o
+	libc/shlib_obj/closedir.o
+	libc/shlib_obj/isnan.o
+	libc/shlib_obj/memset.o
+	libc/shlib_obj/mmap.o
+	libc/shlib_obj/recvfrom.o
+	libc/shlib_obj/socketpair.o
+	libc/shlib_obj/table.o
+	libc/shlib_obj/rand.o
+	libc/shlib_obj/slot_name.o
+	libc/shlib_obj/lock.o
+	libc/shlib_obj/sendto.o
+	libc/shlib_obj/strerror.o
+	libc/shlib_obj/strpbrk.o
+	libc/shlib_obj/wait3.o
+	libc/shlib_obj/flsbuf.o
+	libc/shlib_obj/exception.o
+	libc/shlib_obj/alarm.o
+	libc/shlib_obj/nice.o
+	libc/shlib_obj/strcmpn.o
+	libc/shlib_obj/strcoll.o
+	libc/shlib_obj/strcpyn.o
+	libc/shlib_obj/strcspn.o
+	libc/shlib_obj/strspn.o
+	libc/shlib_obj/getttynam.o
+	libc/shlib_obj/inet_lnaof.o
+	libc/shlib_obj/localeconv.o
+	libc/shlib_obj/strstr.o
+	libc/shlib_obj/ftime.o
+	libc/shlib_obj/rew.o
+	libc/shlib_obj/sigtramp.o
+	libc/shlib_obj/nlist.o
+	libc/shlib_obj/siginterrupt.o
+	libc/shlib_obj/atexit.o
+	libc/shlib_obj/setlocale.o
+	libc/shlib_obj/rexec.o
+	libc/shlib_obj/htonl.o
+	libc/shlib_obj/ntohl.o
+	libc/shlib_obj/va_end.o
+	libc/shlib_obj/inet_netof.o
+	libc/shlib_obj/getw.o
+	libc/shlib_obj/getsegbyname.o
+	libc/shlib_obj/inet_makeaddr.o
+	libc/shlib_obj/setbuf.o
+	libc/shlib_obj/vlimit.o
+	libc/shlib_obj/netname_u.o
+	libc/shlib_obj/strtod.o
+	libc/shlib_obj/compat.o
+	libc/shlib_obj/gets.o
+	libc/shlib_obj/ualarm.o
+	libc/shlib_obj/strtok.o
+	libc/shlib_obj/sbrk.o
+	libc/shlib_obj/doscan.o
+	libc/shlib_obj/getpw.o
+	libc/shlib_obj/sleep.o
+	libc/shlib_obj/usleep.o
+	libc/shlib_obj/getwd.o
+	libc/shlib_obj/tmpnam.o
+	libc/shlib_obj/exportent.o
+	libc/shlib_obj/rstrtok.o
+	libc/shlib_obj/stack.o
+	libc/shlib_obj/findiop.o
+	libc/shlib_obj/popen.o
+	libc/shlib_obj/getpass.o
+	libc/shlib_obj/getusershell.o
+	libc/shlib_obj/qsort.o
+	libc/shlib_obj/syslog.o
+	libc/shlib_obj/inet_ntoa.o
+	libc/shlib_obj/ns_addr.o
+	libc/shlib_obj/ttyname.o
+	libc/shlib_obj/getlogin.o
+	libc/shlib_obj/disktab.o
+	libc/shlib_obj/ns_ntoa.o
+	libc/shlib_obj/timezone.o
+	libc/shlib_obj/reset.o
+	libc/shlib_obj/signal.o
+	libc/shlib_obj/rcmd.o
+	libc/shlib_obj/getttyent.o
+	libc/shlib_obj/ether_addr.o
+	libc/shlib_obj/ecvt.o
+##
+## These four lines get switched by the sed script to create the spec_sys_mdb
+##
+	libc/shlib_obj/malloc.o		# NON-MALLOC_DEBUG
+##	libc/shlib_obj/debug_malloc.o	# MALLOC_DEBUG
+##	libc/shlib_obj/port_listen.o	# MALLOC_DEBUG
+##	libc/shlib_obj/malloc_server.o	# MALLOC_DEBUG
+	libc/shlib_obj/regex.o
+	libc/shlib_obj/fstab.o
+	libc/shlib_obj/crypt.o
+	libc/shlib_obj/ruserpass.o
+	libc/shlib_obj/ctime.o
+	libc/shlib_obj/get_end.o
+##
+## New binaries used in NFS 4.0
+##
+	libc/shlib_obj/des_crypt.o
+	libc/shlib_obj/des_soft.o
+	libc/shlib_obj/lockf.o
+	libc/shlib_obj/svcauth_des.o
+	libc/shlib_obj/fgetpwent.o
+	libc/shlib_obj/netname.o
+	libc/shlib_obj/openchild.o
+	libc/shlib_obj/key_call.o
+	libc/shlib_obj/key_prot.o
+	libc/shlib_obj/strcasecmp.o
+	libc/shlib_obj/realpath.o
+	libc/shlib_obj/wait4.o
+	libc/shlib_obj/ustat.o
+	libc/shlib_obj/getdents.o
+##
+## Stuff used by C library lookup
+##
+	libc/shlib_obj/lu_utils.o	# has private_extern data __lookup_buf
+					## and __lu_port
+	libc/shlib_obj/lookupUser.o
+	libc/shlib_obj/_lu_types_xdr.o
+	libc/shlib_obj/getent_pw.o
+	libc/shlib_obj/getent_gr.o
+	libc/shlib_obj/getent_h.o
+	libc/shlib_obj/getent_s.o
+	libc/shlib_obj/getent_r.o
+	libc/shlib_obj/getent_n.o
+	libc/shlib_obj/getent_p.o
+	libc/shlib_obj/getent_mnt.o
+	libc/shlib_obj/getent_prdb.o
+	libc/shlib_obj/getent_alias.o
+	libc/shlib_obj/getent_bprms.o
+	libc/shlib_obj/getent_netgr.o
+	libc/shlib_obj/getent_bootp.o
+##
+## XDR - used by many applications indirectly through libc lookup
+## routines.
+## 
+	libc/shlib_obj/xdr.o
+	libc/shlib_obj/xdr_array.o
+	libc/shlib_obj/xdr_float.o
+	libc/shlib_obj/xdr_mem.o
+	libc/shlib_obj/xdr_rec.o
+	libc/shlib_obj/xdr_reference.o
+	libc/shlib_obj/xdr_stdio.o
+##
+## NetInfo files - used primarily by lookupd, netinfod & nibindd
+##
+## ni_error.o contains the symbol _ni_errmsgs which in the 1.0 release was
+## inadverntly a global data symbol that was subsequently made a static.
+##
+	libc/shlib_obj/ni_error.o
+	libc/shlib_obj/ni_glue.o
+	libc/shlib_obj/ni_prot_clnt.o
+	libc/shlib_obj/ni_prot_xdr.o
+	libc/shlib_obj/ni_useful.o
+	libc/shlib_obj/ni_util.o
+	libc/shlib_obj/ni_pwdomain.o
+	libc/shlib_obj/nb_prot_xdr.o
+	libc/shlib_obj/putpwpasswd.o
+##
+## Sun RPC - used by many network services, including NetInfo
+##
+	libc/shlib_obj/auth_none.o
+	libc/shlib_obj/auth_unix.o
+	libc/shlib_obj/authunix_prot.o
+	libc/shlib_obj/bindresvport.o
+	libc/shlib_obj/clnt_generic.o
+	libc/shlib_obj/clnt_perror.o
+	libc/shlib_obj/clnt_raw.o
+	libc/shlib_obj/clnt_simple.o
+	libc/shlib_obj/clnt_tcp.o
+	libc/shlib_obj/clnt_udp.o
+	libc/shlib_obj/get_myaddress.o
+	libc/shlib_obj/mcast_args.o
+	libc/shlib_obj/pmap_clnt.o
+	libc/shlib_obj/pmap_getmaps.o
+	libc/shlib_obj/pmap_getport.o
+	libc/shlib_obj/pmap_prot.o
+	libc/shlib_obj/pmap_prot2.o
+	libc/shlib_obj/pmap_rmt.o
+	libc/shlib_obj/rpc_callmsg.o
+	libc/shlib_obj/rpc_dtablesz.o
+	libc/shlib_obj/rpc_prot.o
+	libc/shlib_obj/svc.o
+	libc/shlib_obj/svc_auth.o
+	libc/shlib_obj/svc_auth_unix.o
+	libc/shlib_obj/svc_raw.o
+	libc/shlib_obj/svc_run.o
+	libc/shlib_obj/svc_simple.o
+	libc/shlib_obj/svc_tcp.o
+	libc/shlib_obj/svc_udp.o
+##
+## Old style lookup routines - used at boot time and by those
+## fools who opt for UNIX/YP compatibility.
+##
+	libc/shlib_obj/aliasdb.o
+	libc/shlib_obj/getnetent.o
+	libc/shlib_obj/getnetgrent.o
+	libc/shlib_obj/getprotoent.o
+	libc/shlib_obj/getservent.o
+	libc/shlib_obj/gethostent.o
+	libc/shlib_obj/innetgr.o
+	libc/shlib_obj/getgrent.o 
+	libc/shlib_obj/getpwent.o 
+	libc/shlib_obj/mntent.o
+	libc/shlib_obj/old_printerdb.o
+	libc/shlib_obj/getrpcent.o 
+	libc/shlib_obj/getrpcport.o
+##
+## BIND - used only when BIND turned on (off by default)
+##
+	libc/shlib_obj/res_comp.o
+	libc/shlib_obj/res_debug.o
+	libc/shlib_obj/res_hostlook.o
+	libc/shlib_obj/res_init.o
+	libc/shlib_obj/res_mkquery.o
+## Additions for BIND 4.8	
+	libc/shlib_obj/res_query.o
+	libc/shlib_obj/res_send.o
+##
+## Yellow Pages - used only when YP turned on (off by default)
+##
+	libc/shlib_obj/yp_all.o
+	libc/shlib_obj/yp_bind.o
+	libc/shlib_obj/yp_enum.o
+	libc/shlib_obj/yp_master.o
+	libc/shlib_obj/yp_match.o
+	libc/shlib_obj/yp_order.o
+	libc/shlib_obj/yperr_string.o
+	libc/shlib_obj/ypmaint_xdr.o
+	libc/shlib_obj/ypprot_err.o
+	libc/shlib_obj/ypv1_xdr.o
+	libc/shlib_obj/ypxdr.o
+##
+## Profiling
+##
+	libc/shlib_obj/gmon.o
+##
+## GNU library
+##
+	libc/shlib_obj/adddi3.o
+	libc/shlib_obj/anddi3.o
+	libc/shlib_obj/ashldi3.o
+	libc/shlib_obj/ashrdi3.o
+	libc/shlib_obj/bdiv.o
+	libc/shlib_obj/builtin_New.o
+	libc/shlib_obj/builtin_del.o
+	libc/shlib_obj/cmpdi2.o
+	libc/shlib_obj/divdi3.o
+	libc/shlib_obj/eprintf.o
+	libc/shlib_obj/fixdfdi.o
+	libc/shlib_obj/fixdfsi.o
+	libc/shlib_obj/fixunsdfdi.o
+	libc/shlib_obj/fixunsdfsi.o
+	libc/shlib_obj/floatdidf.o
+	libc/shlib_obj/iordi3.o
+	libc/shlib_obj/lshldi3.o
+	libc/shlib_obj/lshrdi3.o
+	libc/shlib_obj/moddi3.o
+	libc/shlib_obj/muldi3.o
+	libc/shlib_obj/negdi2.o
+	libc/shlib_obj/one_cmpldi2.o
+	libc/shlib_obj/subdi3.o
+	libc/shlib_obj/ucmpdi2.o
+	libc/shlib_obj/udivdi3.o
+	libc/shlib_obj/umoddi3.o
+	libc/shlib_obj/xordi3.o
+##
+## International library modules
+##
+	libc/shlib_obj/NXCType.o
+	libc/shlib_obj/NXIsAlNum.o
+	libc/shlib_obj/NXIsAlpha.o
+	libc/shlib_obj/NXIsAscii.o
+	libc/shlib_obj/NXIsCntrl.o
+	libc/shlib_obj/NXIsDigit.o
+	libc/shlib_obj/NXIsGraph.o
+	libc/shlib_obj/NXIsLower.o
+	libc/shlib_obj/NXIsPrint.o
+	libc/shlib_obj/NXIsPunct.o
+	libc/shlib_obj/NXIsSpace.o
+	libc/shlib_obj/NXIsUpper.o
+	libc/shlib_obj/NXIsXDigit.o
+	libc/shlib_obj/NXToAscii.o
+	libc/shlib_obj/NXToLower.o
+	libc/shlib_obj/NXToUpper.o
+	libc/shlib_obj/_NXToLower.o
+	libc/shlib_obj/_NXToUpper.o
+##
+## Version information never used by code in the library
+##
+	libc/shlib_obj/libc_vers.o
+	libdb/shlib_obj/db_vers.o
+	libm/shlib_obj/libm_vers.o
+	libobjc/shlib_obj/objc_vers.o
+	libsound/shlib_obj/sound_vers.o
+	libstreams/shlib_obj/streams_vers.o
+##	libbtree/shlib_obj/btree_vers.o
+
+	vers.o
+
+#init pointers.o
+	__libsys__setjmp 		__setjmp
+	__libsys__longjmp		__longjmp
+	__libsys_environ		_environ
+	__libsys_exit			_exit
+	__libsys_malloc			_malloc
+	__libsys_calloc			_calloc
+	__libsys_realloc		_realloc
+	__libsys_valloc			_valloc
+	__libsys_mstats			_mstats
+	__libsys_free			_free
+	__libsys_malloc_size		_malloc_size
+	__libsys_malloc_debug		_malloc_debug
+	__libsys_malloc_error		_malloc_error
+	__libsys_malloc_good_size	_malloc_good_size
+	__libsys_NXArgv			_NXArgv
+	__libsys_NXArgc			_NXArgc
+	__libsys_setjmp 		_setjmp
+	__libsys_longjmp		_longjmp
+	__libsys_NXAddRegion		_NXAddRegion
+	__libsys_NXCreateZone		_NXCreateZone
+	__libsys_NXCreateChildZone	_NXCreateChildZone
+	__libsys_NXMallocCheck		_NXMallocCheck
+	__libsys_NXMergeZone		_NXMergeZone
+	__libsys_NXNameZone		_NXNameZone
+	__libsys_NXRemoveRegion		_NXRemoveRegion
+	__libsys_NXZoneCalloc		_NXZoneCalloc
+	__libsys_NXZoneFromPtr		_NXZoneFromPtr
+	__libsys_NXZonePtrInfo		_NXZonePtrInfo
+	__libsys_NXDefaultMallocZone	_NXDefaultMallocZone
+	__libsys_malloc_singlethreaded	_malloc_singlethreaded
+	__libsys_vfree			_vfree
+	__libsys__NXMallocDumpFrees	__NXMallocDumpFrees
+	__libsys__NXMallocDumpZones	__NXMallocDumpZones
+	__libsys__malloc_fork_prepare	__malloc_fork_prepare
+	__libsys__malloc_fork_parent	__malloc_fork_parent
+	__libsys__malloc_fork_child	__malloc_fork_child
+	__libsys_malloc_freezedry	_malloc_freezedry
+	__libsys_malloc_jumpstart	_malloc_jumpstart
+
+#init libc/shlib_obj/exc_server.o
+	__libsys_catch_exception_raise 	_catch_exception_raise
+
+#init libc/shlib_obj/getmachhead.o
+	__libsys__mh_execute_header	__mh_execute_header
+
+#init libc/shlib_obj/getsecbyname.o
+	__libsys__mh_execute_header	__mh_execute_header
+
+#init libc/shlib_obj/getsegbyname.o
+	__libsys__mh_execute_header	__mh_execute_header
+
+#init libc/shlib_obj/get_end.o
+	__libsys__mh_execute_header	__mh_execute_header
+

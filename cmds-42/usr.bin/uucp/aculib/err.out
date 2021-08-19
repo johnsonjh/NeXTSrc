@@ -1,0 +1,26 @@
+cc -O    -c bsdtcp.c
+cc -O    -c df2.c
+cc -O    -c df12.c
+cc -O    -c dk.c
+cc -O    -c dn.c
+cc -O    -c hys.c
+cc -O    -c hysq.c
+cc -O    -c mic.c
+cc -O    -c nov.c
+cc -O    -c pen.c
+cc -O    -c pnet.c
+cc -O    -c rvmacs.c
+cc -O    -c sy.c
+cc -O    -c unet.c
+cc -O    -c va212.c
+cc -O    -c va811.c
+cc -O    -c va820.c
+cc -O    -c vad.c
+cc -O    -c vent.c
+cc -O    -c vmacs.c
+cc -O    -c hys24.c
+cc -O    -c cds224.c
+cc -O    -c att2224.c
+cc -O    -c fascomm.c
+ar cr aculib.a bsdtcp.o df2.o df12.o dk.o dn.o hys.o hysq.o mic.o nov.o pen.o pnet.o  rvmacs.o sy.o unet.o va212.o va811.o va820.o vad.o vent.o vmacs.o  hys24.o cds224.o att2224.o fascomm.o
+ranlib aculib.a 2>&1 | sed '/no symbol table/d'

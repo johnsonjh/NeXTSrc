@@ -1,0 +1,384 @@
+mkdirs STD_OBJS
+CWD=`pwd`; cd /BSD/LIBS/libs-9i0.82/root; DSTROOT=`pwd`; cd $CWD;  cd STD_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-O"  LIBRARY=curses  STDinstall 
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../addch.c
+ld  -X -r xxx.o -o addch.o
+md -d -u Makedep addch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../addstr.c
+ld  -X -r xxx.o -o addstr.o
+md -d -u Makedep addstr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../box.c
+ld  -X -r xxx.o -o box.o
+md -d -u Makedep box.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../clear.c
+ld  -X -r xxx.o -o clear.o
+md -d -u Makedep clear.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../clrtobot.c
+ld  -X -r xxx.o -o clrtobot.o
+md -d -u Makedep clrtobot.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../clrtoeol.c
+ld  -X -r xxx.o -o clrtoeol.o
+md -d -u Makedep clrtoeol.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../cr_put.c
+ld  -X -r xxx.o -o cr_put.o
+md -d -u Makedep cr_put.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../cr_tty.c
+ld  -X -r xxx.o -o cr_tty.o
+md -d -u Makedep cr_tty.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../curses.c
+ld  -X -r xxx.o -o curses.o
+md -d -u Makedep curses.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../delch.c
+ld  -X -r xxx.o -o delch.o
+md -d -u Makedep delch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../deleteln.c
+ld  -X -r xxx.o -o deleteln.o
+md -d -u Makedep deleteln.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../delwin.c
+ld  -X -r xxx.o -o delwin.o
+md -d -u Makedep delwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../endwin.c
+ld  -X -r xxx.o -o endwin.o
+md -d -u Makedep endwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../erase.c
+ld  -X -r xxx.o -o erase.o
+md -d -u Makedep erase.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../fullname.c
+ld  -X -r xxx.o -o fullname.o
+md -d -u Makedep fullname.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../getch.c
+ld  -X -r xxx.o -o getch.o
+md -d -u Makedep getch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../getstr.c
+ld  -X -r xxx.o -o getstr.o
+md -d -u Makedep getstr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../id_subwins.c
+ld  -X -r xxx.o -o id_subwins.o
+md -d -u Makedep id_subwins.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../idlok.c
+ld  -X -r xxx.o -o idlok.o
+md -d -u Makedep idlok.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../initscr.c
+ld  -X -r xxx.o -o initscr.o
+md -d -u Makedep initscr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../insch.c
+ld  -X -r xxx.o -o insch.o
+md -d -u Makedep insch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../insertln.c
+ld  -X -r xxx.o -o insertln.o
+md -d -u Makedep insertln.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../longname.c
+ld  -X -r xxx.o -o longname.o
+md -d -u Makedep longname.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../move.c
+ld  -X -r xxx.o -o move.o
+md -d -u Makedep move.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../mvprintw.c
+ld  -X -r xxx.o -o mvprintw.o
+md -d -u Makedep mvprintw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../mvscanw.c
+ld  -X -r xxx.o -o mvscanw.o
+md -d -u Makedep mvscanw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../mvwin.c
+ld  -X -r xxx.o -o mvwin.o
+md -d -u Makedep mvwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../newwin.c
+ld  -X -r xxx.o -o newwin.o
+md -d -u Makedep newwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../overlay.c
+ld  -X -r xxx.o -o overlay.o
+md -d -u Makedep overlay.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../overwrite.c
+ld  -X -r xxx.o -o overwrite.o
+md -d -u Makedep overwrite.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../printw.c
+ld  -X -r xxx.o -o printw.o
+md -d -u Makedep printw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../putchar.c
+ld  -X -r xxx.o -o putchar.o
+md -d -u Makedep putchar.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../refresh.c
+ld  -X -r xxx.o -o refresh.o
+md -d -u Makedep refresh.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../scanw.c
+ld  -X -r xxx.o -o scanw.o
+md -d -u Makedep scanw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../scroll.c
+ld  -X -r xxx.o -o scroll.o
+md -d -u Makedep scroll.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../standout.c
+ld  -X -r xxx.o -o standout.o
+md -d -u Makedep standout.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../toucholap.c
+ld  -X -r xxx.o -o toucholap.o
+md -d -u Makedep toucholap.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../touchwin.c
+ld  -X -r xxx.o -o touchwin.o
+md -d -u Makedep touchwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../tstp.c
+ld  -X -r xxx.o -o tstp.o
+md -d -u Makedep tstp.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o ../unctrl.c
+ld  -X -r xxx.o -o unctrl.o
+md -d -u Makedep unctrl.d
+vers_string -l curses > curses_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o xxx.o curses_vers.c
+ld  -X -r xxx.o -o curses_vers.o
+md -d -u Makedep curses_vers.d
+ar cr libcurses.a addch.o addstr.o box.o clear.o clrtobot.o  clrtoeol.o cr_put.o cr_tty.o curses.o delch.o  deleteln.o delwin.o endwin.o erase.o fullname.o  getch.o getstr.o id_subwins.o idlok.o initscr.o  insch.o insertln.o longname.o move.o mvprintw.o  mvscanw.o mvwin.o newwin.o overlay.o overwrite.o  printw.o putchar.o refresh.o scanw.o scroll.o  standout.o toucholap.o touchwin.o tstp.o  unctrl.o   curses_vers.o
+install -r -m 644 libcurses.a /BSD/LIBS/libs-9i0.82/root/usr/lib
+mkdirs PROF_OBJS
+CWD=`pwd`; cd /BSD/LIBS/libs-9i0.82/root; DSTROOT=`pwd`; cd $CWD;  cd PROF_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-pg -O"  LIBRARY=curses_p  PROFinstall 
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../addch.c
+ld  -X -r xxx.o -o addch.o
+md -d -u Makedep addch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../addstr.c
+ld  -X -r xxx.o -o addstr.o
+md -d -u Makedep addstr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../box.c
+ld  -X -r xxx.o -o box.o
+md -d -u Makedep box.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../clear.c
+ld  -X -r xxx.o -o clear.o
+md -d -u Makedep clear.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../clrtobot.c
+ld  -X -r xxx.o -o clrtobot.o
+md -d -u Makedep clrtobot.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../clrtoeol.c
+ld  -X -r xxx.o -o clrtoeol.o
+md -d -u Makedep clrtoeol.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../cr_put.c
+ld  -X -r xxx.o -o cr_put.o
+md -d -u Makedep cr_put.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../cr_tty.c
+ld  -X -r xxx.o -o cr_tty.o
+md -d -u Makedep cr_tty.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../curses.c
+ld  -X -r xxx.o -o curses.o
+md -d -u Makedep curses.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../delch.c
+ld  -X -r xxx.o -o delch.o
+md -d -u Makedep delch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../deleteln.c
+ld  -X -r xxx.o -o deleteln.o
+md -d -u Makedep deleteln.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../delwin.c
+ld  -X -r xxx.o -o delwin.o
+md -d -u Makedep delwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../endwin.c
+ld  -X -r xxx.o -o endwin.o
+md -d -u Makedep endwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../erase.c
+ld  -X -r xxx.o -o erase.o
+md -d -u Makedep erase.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../fullname.c
+ld  -X -r xxx.o -o fullname.o
+md -d -u Makedep fullname.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../getch.c
+ld  -X -r xxx.o -o getch.o
+md -d -u Makedep getch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../getstr.c
+ld  -X -r xxx.o -o getstr.o
+md -d -u Makedep getstr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../id_subwins.c
+ld  -X -r xxx.o -o id_subwins.o
+md -d -u Makedep id_subwins.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../idlok.c
+ld  -X -r xxx.o -o idlok.o
+md -d -u Makedep idlok.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../initscr.c
+ld  -X -r xxx.o -o initscr.o
+md -d -u Makedep initscr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../insch.c
+ld  -X -r xxx.o -o insch.o
+md -d -u Makedep insch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../insertln.c
+ld  -X -r xxx.o -o insertln.o
+md -d -u Makedep insertln.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../longname.c
+ld  -X -r xxx.o -o longname.o
+md -d -u Makedep longname.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../move.c
+ld  -X -r xxx.o -o move.o
+md -d -u Makedep move.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../mvprintw.c
+ld  -X -r xxx.o -o mvprintw.o
+md -d -u Makedep mvprintw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../mvscanw.c
+ld  -X -r xxx.o -o mvscanw.o
+md -d -u Makedep mvscanw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../mvwin.c
+ld  -X -r xxx.o -o mvwin.o
+md -d -u Makedep mvwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../newwin.c
+ld  -X -r xxx.o -o newwin.o
+md -d -u Makedep newwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../overlay.c
+ld  -X -r xxx.o -o overlay.o
+md -d -u Makedep overlay.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../overwrite.c
+ld  -X -r xxx.o -o overwrite.o
+md -d -u Makedep overwrite.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../printw.c
+ld  -X -r xxx.o -o printw.o
+md -d -u Makedep printw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../putchar.c
+ld  -X -r xxx.o -o putchar.o
+md -d -u Makedep putchar.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../refresh.c
+ld  -X -r xxx.o -o refresh.o
+md -d -u Makedep refresh.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../scanw.c
+ld  -X -r xxx.o -o scanw.o
+md -d -u Makedep scanw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../scroll.c
+ld  -X -r xxx.o -o scroll.o
+md -d -u Makedep scroll.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../standout.c
+ld  -X -r xxx.o -o standout.o
+md -d -u Makedep standout.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../toucholap.c
+ld  -X -r xxx.o -o toucholap.o
+md -d -u Makedep toucholap.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../touchwin.c
+ld  -X -r xxx.o -o touchwin.o
+md -d -u Makedep touchwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../tstp.c
+ld  -X -r xxx.o -o tstp.o
+md -d -u Makedep tstp.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o ../unctrl.c
+ld  -X -r xxx.o -o unctrl.o
+md -d -u Makedep unctrl.d
+vers_string -l curses_p > curses_p_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o xxx.o curses_p_vers.c
+ld  -X -r xxx.o -o curses_p_vers.o
+md -d -u Makedep curses_p_vers.d
+ar cr libcurses_p.a addch.o addstr.o box.o clear.o clrtobot.o  clrtoeol.o cr_put.o cr_tty.o curses.o delch.o  deleteln.o delwin.o endwin.o erase.o fullname.o  getch.o getstr.o id_subwins.o idlok.o initscr.o  insch.o insertln.o longname.o move.o mvprintw.o  mvscanw.o mvwin.o newwin.o overlay.o overwrite.o  printw.o putchar.o refresh.o scanw.o scroll.o  standout.o toucholap.o touchwin.o tstp.o  unctrl.o   curses_p_vers.o
+install -r -m 644 libcurses_p.a /BSD/LIBS/libs-9i0.82/root/usr/lib
+mkdirs DBG_OBJS
+CWD=`pwd`; cd /BSD/LIBS/libs-9i0.82/root; DSTROOT=`pwd`; cd $CWD;  cd DBG_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-gg"  LIBRARY=curses_g  DBGinstall 
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../addch.c
+ld  -X -r xxx.o -o addch.o
+md -d -u Makedep addch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../addstr.c
+ld  -X -r xxx.o -o addstr.o
+md -d -u Makedep addstr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../box.c
+ld  -X -r xxx.o -o box.o
+md -d -u Makedep box.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../clear.c
+ld  -X -r xxx.o -o clear.o
+md -d -u Makedep clear.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../clrtobot.c
+ld  -X -r xxx.o -o clrtobot.o
+md -d -u Makedep clrtobot.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../clrtoeol.c
+ld  -X -r xxx.o -o clrtoeol.o
+md -d -u Makedep clrtoeol.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../cr_put.c
+ld  -X -r xxx.o -o cr_put.o
+md -d -u Makedep cr_put.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../cr_tty.c
+ld  -X -r xxx.o -o cr_tty.o
+md -d -u Makedep cr_tty.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../curses.c
+ld  -X -r xxx.o -o curses.o
+md -d -u Makedep curses.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../delch.c
+ld  -X -r xxx.o -o delch.o
+md -d -u Makedep delch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../deleteln.c
+ld  -X -r xxx.o -o deleteln.o
+md -d -u Makedep deleteln.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../delwin.c
+ld  -X -r xxx.o -o delwin.o
+md -d -u Makedep delwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../endwin.c
+ld  -X -r xxx.o -o endwin.o
+md -d -u Makedep endwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../erase.c
+ld  -X -r xxx.o -o erase.o
+md -d -u Makedep erase.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../fullname.c
+ld  -X -r xxx.o -o fullname.o
+md -d -u Makedep fullname.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../getch.c
+ld  -X -r xxx.o -o getch.o
+md -d -u Makedep getch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../getstr.c
+ld  -X -r xxx.o -o getstr.o
+md -d -u Makedep getstr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../id_subwins.c
+ld  -X -r xxx.o -o id_subwins.o
+md -d -u Makedep id_subwins.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../idlok.c
+ld  -X -r xxx.o -o idlok.o
+md -d -u Makedep idlok.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../initscr.c
+ld  -X -r xxx.o -o initscr.o
+md -d -u Makedep initscr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../insch.c
+ld  -X -r xxx.o -o insch.o
+md -d -u Makedep insch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../insertln.c
+ld  -X -r xxx.o -o insertln.o
+md -d -u Makedep insertln.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../longname.c
+ld  -X -r xxx.o -o longname.o
+md -d -u Makedep longname.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../move.c
+ld  -X -r xxx.o -o move.o
+md -d -u Makedep move.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../mvprintw.c
+ld  -X -r xxx.o -o mvprintw.o
+md -d -u Makedep mvprintw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../mvscanw.c
+ld  -X -r xxx.o -o mvscanw.o
+md -d -u Makedep mvscanw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../mvwin.c
+ld  -X -r xxx.o -o mvwin.o
+md -d -u Makedep mvwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../newwin.c
+ld  -X -r xxx.o -o newwin.o
+md -d -u Makedep newwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../overlay.c
+ld  -X -r xxx.o -o overlay.o
+md -d -u Makedep overlay.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../overwrite.c
+ld  -X -r xxx.o -o overwrite.o
+md -d -u Makedep overwrite.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../printw.c
+ld  -X -r xxx.o -o printw.o
+md -d -u Makedep printw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../putchar.c
+ld  -X -r xxx.o -o putchar.o
+md -d -u Makedep putchar.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../refresh.c
+ld  -X -r xxx.o -o refresh.o
+md -d -u Makedep refresh.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../scanw.c
+ld  -X -r xxx.o -o scanw.o
+md -d -u Makedep scanw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../scroll.c
+ld  -X -r xxx.o -o scroll.o
+md -d -u Makedep scroll.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../standout.c
+ld  -X -r xxx.o -o standout.o
+md -d -u Makedep standout.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../toucholap.c
+ld  -X -r xxx.o -o toucholap.o
+md -d -u Makedep toucholap.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../touchwin.c
+ld  -X -r xxx.o -o touchwin.o
+md -d -u Makedep touchwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../tstp.c
+ld  -X -r xxx.o -o tstp.o
+md -d -u Makedep tstp.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o ../unctrl.c
+ld  -X -r xxx.o -o unctrl.o
+md -d -u Makedep unctrl.d
+vers_string -l curses_g > curses_g_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -gg -c -o xxx.o curses_g_vers.c
+ld  -X -r xxx.o -o curses_g_vers.o
+md -d -u Makedep curses_g_vers.d
+ar cr libcurses_g.a addch.o addstr.o box.o clear.o clrtobot.o  clrtoeol.o cr_put.o cr_tty.o curses.o delch.o  deleteln.o delwin.o endwin.o erase.o fullname.o  getch.o getstr.o id_subwins.o idlok.o initscr.o  insch.o insertln.o longname.o move.o mvprintw.o  mvscanw.o mvwin.o newwin.o overlay.o overwrite.o  printw.o putchar.o refresh.o scanw.o scroll.o  standout.o toucholap.o touchwin.o tstp.o  unctrl.o   curses_g_vers.o
+install -r -m 644 libcurses_g.a /BSD/LIBS/libs-9i0.82/root/usr/lib

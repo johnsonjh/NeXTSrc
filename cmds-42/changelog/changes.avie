@@ -1,0 +1,12 @@
+cmds-28
+	Fixed vmmprint to work with latest kernel.
+
+cmds-29
+	Changed ps and mach_init to use new scheduler priorities.
+
+cmds-30
+	Fixed arp to use /mach, not /vmunix.
+	Cleaned up Makefile for telnetd along with some conditionals
+		(note, we should probably clean up all of the makefiles
+		to no longer use -bsd or __STRICT_BSD__ and to not do the
+		bogus cc -M hack with awk).

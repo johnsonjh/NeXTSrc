@@ -1,0 +1,1181 @@
+/*	@(#)init.c	1.0	02/04/87	(c) 1987 NeXT	*/
+
+/*
+ * Copyright (c) 1980,1986 Regents of the University of California.
+ * All rights reserved.  The Berkeley software License Agreement
+ * specifies the terms and conditions for redistribution.
+ */
+
+#ifndef lint
+static char sccsid[] = "@(#)init.c	5.6 (Berkeley) 5/26/86";
+#endif not lint
+
+#include <signal.h>
+#define	EXPORT_BOOLEAN
+#include <sys/boolean.h>
+#include <sys/types.h>
+#include <utmp.h>
+#include <setjmp.h>
+#include <sys/reboot.h>
+#include <errno.h>
+#include <sys/file.h>
+#include <sys/fcntl.h>
+#include <strings.h>
+#ifdef	NeXT_MOD
+#include <stdio.h>
+#include <sys/ioctl.h>
+#include <sys/reboot.h>
+#include <mon/nvram.h>
+#include <nextdev/video.h>
+
+/*
+ * Copyright (c) 1983 Regents of the University of California.
+ * All rights reserved.  The Berkeley software License Agreement
+ * specifies the terms and conditions for redistribution.
+ *
+ *	@(#)ttyent.h	5.1 (Berkeley) 5/30/85
+ */
+
+struct	ttyent { /* see getttyent(3) */
+	char	*ty_name;	/* terminal device name */
+	char	*ty_getty;	/* command to execute, usually getty */
+	char	*ty_type;	/* terminal type for termcap (3X) */
+	int	ty_status;	/* status flags (see below for defines) */
+	char 	*ty_window;	/* command to start up window manager */
+#ifdef	NeXT_MOD
+	char	*ty_onerror;	/* command to run if error logout */
+	char    *ty_onoption;
+#endif	NeXT_MOD
+	char	*ty_comment;	/* usually the location of the terminal */
+};
+
+#define TTY_ON		0x1	/* enable logins (startup getty) */
+#define TTY_SECURE	0x2	/* allow root to login */
+
+#define COMMON	0		/* Usual command that is run - getty */
+#define ONERROR 1		/* 
+				 * Command to run if error condition occurs.
+				 * This will almost always be the windowserver
+				 * and loginwindow.  This is so if the w.s.
+				 * ever dies, that the naive user (stan)
+				 * doesn't ever see the console window.
+				 */
+#define ONOPTION 2		/* 
+				 * Command to run when loginwindow exits with
+				 * special error code (229).  This signifies
+				 * that the user typed "console" at l.w. and
+				 * l.w. wants to exit and have init run getty
+				 * which will then put up a console window.
+				 */
+
+extern struct ttyent *getttyent();
+extern struct ttyent *getttynam();
+#else	NeXT_MOD
+#include <ttyent.h>
+#endif	NeXT_MOD
+#include <sys/syslog.h>
+#include <sys/stat.h>
+#ifdef	NeXT_MOD
+#include <sys/wait.h>
+#endif	NeXT_MOD
+
+#define	LINSIZ	sizeof(wtmp.ut_line)
+#define	CMDSIZ	200	/* max string length for getty or window command*/
+#define	ALL	p = itab; p ; p = p->next
+#define	EVER	;;
+#define SCPYN(a, b)	strncpy(a, b, sizeof(a))
+#define SCMPN(a, b)	strncmp(a, b, sizeof(a))
+
+char	shell[]	= "/bin/sh";
+char	minus[]	= "-";
+char	runc[]	= "/etc/rc";
+char	utmpf[]	= "/etc/utmp";
+char	wtmpf[]	= "/usr/adm/wtmp";
+char	ctty[]	= "/dev/console";
+#ifdef	NeXT
+char	rcboot[]= "/etc/rc.boot";
+#endif	NeXT
+
+struct utmp wtmp;
+struct	tab
+{
+	char	line[LINSIZ];
+	char	comn[CMDSIZ];
+	char	xflag;
+	int	pid;
+	int	wpid;		/* window system pid for SIGHUP	*/
+	char	wcmd[CMDSIZ];	/* command to start window system process */
+#ifdef	NeXT_MOD
+	char	ecmd[CMDSIZ];	/* command to run on error condition */
+	char	ocmd[CMDSIZ];	/* command to run on option condition */
+#endif	NeXT_MOD
+	time_t	gettytime;
+	int	gettycnt;
+	time_t	windtime;
+	int	windcnt;
+	struct	tab *next;
+} *itab;
+
+int	fi;
+int	mergflag;
+jmp_buf	sjbuf, shutpass;
+time_t	time0;
+
+void	reset();
+void	merge();
+int	idle();
+char	*strcpy(), *strcat();
+long	lseek();
+
+struct	sigvec rvec = { reset, sigmask(SIGHUP), 0 };
+
+main(argc, argv)
+	char **argv;
+{
+	int howto, oldhowto;
+
+	time0 = time(0);
+
+	if (argc > 1 && argv[1][0] == '-') {
+		char *cp;
+
+		howto = 0;
+		cp = &argv[1][1];
+		while (*cp) switch (*cp++) {
+		case 'a':
+			howto |= RB_ASKNAME;
+			break;
+#ifdef	NeXT
+		case 'b':
+			howto |= RB_NOBOOTRC;
+			break;
+#endif	NeXT
+		case 's':
+			howto |= RB_SINGLE;
+			break;
+		}
+	} else {
+		howto = RB_SINGLE;
+	}
+	openlog("init", LOG_CONS|LOG_ODELAY, LOG_AUTH);
+	sigvec(SIGTERM, &rvec, (struct sigvec *)0);
+	signal(SIGTSTP, idle);
+	signal(SIGSTOP, SIG_IGN);
+	signal(SIGTTIN, SIG_IGN);
+	signal(SIGTTOU, SIG_IGN);
+	(void) setjmp(sjbuf);
+#ifdef	NeXT
+	if ((howto & RB_NOBOOTRC) == 0 && access (rcboot, R_OK) == 0) {
+		howto |= RB_NOBOOTRC;
+		if (boot_rc(howto)) {
+			/* some sort of error, goto single user */
+			howto |= RB_SINGLE;
+		}
+	}
+#endif	NeXT
+	for (EVER) {
+		oldhowto = howto;
+#ifdef	NeXT
+		howto = RB_SINGLE | RB_NOBOOTRC;
+#else	NeXT
+		howto = RB_SINGLE;
+#endif	NeXT
+		if (setjmp(shutpass) == 0)
+			shutdown();
+		if (oldhowto & RB_SINGLE)
+			single();
+		if (runcom(oldhowto) == 0) 
+			continue;
+		merge();
+#ifdef DEBUG
+		first_multiple();
+#else
+		multiple();
+#endif DEBUG
+	}
+}
+
+int	shutreset();
+
+shutdown()
+{
+	register i;
+	register struct tab *p, *p1;
+
+	close(creat(utmpf, 0644));
+	signal(SIGHUP, SIG_IGN);
+	for (p = itab; p ; ) {
+		term(p);
+		p1 = p->next;
+		free(p);
+		p = p1;
+	}
+	itab = (struct tab *)0;
+	signal(SIGALRM, shutreset);
+	(void) kill(-1, SIGTERM);	/* one chance to catch it */
+#ifdef	NeXT
+	sleep(2);			/* our machine is faster.. */
+#else	NeXT
+	sleep(5);
+#endif	NeXT
+	alarm(30);
+	for (i = 0; i < 5; i++)
+		kill(-1, SIGKILL);
+	while (wait((union wait *)0) != -1)
+		;
+	alarm(0);
+	shutend();
+}
+
+char shutfailm[] = "WARNING: Something is hung (wont die); ps axl advised\n";
+
+shutreset()
+{
+	int status;
+
+	if (fork() == 0) {
+		int ct = open(ctty, 1);
+		write(ct, shutfailm, sizeof (shutfailm));
+		sleep(5);
+		exit(1);
+	}
+	sleep(5);
+	shutend();
+	longjmp(shutpass, 1);
+}
+
+shutend()
+{
+	register i, f;
+	acct(0);
+	signal(SIGALRM, SIG_DFL);
+	for (i = 0; i < 10; i++)
+		close(i);
+	f = open(wtmpf, O_WRONLY|O_APPEND);
+	if (f >= 0) {
+		SCPYN(wtmp.ut_line, "~");
+		SCPYN(wtmp.ut_name, "shutdown");
+		SCPYN(wtmp.ut_host, "");
+		time(&wtmp.ut_time);
+		write(f, (char *)&wtmp, sizeof(wtmp));
+		close(f);
+	}
+	return (1);
+}
+
+single()
+{
+	register pid;
+	register xpid;
+	extern	errno;
+#ifdef NeXT_MOD
+	char sbuf[128];
+	char *try, *passwd;
+	char *hw_passwd(), *gethwpasswd();
+	int retries = 0;
+#endif NeXT_MOD
+
+	do {
+		pid = fork();
+		if (pid == 0) {
+			signal(SIGTERM, SIG_DFL);
+			signal(SIGHUP, SIG_DFL);
+			signal(SIGALRM, SIG_DFL);
+			signal(SIGTSTP, SIG_IGN);
+#ifdef	NeXT
+			/* make sure there is a visible window */
+			(void) open(ctty, O_RDWR | O_POPUP);
+#else	NeXT
+			(void) open(ctty, O_RDWR);
+#endif	NeXT
+			dup2(0, 1);
+			dup2(0, 2);
+#ifdef NeXT_MOD
+			/*
+			 * If there is a hardware passwd, we want to 
+			 * prompt the user for it.  The write will be 
+			 * to the console window because of the O_POPUP flag.
+			 */
+			passwd = hw_passwd ();
+			write (1, "\n\n", 2);
+			
+			if (passwd != (char *)NULL)  {
+				do {
+					try = 
+				     gethwpasswd ("Enter hardware password:");
+					if (strcmp (try, passwd) == 0)  {
+						execl(shell, minus, (char *)0);
+						exit (0);
+					}
+					else  {
+						sprintf (sbuf,
+						    "Password incorrect.\n\n");
+						write (1, sbuf, strlen (sbuf));
+					}
+				}
+				while (++retries < 3);
+				do_halt();
+		   	}
+			else  {
+				execl(shell, minus, (char *)0);
+				exit(0);
+			}
+#else
+			execl(shell, minus, (char *)0);
+			exit(0);
+#endif NeXT_MOD
+		}
+		while ((xpid = wait((union wait *)0)) != pid)
+			if (xpid == -1 && errno == ECHILD)
+				break;
+	} while (xpid == -1);
+}
+
+#ifdef NeXT_MOD
+/*
+ * Taken from etc/halt/halt.c
+ */
+
+#include <stdio.h>
+#include <signal.h>
+#include <sgtty.h>
+
+do_halt()
+{
+	char sbuf [40];
+	int halthowto = RB_HALT;
+
+	(void) kill(-1, SIGTERM);	/* one chance to catch it */
+
+	sprintf (sbuf, "Invalid hardware password, halting machine...\n");
+	write (1, sbuf, strlen (sbuf));
+
+	shutend();
+	sync();
+	setalarm(5);
+	pause();
+	syscall(55, halthowto);
+
+}
+
+dingdong()
+{
+	/* RRRIIINNNGGG RRRIIINNNGGG */
+}
+
+setalarm(n)
+{
+	signal(SIGALRM, dingdong);
+	alarm(n);
+}
+
+/*
+ * Taken from lib/gen/getpass.c
+ */
+
+char *gethwpasswd(prompt)
+    char *prompt;
+{
+	struct sgttyb ttyb;
+	int flags;
+	register char *p;
+	register c;
+	static char pbuf[9], sbuf[40], tbuf[40];
+	int (*signal())();
+	int (*sig)();
+
+	ioctl(1, TIOCGETP, &ttyb);
+	flags = ttyb.sg_flags;
+	ttyb.sg_flags &= ~ECHO;
+	ioctl(1, TIOCSETP, &ttyb);
+
+	sprintf(sbuf, "%s", prompt); 
+	write (2, sbuf, strlen (sbuf));
+
+	for (p=pbuf; (c = getchar())!='\n' && c!=EOF;) {
+		if (p < &pbuf[8])
+			*p++ = c;
+	}
+	*p = '\0';
+	sprintf(sbuf, "\n"); 
+	write(2, sbuf, strlen (sbuf));
+
+	ttyb.sg_flags = flags;
+	ioctl(1, TIOCSETP, &ttyb);
+
+#ifdef DEBUG
+	sprintf (tbuf, "Entered password \"%s\"\n", pbuf);
+	write (2, tbuf, strlen (tbuf));
+#endif DEBUG
+	return(pbuf);
+}
+
+
+char *hw_passwd ()
+{
+	char *cp;
+	char sbuf[40];
+	static char buffer [12];
+	struct nvram_info nvi;
+	int    vidfd, count;
+
+	if ((vidfd = open ("/dev/vid0", O_RDONLY, 0)) == -1)  {
+#ifdef DEBUG
+		sprintf (sbuf,"vidfd open failed\n");
+		write (1, sbuf, strlen (sbuf));
+#endif DEBUG
+	    	return (NULL);
+	}
+
+	if (ioctl (vidfd, DKIOCGNVRAM, &nvi) == -1) {
+#ifdef DEBUG
+		sprintf (sbuf, "vidfd DKIOCGNVRAM failed\n");
+		write (1, sbuf, strlen (sbuf));
+#endif DEBUG
+	    	return (NULL);
+	}
+
+	if (nvi.ni_hw_pwd == HW_PWD)  {
+#ifdef DEBUG
+		sprintf (sbuf, "NVRAM passwd \"%s\"\n", nvi.ni_ep);
+		write (1, sbuf, strlen (sbuf));
+#endif DEBUG
+		for (count = 0; count < NVRAM_HW_PASSWD; count++) {
+			nvi.ni_ep[count] ^= 'N';
+		}
+		strncpy (buffer, nvi.ni_ep, NVRAM_HW_PASSWD);
+		/* ni_ep is not necessarily null terminated */
+		cp = buffer;
+		return (cp);
+	}
+	else
+	    	return (NULL);
+}
+
+
+#endif NeXT_MOD
+
+
+runcom(oldhowto)
+	int oldhowto;
+{
+	register pid, f;
+	int status;
+
+	pid = fork();
+	if (pid == 0) {
+		(void) open("/", O_RDONLY);
+		dup2(0, 1);
+		dup2(0, 2);
+		if (oldhowto & RB_SINGLE)
+			execl(shell, shell, runc, (char *)0);
+		else
+			execl(shell, shell, runc, "autoboot", (char *)0);
+		exit(1);
+	}
+	while (wait((union wait *) &status) != pid)
+		;
+	if (status)
+		return (0);
+	f = open(wtmpf, O_WRONLY|O_APPEND);
+	if (f >= 0) {
+		SCPYN(wtmp.ut_line, "~");
+		SCPYN(wtmp.ut_name, "reboot");
+		SCPYN(wtmp.ut_host, "");
+		if (time0) {
+			wtmp.ut_time = time0;
+			time0 = 0;
+		} else
+			time(&wtmp.ut_time);
+		write(f, (char *)&wtmp, sizeof(wtmp));
+		close(f);
+	}
+	return (1);
+}
+
+struct	sigvec	mvec = { merge, sigmask(SIGTERM), 0 };
+/*
+ * Multi-user.  Listen for users leaving, SIGHUP's
+ * which indicate ttys has changed, and SIGTERM's which
+ * are used to shutdown the system.
+ */
+#ifdef DEBUG
+first_multiple()
+{
+	multiple();
+}
+#endif DEBUG
+
+multiple()
+{
+	register struct tab *p;
+	register pid;
+	int omask;
+#ifdef	NeXT_MOD
+	union wait status;
+#endif	NeXT_MOD
+
+	sigvec(SIGHUP, &mvec, (struct sigvec *)0);
+	for (EVER) {
+#ifdef	NeXT_MOD
+		pid = wait(&status);
+#ifdef DEBUG
+		syslog (LOG_ERR, "MULTIPLE: pid (%d) p.pid (%d) p.wpid(%d)", 
+			pid, p->pid, p->wpid);
+#endif DEBUG
+#else	NeXT_MOD
+		pid = wait((int *)0);
+#endif	NeXT_MOD
+		if (pid == -1)
+			return;
+		omask = sigblock(SIGHUP);
+		for (ALL) {
+			/* must restart window system BEFORE loginwindow */
+			if (p->wpid == pid || p->wpid == -1)  {
+				if (WIFEXITED (status) && 
+				    status.w_retcode != 229)  {
+#ifdef DEBUG
+					syslog (LOG_ERR, "First If WSTART");
+#endif DEBUG
+				    	wstart(p);
+				}
+			}
+			if (p->pid == pid || p->pid == -1) {
+#ifdef	NeXT_MOD
+				if (WIFSIGNALED (status)) {
+					rmut (p);
+					dfork (p, ONERROR);
+				}					
+				else  {
+				    /* (WIFEXITED (status) */
+				    if (status.w_retcode == 229)  {
+#ifdef DEBUG
+					syslog (LOG_ERR, "WIFEXITED(229)");
+#endif DEBUG
+					/* disown the window system */
+					wterm (p);
+					if (p->wpid)  
+					    kill (p->wpid, SIGHUP);
+					rmut (p);
+					dfork (p, ONOPTION);
+				    }
+				    else  {
+					/* disown the window system */
+					if (p->wpid)
+					    kill (p->wpid, SIGHUP);
+					if (p->wcmd[0]) {
+#ifdef DEBUG
+					    syslog (LOG_ERR, "2nd If WSTART");
+#endif DEBUG
+					    /* restart the window system */
+					    wstart (p);
+					}
+					rmut (p);
+					dfork (p, ONERROR);
+				    }
+			        }
+#else	NeXT_MOD
+				/* disown the window system */
+				if (p->wpid)
+					kill(p->wpid, SIGHUP);
+				rmut(p);
+				dfork(p);
+#endif	NeXT_MOD
+			}
+		}
+		sigsetmask(omask);
+	}
+}
+
+/*
+ * Merge current contents of ttys file
+ * into in-core table of configured tty lines.
+ * Entered as signal handler for SIGHUP.
+ */
+#define	FOUND	1
+#define	CHANGE	2
+#define WCHANGE 4
+
+void
+merge()
+{
+	register struct tab *p;
+	register struct ttyent *t;
+	register struct tab *p1;
+
+	for (ALL)
+		p->xflag = 0;
+	setttyent();
+	while (t = getttyent()) {
+		if ((t->ty_status & TTY_ON) == 0)
+			continue;
+		for (ALL) {
+			if (SCMPN(p->line, t->ty_name))
+				continue;
+			p->xflag |= FOUND;
+			if (SCMPN(p->comn, t->ty_getty)) {
+				p->xflag |= CHANGE;
+				SCPYN(p->comn, t->ty_getty);
+			}
+#ifdef	NeXT_MOD
+			if (t->ty_window != 0)
+#endif	NeXT_MOD
+			if (SCMPN(p->wcmd, t->ty_window)) {
+				p->xflag |= WCHANGE|CHANGE;
+				SCPYN(p->wcmd, t->ty_window);
+			}
+			goto contin1;
+		}
+
+		/*
+		 * Make space for a new one
+		 */
+		p1 = (struct tab *)calloc(1, sizeof(*p1));
+		if (!p1) {
+			syslog(LOG_ERR, "no space for '%s' !?!", t->ty_name);
+			goto contin1;
+		}
+		/*
+		 * Put new terminal at the end of the linked list.
+		 */
+		if (itab) {
+			for (p = itab; p->next ; p = p->next)
+				;
+			p->next = p1;
+		} else
+			itab = p1;
+
+		p = p1;
+		SCPYN(p->line, t->ty_name);
+		p->xflag |= FOUND|CHANGE;
+		SCPYN(p->comn, t->ty_getty);
+#ifdef	NeXT_MOD
+		if (t->ty_window != 0)
+#endif	NeXT_MOD
+		if (strcmp(t->ty_window, "") != 0) {
+			p->xflag |= WCHANGE;
+			SCPYN(p->wcmd, t->ty_window);
+		}
+#ifdef	NeXT_MOD
+		if (t->ty_onerror != 0 && t->ty_onerror[0] != '\0') {
+			SCPYN(p->ecmd, t->ty_onerror);
+		}
+		if (t->ty_onoption != 0 && t->ty_onoption[0] != '\0') {
+			SCPYN(p->ocmd, t->ty_onoption);
+		}
+#endif	NeXT_MOD
+	contin1:
+		;
+	}
+	endttyent();
+	p1 = (struct tab *)0;
+	for (ALL) {
+		if ((p->xflag&FOUND) == 0) {
+#ifdef DEBUG
+			syslog (LOG_ERR, "FOUND term() wterm()");
+#endif DEBUG
+			term(p);
+			wterm(p);
+			if (p1)
+				p1->next = p->next;
+			else
+				itab = p->next;
+			free(p);
+			p = p1 ? p1 : itab;
+		} else {
+			/* window system should be started first */
+			if (p->xflag&WCHANGE) {
+#ifdef DEBUG
+				syslog (LOG_ERR, "WCHANGE wstart");
+#endif DEBUG
+				wterm(p);
+				wstart(p);
+			}
+			if (p->xflag&CHANGE) {
+				term(p);
+#ifdef	NeXT_MOD
+#ifdef DEBUG
+				syslog (LOG_ERR, "CHANGE dfork COMMON");
+#endif DEBUG
+				dfork(p, COMMON);
+#else	NeXT_MOD
+				dfork(p);
+#endif 	NeXT_MOD
+			}
+		}
+		p1 = p;
+	}
+}
+
+term(p)
+	register struct tab *p;
+{
+
+	if (p->pid != 0) {
+		rmut(p);
+		kill(p->pid, SIGKILL);
+	}
+	p->pid = 0;
+	/* send SIGHUP to get rid of connections */
+	if (p->wpid > 0)
+		kill(p->wpid, SIGHUP);
+}
+
+#include <sys/ioctl.h>
+
+#ifdef	NeXT_MOD
+dfork(p, which)
+	struct tab *p;
+	int which;
+#else	NeXT_MOD
+dfork(p)
+	struct tab *p;
+#endif	NeXT_MOD
+{
+	register pid;
+	time_t t;
+	int dowait = 0;
+
+	time(&t);
+	p->gettycnt++;
+	if ((t - p->gettytime) >= 60) {
+		p->gettytime = t;
+		p->gettycnt = 1;
+	} else if (p->gettycnt >= 5) {
+		dowait = 1;
+		p->gettytime = t;
+		p->gettycnt = 1;
+	}
+	pid = fork();
+	if (pid == 0) {
+		signal(SIGTERM, SIG_DFL);
+		signal(SIGHUP, SIG_IGN);
+		sigsetmask(0);	/* since can be called from masked code */
+		if (dowait) {
+			syslog(LOG_ERR, "'%s %s' failing, sleeping", p->comn, p->line);
+			closelog();
+			sleep(30);
+		}
+#ifdef	NeXT_MOD
+		switch (which)  {
+		    case COMMON:
+#ifdef DEBUG
+			syslog (LOG_ERR, "COMMON");
+#endif DEBUG
+			execit(p->comn, p->line);
+			break;
+		    case ONOPTION:
+#ifdef DEBUG
+			syslog (LOG_ERR, "ONOPTION");
+#endif DEBUG
+			if (p->ocmd[0])  
+			    execit(p->ocmd, p->line);
+			else if (p->ecmd[0])
+			    execit(p->ecmd, p->line);
+			else
+			    execit(p->comn, p->line);
+			break;
+		    case ONERROR:
+#ifdef DEBUG
+			syslog (LOG_ERR, "ONERROR");
+#endif DEBUG
+			if (p->ecmd[0])  
+			    execit(p->ecmd, p->line);
+			else
+			    execit(p->comn, p->line);
+			break;
+		    default:
+			execit (p->wcmd, p->line);
+		}
+#else
+		execit(p->comn, p->line);
+#endif	NeXT_MOD
+#ifdef	NeXT_MOD
+		exit(1);
+#else
+		exit(0);
+#endif NeXT_MOD
+	}
+	p->pid = pid;
+}
+
+/*
+ * Remove utmp entry.
+ */
+rmut(p)
+	register struct tab *p;
+{
+	register f;
+	int found = 0;
+	static unsigned utmpsize;
+	static struct utmp *utmp;
+	register struct utmp *u;
+	int nutmp;
+	struct stat statbf;
+
+	f = open(utmpf, O_RDWR);
+	if (f >= 0) {
+		fstat(f, &statbf);
+		if (utmpsize < statbf.st_size) {
+			utmpsize = statbf.st_size + 10 * sizeof(struct utmp);
+			if (utmp)
+				utmp = (struct utmp *)realloc(utmp, utmpsize);
+			else
+				utmp = (struct utmp *)malloc(utmpsize);
+			if (!utmp)
+				syslog(LOG_ERR, "utmp malloc failed");
+		}
+		if (statbf.st_size && utmp) {
+			nutmp = read(f, utmp, statbf.st_size);
+			nutmp /= sizeof(struct utmp);
+			for (u = utmp ; u < &utmp[nutmp] ; u++) {
+				if (SCMPN(u->ut_line, p->line) ||
+				    u->ut_name[0]==0)
+					continue;
+				lseek(f, ((long)u)-((long)utmp), L_SET);
+				SCPYN(u->ut_name, "");
+				SCPYN(u->ut_host, "");
+				time(&u->ut_time);
+				write(f, (char *)u, sizeof(*u));
+				found++;
+			}
+		}
+		close(f);
+	}
+	if (found) {
+		f = open(wtmpf, O_WRONLY|O_APPEND);
+		if (f >= 0) {
+			SCPYN(wtmp.ut_line, p->line);
+			SCPYN(wtmp.ut_name, "");
+			SCPYN(wtmp.ut_host, "");
+			time(&wtmp.ut_time);
+			write(f, (char *)&wtmp, sizeof(wtmp));
+			close(f);
+		}
+		/*
+		 * After a proper login force reset
+		 * of error detection code in dfork.
+		 */
+		p->gettytime = 0;
+		p->windtime = 0;
+	}
+}
+
+void
+reset()
+{
+
+	longjmp(sjbuf, 1);
+}
+
+jmp_buf	idlebuf;
+
+idlehup()
+{
+
+	longjmp(idlebuf, 1);
+}
+
+idle()
+{
+	register struct tab *p;
+	register pid;
+
+	signal(SIGHUP, idlehup);
+	for (EVER) {
+		if (setjmp(idlebuf))
+			return;
+		pid = wait((union wait *) 0);
+		if (pid == -1) {
+			sigpause(0);
+			continue;
+		}
+		for (ALL) {
+			/* if window system dies, mark it for restart */
+			if (p->wpid == pid)
+				p->wpid = -1;
+			if (p->pid == pid) {
+				rmut(p);
+				p->pid = -1;
+			}
+		}
+	}
+}
+
+wterm(p)
+	register struct tab *p;
+{
+	if (p->wpid != 0) {
+		kill(p->wpid, SIGKILL);
+	}
+	p->wpid = 0;
+}
+
+wstart(p)
+	register struct tab *p;
+{
+	register pid;
+	time_t t;
+	int dowait = 0;
+
+	time(&t);
+	p->windcnt++;
+	if ((t - p->windtime) >= 60) {
+		p->windtime = t;
+		p->windcnt = 1;
+	} else if (p->windcnt >= 5) {
+		dowait = 1;
+		p->windtime = t;
+		p->windcnt = 1;
+	}
+
+	pid = fork();
+
+	if (pid == 0) {
+		signal(SIGTERM, SIG_DFL);
+		signal(SIGHUP,  SIG_IGN);
+		sigsetmask(0);	/* since can be called from masked code */
+		if (dowait) {
+			syslog(LOG_ERR, "'%s %s' failing, sleeping", p->wcmd, p->line);
+			closelog();
+			sleep(30);
+		}
+#ifdef DEBUG
+		syslog (LOG_ERR, "WSTART");
+#endif DEBUG
+		execit(p->wcmd, p->line);
+		printf ("wstart: exiting\n");
+		exit(0);
+	}
+	p->wpid = pid;
+}
+
+#define NARGS	20	/* must be at least 4 */
+#define ARGLEN	512	/* total size for all the argument strings */
+
+execit(s, arg)
+	char *s;
+	char *arg;	/* last argument on line */
+{
+	char *argv[NARGS], args[ARGLEN], *envp[1];
+	register char *sp = s;
+	register char *ap = args;
+	register char c;
+	register int i;
+
+#ifdef DEBUG
+	syslog (LOG_ERR, ":execit: %s %s", s, arg);
+#endif DEBUG
+	/*
+	 * First we have to set up the argument vector.
+	 * "prog arg1 arg2" maps to exec("prog", "-", "arg1", "arg2"). 
+	 */
+	for (i = 1; i < NARGS - 2; i++) {
+		argv[i] = ap;
+		for (EVER) {
+			if ((c = *sp++) == '\0' || ap >= &args[ARGLEN-1]) {
+				*ap = '\0';
+				goto done;
+			}
+			if (c == ' ') {
+				*ap++ = '\0';
+				while (*sp == ' ')
+					sp++;
+				if (*sp == '\0')
+					goto done;
+				break;
+			}
+			*ap++ = c;
+		}
+	}
+done:
+	argv[0] = argv[1];
+	argv[1] = "-";
+	argv[i+1] = arg;
+	argv[i+2] = 0;
+	envp[0] = 0;
+	execve(argv[0], &argv[1], envp);
+	/* report failure of exec */
+	syslog(LOG_ERR, "%s: %m", argv[0]);
+	closelog();
+	sleep(10);	/* prevent failures from eating machine */
+}
+
+#ifdef	NeXT
+/* execute the "rc.boot" file once at boot time */
+int
+boot_rc(howto)
+	int howto;
+{
+	int pid;
+	int status;
+	
+	printf ("boot_rc\n");
+	if ((pid = fork()) == 0) {
+		open ("/", O_RDONLY);
+		dup2 (0, 1);
+		dup2 (0, 2);
+		if (howto & RB_SINGLE)
+			execl (shell, shell, rcboot, "singleuser", (char*) 0);
+		else
+			execl (shell, shell, rcboot, (char *)0);
+		exit (1);
+	}
+	while (wait ((union wait *) &status) != pid);
+	return(status);
+}
+#endif	NeXT
+
+#ifdef	NeXT_MOD
+/* /BSD/LIBS/libs/lib/libc/gen/getttyent.c */
+/*
+ * Copyright (c) 1985 Regents of the University of California.
+ * All rights reserved.  The Berkeley software License Agreement
+ * specifies the terms and conditions for redistribution.
+ */
+
+#if defined(LIBC_SCCS) && !defined(lint)
+static char sccsid[] = "@(#)getttyent.c	5.4 (Berkeley) 5/19/86";
+#endif LIBC_SCCS and not lint
+
+#include <stdio.h>
+#ifdef	NeXT_MOD
+#else	NeXT_MOD
+#include <strings.h>
+#include <ttyent.h>
+#endif	NeXT_MOD
+
+static char TTYFILE[] = "/etc/ttys";
+static char zapchar;
+static FILE *tf = NULL;
+#define LINE 256
+static char line[LINE];
+static struct ttyent tty;
+
+setttyent()
+{
+	if (tf == NULL)
+		tf = fopen(TTYFILE, "r");
+	else
+		rewind(tf);
+}
+
+endttyent()
+{
+	if (tf != NULL) {
+		(void) fclose(tf);
+		tf = NULL;
+	}
+}
+
+#define QUOTED	1
+
+/*
+ * Skip over the current field, removing quotes,
+ * and return a pointer to the next field.
+ */
+static char *
+skip(p)
+	register char *p;
+{
+	register char *t = p;
+	register int c;
+	register int q = 0;
+
+	for (; (c = *p) != '\0'; p++) {
+		if (c == '"') {
+			q ^= QUOTED;	/* obscure, but nice */
+			continue;
+		}
+		if (q == QUOTED && *p == '\\' && *(p+1) == '"')
+			p++;
+		*t++ = *p;
+		if (q == QUOTED)
+			continue;
+		if (c == '#') {
+			zapchar = c;
+			*p = 0;
+			break;
+		}
+		if (c == '\t' || c == ' ' || c == '\n') {
+			zapchar = c;
+			*p++ = 0;
+			while ((c = *p) == '\t' || c == ' ' || c == '\n')
+				p++;
+			break;
+		}
+	}
+	*--t = '\0';
+	return (p);
+}
+
+static char *
+value(p)
+	register char *p;
+{
+	if ((p = index(p,'=')) == 0)
+		return(NULL);
+	p++;			/* get past the = sign */
+	return(p);
+}
+
+struct ttyent *
+getttyent()
+{
+	register char *p;
+	register int c;
+
+	if (tf == NULL) {
+		if ((tf = fopen(TTYFILE, "r")) == NULL)
+			return (NULL);
+	}
+	do {
+		p = fgets(line, LINE, tf);
+		if (p == NULL)
+			return (NULL);
+		while ((c = *p) == '\t' || c == ' ' || c == '\n')
+			p++;
+	} while (c == '\0' || c == '#');
+	zapchar = 0;
+	tty.ty_name = p;
+	p = skip(p);
+	tty.ty_getty = p;
+	p = skip(p);
+	tty.ty_type = p;
+	p = skip(p);
+#ifdef	NeXT_MOD
+	tty.ty_onerror = NULL;
+	tty.ty_onoption = NULL;
+#endif	NeXT_MOD
+	tty.ty_status = 0;
+	tty.ty_window = NULL;
+	for (; *p; p = skip(p)) {
+#define space(x) ((c = p[x]) == ' ' || c == '\t' || c == '\n')
+		if (strncmp(p, "on", 2) == 0 && space(2))
+			tty.ty_status |= TTY_ON;
+		else if (strncmp(p, "off", 3) == 0 && space(3))
+			tty.ty_status &= ~TTY_ON;
+		else if (strncmp(p, "secure", 6) == 0 && space(6))
+			tty.ty_status |= TTY_SECURE;
+		else if (strncmp(p, "window=", 7) == 0)
+			tty.ty_window = value(p);
+#ifdef	NeXT_MOD
+		else if (strncmp(p, "onerror=", 8) == 0)
+			tty.ty_onerror = value(p);
+		else if (strncmp(p, "onoption=", 9) == 0)
+			tty.ty_onoption = value(p);
+#endif	NeXT_MOD
+		else
+			break;
+	}
+	if (zapchar == '#' || *p == '#')
+		while ((c = *++p) == ' ' || c == '\t')
+			;
+	tty.ty_comment = p;
+	if (*p == 0)
+		tty.ty_comment = 0;
+	if (p = index(p, '\n'))
+		*p = '\0';
+	return(&tty);
+}
+#endif	NeXT_MOD

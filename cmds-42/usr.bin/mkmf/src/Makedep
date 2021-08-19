@@ -1,0 +1,61 @@
+Mkmf.o: Mkmf.c sccsid.h Mkmf.h getarg.h hash.h null.h path.h target.h slist.h
+Mkmf.o: suffix.h system.h /usr/include/sys/file.h /usr/include/sys/fcntl.h
+Mkmf.o: yesno.h defaultrul.h defaultsfx.h
+badopt.o: badopt.c /usr/include/stdio.h /usr/include/stddef.h
+badopt.o: /usr/include/stdarg.h null.h
+buildlist.o: buildlist.c /usr/include/sys/types.h /usr/include/sys/dir.h
+buildlist.o: /usr/include/sys/types.h /usr/include/stdio.h
+buildlist.o: /usr/include/stddef.h /usr/include/stdarg.h /usr/include/ctype.h
+buildlist.o: Mkmf.h hash.h null.h path.h slist.h suffix.h system.h
+buildlist.o: /usr/include/sys/file.h /usr/include/sys/fcntl.h yesno.h
+depend.o: depend.c /usr/include/ctype.h /usr/include/stdio.h
+depend.o: /usr/include/stddef.h /usr/include/stdarg.h Mkmf.h dlist.h hash.h
+depend.o: macro.h null.h path.h slist.h system.h /usr/include/sys/file.h
+depend.o: /usr/include/sys/fcntl.h yesno.h
+dlist.o: dlist.c /usr/include/stdio.h /usr/include/stddef.h
+dlist.o: /usr/include/stdarg.h Mkmf.h dlist.h hash.h null.h slist.h yesno.h
+editmf.o: editmf.c /usr/include/ctype.h /usr/include/signal.h
+editmf.o: /usr/include/sys/signal.h /usr/include/machine/signal.h
+editmf.o: /usr/include/stdio.h /usr/include/stddef.h /usr/include/stdarg.h
+editmf.o: Mkmf.h dlist.h hash.h macro.h null.h slist.h system.h
+editmf.o: /usr/include/sys/file.h /usr/include/sys/fcntl.h yesno.h
+getcwp.o: getcwp.c null.h
+getproject.o: getproject.c null.h
+hash.o: hash.c null.h hash.h macro.h
+iolin.o: iolin.c /usr/include/stdio.h /usr/include/stddef.h
+iolin.o: /usr/include/stdarg.h yesno.h
+macro.o: macro.c /usr/include/ctype.h /usr/include/stdio.h
+macro.o: /usr/include/stddef.h /usr/include/stdarg.h Mkmf.h hash.h macro.h
+macro.o: null.h slist.h yesno.h
+misc.o: misc.c /usr/include/ctype.h /usr/include/stdio.h /usr/include/stddef.h
+misc.o: /usr/include/stdarg.h Mkmf.h hash.h macro.h null.h path.h target.h
+misc.o: spms.h suffix.h system.h /usr/include/sys/file.h
+misc.o: /usr/include/sys/fcntl.h yesno.h
+mustfopen.o: mustfopen.c /usr/include/stdio.h /usr/include/stddef.h
+mustfopen.o: /usr/include/stdarg.h
+optpath.o: optpath.c path.h
+pathcat.o: pathcat.c /usr/include/stdio.h /usr/include/stddef.h
+pathcat.o: /usr/include/stdarg.h path.h
+pathhead.o: pathhead.c null.h path.h
+pperror.o: pperror.c /usr/include/stdio.h /usr/include/stddef.h
+pperror.o: /usr/include/stdarg.h
+rule.o: rule.c Mkmf.h null.h rule.h slist.h suffix.h system.h
+rule.o: /usr/include/sys/file.h /usr/include/sys/fcntl.h yesno.h
+slappend.o: slappend.c /usr/include/stdio.h /usr/include/stddef.h
+slappend.o: /usr/include/stdarg.h macro.h null.h slist.h
+slinit.o: slinit.c /usr/include/stdio.h /usr/include/stddef.h
+slinit.o: /usr/include/stdarg.h null.h slist.h
+slsort.o: slsort.c /usr/include/stdio.h /usr/include/stddef.h
+slsort.o: /usr/include/stdarg.h null.h slist.h yesno.h
+strpcpy.o: strpcpy.c
+strsav.o: strsav.c null.h
+suffix.o: suffix.c /usr/include/stdio.h /usr/include/stddef.h
+suffix.o: /usr/include/stdarg.h Mkmf.h hash.h macro.h null.h suffix.h yesno.h
+usage.o: usage.c /usr/include/stdio.h /usr/include/stddef.h
+usage.o: /usr/include/stdarg.h null.h
+warn.o: warn.c /usr/include/stdio.h /usr/include/stddef.h /usr/include/stdarg.h
+warn.o: null.h
+warn2.o: warn2.c /usr/include/stdio.h /usr/include/stddef.h
+warn2.o: /usr/include/stdarg.h null.h
+warns.o: warns.c /usr/include/stdio.h /usr/include/stddef.h
+warns.o: /usr/include/stdarg.h null.h

@@ -1,0 +1,105 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    gk:1.1; strict;
+comment  @ * @;
+
+
+1.1
+date     88.09.30.15.46.01;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@NeXT, Inc.
+@
+
+
+
+1.1
+log
+@Initial NeXT version
+@
+text
+@/* 
+ * Mach Operating System
+ * Copyright (c) 1987 Carnegie-Mellon University
+ * All rights reserved.  The CMU software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ */
+/*
+ * vax_fast_lock.h
+ *
+ * $Source: /afs/cs.cmu.edu/project/mach/member/dpj/netmsg/server/RCS/vax_fast_lock.h,v $
+ *
+ * $Header: vax_fast_lock.h,v 1.6 88/03/04 16:39:41 dpj Rel $
+ *
+ */
+
+/*
+ * Fast inline locking routines for Vax.
+ */
+
+/*
+ * HISTORY:
+ * 27-Jul-87  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Created history, code courtesy of rfr.
+ */
+
+#ifndef _VAX_FAST_LOCK_
+#define _VAX_FAST_LOCK_ 1
+
+#ifndef	vax
+	Sorry, this only works on a Vax.
+#endif	vax
+
+#undef spin_lock
+#define spin_lock(p_crit) {					\
+	extern	int	cthread_critical;			\
+	register int not_done = 1;				\
+	while (not_done) {					\
+		asm("7:	bbssi	$0,_cthread_critical,7b");	\
+		if (*(int *)(p_crit) == 0) {			\
+			*(int *)(p_crit) = 1; not_done = 0; 	\
+		asm("8:	bbcci	$0,_cthread_critical,8b");	\
+		} else {					\
+		asm("9:	bbcci	$0,_cthread_critical,9b"); }	\
+	}							\
+}
+
+#undef spin_unlock
+#define	spin_unlock(p_crit) {				\
+	extern	int	cthread_critical;		\
+	asm("7:	bbssi	$0,_cthread_critical,7b");	\
+	*(int *)(p_crit) = 0;				\
+	asm("8:	bbcci	$0,_cthread_critical,8b");	\
+}
+
+#undef mutex_lock
+#define mutex_lock(m_crit) {					\
+	extern	int	cthread_critical;			\
+	extern 	int *	swtch_cnt_ptr; 				\
+	register int 	not_done = 1;				\
+	while (not_done) {					\
+		asm("7:	bbssi	$0,_cthread_critical,7b");	\
+		if (*(int *)(m_crit) == 0) {			\
+			*(int *)(m_crit) = 1; not_done = 0; 	\
+		asm("8:	bbcci	$0,_cthread_critical,8b");	\
+		} else {					\
+		asm("9:	bbcci	$0,_cthread_critical,9b"); }	\
+		if (not_done) { (*swtch_cnt_ptr)++; swtch_pri(127); }	\
+	}							\
+}
+
+#undef mutex_unlock
+#define	mutex_unlock(m_crit) {				\
+	extern	int	cthread_critical;		\
+	asm("7:	bbssi	$0,_cthread_critical,7b");	\
+	*(int *)(m_crit) = 0;				\
+	asm("8:	bbcci	$0,_cthread_critical,8b");	\
+}
+
+
+#endif _VAX_FAST_LOCK_
+@

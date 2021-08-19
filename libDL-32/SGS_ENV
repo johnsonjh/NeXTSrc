@@ -1,0 +1,24 @@
+####################################################################
+#
+#		 ### SGS source control definitions ###
+#
+# This section is applicable to source under SGS source control only.
+# The following three variables must be uncommented and suitably
+# defined.  This file must appear in the version root of all versions
+# under SGS control.  Is typically placed in the version root of the
+# original version and propagated by make_clone and new_vers to
+# subsequent versions.
+
+# Redefine MASTER_USER to be the login for the account
+# owning the master versions of the project software
+MASTER_USER=dl
+
+# Refine PROJECT_NAME for the name chosen for your project
+PROJECT_NAME=libDL
+
+# Redefine DONT_DIFF to be an egrep(1) pattern that matches
+# files that are not source files and should not be
+# diff'ed by commands like diff_clone or integrated
+DONT_DIFF:/tags$|/vers.c$|/core$|\.o$|\.a$|\~$|/\.|\.s$|\.temps$|\.hs$|/\#|\.wn$|\.dump$|\.arc$
+
+

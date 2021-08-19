@@ -1,0 +1,7 @@
+in.tnamed.o: in.tnamed.c /usr/include/stdio.h /usr/include/stddef.h
+in.tnamed.o: /usr/include/stdarg.h /usr/include/strings.h /usr/include/string.h
+in.tnamed.o: /usr/include/stddef.h /usr/include/signal.h
+in.tnamed.o: /usr/include/sys/signal.h /usr/include/machine/signal.h
+in.tnamed.o: /usr/include/sys/time.h /usr/include/time.h /usr/include/stddef.h
+in.tnamed.o: /usr/include/sys/types.h /usr/include/sys/socket.h
+in.tnamed.o: /usr/include/netinet/in.h /usr/include/netdb.h

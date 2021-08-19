@@ -1,0 +1,209 @@
+Changes for the Warp ?? release (the -30 compiler release):
+- Added the -s <segname> <sectname> option to otool(1) to print the contents of
+  a section (related to bug #9404).
+- Fixed a two bugs (#8466) in segedit, the first was if the first segment did
+  not start at offset 0 it would refuse to replace sections (only the MH_EXECUTE
+  format would work) and second the size of the replaced section got rounded to
+  sizeof(long) and not to the section alignment.  There still exist the problem
+  where the alignment of the sections that follow a replaced section is not
+  correct.
+- Cleaned up the Makefile and removed the -lsys_s's from the link lines.
+
+Changes for the Warp ?? release (the -29 compiler release):
+- Added the -l option to size to print the "layout" of the sections with -m
+  (undocumented).
+
+Changes for the Warp ?? release (the -27 compiler release):
+- Changed strings to look in all non-zero fill section except the
+  (__TEXT,__text) section by default.
+
+Changes for the Warp ?? release (the -26 compiler release):
+- Fixed a bug in otool in printing unknown load commands with a negitive
+  cmdsize.
+
+Changes for the Warp 3 (OS update) release (the -25 compiler release):
+- Updated otool to handle scattered relocation entries.
+- Fixed a bug in strip that was opening the debug and save list files read/write
+  when it should have been opening it read only.
+- Fixed otool to dissassemble fnop not fbfw .+2
+
+Changes for the Warp 3 release (the -24 compiler release):
+- Fixed a bug in otool's dissembler that "andl d0,d7" got disassembled as
+  "andl d0,d3".
+- Fixed ebadexec to use the new version of host_info.
+- Added -lc_static to otool, ebadexec links in the Makefile.
+- Changed nm not to add the ".section_start" symbol if the section is of zero
+  size.
+- Removed the prototype for map_fd from ebadexec.c .
+- Changed the -a option to -A which saves only absolute symbols except zero
+  valued symbols (but including .objc_class_name_* symbols).  This is intended
+  for use with IB and the rld package.
+
+Changes for the 2.0 impulse X.X release (the -23 compiler release):
+- Fixed a bug with strip -d that did not get the filenames sorted because it
+  needed a function for qsort that needed one more level of indirection.
+- All released things except otool and ebadexec are now linked with libsys and
+  most are -object format.
+- Hard coded the host machine type in ebadexec because the host_info call is
+  currently broken.
+
+Changes for the 2.0 impulse X.X release (the -22 compiler release):
+- Changed ebadexec to the new host_into stuff.
+- Fixed a bug in mlist.c that did not allocate the right number of bytes for
+  names with categories.
+- Broke down and added the fsync() to get around the constantly recuring bug in
+  the kernel that does not set the modifiy time correctly.
+- Fixed a bug in ranlib(1) that did not produce the symbol table in sorted
+  order when the number of strings overflowed it's first string table and
+  went on to use more than one.
+- Added the -d option to strip(1) to save a list of object's debugging symbols
+  which be used to save the debugging symbols for objects in the shared library
+  that contain data so thing like errno and NXApp don't appear as char's.
+
+Changes for the 2.0 impulse X.X release (the -21 compiler release):
+- Changed strip to set the vmsize of the linkedit segment to the same as the
+  filesize of when it is set.  This appears to work but the kernel is very
+  sensitive in this area.
+- Added the -a option to strip(1) to strip absolute symbols with zero values.
+- Fixed two bugs in the disassembler of otool(1) in the muls/mulu instructions
+  where the word and long versions got reversed.
+
+Changes for the 2.0 impulse X.X release (the -19 compiler release):
+- Added some code in indr(l) to keep the shared library reference object
+  referencing all objects in the library including all objects created by
+  indr itself.
+- Fixed it so that any member name that starts with "__.SYMDEF" is not copied
+  to the output (this avoids "__.SYMDEF SORTED" being copied and then ar(1)
+  messing up and hacking the name and then ranlib(1) not replacing it).
+- Zeroed out the environment and shorten the tempdir name to allow more space
+  for the command line arguments for indr (this overflowed with libsys-22 and
+  librld).
+- Updated for the changes to CPU_TYPE and CPU_SUBTYPE with the changes to
+  <sys/machine.h>
+- Added to nm the following to support generating the load order file for the
+  link editor option -loadorder SEG sect file:
+	allow the libx.a(member.o) syntax,
+	added the -s SEG sect option to list only symbols from that section
+	added the -j flag to list only the symbol name (no value or type)
+	added the -l flag to print a pseudo symbol .section_start if no symbol
+		has the value of the start of the section (used with -s above)
+  So with nm -jsol __TEXT __text `cat loadlist` this will generate the load
+  order file from a list of objects to be loaded.
+- Added printing of category names to objective C symbol names using the updated
+  mlist function.
+- Fixed nm to handle full 16 character archive member names.
+- Fixed size to handle full 16 character segment and section names.
+
+Changes for the 2.0 impulse 0.01 release (the -17 compiler release):
+- Updated indr(l) to use the ranlib(1) -s option.
+- Fixed a bug in indr(l) that if the input object file did not have a LC_SYMSEG
+  it might core dump indr(l) because it used the local variable `ssp'  without
+  being set.
+- Updated otool to print the shared library initialization from the section
+  now created by mkshlib.  Also removed the LIBMAGIC stuff for a.out shlibs
+  since it was removed from mkshlib.
+- Updated nm to not have the section numbers for text, data, and bss hard coded
+  in it but to determine them from the headers.
+- Fixed a bug in segedit(1) that did not first check the filesize of a segment
+  for zero size before adjusting it's internal low_noreloc_seg which would cause
+  it to think the file was out of order and not process it.
+- Added the -s option to ranlib(1) to sort the ranlib structures by name for
+  use by the new link editor (The default).  The -a option builds the table of
+  contents in the original archive order.  Also added the -c option to ranlib
+  to take common definitions as symbols that are defined for the purpose of the
+  table of contents (the previous behavior, NOT the default).  Also made it
+  faster by writing the archive and not calling ar(1)
+- Fixed the Makefile so that segedit would NOT end up in usr/local/bin but in
+  usr/bin (it didn't make it out in the 1.0 release for this reason).
+- Fixed file(1) so that it would not run off the end of the buffer looking at
+  load commands looking for the symbol table load command (bug 3121).
+- Added the -i option to otool to print the shared library initialization table.
+- Added printing the minor version number to otool with the -L option.
+- Fixed printing of segment and section names that are a full 16 characters
+  long which don't have a null terminating byte in otool.c, nm.c, size.c and
+  segedit.c .  The fix was to use "%0.16s" instead of "%s" for the format
+  string to printf().
+- Turned on NeXT_MOD in ar.c to turn on the code to match truncated names in
+  the archive and not put two of the same file in an archive if it's name was
+  over 16 characters (bug 2031).
+
+Changes for the 0.96 release (the -16 compiler release):
+- Changed and clarified the meaning of the strings '-' and '-a' options to mean
+  '-' print strings from the enitre file
+  '-a' print strings from all sections
+- Added the -c option to otool to print the argument strings from a core file.
+- Added the program segedit(1).
+- Turned on the NeXT_NFS define in ranlib to fix a bug which set the
+  modification date wrong on a library if it resided on an NFS mounted file
+  system.
+
+Changes for the 0.93 release (the -12 compiler release):
+- Added the printing of the SG_NORELOC flag to segments.
+- Added the -gg option to atom to produce symseg info only when -gg is present.
+- Added the printing of method names for nm (turns off with -z).
+- Updated otool to handle objective-C categories.
+- Fixed a bug in strip that would not strip objects with non-zero bss sizes.
+
+Changes for the 0.91 release (the -11 compiler release):
+- Added the -s <file> option to strip to do selective stripping and to
+  correctly strip "ordered" Mach-O files.
+- Changed the Makefile to compile everything without -bsd and without
+  -fwritable-strings.
+- Changed ar use of mktemp() to allow it to be compiled without
+  -fwritable-strings and made changes signal() calls to allow it
+  to be compiled without -bsd.
+- Removed printing of (with -gg symbol table) in file(1).
+
+Changes for the 0.91 release (the -10 compiler release):
+- Added the -L option to otool to print the shared libraries used.
+- Added the -o and -O options to otool to dump the objective-C runtime info
+  and string table.
+- Major addition of the -objc flag to atom which splits an OMAGIC file into the
+  sections of the __OBJC segment for the new objective-C runtime.
+- Added the -G option to otool to print the size of the global data section for
+  shared libraries.
+- Added the -x option to nm to print the everything in hex (the name is also
+  printed as a string).
+- Added the -T <hex number> option to otool for OMAGIC files's text address.
+  This is so it can dissassemble the kernel, etc.
+
+Changes for the 0.83 release (the -9 compiler release):
+- Changed indr to default to producing Mach-O files.
+
+Changes for the 0.82 release (the -8 compiler release):
+- Changed the Makefile to install in /bin except for indr which is now in
+  in /usr/local/bin (this directory gets cleaned before release).
+
+Changes for the 0.82 release (the -7 compiler release):
+- Added printing the new header_addr fields of fvmlib load and id commands.
+- Fixed a bug that didn't print MACH_SHLIB_ROOT's symreloffset field.
+- Added in atom page 0 protect segment in execute formats (binaries will only
+  run under a 0.81 or better system).
+- Changed all casts on left hand sides to a final cast on the right hand side
+  this is no longer legal in ANSI C (a late -6 compiler change).
+- Changed atom's setting of page_size to a cpp macro passed in from the
+  Makefile and not use getpagesize().
+
+Changes for the 0.81 release (the -6 compiler release):
+- Added the tool ranlib to here and it was removed from the commands project.
+- Added the tool indr (the tool to build the ANSI C library).
+- Updated otool, nm, file, size, strip, atom and ranlib to understand mach-O
+  relocatable files and NOT have any kluges except that the symbol, string and
+  symsegs are at the end of the file (strip and indr).
+- Added -m options to nm and size to print in mach-O format.
+
+Changes for the 0.8 release:
+- Added the printing of LC_IDENT load commands.
+- Added support to print out the NeXT_THREAD_STATE_USER_REG flavor of thread
+  state.
+- Added the -gg option to strip to strip just the symbol segments.
+
+- Fixed a bug in strip that would strip the segments created from files of
+  mach-O files.  It tried to use the size of the textoffset + textsize +
+  datasize instead of just using symoff.
+- Fixed a bug in otool to print out unknown thread states correctly and not
+  just print "\n"'s forever.
+- Fixed a bug in atom that didn't handle stripped a.out files and not complain
+  about not being able reading the string table.
+- Fixed a bug in atom that didn't remove the output file before exiting non-
+  zero in error cases.

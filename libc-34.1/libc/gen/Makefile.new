@@ -1,0 +1,152 @@
+#
+# Copyright (c) 1980 Regents of the University of California.
+# All rights reserved.  The Berkeley software License Agreement
+# specifies the terms and conditions for redistribution.
+#
+#	@(#)Makefile	5.7 (Berkeley) 3/26/86
+#
+# Several routines have been rewritten in assembly language for the VAX.
+# If you are not running on a VAX, you should use the original C sources
+# which are included in this directory. Regretably we do not have a C
+# version of the bstring(3) routines.
+#
+#ifndef vax
+#SRCS=	${STDSRC} ${VAXSRC}
+#OBJS=	${STDOBJ} ${VAXOBJ}
+#else
+SRCS=	${STDSRC}
+OBJS=	${STDOBJ}
+#endif not vax
+
+DEFS=
+CFLAGS=	-O ${DEFS} -DNeXT_MOD
+
+STDSRC=	abort.c alarm.c atoi.c atol.c cfree.c closedir.c crypt.c \
+	ctime.c ctime_data.c ctype_.c errlst.c errstrings.c \
+	execvp.c exportent.c fstab.c gcvt.c getenv.c \
+	getgrent.c getlogin.c getpass.c getmachhead.c \
+	getpwent.c getsecbyname.c getsegbyname.c \
+	getttyent.c getttynam.c getusershell.c getwd.c \
+	initgroups.c isatty.c malloc.c \
+	mkstemp.c mktemp.c mntent.c ndbm.c nlist.c \
+	opendir.c perror.c popen.c psignal.c qsort.c random.c readdir.c \
+	regex.c scandir.c seekdir.c setgid.c setegid.c setrgid.c setuid.c \
+	seteuid.c setruid.c siginterrupt.c siglist.c signal.c sigstrings.c \
+	sleep.c swab.c syslog.c system.c \
+	telldir.c time.c timezone.c ttyname.c \
+	ttyslot.c ualarm.c usleep.c vfree.c libc_pointers.c getmachhead.c
+VAXSRC=	index.c rindex.c strcat.c strcmp.c strcpy.c strlen.c \
+	strncat.c strncmp.c strncpy.c
+
+STDOBJ=	abort.o alarm.o atoi.o atol.o cfree.o closedir.o crypt.o \
+	ctime.o ctime_data.o ctype_.o errlst.o errstrings.o \
+	execvp.o exportent.o fstab.o gcvt.o getenv.o \
+	getgrent.o getlogin.o getpass.o \
+	getpwent.o getsecbyname.o getsegbyname.o getmachhead.c \
+	getttyent.o getttynam.o getusershell.o getwd.o \
+	initgroups.o isatty.o malloc.o \
+	mkstemp.o mktemp.o mntent.o ndbm.o nlist.o \
+	opendir.o perror.o popen.o psignal.o qsort.o random.o readdir.o \
+	regex.o scandir.o seekdir.o setgid.o setegid.o setrgid.o setuid.o \
+	seteuid.o setruid.o siginterrupt.o siglist.o signal.o sigstrings.o \
+	sleep.o swab.o syslog.o system.o \
+	telldir.o time.o timezone.o ttyname.o \
+	ttyslot.o ualarm.o usleep.o vfree.o libc_pointers.o
+VAXOBJ=	index.o rindex.o strcat.o strcmp.o strcpy.o strlen.o \
+	strncat.o strncmp.o strncpy.o
+
+TAGSFILE=tags
+
+MV=	mv -f
+
+all:	genlib genlib_p
+
+libc_vers.c: ${DOVERS} ${OBJS}
+	@rm -f $@
+	vers_string -l libc > $@
+
+.c.o:
+	${CC} -p ${CFLAGS} -c $<
+	-ld -X -r $@ -o profiled/$@
+	${CC} ${CFLAGS} -c $<
+	-ld -x -r $@ -o xxx.o
+	rm -f $@
+	${MV} xxx.o $@
+
+libc_pointers.o:
+	${CC} -p ${CFLAGS} -c libc_pointers.c
+	-ld -X -r $@ -o profiled/$@
+	${CC} ${CFLAGS} -DSHLIB -c libc_pointers.c
+	-ld -x -r $@ -o xxx.o
+	rm -f $@
+	${MV} xxx.o shared/$@
+	${CC} ${CFLAGS} -c libc_pointers.c
+	-ld -x -r $@ -o xxx.o
+	rm -f $@
+	${MV} xxx.o $@
+
+getsecbyname.o:
+	${CC} -p ${CFLAGS} -c getsecbyname.c
+	-ld -X -r $@ -o profiled/$@
+	${CC} ${CFLAGS} -DSHLIB -c getsecbyname.c
+	-ld -x -r $@ -o xxx.o
+	rm -f $@
+	${MV} xxx.o shared/$@
+	${CC} ${CFLAGS} -c getsecbyname.c
+	-ld -x -r $@ -o xxx.o
+	rm -f $@
+	${MV} xxx.o $@
+
+getsegbyname.o:
+	${CC} -p ${CFLAGS} -c getsegbyname.c
+	-ld -X -r $@ -o profiled/$@
+	${CC} ${CFLAGS} -DSHLIB -c getsegbyname.c
+	-ld -x -r $@ -o xxx.o
+	rm -f $@
+	${MV} xxx.o shared/$@
+	${CC} ${CFLAGS} -c getsegbyname.c
+	-ld -x -r $@ -o xxx.o
+	rm -f $@
+	${MV} xxx.o $@
+
+getenv.o:
+	${CC} -p ${CFLAGS} -c getenv.c
+	-ld -X -r $@ -o profiled/$@
+	${CC} ${CFLAGS} -DSHLIB -c getenv.c
+	-ld -x -r $@ -o xxx.o
+	rm -f $@
+	${MV} xxx.o shared/$@
+	${CC} ${CFLAGS} -c getenv.c
+	-ld -x -r $@ -o xxx.o
+	rm -f $@
+	${MV} xxx.o $@
+
+genlib genlib_p: .depend_done ${OBJS} libc_vers.o
+	@echo "building profiled genlib"
+	@cd profiled; ar cru ../genlib_p ${OBJS} libc_vers.o
+	@echo "buiding normal genlib"
+	@ar cru genlib ${OBJS} libc_vers.o
+
+tags:
+	cwd=`pwd`; \
+	for i in ${SRCS}; do \
+		ctags -a -f ${TAGSFILE} $$cwd/$$i; \
+	done
+
+clean:
+	rm -f genlib genlib_p *.o profiled/*.o shared/*.o tags Makefile.bak
+	rm -f Makedep .depend_done
+	touch Makedep
+
+depend .depend_done:
+	rm -f Makedep .depend_done
+	cc -M ${CFLAGS} ${SRCS} | awk ' { if ($$1 != prev) \
+	     { if (rec != "") print rec; rec = $$0; prev = $$1; } \
+	     else { if (length(rec $$2) > 78) { print rec; rec = $$0; } \
+	     else rec = rec " " $$2 } } \
+	     END { print rec } ' > Makedep
+	-touch .depend_done
+
+ALWAYS:
+
+-include Makedep

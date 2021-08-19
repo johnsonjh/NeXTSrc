@@ -1,0 +1,16 @@
+
+							October 12, 1989
+
+These are the current changes required to bring up GCC on a NeXT, including support for a native Objective-C compiler (the Objective-C run-time system is not included).  The changes are with respect to version 1.36, but can probably be applied to other versions of gcc without too much effort.  The changes have been separated into two parts -- those changes to GCC for use on the NeXT, and those changes to support Objective-C.  The Objective-C diffs should be applied after the NeXT changes have been applied (since that is how they were made), but there is no real interdependence of the features.  The changes are described one by one in the ChangeLog files.
+
+To install the NeXT changes, first copy README-NeXT, ChangeLog-NeXT and INSTALL-NeXT into your virgin GCC distribution.  Then run the INSTALL shell script, which will reorganize things a bit.  Finally apply the patches in gcc.diff-1.36-1.36.NeXT using the patch program (I suggest that you always use the -N option to avoid hosing yourself accidently!).  Due to a bug in the patch program (at least my copy), it may be neccesary to create a symbolic link from tm-next.h to config/tm-next.h before applying the patches, or else patch will be unable to modify the file.  Now just type make, and you should be on your way.  Read the top of the Makefile to see how the VPATH feature is used to advantage (basically you can say make debug or make profile to make alternate versions, and the .o's go into separate subdirectories).
+
+To install the Objective-C changes, copy over the files ChangeLog-OBJC, INSTALL-OBJC, objc-actions.c, and objc-actions.h.  Run the INSTALL-OBJC shell script, and then apply the patches in gcc.diff-1.36.NeXT-1.36.OBJC.  Once again, just type make!
+
+Note that the Objective-C compiler makes some use of NeXT-specific features.  For example, the complier emits a .reference directive to force a given symbol to be linked in, even though there are no compile time references to that symbol.
+
+Note also that several of the NeXT changes are #ifdef'ed with NeXT_PARANOIA.  These are changes which were needed to fix certain obscure bugs in previous versions of GCC.  We are not competely sure that these bugs are in fact fixed in 1.36.
+
+
+	--Matthew Self
+	

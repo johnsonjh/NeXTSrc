@@ -1,0 +1,87 @@
+
+#
+#  NeXT Internal Application Makefile
+#  Copyright 1987, NeXT, Inc.
+#
+#  This Makefile is used for maintaining and installing NeXT software
+#  applications.
+#
+#  Fill in values for the various variables at the places marked by
+#  **number**.  Any rules or dependencies of your own can be added
+#  at the end of the file.
+#
+
+#directory where make gets its includes.  Do not edit.
+MAKE_DIR = /usr/lib/Makefiles
+
+#  **1**  -APPLICATION NAME-
+#  The base name of the application goes here. This should also be the
+#  same name as the SGS project the application is built under.
+NAME = 
+
+#  **2**  -SOURCE FILES-
+#  Here list the .m, .c, .psw, .pswm, .s, .l, .lm, .y, .ym, and .ps files.
+#  You may delete any lines that you don't use.  OTHER_SRCS is used for
+#  files with other suffixes that you wish to be treated like source
+#  (i.e., printed with the source, copied with the source, etc.).
+#  For files in OTHER_SRCS, you need to specify the corresponding .o file
+#  in OTHER_SRCS_OFILES.
+MFILES = 
+CFILES = 
+PSWFILES = 
+PSWMFILES = 
+SFILES = 
+LFILES = 
+LMFILES = 
+YFILES = 
+YMFILES = 
+PSFILES = 
+HFILES = 
+OTHER_SRCS = 
+OTHER_SRCS_OFILES =
+
+#  **3**  -COMMAND OPTIONS-
+#  These are passed as arguments to the Objective-C preprocessor, the C
+#  compiler, linker, pswrap, the assembler, lex and yacc.  You may delete
+#  any lines that you don't use.  All CFLAGS also get passed to
+#  Objective-C and to the final link.  Under OBJCFLAGS, for each Objectice-C
+#  library that you use that supplies class and message group files, you
+#  must list a -I$(OBJDIR)/XXX, where XXX is the base name of the library.
+OBJCFLAGS = 
+CFLAGS = 
+LDFLAGS = 
+PSWFLAGS = 
+ASFLAGS = 
+LFLAGS = 
+YFLAGS = 
+
+#  **4**  -LIBRARIES-
+#  Here list the libraries that the program should be linked with.
+#  Use the format "-lXXX", where XXX is the base name of the library
+#  you want.  For example, to link with the appkit use "-lappkit".
+#  DO NOT use absolute paths here.
+LOADLIBES = 
+
+#  **5**  -BY_PRODUCTS GENERATED FROM BUILDS-
+#  If your build procedure creates any files other than .o files and the
+#  .c and .m files left over from pswrap, you should list them here so
+#  they are removed when a make clean is done.
+BY_PRODUCTS = 
+
+#this file included for standard functionality
+include $(MAKE_DIR)/Makefile.app
+
+#  **6**  -ADDITIONAL INSTALLS-
+#  If there are other actions that you need to do during an installation,
+#  add them as actions under the below target, "additional_installs".
+#  These actions will be carried out right after the application
+#  has been installed.
+additional_installs:
+#	put extra actions here with a tab in front of them
+
+
+# You may comment in this line to get dependencies for the include files
+# you use.  To generate the dependencies, do a "make depend".
+#include Makefile.depends
+
+#  any extra rules or dependencies can be added after this line

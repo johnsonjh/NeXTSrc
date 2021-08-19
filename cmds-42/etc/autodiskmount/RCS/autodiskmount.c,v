@@ -1,0 +1,870 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    mmeyer:1.1;
+comment  @ * @;
+
+
+1.1
+date     89.06.01.10.06.35;  author mmeyer;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#include <sys/types.h>
+#include <sys/errno.h>
+#include <sys/file.h>
+#include <sys/signal.h>
+#include <sys/stat.h>
+#include <sys/param.h>
+#include <nextdev/odvar.h>
+#include <stdio.h>
+#include <mntent.h>
+#include <pwd.h>
+#include "automountmessage.h"
+#import <mach.h>
+#import <sys/message.h>
+#import <servers/netname.h>
+#import <nextdev/disk.h>
+
+#define	OD_CTRL		"/dev/odc0"
+#define	NR		8
+#define	OD_VOL(dev)	(minor(dev) >> 3)
+#define OD_PART(dev)	(minor(dev) & 7)
+#define	OD_DEV(vol, part)	(((vol) << 3) | (part))
+
+int	od_major = 2;
+char	reply[NR], label[MAXLBLLEN];
+int 	bootIsOD = 1;   /* boot device is OD */
+int 	cntlFd = -1;   /* OD_CTRL */
+int	locked = 0;     /* have we locked out other processes? */
+char	raw_part[32];
+char	*OpticalName = "OpticalDisk";
+int     userId;
+
+/* exit codes */
+#define	E_OK		0	/* normal exit */
+#define	E_UNEXP		1	/* unexpected error */
+#define	E_NOT_OD	2	/* device not an optical drive */
+#define	E_FAIL		3	/* operation failed (expected) */
+
+/*
+ * This structure is used to build a list of mntent structures
+ * as copy of /etc/mtab.
+ */
+struct mntlist {
+	struct mntent *mntl_mnt;
+	struct mntlist *mntl_next;
+};
+
+struct mntlist *mkmntlist();
+
+validate_dev (dev)
+{
+	char s[32];
+	int fd;
+
+	if (!bootIsOD)
+	    log ("dev 0x%x\n", dev);
+	if (major(dev) != od_major) {
+	        alert("Device is not an optical drive");
+		return -1;
+	}
+	sprintf (s, "/dev/rod%d%c", OD_VOL(dev), 'a' + OD_PART(dev));
+	if ((fd = open (s, O_RDONLY)) < 0) {
+		panic (s);
+		return -1;
+	}
+	return (fd);
+}
+
+/*    Referenced by mounted() called by etc_mount() */
+
+struct mntlist *mountList;
+
+domount(homedir,vol)
+char *homedir;
+int vol;
+{
+	char s[MAXPATHLEN+1], name[32], hostname[64], pn;
+	int err, npart, not_unique = 0, e;
+	extern int errno;
+	FILE *mf;
+	struct mntent *mnt;
+        struct mntlist *mntl;
+	int slen;
+	int firstCall;
+	int saveBootIsOD;
+	
+	if ((cntlFd < 0) && ((cntlFd = open (OD_CTRL, O_RDONLY)) < 0)) {
+		panic (OD_CTRL);
+		return 0;
+        }
+	if (bootIsOD) {
+		if(ioctl (cntlFd, DKIOCSDCLOCK) < 0) {
+		    panic ("LOCK");
+		    goto exitPoint1;
+		}
+		locked = 1;
+	}    	
+	mountList = mkmntlist(MOUNTED);
+	if (!mountList) {
+		alert ("can't open %s", MOUNTED);
+		goto exitPoint1;
+	}
+	
+	if ((vol < 0) && (ioctl (cntlFd, DKIOCGFREEVOL, &vol) < 0)) {
+		panic ("GFREEVOL");
+		goto exitPoint1;
+	}
+	if (vol < 0) {
+	    alert("all volumes in use");
+	    goto exitPoint;
+	}
+	slen = strlen (OpticalName);
+	for (mntl = mountList;mntl;mntl = mntl->mntl_next) {
+		mnt = mntl->mntl_mnt;
+		if (mnt && !strncmp (rindex (mnt->mnt_dir, '/') + 1,
+		    OpticalName,slen))
+			not_unique = 1;
+	}
+		
+	pn = 'a';
+	sprintf (raw_part, "/dev/rod%d%c", vol, pn);
+	/* mount the file system */
+	if (not_unique)
+		sprintf (s, "%s/%s-%d%c", homedir, OpticalName,
+			vol, pn);
+	else
+		sprintf (s, "%s/%s", homedir, OpticalName);
+	sprintf (name, "/dev/od%d%c", vol, pn);
+	
+	firstCall = 1;
+mountit:
+	initItems(firstCall);
+	if ((e = etc_mount (name, s)) == -1) {
+	        saveBootIsOD = bootIsOD;
+		bootIsOD = 1;
+		un_mount (makedev(od_major, OD_DEV(vol, 0)));
+		bootIsOD = saveBootIsOD;
+		if (!firstCall) {
+			eject (makedev(od_major, OD_DEV(vol, 0)));
+			alert ("Unable to repair disk.");
+			goto exitPoint;
+		}
+		firstCall = 0;
+		if (bootIsOD) {
+		    alert ("Dirty file system -- repair on a 2 drive system.");
+		    goto exitPoint;
+		}
+		alert ("Dirty file system -- checking partition '%c'", 
+			pn);
+		if (sys ("/usr/etc/fsck -y /dev/rod%d%c", vol, pn)) {
+		    goto exitPoint;
+		}
+		goto mountit;
+	} else if (e > 0) {
+		alert ("Mount failed, error code %d", e);
+		goto exitPoint;
+	}
+	writePlaces();
+
+exitPoint:
+	freemntlist(mountList);
+exitPoint1:
+        if (locked)
+	    ioctl (cntlFd, DKIOCSDCUNLOCK);
+	if (cntlFd >= 0)
+	    close(cntlFd);
+	cntlFd = -1;
+	return 0;
+}
+
+doinit(homedir)
+char *homedir;
+{
+	char s[MAXPATHLEN+1], name[32], hostname[64], pn;
+	int err, vol, npart, not_unique = 0, e;
+	extern int errno;
+	FILE *mf;
+	struct mntent *mnt;
+        struct mntlist *mntl;
+	int slen;
+	
+	vol = -1;
+	if ((cntlFd = open (OD_CTRL, O_RDONLY)) < 0) {
+		panic (OD_CTRL);
+		return 0;
+        }
+	
+	if (ioctl (cntlFd, DKIOCGFREEVOL, &vol) < 0) {
+		panic ("GFREEVOL");
+		goto exitPoint;
+	}
+	if (vol < 0) {
+	    alert("all volumes in use");
+	    goto exitPoint;
+	}
+	    		
+	/*
+	 *  Note: In 1.0 the init_dialog should probably allow
+	 *  all the fields of the disk label to be altered
+	 *  instead of using the default from /etc/disktab.
+	 */
+	 
+	if (init_dialog(0) == 0) {
+	        vol = -1;
+		goto exitPoint;
+	}
+	gethostname (hostname, sizeof (hostname));
+	if (sys ("/usr/etc/disk -i -h %s -l %s /dev/rod%da",
+		hostname, label, vol)) {
+		vol = -1;
+	}
+
+exitPoint:
+	if (vol >= 0)
+	    domount(homedir,vol);
+	else {
+	    if (cntlFd >= 0)
+		close(cntlFd);
+	    cntlFd = -1;
+	}
+	return 0;
+}
+
+eject (dev)
+{
+	int fd;
+	
+	fd = validate_dev (dev);
+	if (fd < 0)
+	        return;
+	eject_fd (fd);
+	close (fd);
+}
+
+eject_fd (fd)
+{
+	struct disk_req dr;
+	struct dr_cmdmap *dc = (struct dr_cmdmap*) dr.dr_cmdblk;
+	bzero (&dr, sizeof (dr));
+	bzero (dc, sizeof (*dc));
+	dc->dc_cmd = OMD_EJECT;
+	if (ioctl (fd, DKIOCREQ, &dr) < 0) {
+		panic ("eject");
+		return;
+	}
+}
+
+automount(homedir)
+char *homedir;
+{
+	char s[MAXPATHLEN+1], name[32], hostname[64], pn;
+	int fd, err, vol, npart, not_unique = 0, e;
+	struct disk_label dl;
+	extern int errno;
+	struct partition *p;
+	FILE *mf;
+	struct mntent *mnt;
+        struct mntlist *mntl;
+	int slen;
+	int firstCall, firstFsck;
+	int saveBootIsOD;
+	
+	fd = -1;
+	if ((cntlFd = open (OD_CTRL, O_RDONLY)) < 0) {
+		panic (OD_CTRL);
+		return 0;
+        }
+	if (ioctl (cntlFd, DKIOCINSERT, &vol) < 0) {
+		panic ("INSERT");
+		goto exitPoint1;
+	}
+	if (vol == -1)
+		return;
+	if (bootIsOD) {
+		if(ioctl (cntlFd, DKIOCSDCLOCK) < 0) {
+		    panic ("LOCK");
+		    goto exitPoint1;
+		}
+		locked = 1;
+	}
+	mountList = mkmntlist(MOUNTED);
+	if (!mountList) {
+		alert ("can't open %s", MOUNTED);
+		goto exitPoint1;
+	}
+	sprintf (s, "/dev/rod%da", vol);
+        if (!bootIsOD)
+	    log ("automount %s\n", s);
+	if ((fd = open (s, O_RDONLY)) < 0) {
+		panic (s);
+		goto exitPoint;
+	}
+	
+	/* try to read label information */
+	if (ioctl (fd, DKIOCGLABEL, &dl) < 0) {
+		if (errno != ENXIO) {
+			panic ("GLABEL");
+			goto exitPoint;
+		}
+		
+		/*
+		 *  Note: In 1.0 the init_dialog should probably allow
+		 *  all the fields of the disk label to be altered
+		 *  instead of using the default from /etc/disktab.
+		 */
+		
+		if (locked) 
+		    ioctl (cntlFd, DKIOCSDCUNLOCK);
+		locked = 0;
+		if (init_dialog(1) == 0) {
+			goto exitPoint;
+		}
+		gethostname (hostname, sizeof (hostname));
+		if (sys ("/usr/etc/disk -i -h %s -l %s /dev/rod%da",
+			hostname, label, vol)) {
+			goto exitPoint;
+		}
+		if (bootIsOD) {
+		    if(ioctl (cntlFd, DKIOCSDCLOCK) < 0) {
+			panic ("LOCK");
+			goto exitPoint;
+		    }
+		    locked = 1;
+		}
+		if (ioctl (fd, DKIOCGLABEL, &dl) < 0) {
+			panic ("GLABEL2");
+			goto exitPoint;
+		}
+		if (!bootIsOD)
+		    alert ("Disk initialized\n");
+	}
+	
+	slen = strlen (dl.dl_label);
+	for (mntl = mountList;mntl;mntl = mntl->mntl_next) {
+		mnt = mntl->mntl_mnt;
+		if (mnt && !strncmp (rindex (mnt->mnt_dir, '/') + 1, 
+		    dl.dl_label,slen))
+			not_unique = 1;
+	}
+	
+	/* automount the indicated partitions (but always automount 'a') */
+	for (p = dl.dl_part, npart = 0; p < &dl.dl_part[NPART]; p++) {
+		if ((p->p_automnt == 0 && p != dl.dl_part) ||
+		   p->p_size == 0 || p->p_size == -1)
+			continue;
+		npart++;
+	}
+	if (!npart) {
+		eject_fd (fd);
+		alert ("No file systems to automount found");
+		goto exitPoint;
+	}
+	if (ioctl (fd, DKIOCGLABEL, &dl) < 0) {
+		panic ("GLABEL3");
+		goto exitPoint;
+	}
+	firstCall = 1;
+	for (p = dl.dl_part, pn = 'a'; p < &dl.dl_part[NPART]; p++, pn++) {
+		if ((p->p_automnt == 0 && p != dl.dl_part) ||
+		   p->p_size == 0 || p->p_size == -1)
+			continue;
+		
+		/* use unique mount point name if more than one partition */
+		sprintf (raw_part, "/dev/rod%d%c", vol, pn);
+		
+		/* mount the file system */
+		if (npart > 1 || not_unique)
+			sprintf (s, "%s/%s-%d%c", homedir, dl.dl_label,
+				vol, pn);
+		else
+			sprintf (s, "%s/%s", homedir, dl.dl_label);
+		sprintf (name, "/dev/od%d%c", vol, pn);
+		if (!bootIsOD)
+		    alert ("Automount disk %s on %s", name, s);
+		firstFsck = 1;
+mountit2:
+		initItems(firstCall);
+		firstCall = 0;
+		if ((e = etc_mount (name, s)) == -1) {
+			saveBootIsOD = bootIsOD;
+			bootIsOD = 1;
+			un_mount (makedev(od_major, OD_DEV(vol, 0)));
+			bootIsOD = saveBootIsOD;
+			if (!firstFsck) {
+				eject (makedev(od_major, OD_DEV(vol, 0)));
+				alert ("Unable to repair disk.");
+				goto exitPoint;
+			}
+		        if (bootIsOD) {
+			    alert ("Dirty file system -- repair on a 2 drive system.");
+			    goto exitPoint;
+			}
+			alert ("Dirty file system -- checking partition '%c'", 
+				pn);
+			if (sys ("/usr/etc/fsck -y /dev/rod%d%c", vol, pn)) {
+			    goto exitPoint;
+			}
+			firstFsck = 0;
+			goto mountit2;
+		} else if (e > 0) {
+			alert ("Mount failed, error code %d", e);
+			goto exitPoint;
+		}
+		writePlaces();
+	}
+exitPoint:
+	/* close must be after the mount so the volume isn't deallocated early */
+	close (fd);
+	freemntlist(mountList);
+exitPoint1:
+        if (locked)
+	    ioctl (cntlFd, DKIOCSDCUNLOCK);
+	if (cntlFd >= 0)
+	    close(cntlFd);
+	cntlFd = -1;
+	return 0;
+}
+
+
+un_mount (dev)
+{
+	int fd;
+	char fsname[32];
+	extern int errno;
+	FILE *mf;
+	struct mntent *mnt;
+        struct mntlist *mntl;
+        struct mntlist *firstmnt;
+
+	int points;
+	
+	sprintf (fsname, "/dev/od%d", OD_VOL(dev));
+	
+	firstmnt = mkmntlist(MOUNTED);
+	if (!firstmnt) {
+		alert ("can't open %s", MOUNTED);
+		return 0;
+	}
+
+        points = 0;
+	for (mntl = firstmnt;mntl;mntl = mntl->mntl_next) {
+		mnt = mntl->mntl_mnt;
+		
+		/* unmount each partition of the volume */
+		if (strncmp (fsname, mnt->mnt_fsname, strlen (fsname)) != 0) {
+			if (!bootIsOD)
+			    log ("not %s\n", mnt->mnt_fsname);
+			continue;
+		}
+		points++;
+	}
+	for (mntl = firstmnt;mntl;mntl = mntl->mntl_next) {
+		mnt = mntl->mntl_mnt;
+		
+		/* unmount each partition of the volume */
+		if (strncmp (fsname, mnt->mnt_fsname, strlen (fsname)) != 0) {
+			if (!bootIsOD)
+			    log ("not %s\n", mnt->mnt_fsname);
+			continue;
+		}
+		if (!bootIsOD)
+		    log ("unmount %s\n", mnt->mnt_fsname);
+		points--;
+		errno = umount (mnt->mnt_fsname,!bootIsOD && !points,dev);
+		if (errno != 0) {
+			if (errno != EBUSY) {
+				panic ("unmount");
+				goto exitPoint;
+			}
+			
+			/* TODO: figure out which apps are using disk */
+			log ("%s: EBUSY\n", mnt->mnt_fsname);
+			alert ("Can't unmount disk -- some application still "
+				"has files open on the disk");
+			goto exitPoint;
+		}
+	}
+exitPoint:
+	freemntlist(firstmnt);
+	return 0;
+}
+
+change_label (dev)
+{
+	int fd;
+	struct disk_label dl;
+	
+	fd = validate_dev (dev);
+	if (fd < 0)
+	    return 0;
+	if (ioctl (fd, DKIOCGLABEL, &dl) < 0) {
+		panic ("GLABEL");
+		close (fd);
+		return 0;
+	}
+	strncpy (dl.dl_label, label, MAXLBLLEN);
+	if (ioctl (fd, DKIOCSLABEL, &dl) < 0) {
+		panic ("SLABEL");
+		close (fd);
+		return 0;
+	}
+	close (fd);
+}
+
+logout_unmount(homedir)
+char *homedir;
+{
+	extern int errno;
+	int vol;
+	char part;
+	FILE *mf;
+	struct mntent *mnt;
+	
+	/* can't do this if homedir == "/" or is undefined */
+	if (homedir == 0 || strcmp (homedir, "/") == 0)
+		return (0);
+	if ((mf = _old_setmntent (MOUNTED, "r")) == 0) {
+		alert ("can't open %s", MOUNTED);
+		return 0;
+	}
+again:
+	mnt = _old_getmntent (mf);
+	if (mnt == 0) {
+		_old_endmntent (mf);
+		return 0;
+	}
+	
+	/* unmount each partition of the volume */
+	if (strncmp (homedir, mnt->mnt_dir, strlen (homedir)) != 0) {
+		if (!bootIsOD)
+		    log ("not %s\n", mnt->mnt_dir);
+		goto again;
+	}
+	if (!bootIsOD)
+	    log ("unmount %s\n", mnt->mnt_dir);
+	if ((errno = umount (mnt->mnt_dir, 0, 0)) < 0) {
+		if (errno != EBUSY) {
+			panic ("unmount");
+			_old_endmntent(mf);
+			return 0;
+		}
+		
+		/* TODO: figure out which apps are using disk */
+		log ("%s: EBUSY\n", mnt->mnt_dir);
+		alert ("Can't unmount disk -- some application still "
+			"has files open on the disk");
+		_old_endmntent(mf);
+		return 0;
+	}
+	
+	/* FIXME: assumes only one mount per volume! */
+	sscanf (mnt->mnt_fsname, "/dev/od%d%c", &vol, &part);
+	if (!bootIsOD)
+		log ("logout_unmount: eject od%d%c\n", vol, part);
+	eject (makedev(od_major, OD_DEV(vol, part - 'a')));
+	goto again;
+}
+
+int theSequence;
+port_t wmPort;
+port_t rcvPort;
+port_t sigPort;
+port_t wmReply;
+
+buildMessage(m,s,sport,rport,type,sequence)
+    AMMessage *m;
+    char *s;
+    port_t sport;
+    port_t rport;
+    int type;
+    int sequence;
+{
+    int len;
+    int ec;
+
+    len = strlen(s)+1;
+    m->header.msg_type = MSG_TYPE_NORMAL;
+    m->header.msg_local_port = rport;
+    m->header.msg_remote_port = sport;
+    m->header.msg_id = type;
+    m->header.msg_size = (int) (m->text - (char *) &m) + ((len + 3) / 4)*4;
+    m->header.msg_simple = TRUE;
+    
+    m->sequenceType.msg_type_name = MSG_TYPE_INTEGER_32;
+    m->sequenceType.msg_type_size = sizeof(int)*8;
+    m->sequenceType.msg_type_number = 1;
+    m->sequenceType.msg_type_inline = TRUE;
+    m->sequenceType.msg_type_longform = FALSE;
+    m->sequenceType.msg_type_deallocate = FALSE;
+    m->sequence = sequence;
+    
+    m->textType.msg_type_name = MSG_TYPE_BYTE;
+    m->textType.msg_type_size = 8;
+    m->textType.msg_type_number = len;
+    m->textType.msg_type_inline = TRUE;
+    m->textType.msg_type_longform = FALSE;
+    m->textType.msg_type_deallocate = FALSE;
+    bcopy(s,m->text,len);
+}
+
+static int
+uid(char *mess)
+{    
+    return atoi(mess+strlen(mess)+1);
+}
+
+main (argc, argv)
+	char *argv[];
+{
+	int dev;
+	AMMessage m;
+	char buff[20];
+	int ec;
+	struct stat sb;
+	
+	if (stat("/",&sb) >= 0)
+	    bootIsOD = (major(sb.st_dev) == od_major);
+	
+	ec = port_allocate(task_self(), &wmReply);
+	if (ec != KERN_SUCCESS) {
+	    sprintf(buff,"%d",ec);
+	    log("port_allocate failed:%s",buff);
+	    exit(E_UNEXP);
+	}
+	ec = port_allocate(task_self(), &sigPort);
+	if (ec != KERN_SUCCESS) {
+	    sprintf(buff,"%d",ec);
+	    log("port_allocate failed:%s",buff);
+	    exit(E_UNEXP);
+	}
+	ec = port_allocate(task_self(), &rcvPort);
+	if (ec != KERN_SUCCESS) {
+	    sprintf(buff,"%d",ec);
+	    log("port_allocate failed:%s",buff);
+	    exit(E_UNEXP);
+	}
+	ec = netname_check_in(name_server_port, AUTOMOUNTER, sigPort,rcvPort);
+	if (ec != NETNAME_SUCCESS) {
+	    sprintf(buff,"%d",ec);
+	    log("netname_check_in failed:%s",buff);
+	    exit(E_UNEXP);
+	}
+	
+	while (1) {
+	    m.header.msg_size = sizeof(AMMessage);
+	    m.header.msg_local_port = rcvPort;
+	    ec = msg_receive(&m,MSG_OPTION_NONE,0);
+	    if (ec != RCV_SUCCESS) {
+		sprintf(buff,"%d",ec);
+		log("msg_receive failed:%s",buff);
+		exit(E_UNEXP);
+	    }
+	    theSequence = m.sequence;
+	    wmPort = m.header.msg_remote_port;
+	    
+	    switch (m.header.msg_id) {
+	    case WM_AUTOMOUNT:
+	            userId = uid(m.text);
+		    automount(m.text);
+		    break;
+		    
+	    case WM_EJECT:
+		    eject (atoi(m.text));
+		    break;
+		    
+	    case WM_UNMOUNT:
+		    un_mount (atoi(m.text));
+		    break;
+		    
+	    case WM_NEWLABEL:
+	            strncpy (label,m.text+strlen(m.text)+1, MAXLBLLEN);
+		    change_label (atoi(m.text));
+		    break;
+		    
+	    case WM_LOGOUT:
+		    logout_unmount(m.text);
+		    break;
+		    
+            case WM_MOUNT:
+	            userId = uid(m.text);
+	            domount(m.text,-1);
+		    break;
+		    
+            case WM_INIT:
+	            userId = uid(m.text);
+	            doinit(m.text);
+		    break;
+	    }
+            buildMessage(&m,"",wmPort,wmReply,AM_DONE,theSequence);
+	    ec = msg_send(&m,SEND_TIMEOUT|SEND_SWITCH,120000);
+	    if (ec != SEND_SUCCESS) {
+	    	sprintf(buff,"%d",ec);
+		log("Workspace Manager timed out:%s",buff);
+	    }
+	}
+}
+
+sys (cmd, p1, p2, p3, p4)
+	char *cmd;
+{
+	char s[64];
+	int err;
+
+	sprintf (s, cmd, p1, p2, p3, p4);
+	if (!bootIsOD)
+	    log ("%s\n", s);
+	err = system (s);
+	if (err)
+		alert ("\"%s\" failed, error code %d\n", s, err);
+	return err;
+}
+
+/* START of user interface routines */
+
+int
+sendMsg(s,cmd)
+    	char *s;
+	int cmd;
+{
+        char buff[20];
+	AMMessage m;
+	int ec;
+	
+	buildMessage(&m,s,wmPort,wmReply,cmd,theSequence);
+	ec = msg_send(&m,SEND_TIMEOUT|SEND_SWITCH,120000);
+	if (ec != SEND_SUCCESS) {
+	        sprintf(buff,"%d",ec);
+		log("Workspace Manager timed out:%s",buff);
+		return -1;
+	}
+        return 0;
+}
+
+int
+rcvMsg(m)
+        AMMessage *m;
+{
+	char buff[20];
+	int ec;
+	
+	m->header.msg_size = sizeof(AMMessage);
+	m->header.msg_local_port = rcvPort;
+	ec = msg_receive(m,MSG_OPTION_NONE,0);
+	if (ec != RCV_SUCCESS) {
+	    sprintf(buff,"%d",ec);
+	    log("msg_receive failed:%s",buff);
+	    return -1;
+	}
+	return 0;
+}
+
+init_dialog(automount)
+int automount;
+{
+        AMMessage m;
+	
+        if (sendMsg(automount ? "Y":"N",AM_INIT))
+	    return 0;
+	if (rcvMsg(&m))
+	    return 0;
+	if (m.header.msg_id != WM_CONFIRMINIT)
+	    return 0;
+	strncpy(label,m.text,MAXLBLLEN);
+	return (1);
+}
+
+extern int sys_nerr;
+extern char *sys_errlist[];
+
+panic (s)
+	char *s;
+{
+	AMMessage m;
+	char *errs;
+	char ebuff[300];
+        int  waslocked;
+	
+	waslocked = locked;
+	if (locked && ioctl (cntlFd, DKIOCSDCUNLOCK) < 0)
+	    return;
+	locked = 0;
+
+	errs = "";
+	if (errno > 0 && errno <= sys_nerr)
+		errs = sys_errlist[errno];
+	sprintf(ebuff,"%s:%s",s,errs);
+	sendMsg(ebuff,AM_ALERT);
+	rcvMsg(&m); /* what if not WM_ALERTDONE? */
+	if (waslocked) {
+	    if(ioctl (cntlFd, DKIOCSDCLOCK) < 0) {
+		panic ("LOCK");
+		return;
+	    }
+	    locked = 1;
+	}
+}
+
+alert (s, p1, p2, p3, p4)
+	char *s;
+{
+	AMMessage m;
+	char ebuff[300];
+	int waslocked;
+	
+	waslocked = locked;
+	if (locked && ioctl (cntlFd, DKIOCSDCUNLOCK) < 0)
+	    return;
+	locked = 0;
+	
+	sprintf (ebuff,s, p1, p2, p3, p4);
+	sendMsg(ebuff,AM_ALERT);
+	rcvMsg(&m); /* what if not WM_ALERTDONE? */
+	
+	if (waslocked) {
+	    if(ioctl (cntlFd, DKIOCSDCLOCK) < 0) {
+		panic ("LOCK");
+		return;
+	    }
+	    locked = 1;
+	}
+}
+
+log (s, p1, p2, p3, p4)
+	char *s;
+{
+	int waslocked;
+	
+	waslocked = locked;
+	if (locked && ioctl (cntlFd, DKIOCSDCUNLOCK) < 0)
+	    return;
+	locked = 0;
+	
+	printf (s, p1, p2, p3, p4);
+	
+	if (waslocked) {
+	    if(ioctl (cntlFd, DKIOCSDCLOCK) < 0) {
+		panic ("LOCK");
+		return;
+	    }
+	    locked = 1;
+	}
+}
+
+/* END of user interface routines */
+
+@

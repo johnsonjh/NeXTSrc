@@ -1,0 +1,92 @@
+# Copyright (c) 1980 Regents of the University of California.
+# All rights reserved.  The Berkeley software License Agreement
+# specifies the terms and conditions for redistribution.
+#
+#	@(#)gettytab	5.7 (Berkeley) 2/16/86
+#
+#
+# Most of the table entries here are just copies of the
+# old getty table, it is by no means certain, or even likely,
+# then any of them are optimal for any purpose whatever.
+# Nor is it likely that more than a couple are even correct
+#
+
+#
+# The default gettytab entry, used to set defaults for all other
+# entries, and in cases where getty is called with no table name
+#
+default:\
+	:ap:im=\r\n\r\nNeXT Mach (%h) (%t)\r\n\r\r\n\r:\
+	:er=\177:kl=^U:in=^C:lm=\r\n%h login\72 :sp#9600:
+
+#
+# Fixed speed entries
+#
+#	The "std.NNN" names are known to the special case
+#	portselector code in getty, however they can
+#	be assigned to any table desired.
+#	The "NNN-baud" names are known to the special case
+#	autobaud code in getty, and likewise can
+#	be assigned to any table desired (hopefully the same speed).
+#
+a|std.110|110-baud:\
+	:nd#1:cd#1:uc:sp#110:
+b|std.134|134.5-baud:\
+	:ep:nd#1:cd#2:fd#1:td#1:sp#134:ht:nl:
+1|std.150|150-baud:\
+	:ep:nd#1:cd#2:td#1:fd#1:sp#150:ht:nl:lm=\E\72\6\6\17login\72 :
+c|std.300|300-baud:\
+	:nd#1:cd#1:sp#300:
+d|std.600|600-baud:\
+	:nd#1:cd#1:sp#600:
+f|std.1200|1200-baud:\
+	:fd#1:sp#1200:
+6|std.2400|2400-baud:\
+	:sp#2400:ht:
+7|std.4800|4800-baud:\
+	:sp#4800:ht:
+2|std.9600|9600-baud:\
+	:sp#9600:
+g|std.19200|19200-baud:\
+	:sp#19200:
+
+#
+# Dial in rotary tables, speed selection via 'break'
+#
+0|d300|Dial-300:\
+	:nx=d1200:cd#2:sp#300:
+d1200|Dial-1200:\
+	:nx=d150:fd#1:sp#1200:
+d150|Dial-150:\
+	:nx=d110:lm@:tc=150-baud:
+d110|Dial-110:\
+	:nx=d300:tc=300-baud:
+
+#
+# Odd special case terminals
+#
+-|tty33|asr33|Pity the poor user of this beast:\
+	:tc=110-baud:
+
+X|Xwindow|X window system:\
+	:fd@:nd@:cd@:rw:sp#9600:
+
+#
+# Fast dialup terminals, 9600/2400/1200/300 rotary (can start either way)
+#
+j|D9600|Fast-Dial-9600:\
+	:nx=D2400:tc=9600-baud:
+k|D2400|Fast-Dial-2400:\
+	:nx=D1200:tc=2400-baud:
+3|D1200|Fast-Dial-1200:\
+	:nx=D300:fd@:tc=1200-baud:
+5|D300|Fast-Dial-300:\
+	:nx=D9600:tc=300-baud:
+
+#
+# Auto-baud speed detect entry for Micom 600.
+# Special code in getty will switch this out
+# to one of the NNN-baud entries.
+#
+A|Auto-baud:\
+	:ab:sp#2400:f0#040:

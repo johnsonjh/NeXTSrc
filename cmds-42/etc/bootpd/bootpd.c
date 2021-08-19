@@ -1,0 +1,1202 @@
+#ifndef lint
+static char sccsid[] = "@(#)bootp.c	1.2 (Stanford) 03/19/86";
+#endif
+
+/*
+ * BOOTP (bootstrap protocol) server daemon.
+ *
+ * Answers BOOTP request packets from booting client machines.
+ * See [SRI-NIC]<RFC>RFC951.TXT for a description of the protocol.
+ */
+
+/*
+ * history
+ * 01/22/86	Croft	created.
+ *
+ * 03/19/86	Lougheed  Converted to run under 4.3 BSD inetd.
+ *
+ * 09/06/88	King	Added NeXT interrim support.
+ */
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <sys/file.h>
+#include <sys/time.h>
+#include <net/if.h>
+#include <netinet/in.h>
+#include <netinet/in_systm.h>
+#include <netinet/ip.h>
+#include <netinet/udp.h>
+#include <netinet/if_ether.h>
+#define	iaddr_t struct in_addr
+#include "bootp.h"
+#include "netinfo.h"
+
+#include <signal.h>
+#include <stdio.h>
+#include <strings.h>
+#include <errno.h>
+#include <ctype.h>
+#include <netdb.h>
+#include <setjmp.h>
+#include <syslog.h>
+
+int	debug;
+extern	int errno;
+struct	sockaddr_in sin = { AF_INET };
+struct	sockaddr_in from;
+int	fromlen;
+u_char	buf[1024];	/* receive packet buffer */
+long	time();
+int	onalarm();
+long	lastmsgtime;
+struct	ifreq ifreq[10]; /* holds interface configuration */
+struct	ifconf ifconf;	/* int. config. ioctl block (points to ifreq) */
+struct	arpreq arpreq;	/* arp request ioctl block */
+
+/*
+ * Globals below are associated with the bootp database file (bootptab).
+ */
+
+FILE *fp;
+char	*bootptab = "/etc/bootptab";
+int	f;
+char	line[256];	/* line buffer for reading bootptab */
+char	*linep;		/* pointer to 'line' */
+int	linenum;	/* current line number in bootptab */
+char	homedir[128];	/* bootfile homedirectory */
+char	*bootdir;	/* bootfile homedirectory to give to tftpd */
+char	defaultboot[64]; /* default file to boot */
+char	myhostname[64];			/* hostname of this machine */
+unsigned char	xid;
+
+/*
+ * States that a host entry can be in.
+ */
+enum hoststate { FROMFILE, FROMNET, UNKNOWN, CREATE, OVERWRITE, C_GETPASSWD,
+		 O_GETPASSWD, CANTDEAL, IGNORE };
+
+struct hosts {
+	struct hosts	*next;
+	struct hosts	*prev;
+	enum hoststate	state;
+	struct timeval	tv;
+	unsigned char	xid;		/* XID */
+	unsigned char	prevxid;	/* Previous XID */
+	char		*errstr;	/* error string for CANTDEAL */
+	unsigned long	errxid;		/* XID of requests CANTDEAL with */
+	char		host[31];	/* host name (and suffix) */
+	u_char		htype;		/* hardware type */
+	u_char		haddr[6];	/* hardware address */
+	iaddr_t		iaddr;		/* internet address */
+	char		bootfile[32];	/* default boot file name */
+} *hosts = NULL;
+
+long	modtime;	/* last modification time of bootptab */
+
+#define	MAXIDLE		5*60	/* we hang around for five minutes */
+#define	IGNORETIME	3*60	/* we ignore for three minutes */
+
+static void
+background()
+{
+#ifndef DEBUG
+	if (fork())
+		exit(0);
+	{ int s;
+	for (s = 0; s < 10; s++)
+		(void) close(s);
+	}
+	(void) open("/", O_RDONLY);
+	(void) dup2(0, 1);
+	(void) dup2(0, 2);
+#endif
+	{ int tt = open("/dev/tty", O_RDWR);
+	  if (tt > 0) {
+		ioctl(tt, TIOCNOTTY, 0);
+		close(tt);
+	  }
+	}
+}
+
+main(argc, argv)
+int argc;
+char **argv;
+{
+	register struct bootp *bp;
+	char	*cp;
+	int	n;
+	struct timeval	tv;
+
+	fp = 0;				/* no file open yet */
+	modtime = 0;			/* never modified */
+	debug = 0;			/* no debugging on */
+	gettimeofday(&tv, 0);
+	xid = tv.tv_sec ^ gethostid();	/* initialize xid */
+	gethostname(myhostname, sizeof (myhostname) -1);
+	argc--, argv++;
+	while (argc > 0 && *argv[0] == '-') {
+		for (cp = &argv[0][1]; *cp; cp++) switch (*cp) {
+		case 'd':
+		    debug++;
+		    break;
+		default:
+		    fprintf(stderr,"bootpd: unknown flag -%c ignored",*cp);
+		    break;
+		}
+nextopt:
+		argc--, argv++;
+	}
+	if (debug) {
+		(void) openlog("bootpd", LOG_PID, LOG_DAEMON);
+		syslog(LOG_DEBUG, "server starting");
+	}
+	if ( !issock(0)) {
+		/*
+		 * Started by user.
+		 */
+		if (!debug)
+			background();
+
+		while ((f = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+			syslog(LOG_INFO, "socket call failed");
+			sleep(5);
+		}
+		if (f != 0) {
+			dup2(f, 0);
+			close(f);
+		}
+		sin.sin_port = htons(IPPORT_BOOTPS);
+		while(bind(0, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
+			syslog(LOG_INFO, "bind call failed");
+			sleep(5);
+		}
+	} else {
+		signal(SIGALRM, onalarm);
+		lastmsgtime = time(0);
+		alarm(15);
+	}
+	fromlen = sizeof(from);
+	if (getsockname(0, (struct sockaddr *)&from, &fromlen) < 0) {
+		if (debug)
+			syslog(LOG_DEBUG, "getsockname failed");
+		fprintf(stderr, "%s: ", argv[0]);
+		perror("getsockname");
+		_exit(1);
+	}
+	ifconf.ifc_len = sizeof ifreq;
+	ifconf.ifc_req = ifreq;
+	if (ioctl(0, SIOCGIFCONF, (caddr_t)&ifconf) < 0
+	    || ifconf.ifc_len <= 0) {
+		syslog(LOG_INFO, "'get interface config' ioctl failed");
+		exit(1);
+	}
+	for (;;) {
+		fromlen = sizeof(from);
+		n = recvfrom(0, buf, sizeof (buf)-1, 0,
+		    (struct sockaddr *)&from, &fromlen);
+		if (n < 0) {
+			if (errno != EINTR)
+				sleep(1);
+			if (debug)
+				syslog(LOG_DEBUG, "recvfrom failed %d (%d)",
+					n, errno);
+			errno = 0;
+			continue;
+		}
+		bp = (struct bootp *) buf;
+		if (n < sizeof *bp)
+		    continue;
+		readtab();			/* (re)read the bootptab */
+		sigblock(1<<SIGALRM);
+		lastmsgtime = time(0);
+		switch (bp->bp_op) {
+		case BOOTREQUEST:
+			request();
+			break;
+
+		case BOOTREPLY:
+			reply();
+			break;
+		}
+		sigsetmask(0);
+	}
+}
+
+/*
+ * Determine if a descriptor belongs to a socket or not
+ */
+issock(fd)
+	int fd;
+{
+	struct stat st;
+
+	if (fstat(fd, &st) < 0) {
+		return (0);
+	} 
+	/*	
+	 * SunOS returns S_IFIFO for sockets, while 4.3 returns 0 and
+	 * does not even have an S_IFIFO mode.  Since there is confusion 
+	 * about what the mode is, we check for what it is not instead of 
+	 * what it is.
+	 */
+	switch (st.st_mode & S_IFMT) {
+	case S_IFCHR:
+	case S_IFREG:
+	case S_IFLNK:
+	case S_IFDIR:
+	case S_IFBLK:
+		return (0);
+	default:	
+		return (1);
+	}
+}
+
+
+onalarm()
+{
+	if (time(0) - lastmsgtime >= MAXIDLE)
+		exit(0);
+	alarm(15);
+}
+
+/*
+ * Process BOOTREQUEST packet.
+ *
+ * (Note, this version of the bootp.c server never forwards 
+ * the request to another server.  In our environment the 
+ * stand-alone gateways perform that function.)
+ *
+ * (Also this version does not interpret the hostname field of
+ * the request packet;  it COULD do a name->address lookup and
+ * forward the request there.)
+ */
+request()
+{
+	register struct bootp *rq = (struct bootp *)buf;
+	struct bootp rp;
+	struct nextvend *nv_rq = (struct nextvend *)&rq->bp_vend;
+	struct nextvend *nv_rp = (struct nextvend *)&rp.bp_vend;
+	char path[64], file[64];
+	register struct hosts *hp, *nhp;
+	register n;
+	struct vend *v;
+	int fd;
+	int dothost = 0;		/* file.host was found */
+	extern struct hosts *gethostbyhw();
+	extern struct hosts *gethostbyip();
+	struct hostent *h;
+	char	*cp;
+	ni_name	netpasswd;
+	
+	rp = *rq;	/* copy request into reply */
+	rp.bp_op = BOOTREPLY;
+	if (rq->bp_ciaddr.s_addr == 0) { 
+		/*
+		 * client doesn't know its IP address, 
+		 * search by hardware address.
+		 */
+		hp = gethostbyhw(rq);
+		if (hp == NULL) {
+			return;
+		}
+		rp.bp_yiaddr = hp->iaddr;
+	} else {
+		/* search by IP address */
+		hp = gethostbyip(rq);
+		if (hp == NULL) {
+			return;
+		}
+	}
+	
+	/* If we have a complete entry, respond normally */
+	if (hp->state == FROMFILE || hp->state == FROMNET) {
+		goto hostok;
+	}
+
+	/*
+	 * If this request is not from a NeXT machine, drop it.
+	 */
+	if (bcmp(nv_rq->nv_magic, VM_NEXT, sizeof(nv_rq->nv_magic)) ||
+	    nv_rq->nv_version != 1 || hp->state == IGNORE) {
+		/* XXX - Time out ignores somehow */
+		goto errout;
+	}
+
+	/*
+	 * If we have an internal error.  Respond to the request
+	 * that caused it.  And then ignore further requests.
+	 */
+	if (hp->state == CANTDEAL) {
+cantdeal:
+		if (hp->errxid == 0) {
+			hp->errxid = rq->bp_xid;
+		} else if (hp->errxid != rq->bp_xid) {
+			hp->state = IGNORE;
+			goto errout;
+		}
+
+		/*
+		 * There was some internal error creating the host
+		 * entry.  Report it to the client.
+		 * the state to ignore.
+		 */
+		nv_rp->nv_opcode = BPOP_ERROR;
+		nv_rp->nv_xid = hp->xid;
+		sprintf(nv_rp->nv_text, " \nServer error: %s\n",
+			hp->errstr);
+		goto sendoff;
+	}
+
+	/*
+	 * If this is an fresh request, reset our state if necessary.
+	 */
+	if (nv_rq->nv_opcode == BPOP_OK && nv_rq->nv_xid == 0 &&
+	    hp->state != UNKNOWN) {
+		hostsetstate(hp, UNKNOWN);
+	}
+		
+	/*
+	 * This is a weird ass state machine.
+	 */
+
+	switch (hp->state) {
+
+	    case UNKNOWN:
+
+		if (nv_rq->nv_opcode == BPOP_QUERY &&
+		    nv_rq->nv_xid == hp->xid) {
+
+			/* A response.  Deal with it. */
+			cp = (char *)nv_rq->nv_text;
+			if (h = gethostbyname(cp)) {
+
+				/* Host already exists. */
+				if (ni_hostismine(cp)) {
+
+					/* And its mine */
+					hostsetstate(hp, OVERWRITE);
+					strncpy(hp->host, cp,
+						sizeof(hp->host) - 1);
+					goto overwrite;
+				}
+
+				/* Host exists, but I can't change it */
+				nv_rp->nv_opcode = BPOP_ERROR;
+				nv_rp->nv_xid = 0;
+				strncpy(nv_rp->nv_text,
+				       "Host name already in use.\n",
+					sizeof (nv_rp->nv_text));
+				goto sendoff;
+			}
+
+			/* Host doesn't exist */
+			hostsetstate(hp, CREATE);
+			strncpy(hp->host, cp, sizeof(hp->host) - 1);
+			goto create;
+		} else {
+unknown:
+			/* Fresh start, prompt for the hostname */
+			nv_rp->nv_opcode = BPOP_QUERY;
+			nv_rp->nv_xid = hp->xid;
+
+			/* Don't make this next string ANY longer! */
+			strncpy(nv_rp->nv_text,
+		   " \nNetwork doesn't recognize computer.\nEnter host name: ",
+				sizeof (nv_rp->nv_text));
+			goto sendoff;
+		}
+
+		break;
+			
+	    case OVERWRITE:
+
+		if (nv_rq->nv_opcode == BPOP_QUERY &&
+		    nv_rq->nv_xid == hp->prevxid) {
+overwrite:
+			/* Response to previous state.  Repeat our query.*/
+			nv_rp->nv_opcode = BPOP_QUERY;
+			nv_rp->nv_xid = hp->xid;
+			strncpy(nv_rp->nv_text,
+		   "Name recognized.  New CPU board or ROM chip [y/n]? ",
+				sizeof (nv_rp->nv_text));
+			goto sendoff;
+		} else if (nv_rq->nv_opcode == BPOP_QUERY &&
+			   nv_rq->nv_xid == hp->xid) {
+
+			/* A response.  Deal with it */
+			cp = (char *)nv_rq->nv_text;
+			if (*cp == 'y' || *cp == 'Y') {
+				/* Get the network password */
+				if ((netpasswd = ni_getnetpasswd()) == NULL) {
+					hostsetcantdeal(hp, rq->bp_xid,
+						"can't get network password");
+					goto cantdeal;
+				}
+
+				/* If none is set, overwrite the host now */
+				if (*netpasswd == '\0') {
+					ni_name_free(&netpasswd);
+					if (ni_setenbyname(hp->host,
+							   hp->haddr)) {
+						/* Uh oh. */
+						hostsetcantdeal(hp, rq->bp_xid,
+						 "can't set ethernet address");
+						goto cantdeal;
+					}
+
+					/* NetInfo entry changed, bump state */
+					if ((h = gethostbyname(hp->host)) ==
+					    NULL) {
+						hostsetcantdeal(hp, rq->bp_xid,
+						       "gethostbyname failed");
+						goto cantdeal;
+					}
+					hp->iaddr = *(iaddr_t *)h->h_addr;
+					rp.bp_yiaddr = hp->iaddr;
+					hostsetstate(hp, FROMNET);
+					goto hostok;
+				}
+				ni_name_free(&netpasswd);
+
+				/* Go get password and overwrite the host */
+				hostsetstate(hp, O_GETPASSWD);
+				goto passwd;
+			}
+
+			/* User said no, start over */
+			nv_rp->nv_opcode = BPOP_ERROR;
+			nv_rp->nv_xid = 0;
+			nv_rp->nv_text[0] = '\0';
+			goto sendoff;
+		}
+
+		/* Not for us.  Ignore */
+		goto errout;
+
+	    case CREATE:
+
+		if (nv_rq->nv_opcode == BPOP_QUERY &&
+		    nv_rq->nv_xid == hp->prevxid) {
+create:
+			/* Reponse to previous state.  Repeat our query */
+			nv_rp->nv_opcode = BPOP_QUERY;
+			nv_rp->nv_xid = hp->xid;
+			strncpy(nv_rp->nv_text,
+			 "Add computer to network [y/n]? ",
+				sizeof (nv_rp->nv_text));
+			goto sendoff;
+		} else if (nv_rq->nv_opcode == BPOP_QUERY &&
+			   nv_rq->nv_xid == hp->xid) {
+
+			/* A response.  Deal with it */
+			cp = (char *)nv_rq->nv_text;
+			if (*cp == 'y' || *cp == 'Y') {
+				/* Get the network password */
+				if ((netpasswd = ni_getnetpasswd()) == NULL) {
+					hostsetcantdeal(hp, rq->bp_xid,
+						"can't get network password");
+					goto cantdeal;
+				}
+
+				/* If none is set, overwrite the host now */
+				if (*netpasswd == '\0') {
+					/* We are creating a new host */
+					ni_name_free(&netpasswd);
+					if (ni_getnextipaddr(&hp->iaddr)) {
+						hostsetcantdeal(hp, rq->bp_xid,
+						    "no available IP address");
+						goto cantdeal;
+					}
+					if (ni_createhost(hp->host,
+							  hp->haddr,
+							  hp->iaddr,
+							  hp->bootfile) ) {
+						hostsetcantdeal(hp, rq->bp_xid,
+						    "can't create host entry");
+						goto cantdeal;
+					}
+#ifdef NOTNEEDED
+					if ((h = gethostbyname(hp->host)) ==
+					    NULL) {
+						hostsetcantdeal(hp, rq->bp_xid,
+						       "gethostbyname failed");
+						goto cantdeal;
+					}
+					hp->iaddr = *(iaddr_t *)h->h_addr;
+#endif NOTNEEDED
+					/* NetInfo entry changed, bump state */
+					rp.bp_yiaddr = hp->iaddr;
+					hostsetstate(hp, FROMNET);
+					goto hostok;
+				}
+				ni_name_free(&netpasswd);
+
+				/* Go get a password and create the host */
+				hostsetstate(hp, C_GETPASSWD);
+				goto passwd;
+			}
+
+			/* User said no.  Start over. */
+			nv_rp->nv_opcode = BPOP_ERROR;
+			nv_rp->nv_xid = 0;
+			nv_rp->nv_text[0] = '\0';
+			goto sendoff;
+		}
+		/* Not for us.  Ignore. */
+		goto errout;
+			
+	    case O_GETPASSWD:
+	    case C_GETPASSWD:
+
+		if (nv_rq->nv_opcode == BPOP_QUERY &&
+		    nv_rq->nv_xid == hp->prevxid) {
+passwd:
+			/* Response to previous state.  Repeat our query */
+			nv_rp->nv_opcode = BPOP_QUERY_NE;
+			nv_rp->nv_xid = hp->xid;
+			strncpy(nv_rp->nv_text,
+				"Enter network password: ",
+				sizeof (nv_rp->nv_text));
+			goto sendoff;
+		} else if (nv_rq->nv_opcode == BPOP_QUERY_NE &&
+			   nv_rq->nv_xid == hp->xid) {
+
+			/* A reponse.  Deal with it */
+			cp = (char *)nv_rq->nv_text;
+			if (ni_passwdok(cp)) {
+
+				/* Password is ok.  Change the NetInfo entry */
+				if (hp->state == O_GETPASSWD) {
+					if (ni_setenbyname(hp->host,
+							   hp->haddr)) {
+						/* Uh oh. */
+						hostsetcantdeal(hp, rq->bp_xid,
+						 "can't set ethernet address");
+						goto cantdeal;
+					}
+
+					if ((h = gethostbyname(hp->host)) ==
+					    NULL) {
+						hostsetcantdeal(hp, rq->bp_xid,
+						       "gethostbyname failed");
+						goto cantdeal;
+					}
+					hp->iaddr = *(iaddr_t *)h->h_addr;
+				} else {
+					/* We are creating a new host */
+					if (ni_getnextipaddr(&hp->iaddr)) {
+						hostsetcantdeal(hp, rq->bp_xid,
+						    "no available IP address");
+						goto cantdeal;
+					}
+					if (ni_createhost(hp->host,
+							  hp->haddr,
+							  hp->iaddr,
+							  hp->bootfile) ) {
+						hostsetcantdeal(hp, rq->bp_xid,
+						    "can't create host entry");
+						goto cantdeal;
+					}
+				}
+#ifdef NOTNEEDED
+				if ((h = gethostbyname(hp->host)) == NULL) {
+					hostsetcantdeal(hp, rq->bp_xid,
+						       "gethostbyname failed");
+					goto cantdeal;
+				}
+				hp->iaddr = *(iaddr_t *)h->h_addr;
+#endif NOTNEEDED
+				/* NetInfo entry changed, bump state */
+				rp.bp_yiaddr = hp->iaddr;
+				hostsetstate(hp, FROMNET);
+				goto hostok;
+			}
+			nv_rp->nv_opcode = BPOP_ERROR;
+			nv_rp->nv_xid = 0;
+			strncpy(nv_rp->nv_text, "Incorrect password.\n",
+				sizeof (nv_rp->nv_text));
+			goto sendoff;
+		}
+		/* Not for us.  Ignore. */
+		goto errout;
+
+	    case FROMFILE:
+	    case FROMNET:
+hostok:
+		syslog(LOG_INFO,"request from %s for '%s'",
+		       hp->host, rq->bp_file);
+		strcpy(path, homedir);
+		strcat(path, "/");
+		if (rq->bp_file[0] == 0) { /* if client didnt specify file */
+			if (hp->bootfile[0] == 0)
+				strcpy(file, defaultboot);
+			else
+				strcpy(file, hp->bootfile);
+		} else {
+			/* client did specify file */
+			strcpy(file, rq->bp_file);
+		}
+		if (file[0] == '/')	/* if absolute pathname */
+			strcpy(path, file);
+		else
+			strcat(path, file);
+		/* try first to find the file with a ".host" suffix */
+		n = strlen(path);
+		strcat(path, ".");
+		strcat(path, hp->host);
+		if (access(path, R_OK) < 0) {
+			path[n] = 0;	/* try it without the suffix */
+			if (access(path, R_OK) < 0) {
+				if (rq->bp_file[0])  /* wanted specific file */
+					goto errout; /* and we didnt have it */
+				syslog(LOG_INFO, "boot file %s* missing?",
+				       path);
+			}
+		} else {
+			dothost++;
+		}
+		if (bootdir) {
+			/* Rebuild the path with bootdir at the front */
+			strcpy(path, bootdir);
+			if (bootdir[strlen(bootdir)-1] != '/') {
+				strcat(path, "/");
+			}
+			if (file[0] == '/') /* XXX no work in secure case */
+				strcpy(path, file);
+			else
+				strcat(path, file);
+			if (dothost) {
+				strcat(path, ".");
+				strcat(path, hp->host);
+			}
+		}
+		syslog(LOG_INFO,"replyfile %s", path);
+		strcpy(rp.bp_file, path);
+		if (strncmp(nv_rq->nv_magic, VM_NEXT,
+			    sizeof(nv_rq->nv_magic)) == 0) {
+			if (nv_rq->nv_version == 1) {
+				nv_rp->nv_opcode = BPOP_OK;
+				nv_rp->nv_xid = 0;
+			}
+		}
+		break;
+
+	    default:
+		syslog(LOG_ERR,"%s has bogus state", hp->host);
+		goto errout;
+	}
+sendoff:
+	sendreply(&rp, 0);
+errout:
+	freehost(hp);
+	return;
+}
+
+
+/*
+ * Process BOOTREPLY packet (something is using us as a gateway).
+ */
+reply()
+{
+	struct bootp *bp = (struct bootp *)buf;
+
+	sendreply(bp, 1);
+}
+
+
+/*
+ * Send a reply packet to the client.  'forward' flag is set if we are
+ * not the originator of this reply packet.
+ */
+sendreply(bp, forward)
+	register struct bootp *bp;
+{
+	iaddr_t dst;
+	struct sockaddr_in to;
+	struct hostent *h;
+
+	to = sin;
+	to.sin_port = htons(IPPORT_BOOTPC);
+	/*
+	 * If the client IP address is specified, use that
+	 * else if gateway IP address is specified, use that
+	 * else make a temporary arp cache entry for the client's NEW 
+	 * IP/hardware address and use that.
+	 */
+	if (bp->bp_ciaddr.s_addr) {
+		dst = bp->bp_ciaddr;
+		if (debug) syslog(LOG_DEBUG, "reply ciaddr");
+	} else if (bp->bp_giaddr.s_addr && forward == 0) {
+		dst = bp->bp_giaddr;
+		to.sin_port = htons(IPPORT_BOOTPS);
+		if (debug) syslog(LOG_DEBUG, "reply giaddr");
+	} else {
+		dst = bp->bp_yiaddr;
+		if (debug) syslog(LOG_DEBUG, "reply yiaddr %x", dst.s_addr);
+		setarp(&dst, bp->bp_chaddr, bp->bp_hlen);
+	}
+
+	if (forward == 0) {
+		/*
+		 * If we are originating this reply, we
+		 * need to find our own interface address to
+		 * put in the bp_siaddr field of the reply.
+		 * If this server is multi-homed, pick the
+		 * 'best' interface (the one on the same net
+		 * as the client).
+		 */
+		int maxmatch = 0;
+		int len, m;
+		register struct ifreq *ifrp, *ifrmax;
+
+		ifrmax = ifrp = &ifreq[0];
+		len = ifconf.ifc_len;
+		for ( ; len > 0 ; len -= sizeof ifreq[0], ifrp++) {
+			if ((m = nmatch((caddr_t)&dst,
+			    (caddr_t)&((struct sockaddr_in *)
+			     (&ifrp->ifr_addr))->sin_addr)) > maxmatch) {
+				maxmatch = m;
+				ifrmax = ifrp;
+			}
+		}
+		if (bp->bp_giaddr.s_addr == 0) {
+			if (maxmatch == 0) {
+				syslog(LOG_INFO, "missing gateway address");
+				return;
+			}
+			bp->bp_giaddr = ((struct sockaddr_in *)
+				(&ifrmax->ifr_addr))->sin_addr;
+		}
+		bp->bp_siaddr = ((struct sockaddr_in *)
+			(&ifrmax->ifr_addr))->sin_addr;
+		if ( h = gethostbyaddr(&((struct sockaddr_in *)
+					 (&ifrmax->ifr_addr))->sin_addr,
+				       sizeof (struct in_addr),
+				       AF_INET) ) {
+		    strcpy(bp->bp_sname, h->h_name);
+		}
+	}
+	to.sin_addr = dst;
+	if (sendto(0, (caddr_t)bp, sizeof *bp, 0,
+	    (struct sockaddr *)&to, sizeof to) < 0)
+		syslog(LOG_INFO, "send failed");
+}
+
+
+/*
+ * Return the number of leading bytes matching in the
+ * internet addresses supplied.
+ */
+nmatch(ca,cb)
+	register char *ca, *cb;
+{
+	register n,m;
+
+	for (m = n = 0 ; n < 4 ; n++) {
+		if (*ca++ != *cb++)
+			return(m);
+		m++;
+	}
+	return(m);
+}
+
+
+/*
+ * Setup the arp cache so that IP address 'ia' will be temporarily
+ * bound to hardware address 'ha' of length 'len'.
+ */
+setarp(ia, ha, len)
+	iaddr_t *ia;
+	u_char *ha;
+{
+	struct sockaddr_in *si;
+
+	arpreq.arp_pa.sa_family = AF_INET;
+	si = (struct sockaddr_in *)&arpreq.arp_pa;
+	si->sin_addr = *ia;
+	bcopy(ha, arpreq.arp_ha.sa_data, len);
+	if (ioctl(0, SIOCSARP, (caddr_t)&arpreq) < 0)
+		syslog(LOG_INFO, "set arp ioctl failed");
+}
+
+
+/*
+ * Read bootptab database file.  Avoid rereading the file if the
+ * write date hasnt changed since the last time we read it.
+ */
+readtab()
+{
+	struct stat st;
+	register char *cp;
+	int v;
+	register i;
+	char temp[64], tempcpy[64];
+	register struct hosts *hp, *thp;
+	int skiptopercent;
+	struct hostent *h;
+
+	if (fp == 0) {
+		if ((fp = fopen(bootptab, "r")) == NULL) {
+			syslog(LOG_INFO, "can't open %s", bootptab);
+			exit(1);
+		}
+	}
+	if (fstat(fileno(fp), &st) == 0 &&
+	    st.st_mtime == modtime && st.st_nlink)
+		return;	/* hasnt been modified or deleted yet */
+	fclose(fp);
+	if ((fp = fopen(bootptab, "r")) == NULL) {
+		syslog(LOG_INFO, "can't open %s", bootptab);
+		exit(1);
+	}
+	fstat(fileno(fp), &st);
+	syslog(LOG_INFO, "(re)reading %s", bootptab);
+	modtime = st.st_mtime;
+	homedir[0] = defaultboot[0] = 0;
+	bootdir = NULL;
+	linenum = 0;
+	skiptopercent = 1;
+
+	/*
+	 * Free old file entries.
+	 */
+	hp = hosts;
+	while (hp) {
+		thp = hp->next;			
+		if (hp->state == FROMFILE) {
+			hostremove(hp);
+			free((char *)hp);
+		}
+		hp = thp;
+	}
+
+	/*
+	 * read and parse each line in the file.
+	 */
+	for (;;) {
+		if (fgets(line, sizeof line, fp) == NULL)
+			break;	/* done */
+		if ((i = strlen(line)))
+			line[i-1] = 0;	/* remove trailing newline */
+		linep = line;
+		linenum++;
+		if (line[0] == '#' || line[0] == 0 || line[0] == ' ')
+			continue;	/* skip comment lines */
+		/* fill in fixed leading fields */
+		if (homedir[0] == 0) {
+			getfield(homedir, sizeof homedir);
+			if (cp = (char *) index(homedir, ':')) {
+			    *cp++ = '\0';
+			    bootdir = cp;
+			}
+			continue;
+		}
+		if (defaultboot[0] == 0) {
+			getfield(defaultboot, sizeof defaultboot);
+			continue;
+		}
+		if (skiptopercent) {	/* allow for future leading fields */
+			if (line[0] != '%')
+				continue;
+			skiptopercent = 0;
+			continue;
+		}
+		/* fill in host table */
+		hp = (struct hosts *) malloc(sizeof (*hp));
+		getfield(hp->host, sizeof hp->host);
+		getfield(temp, sizeof temp);
+		sscanf(temp, "%d", &v);
+		hp->htype = v;
+		getfield(temp, sizeof temp);
+		strcpy(tempcpy, temp);
+		cp = tempcpy;
+		/* parse hardware address */
+		for (i = 0 ; i < sizeof hp->haddr ; i++) {
+			char *cpold;
+			char c;
+			cpold = cp;
+			while (*cp != '.' && *cp != ':' && *cp != 0)
+				cp++;
+			c = *cp;	/* save original terminator */
+			*cp = 0;
+			cp++;
+			if (sscanf(cpold, "%x", &v) != 1)
+				goto badhex;
+			hp->haddr[i] = v;
+			if (c == 0)
+				break;
+		}
+		if (hp->htype == 1 && i != 5) {
+	badhex:
+			syslog(LOG_INFO, "bad hex address: %s, at line %d of bootptab",
+			       temp, linenum);
+			free((char *)hp);
+			continue;
+		}
+		getfield(temp, sizeof temp);
+		if ((i = inet_addr(temp)) == -1 || i == 0) {
+			syslog(LOG_INFO, "bad internet address: %s, at line %d of bootptab",
+				temp, linenum);
+			free((char *)hp);
+			continue;
+		}
+		hp->iaddr.s_addr = i;
+		getfield(hp->bootfile, sizeof hp->bootfile);
+		hostsetstate(hp, FROMFILE);
+		hostinsert(hp);
+	}
+}
+
+
+/*
+ * Get next field from 'line' buffer into 'str'.  'linep' is the 
+ * pointer to current position.
+ */
+getfield(str, len)
+	char *str;
+{
+	register char *cp = str;
+
+	for ( ; *linep && (*linep == ' ' || *linep == '\t') ; linep++)
+		;	/* skip spaces/tabs */
+	if (*linep == 0) {
+		*cp = 0;
+		return;
+	}
+	len--;	/* save a spot for a null */
+	for ( ; *linep && *linep != ' ' & *linep != '\t' ; linep++) {
+		*cp++ = *linep;
+		if (--len <= 0) {
+			*cp = 0;
+			syslog(LOG_INFO, "string truncated: %s, on line %d of bootptab",
+				str, linenum);
+			return;
+		}
+	}
+	*cp = 0;
+}
+
+
+/*
+ * log an error message 
+ *
+ */
+
+LOGSYS(foo, fmt, args)
+int foo;
+char *fmt;
+{
+	FILE *lp;
+
+	if ((lp = fopen("/usr/adm/bootplog", "a+")) == NULL)
+		return;
+	_doprnt(fmt, &args, lp);
+	putc('\n', lp);
+	fclose(lp);
+}
+
+hostinsert(
+	   struct hosts *hp
+	   )
+{
+	hp->next = hosts;
+	hp->prev = NULL;
+	if (hosts) {
+		hosts->prev = hp;
+	}
+	hosts = hp;
+}
+
+hostremove(
+	   struct hosts *hp
+	   )
+{
+	if (hp->prev) {
+		hp->prev->next = hp->next;
+	} else {
+		hosts = hp->next;
+	}
+	if (hp->next) {
+		hp->next->prev = hp->prev;
+	}
+}
+
+hostsetstate(
+	     struct hosts	*hp,
+	     enum hoststate	state
+	     )
+{
+	if (state == FROMNET || state == FROMFILE) {
+		hp->prevxid = 0;
+		hp->xid = 0;
+	} else {
+		hp->prevxid = hp->xid;
+		hp->xid = xid++;
+	}
+	hp->state = state;
+}
+
+hostsetcantdeal(
+		struct hosts	*hp,
+		unsigned long	errxid,
+		char		*errstr
+		)
+{
+	hp->state = CANTDEAL;
+	hp->xid = 0;
+	hp->prevxid = 0;
+	hp->errxid = errxid;
+	hp->errstr = errstr;
+}
+
+
+
+struct hosts *
+gethostbyhw(
+	struct bootp *rq
+	)
+{
+	struct hosts	*hp;
+	char		*host;
+	char		*bootfile;
+	struct timeval	tv;
+
+	if (useni()) {
+		if (gettimeofday(&tv, 0)) {
+			syslog(LOG_ERR, "gettimeofday failed");
+			return (NULL);
+		}
+		
+		/* Try to find some pre-existing entry. */
+		for (hp = hosts; hp; hp = hp->next) {
+			if (rq->bp_htype == hp->htype &&
+			    hp->state != FROMFILE &&
+			    bcmp(rq->bp_chaddr, hp->haddr,
+				 sizeof(hp->haddr)) == 0) {
+				if (hp->state == IGNORE) {
+					if ((tv.tv_sec - hp->tv.tv_sec) >
+					    IGNORETIME) {
+						hostremove(hp);
+						free((char *)hp);
+						continue;
+					}
+				} else {
+					/* Update last access time */
+					hp->tv = tv;
+				}
+				return (hp);
+			}
+		}
+
+		/* Not there.  Get it from NetInfo */
+		hp = (struct hosts *)malloc(sizeof (*hp));
+		bzero(hp, sizeof(*hp));
+		hp->tv = tv;
+		hp->htype = rq->bp_htype;
+		hostinsert(hp);
+		bcopy(rq->bp_chaddr, &hp->haddr, sizeof(hp->haddr));
+		if (ni_getbyether(&hp->haddr, &host, &hp->iaddr, &bootfile)) {
+			if (host != NULL) {
+				strncpy(hp->host, host, 
+					sizeof(hp->host) - 1);
+			} 
+			if (bootfile != NULL) {
+				strncpy(hp->bootfile, bootfile, 
+					sizeof(hp->bootfile) - 1);
+			}
+			hostsetstate(hp, FROMNET);
+			return (hp);
+		}
+
+		/* Not there either.  See if we are promiscuous */
+		if (promiscuous()) {
+			/* Yep.  Set up an unknown host */
+			if (ni_getconfigipaddr(&hp->iaddr)) {
+				/* We're really hosed. */
+				hp->state = IGNORE;
+				return (hp);
+			}
+			
+			if (ni_getbootfile(hp->bootfile,
+					   sizeof (hp->bootfile) -1)) {
+				hp->errstr = "can't find default bootfile";
+				goto errout;
+			}
+			hostsetstate(hp, UNKNOWN);
+			return (hp);
+		} else {
+			/* Nope.  Ignore this host for a while */
+			hp->state = IGNORE;
+			return (hp);
+		}
+			
+
+	    errout:
+		hostsetcantdeal(hp, 0, hp->errstr);
+		return(hp);
+	} else {
+		for (hp = hosts; hp; hp = hp->next) {
+			if (rq->bp_htype == hp->htype &&
+			    hp->state == FROMFILE &&
+			    bcmp(rq->bp_chaddr, hp->haddr, 6) == 0) {
+				return (hp);
+			}
+		}
+	}
+	return (NULL);
+}
+
+struct hosts *
+gethostbyip(
+	struct bootp *rq
+	)
+{
+	struct hosts *hp;
+	int n;
+	char *host;
+	char *bootfile;
+	struct ether_addr en;
+
+	if (useni()) {
+		hp = (struct hosts *)malloc(sizeof (*hp));
+		bzero(hp, sizeof(*hp));
+		bcopy(&rq->bp_ciaddr, &hp->iaddr, sizeof(hp->iaddr));
+		if (ni_getbyip(&hp->iaddr, &host, &hp->haddr, &bootfile)) {
+			if (host != NULL) {
+				strncpy(hp->host, host, 
+					sizeof(hp->host) - 1);
+			} 
+			if (bootfile != NULL) {
+				strncpy(hp->bootfile, bootfile, 
+					sizeof(hp->bootfile) - 1);
+			}
+			hp->htype = rq->bp_htype;
+			hostsetstate(hp, FROMNET);
+			hostinsert(hp);
+			return (hp);
+		}
+	} else {
+		for (hp = hosts; hp; hp = hp->next) {
+			if (rq->bp_ciaddr.s_addr == hp->iaddr.s_addr &&
+			    hp->state == FROMFILE) {
+				return (hp);
+			}
+		}
+	}
+	return (NULL);
+}
+
+freehost(
+	 struct hosts *hp
+	 )
+{
+
+	if (hp->state == FROMNET) {
+		hostremove(hp);
+		free((char *)hp);
+	}
+	return (0);
+}

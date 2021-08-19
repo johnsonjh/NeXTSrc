@@ -1,0 +1,241 @@
+
+The 0.83 system release (-9 compiler release) contains the following changes:
+
+   Changes to the Objective-C compiler:
+
+   * added the `-objc' compiler option. This instructs the compiler
+     that the source file it is about to compile contains Objective-C 
+     code...now you can have Objective-C code in a `.c' file!
+
+   * added static typing. Users can now communicate the class of object
+     to the compiler (not just `id'). The syntax is identical to the
+     syntax for `typedef's'. In addition to being more descriptive 
+     to readers of a program, this provides the compiler with all 
+     the information necessary to:
+
+     (1) provide better error checking, 
+     (2) directly access to instance variables that are declared public, 
+     (3) have the same selector name return or take different data types.
+
+     For example,
+
+   	#import <objc/Object.h>
+
+   	@interface A : Object @end
+
+   	@interface B : Object @end
+
+   	@interface C : B @end
+
+   	/* rules for statically typed objects.
+   	 *
+   	 * an assignment of the form `a' = `b' is permitted if:
+   	 *
+   	 *   - `a' or `b' is of type "id".
+   	 *   - `a' and `b' are the same class type.
+   	 *   - `a' and `b' are of class types A and B such that 
+         *	B is a descendant of A.
+   	 */
+   	static void test_type_comparisons(A *myA, B *myB, C *myC)
+   	{
+   		Object *myObject;
+
+   		myObject = myB = myC; 	/* legal */
+   		myC = myB = myObject;	/* illegal */
+   		myA = myC;		/* illegal */
+   		myA = myB;		/* illegal */
+	}
+
+	main()
+	{
+		test_type_comparisons([A new], [B new], [C new]);
+	}
+
+   * added public/private instance variables. Users of an object are
+     permitted direct access to the instance variables of an object iff:
+
+      (1) the user specifies the class of object at compile time, and
+      (2) the author of the class declares them as `@public'.
+
+     For example,
+
+	#import <objc/Object.h>
+
+	@interface A : Object 
+	{
+		int private;
+	  @public
+		int public;
+	}
+	@end
+
+	@interface B : Object 
+	{
+		int private;
+	  @public
+		int public;
+	}
+	@end
+
+	main() { 
+		A *tA = [A new];
+		B *tB = [B new];
+
+	 	tA->private;
+		tB->private;
+		tA->public;
+		tB->public;	
+	}
+
+     will produce the following warnings,
+
+     In function main:
+     exPublicPrivate.m:23: instance variable `private' is declared private
+     exPublicPrivate.m:24: instance variable `private' is declared private
+
+   * added an error diagnostic for selector return/argument type 
+     ambiquities. For example, 
+
+   	#import <objc/Object.h>
+
+	@interface A : Object 
+	- (int) foo; 
+	@end
+
+	@interface B : Object 
+	- (double) foo; 
+	@end
+
+	static void foo(id anObj) { [anObj foo]; }
+
+	main() { foo([B new]); }
+
+     will produce the following warning,
+
+     In function foo:
+     exAmbiguous.m:8: warning: multiple declarations for method `foo'
+     exAmbiguous.m:4: using `-(int )foo'
+     exAmbiguous.m:6: also found `-(double )foo'
+
+     If your intention was to use `-(double)foo', use static typing.
+     For example, the following change would eliminate the warning.
+
+	static void foo(B *anObj) { [anObj foo]; }
+
+   Compatibility of the Objective-C compiler:
+
+   * with 0.82 compiler...upward compatible.
+
+   * with the Stepstone translator (important for `herman'):
+
+     - we do not support static or stack allocated objects. The user
+     will receive an error if this service is requested.
+
+     - we do not currently support the `-sBind' switch for statically
+     binding methods to their implementations. We may support this in
+     a future release.
+
+     - all instance variables that a class defines are public within
+     its implementation. The Stepstone translator does not accept 
+     the following, it is clearly a bug that they should fix:
+
+	#import <objc/Object.h>
+
+	@interface Example : Object
+	{
+		int private;
+	   @public
+		int public;
+	}
+	+ new;
+	@end
+
+	@implementation Example 
+
+	static void foo(Example *anEx)
+	{
+		/* the Stepstone translator thinks `private'
+		 * is undefined, this is clearly a bug... 
+		 */
+		printf("private = %d, public = %d\n",
+			anEx->private,anEx->public);
+	}
+	+ new
+	{
+		self = [super new];
+		private = 7;
+		public = 8;
+		return self;
+	}
+	@end
+
+	main()	
+	{ 
+		foo([Example new]);
+	}
+
+     We allow this...public/private is useless (almost) without it.
+
+   NOTE FOR SHLIB USERS (within NeXT):
+
+   Static typing will not work well with objects that are defined in other
+   shared libraries. This is because our implementation of shared libraries
+   uses the preprocessor to accomplish much of its magic. For example,
+   consider the following code:
+
+	Object *anObject;
+	anObject = [Object new];
+
+   will be expanded into (using macros defined in `shlib.h'):
+
+	(*libNeXT_Object) *anObject;
+	anObject = [(*libNeXT_Object) new];
+
+   which is clearly not appropriate...
+
+   * This restriction will go away with the v1.0 Objective-C 
+   runtime system, which will work much better with shared libraries... 
+
+***
+
+- Updated and new man pages now exist for:
+    atom.1
+    ld.1
+    nm.1
+    otool.1
+    size.1
+    strip.1
+    end.3
+    getmachheaders.3
+    getsectbyname.3
+    getsegbyname.3
+    nlist.3
+    Mach-O.5
+    stab.5
+    cmpshlib.l
+    indr.l
+    mkshlib.l
+  See Gary Miller or Kevin Enderby if you want a copy before 0.83
+  documentation gets released.
+
+- The handling of expected undefined symbols has been tighted up when building
+  shared libraries.  The mkshlib(l) option -u is now gone and the new directive
+  #undefineds has been added.  All expected undefined symbol names must now be
+  listed in the library specification file.  For example the 0.82 shared appkit
+  would have the following lines added to it (I think):
+
+	#undefined
+		__Object
+		___Object
+		__List
+		___List
+
+  And then the -u option would no longer be used with mkshlib(l).  Mkshlib(l)
+  takes these symbol names and passes them as `-U __Object', etc. to ld(1).
+  This new option to ld allows only these symbols to be undefined.  If these
+  are the only symbol undefined ld(1) prints no errors or warnings.
+
+- The default format of object files produced by indr(l) is now Mach-O
+  relocatable object files and no longer OMAGIC a.out files.  This only applys
+  to the object files it creates and not the object files it processes (they
+  remain in the format they appeared as input).

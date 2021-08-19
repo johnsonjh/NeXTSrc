@@ -1,0 +1,2722 @@
+head     1.3;
+access   ;
+symbols  ;
+locks    osdev:1.3; strict;
+comment  @ * @;
+
+
+1.3
+date     89.07.15.21.19.17;  author osdev;  state Exp;
+branches ;
+next     1.2;
+
+1.2
+date     89.06.11.17.35.55;  author osdev;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.06.11.17.33.09;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+1.3
+log
+@Bug fixes from Lee.
+@
+text
+@/* New User Installation Program
+ *
+ *	Brian Reid, Erik Hedberg, Jeff Mogul, and Fred Yankowski
+ *	Stanford University
+ *
+ *	This program helps system administrators manage login accounts.
+ *	it reflects the way we do things at Stanford, but can probably
+ *	be adapted to almost any situation.
+ *
+ *	It was originally written by Fred Yankowski as an MS project
+ *	in 1980.  Several years of experience at using it showed us
+ *	lots of things that we would like it to do differently; Erik
+ *	Hedberg added many changes.  In summer 1984 Brian Reid tore it
+ *	all apart, adapted it to 4.2BSD, modified it to use the C
+ *	library as much as possible added error checking and
+ *	command-line parsing, rewrote code that didn't amuse him, and
+ *	changed the structure of it so that it read in a configuration
+ *	file instead of having compile-time options. Jeff Mogul added
+ *	the -d option.  Peter King at Stanford put in filling of holes
+ *	in the password file.  The man page is entirely by Brian Reid.
+ *	Peter King at NeXT adapted it for use on the NeXT Computer
+ *	System and to deal with YP.
+ *
+ *	This program does not contain any Unix source code, nor is it
+ *	copied from any. It is completely public domain, and you are
+ *	free to use, distribute, modify, or sell it, make T-shirts out
+ *	of it, or do whatever you want.
+ *
+ *	Note that to avoid using YP with getpwuid, getpwnam, getgrgid
+ *	and getgrnam we load in the original 4.3BSD routines.  These
+ *	routines are not public domain.
+ *
+ *	This program has been severly modified for the addition of
+ *	accounts under netinfo in the NeXT environment.  Modifications
+ *	were made by Lee Tucker.  This system is now tightly bound to 
+ *      netinfo and will not work without it.   It is now also necessary
+ * 	to replace the getpwuid, getpwnam, with new routines that access
+ *	only the selected netinfo domain back to netinfo.  Locking of
+ *      passwd files is no longer necessary as all edits occur immediately
+ *	in NetInfo.
+ */
+
+
+#include <stdio.h>
+#include <libc.h>
+#include <ctype.h>
+#include <signal.h>
+#include <sgtty.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include "nu.h"
+#define  CONTROL_D '\003'
+
+
+long	nsymbols;
+char    This_host[100];			/* Holds result of gethostname() */
+
+int     numtopnodes = 0;
+struct topnode  topnode[MAXGROUPS];	/* to be filled in from nu.cf */
+
+int     incritsect;			/* Set to true when the program is in
+					   the section involved with updating
+					   the files and creating new files
+					   and, hence, should not be
+					   interruptable by ^C. */
+
+int     wasinterrupted;			/* Set to true if interrupt occurs
+					   during a call to 'System' */
+
+char    cmd[BUF_LINE];			/* Buffer to construct commands in */
+
+char    editor[BUF_WORD];		/* Who is running this program */
+
+FILE * logf;				/* File to log actions in */
+int     whichmail;			/* record which kind of mail the user
+					   wants */
+struct stat statbuf;			/* for stat and lstat calls */
+
+void *ncpy (char *to, char *from, int len)
+{
+    register int    i;
+    for (i = 1; i <= len; i++)
+	*to++ = *from++;
+}
+
+/* YesNo
+ *	Gets either a yes or a no answer. "Yy\n" for yes, "Nn" for no.
+ */
+int YesNo (char defaultans)
+{
+    char    temp[BUF_WORD], ans;
+
+    for (;;) {
+	fgets (temp, BUF_WORD, stdin);
+	MapLowerCase (temp);
+	ans = temp[0];
+	if (ans == '\n')
+	    ans = defaultans;
+	if (ans == 'y')
+	    return (TRUE);
+	if (ans == 'n')
+	    return (FALSE);
+	printf ("Answer y or n. [return means %c] ", defaultans);
+    }
+}
+
+/* UseDefault
+ *	returns TRUE if NULL entered (meaning use default) or
+ *	FALSE after reading text to use in place of default
+ */
+int UseDefault (char *str, char *def)
+{
+    char    temp[BUF_WORD];
+    printf (" [%s] ", def);
+    gets (temp);
+    if (strlen(temp) == 0) {
+	if (str != def)
+	    strcpy (str, def);
+	return (TRUE);
+    }
+    else {
+	strcpy (str, temp);
+	return (FALSE);
+    }
+}
+
+/* GetUserID
+ *	returns the userid for the new user.  The routine scans the
+ *	password file to find the highest userid so far assigned.
+ *	The new userid is then set to be the one more than this value.
+ *	This calculated default can be overridden, but the password
+ *	file is searched to insure that the chosen userid will be
+ *	unique.
+ */
+int GetUserID () 
+{
+    int     maxuid, newuid;
+    char    defaultID[BUF_WORD], buf[BUF_WORD];
+    struct passwd* pwd;
+
+    if (IntV("PWFillHoles")) {
+	    /* Scan the passwd file for the first userid above PWUserBase */
+	    for (newuid = IntV("PWUserBase"); mygetpwuid(newuid) != NULL;
+		 newuid++)
+		    ;
+    } else {
+	    /* scan the passwd file for the highest userid */
+	    maxuid = 0;
+	    newuid = getMaxUid();
+    }
+    sprintf (defaultID, "%d", newuid);
+
+    for (;;) {
+	printf ("User id number? (small integer) ");
+	UseDefault (buf, defaultID);
+	newuid = atoi (buf);
+	if (newuid <= 0) {
+	    printf ("Userid must be >0, and should be >10.\n");
+	    continue;
+	}
+	if ((pwd = mygetpwuid (newuid)) == NULL)
+	    return (newuid);
+	else
+	    printf ("User id %d is already assigned to %s (%s)\n",
+		    pwd->pw_uid, pwd->pw_name, pwd->pw_gecos);
+    }
+}
+
+/* GetGroup
+ *	writes the group name in grpname and returns the numeric gid.
+ *	A groupid can be entered as a number or the name for a
+ *	group (as defined in /etc/group).  The getgr-- functions are
+ *	used to peruse the group file.  Legal symbolic names are
+ *	mapped into the corresponding groupid.  Input numeric
+ *	groupid's are mapped into the corresponding symbolic name
+ *	(if such exists) for verification.
+ */
+int GetGroupID (char *group)
+{
+    struct group   *agrp;
+    int     gid;
+    char    buf[BUF_WORD], def[BUF_WORD];
+
+ /* Get group name for IntV("DefaultGroup") */
+    if (agrp = mygetgrgid (IntV ("DefaultGroup")))
+	strcpy (def, agrp->gr_name);
+    else
+	strcpy (def, "unknown");
+
+    for (;;) {
+	printf ("Which user group? (name or number; ? for list)");
+	UseDefault (buf, def);
+	if ((strcmp (buf, "?") == 0 || (strcmp (buf, "help") == 0))) {
+	    char    hbuf[BUF_LINE], *hptr;
+	    int     gcount;
+	    hptr = hbuf;
+	    gcount = 0;
+	    sprintf (hptr, "Available groups are:");
+	    listGroups();
+	    if (gcount != 0)
+		puts(hptr);
+	    continue;
+	}
+
+	if (isdigit (*buf)) {
+    /* presumably, a numeric groupid has been entered */
+	    gid = atoi (buf);
+	    if (agrp = mygetgrgid (gid))
+		strcpy (buf, agrp->gr_name);
+	    else
+		strcpy (buf, "unknown");
+	    printf ("Selected groupid is %d (%s), OK? (y or n) [y] ", gid, buf);
+	    if (YesNo ('y')) {
+		strcpy (group, buf);
+		return (gid);
+	    }
+	}
+	else {
+    /* some symbolic group name has been entered */
+	    if (agrp = mygetgrnam (buf)) {
+		strcpy (group, agrp->gr_name);
+		return (agrp->gr_gid);
+	    }
+	    else
+		printf ("Sorry, %s is not a registered group name.\nIf you want a list of groups, type '?'\n", buf);
+	}
+    }
+}
+
+/* MapLowerCase
+ *	maps the given string into lower-case.
+ */
+void *MapLowerCase (char *b)
+{
+    while (*b) {if (isupper (*b)) *b++ += 'a'-'A'; else b++;}
+}
+
+/* MapUpperCase
+ *	maps the given string into lower-case.
+ */
+void *MapUpperCase (char *b)
+{
+    while (*b) {if (islower (*b)) *b++ -= 'a'-'A'; else b++;}
+}
+
+int HasBadChars (char *b)
+{
+    while (*b) {
+	if ((NOT isalpha (*b)) && (NOT isdigit (*b)) && (*b != '_'))
+	    return (TRUE);
+	b++;
+    }
+    return (FALSE);
+}
+
+/* GetLoginName
+ * 	Prompts for a login name and checks to make sure it is legal.
+ *	The login name is returned, null-terminated, in "buf".
+ */
+void *GetLoginName (char *buf)
+{
+    int     done = FALSE, i, j;
+    char   *aptr;
+    datum aliaskey, aliasname;
+    struct passwd* pwd;
+
+    while (NOT done) {
+	printf ("Login name? (1-8 alphanumerics) [no default] ");
+	gets (buf);
+	if (strlen(buf) == 0)
+	    continue;
+
+	MapLowerCase (buf);
+	if (HasBadChars (buf)) {
+	    printf ("Sorry, the login name can contain only alphanumerics or '_'\n");
+	    continue;
+	}
+
+	if (strlen (buf) > IntV ("MaxNameLength")) {
+	    printf ("Sorry, login names must not contain more than ");
+	    printf ("%d characters\n", IntV ("MaxNameLength"));
+	    buf[IntV ("MaxNameLength")] = 0;
+	    printf ("Should it be truncated to '%s'? ", buf);
+	    if (NOT YesNo ('y'))
+		continue;		/* start over again */
+	}
+
+ /* check to see that the login is unique */
+	if (pwd = mygetpwnam (buf)) {
+	    printf ("Sorry, the login '%s' is already in use (id %d, %s).\n",
+		    buf, pwd->pw_uid, pwd->pw_gecos);
+	    continue;
+	}
+	done = TRUE;
+ /* check to make sure that the login does not conflict with an alias. This
+    whole section of code is ridiculous overkill, but I was in the mood
+    (BKR). */
+    }
+}
+
+/* GetPassword
+ *	read password (null is still allowed)
+ */
+char   *GetPassword (ascpw, cryptpw)
+char   *ascpw, *cryptpw;
+{
+    char    saltc[2], c;
+    long    salt;
+    register int    i;
+    char    pw1[40], pw2[40];
+
+    printf("\n%s\n%s\n%s\n\n",
+	   "Passwords are very important to system security.  When you are",
+	   "entering a new password, make sure that it is at least 6 characters",
+	   "long and that it contains at least one character that is not a letter.");
+    do {
+	strcpy (pw1, getpass ("Enter password: "));
+	strcpy (pw2, getpass ("Retype password, please: "));
+	if (!strcmp (pw1, pw2))
+	    break;
+	printf ("They don't match. Please try again.\n");
+    } while (TRUE);
+
+    strcpy (ascpw, pw1);
+    if (strlen (ascpw)) {
+	time (&salt);
+	salt += getpid ();
+	saltc[0] = salt & 077;
+	saltc[1] = (salt >> 6) & 077;
+	for (i = 0; i < 2; i++) {
+	    c = saltc[i] + '.';
+	    if (c > '9')
+		c += 7;
+	    if (c > 'Z')
+		c += 6;
+	    saltc[i] = c;
+	}
+	strcpy (cryptpw, (crypt (ascpw, saltc)));
+    }
+    else
+	strcpy (cryptpw, "");
+}
+
+/* GetRealName
+ *	read the new user's actual name.
+ */
+GetRealName (buf)
+char   *buf;
+{
+    int     done;
+    done = FALSE;
+    while (NOT done) {
+	printf ("Enter actual user name: ");
+	gets (buf);
+	if (index (buf, ':'))
+	    printf ("Sorry, the name must not contain ':'\n");
+	else if (index (buf, ','))
+	    printf ("Sorry, the name must not contain ','\n");
+	else
+	    done = TRUE;
+    }
+}
+
+/* GetLoginDir
+ *	Writes the new user's login directory in the cpw_dir field.
+ */
+int GetLoginDir (struct cpasswd *np)
+{
+    int     DontClobberDir;
+    register int    i, done;
+    char    defdir[BUF_WORD];		/* default login directory */
+
+    strcpy (defdir, StrV ("DefaultHome"));
+    strcat (defdir, "/");
+
+    for (i = 0; topnode[i].gid; i++) {
+	if (np->cpw_gid == topnode[i].gid) {
+	    strcpy (defdir, topnode[i].topnodename);
+	    strcat (defdir, "/");
+	    break;
+	}
+    }
+    strcat (defdir, np->cpw_name);
+
+    done = FALSE;
+    while (NOT done) {
+	printf ("Login directory? ");
+	UseDefault (np->cpw_dir, defdir);
+	if (index (np->cpw_dir, ':')) {
+	    printf ("Sorry, the name must not contain ':'\n");
+	    continue;
+	}
+	DontClobberDir = 0;
+	if (stat (np->cpw_dir, &statbuf) == 0) {
+	    printf ("%s already exists. Do you want to clobber it? (y or n) [n] ", np->cpw_dir);
+	    if (YesNo ('n'))
+		break;
+	    printf ("Do you want to use %s, but not touch its contents? (y or n) [y] ", np->cpw_dir);
+	    if (NOT YesNo ('y'))
+		continue;
+	    DontClobberDir = 1;
+	    break;
+	}
+	break;
+    }
+    return (DontClobberDir);
+}
+
+/* GetLoginSH
+ *	returns the new user's login shell directory.  The default,
+ *	which may be overridden, is StrV("DefaultShell").
+ */
+void *GetLoginSH (char *buf)
+{
+    FILE * shellf;
+    int     done;
+
+    done = FALSE;
+    while (NOT done) {
+	printf ("Enter shell");
+	UseDefault (buf, StrV ("DefaultShell"));
+	shellf = fopen (buf, "r");
+	if (shellf == NULL) {
+	    printf ("I trust you realize that there is no such file.\n");
+	    printf ("Is that ok? (y or n) [y] ");
+	    if (NOT YesNo ('y'))
+		continue;
+	}
+	if (index (buf, ':'))
+	    printf ("Sorry, shell file name must not contain ':'\n");
+	else
+	    done = TRUE;
+	fclose(shellf);
+    }
+}
+
+
+/* System
+ *	
+ *	Like the regular "system", but does the right thing with ^C
+ */
+int System (char *cmdstring)
+{
+    int     status, pid, waitstat;
+
+    if (IntV("Debug"))
+    	printf("System(%s)\n", cmdstring);
+    wasinterrupted = FALSE;
+
+    fflush(stdout);
+    fflush(stderr);
+
+    if (!(pid = vfork ())) {
+	execl ("/bin/sh", "sh", "-c", cmdstring, 0);
+	_exit (127);
+    }
+    while ((waitstat = wait (&status)) != pid && waitstat != -1);
+    if (waitstat == -1)
+	status = -1;
+    return (status);
+}
+/* CallSys
+ *	repeats a System call until the call returns without error,
+ *	or until it returns with an error but without the flag being
+ *	set indicating that an interrupt occurred during the call.
+ *	This flag, 'wasinterrupted', is set FALSE just before a
+ *	System call, and is set to TRUE only if the Catch routine is
+ *	called during the critical (uninterruptable) section of the
+ *	program.
+ */
+int CallSys (char *cmd)
+{
+    register int    status;
+
+    while (status = System (cmd))
+	if (NOT wasinterrupted)		/* regular system error */
+	    return (status);		/* system call bombed */
+    return (status);			/* executed without problem */
+}
+
+/* DoCommand
+ *	calls 'Callsys' to execute the string 'cmd', and supplies
+ *	some messages.  Exits if 'fatal' is TRUE.
+ */
+void *DoCommand (char *cmd, int fatal, int safe)
+{
+    register int    status;
+
+    if (IntV ("Debug"))
+	printf ("%s", cmd);
+    if (IntV ("Debug") == 0 || safe) {
+	if (status = CallSys (cmd)) {
+	    printf ("nu: '%s' failed, status %d\n", cmd, status);
+	    perror ("nu");
+	    if (fatal) {
+		exit (ERROR);
+	    }
+	}
+    }
+    else
+	printf ("Unsafe command, skipped in Debug mode.\n");
+}
+
+/* AddToPasswd
+ *	takes the userrect holding the new entry for the passwd file, and
+ *	inserts this into NetInfo.
+ */
+void *AddToPasswd (struct cpasswd *userrec, int caps, char *argv[])
+{
+    ni_proplist fullUser;
+    ni_property	workingProperty;
+    ni_id 	newChild;
+    ni_status	whatHappened;
+    char	num2String[7];
+
+    NI_INIT(&fullUser);
+    NI_INIT(&workingProperty);
+    workingProperty.nip_name = "name";
+    ni_namelist_insert(&workingProperty.nip_val, userrec->cpw_name, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "passwd";
+    ni_namelist_insert(&workingProperty.nip_val, userrec->cpw_passwd, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "uid";
+    sprintf(num2String, "%d", userrec->cpw_uid);
+    ni_namelist_insert(&workingProperty.nip_val, num2String, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "gid";
+    sprintf(num2String, "%d", userrec->cpw_gid);
+    ni_namelist_insert(&workingProperty.nip_val, num2String, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "realname";
+    ni_namelist_insert(&workingProperty.nip_val, userrec->cpw_person, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "home";
+    ni_namelist_insert(&workingProperty.nip_val, userrec->cpw_dir, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "shell";
+    ni_namelist_insert(&workingProperty.nip_val, userrec->cpw_shell, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "_writers_passwd";
+    ni_namelist_insert(&workingProperty.nip_val, userrec->cpw_name, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    whatHappened = ni_create(niHandle, &userDir, fullUser, &newChild, NI_INDEX_NULL);
+    /* here is where we build the proplist and ni_write it*/
+    if (whatHappened != NI_OK) {
+	printf ("Unable to write account to NetInfo.\n");
+	exit (ERROR);
+    }
+    else {
+	printf ("Account added to NetInfo.\n");
+    }
+
+}
+
+/* ReplaceInPasswd
+ *	takes the userrect holding the new entry for the passwd file, and
+ *	replaces this into NetInfo.
+ */
+ni_status ReplaceInPasswd (struct cpasswd *userrec, ni_id whatDir)
+{
+    ni_proplist fullUser;
+    ni_property	workingProperty;
+    ni_status	whatHappened;
+    char	num2String[7];
+
+    NI_INIT(&fullUser);
+    NI_INIT(&workingProperty);
+    workingProperty.nip_name = "name";
+    ni_namelist_insert(&workingProperty.nip_val, userrec->cpw_name, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "passwd";
+    ni_namelist_insert(&workingProperty.nip_val, userrec->cpw_passwd, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "uid";
+    sprintf(num2String, "%d", userrec->cpw_uid);
+    ni_namelist_insert(&workingProperty.nip_val, num2String, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "gid";
+    sprintf(num2String, "%d", userrec->cpw_gid);
+    ni_namelist_insert(&workingProperty.nip_val, num2String, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "realname";
+    ni_namelist_insert(&workingProperty.nip_val, userrec->cpw_person, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "home";
+    ni_namelist_insert(&workingProperty.nip_val, userrec->cpw_dir, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "shell";
+    ni_namelist_insert(&workingProperty.nip_val, userrec->cpw_shell, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    workingProperty.nip_name = "_writers_passwd";
+    ni_namelist_insert(&workingProperty.nip_val, userrec->cpw_name, NI_INDEX_NULL);
+    ni_proplist_insert(&fullUser, workingProperty, NI_INDEX_NULL);
+    ni_namelist_free(&workingProperty.nip_val);
+    whatHappened = ni_write(niHandle, &whatDir, fullUser);
+    return (whatHappened);
+
+}
+
+/* LogAddition
+ *	creates an entry for a file that holds information about
+ *	newuser's, corresponding to the information in the passwd
+ *	file.  This file is used only informally, to keep track
+ *	recent additions.
+ */
+void *LogAddition (char *buf)
+{
+    FILE * logf;
+    long    clock;
+
+    if (logf = fopen (StrV ("Logfile"), "a")) {
+	clock = time (0);
+	fprintf (logf, "%s\tadded by %s on %s\n", buf, editor, ctime (&clock));
+	fclose (logf);
+    }
+    else
+	fprintf (stderr, "Can't make log file entry\n");
+}
+
+/* CreateDir
+ *	calls a shell script that creates a new directory, to be
+ *	the new user's login dir.  This new user becomes the owner
+ *	of the directory.
+ */
+void *CreateDir (struct cpasswd *np, int clobber)
+{
+    sprintf (cmd, "%s %d %d %s %s %d %d\n",
+	    StrV ("CreateDir"),
+	    np->cpw_uid,
+	    np->cpw_gid,
+	    np->cpw_dir,
+	    np->cpw_linkdir,
+	    clobber,
+	    IntV ("Debug")
+	);
+    DoCommand (cmd, FATAL, SAFE);
+}
+
+/* InstallFiles
+ *	Call the shell script that puts files in the new directory
+ *	and makes sure they have the right ownership.
+ */
+void *InstallFiles (struct cpasswd *np)
+{
+    sprintf (cmd, "%s %s %d %d %d %d\n",
+	    StrV ("CreateFiles"),
+	    np->cpw_dir,
+	    np->cpw_uid,
+	    np->cpw_gid,
+	    (whichmail == 'm') && IntV ("WantMHsetup"),
+	    IntV ("Debug")
+	);
+    DoCommand (cmd, NONFATAL, SAFE);
+
+}
+/* PwPrint
+ *	Print the fields of a passwd structure.
+ */
+void *PwPrint (struct cpasswd *cpw)
+{
+    printf ("   1)  login ...... %s\n", cpw->cpw_name);
+    printf ("   2)  password ... ");
+    if (cpw->cpw_passwd[0])
+	printf ("%s (encrypted)\n", cpw->cpw_passwd);
+    else
+	printf ("(none)\n");
+    printf ("   3)  name ....... %s\n", cpw->cpw_person);
+    printf ("   4)  userid ..... %d\n", cpw->cpw_uid);
+    printf ("   5)  groupid .... %d (%s)\n", cpw->cpw_gid, cpw->cpw_group);
+    printf ("   6)  login dir .. %s\n", cpw->cpw_dir);
+    printf ("   7)  login sh ... %s\n", cpw->cpw_shell[0] ? cpw->cpw_shell
+	    : "/bin/sh (null default)");
+}
+
+/* Verified
+ *	print the current account data, ask if it is Ok, and return
+ *	TRUE if it is Ok, false otherwise.	
+ */
+int Verified (struct cpasswd *np)
+{
+/*
+ *  Clear all waiting input and output chars.
+ *  Actually we just want to clear any waiting input chars so
+ *  we have a chance to see the values before confirming them.
+ *  We have to sleep a second to let waiting output chars print.
+ */
+    sleep (1);
+    ioctl (0, TIOCFLUSH, 0);
+
+    PwPrint (np);
+
+    printf ("Are these values OK? (y or n)  [y] ");
+    fflush (stdout);
+    if (YesNo ('y'))
+	return (TRUE);
+    else {
+	printf ("Do you want to continue? (y or n) [y] ");
+	if (YesNo ('y'))
+	    return (FALSE);
+	else {
+	    exit (OK);
+	}
+    }
+}
+
+
+/* Catch
+ *	is called whenever ^C is typed at the terminal.  If the
+ *	critical section flag is set, the program should not be
+ *	aborted, and so the routine just returns.  If the flag is not
+ *	set, the terminate routine is called to halt the program.
+ */
+int Catch () 
+{
+    signal (SIGINT, SIG_IGN);		/* ignore ^C's for a short time */
+
+    if (incritsect) {
+	printf ("\nSorry, 'nu' is in a critical section and should not terminate here.\n");
+	printf ("Please try again later. The safest thing to do is to let it finish,\n");
+	printf ("then go back and kill the new account with 'nu -k name'.\n");
+	wasinterrupted = TRUE;
+	signal (SIGINT, Catch);
+ /* further ^C's trapped to 'Catch()' */
+	return (TRUE);
+    }
+    else {
+	printf ("\nProgram aborted.\n");
+	exit (ERROR);
+    }
+}
+
+/* Additions
+ *	This is the driver routine for adding new users. It is called from
+ *	main() if the "-a" option is found.
+ */
+void *Additions (int allCaps, char *argv[])
+{
+    int     done, noclobber, i;
+    char    access[BUF_WORD], buffer[BUF_LINE];
+    struct cpasswd  new;
+    long	salt;
+    char    saltc[2], c;
+    ni_id   tempID;
+
+    done = FALSE;	/* becomes TRUE when the user is satisfied with */
+    while (NOT done) {	/*   the data, as it has been set up. */
+
+	if (allCaps == TRUE) {  /* Perform from a single command line instead of querying for everything. */
+	    /* don't error check much, count on the app to do this for the most part */
+	    strncpy(new.cpw_name, argv[2], BUF_WORD);
+	    strncpy(new.cpw_person, argv[3], BUF_WORD);
+	    new.cpw_uid = atoi(argv[4]);
+	    new.cpw_gid = atoi(argv[5]);
+	    strncpy(new.cpw_shell, argv[6], BUF_WORD);
+	    strncpy(new.cpw_asciipw, argv[7], BUF_WORD);
+	    strncpy(new.cpw_dir, argv[8], BUF_WORD);
+	    if (argv[9][0] == 'Y')
+		noclobber = TRUE;
+	    else {
+		noclobber = FALSE;
+		if (argv[10][0] = 'Y')
+		    whichmail = 'm';
+		else
+		    whichmail = 'u';
+	    }
+	    /* Note, no null password allowed in the app */
+	    time (&salt);
+	    salt += getpid ();
+	    saltc[0] = salt & 077;
+	    saltc[1] = (salt >> 6) & 077;
+	    for (i = 0; i < 2; i++) {
+		c = saltc[i] + '.';
+		if (c > '9')
+		    c += 7;
+		if (c > 'Z')
+		    c += 6;
+		saltc[i] = c;
+	    }
+	    strcpy (new.cpw_passwd, (crypt (new.cpw_asciipw, saltc)));
+	}
+	else {
+	    GetLoginName (new.cpw_name);
+	    if (aliasDir.nii_object != userDir.nii_object) {
+		sprintf(buffer, "/aliases/%s", new.cpw_name);
+		if (ni_pathsearch(niHandle, &tempID, buffer) == NI_OK) {
+		    printf("The user name you are attempting to use, matches an already exiting alias.\nPlease remove the alias, or choose another name.\n");
+		    return;
+		}
+	    }
+	    GetPassword (new.cpw_asciipw, new.cpw_passwd);
+	    GetRealName (new.cpw_person);
+	    new.cpw_uid = GetUserID ();
+	    new.cpw_gid = GetGroupID (new.cpw_group);
+	    noclobber = GetLoginDir (&new);
+	    GetLoginSH (new.cpw_shell);
+	    if (noclobber == 0 
+		&& IntV("WantMHsetup")) {
+		printf ("Do you want an initialized ~/Mail for MH? (y or n) [y] ");
+		if (YesNo ('y'))
+		    whichmail = 'm';
+		else
+		    whichmail = 'u';
+	    }
+	}
+	if (IntV ("WantSymbolicLinks") != 0) {
+	    strcpy (new.cpw_linkdir, StrV ("SymbolicLinkDir"));
+	    strcat (new.cpw_linkdir, "/");
+	    strcat (new.cpw_linkdir, new.cpw_name);
+	}
+	else
+	    strcpy (new.cpw_linkdir, new.cpw_dir);
+
+	if (aliasDir.nii_object != userDir.nii_object) {
+	    sprintf(buffer, "/aliases/%s", new.cpw_name);
+	    if (ni_pathsearch(niHandle, &tempID, buffer) == NI_OK) {
+		printf("The user name you are attempting to use, matches an already exiting alias.\nPlease remove the alias, or choose another name");
+		return;
+	    }
+	}
+	else;
+	if ((allCaps == TRUE) || (Verified (&new))) {
+	    incritsect = TRUE;		/* should not be interrupted */
+	    AddToPasswd (&new, allCaps, argv);
+	    if (noclobber == TRUE) {
+		CreateDir (&new, 0);
+	    }
+	    else {
+		CreateDir (&new, 1);
+		InstallFiles (&new);
+	    }
+	    sprintf (buffer, "%s:%s:%d:%d:%s:%s:%s\n",
+		    new.cpw_name, new.cpw_passwd, new.cpw_uid, new.cpw_gid,
+		    new.cpw_person, new.cpw_linkdir, new.cpw_shell);
+	    LogAddition (buffer);
+	    incritsect = FALSE;
+
+	    if (allCaps == FALSE) {
+		printf ("\nDo you wish to add more new users? (y or n)  [y] ");
+		done = NOT YesNo ('y');
+	    }
+	    else
+		done = TRUE;
+	}
+    }
+}
+
+
+/* Xfer
+ *	copies the values from a 'passwd' structure (which
+ *	is static in a system 'mygetpw---' routine) into a
+ *	'cpasswd' structure.  This is done so that multiple
+ *	'passwd' entries can be saved.
+ */
+void *Xfer(struct passwd *pwd, struct cpasswd *cpw)
+{
+    struct group   *agrp;
+
+    strcpy (cpw->cpw_name, pwd->pw_name);
+    strcpy (cpw->cpw_passwd, pwd->pw_passwd);
+    cpw->cpw_asciipw[0] = 0;
+    cpw->cpw_uid = pwd->pw_uid;
+    cpw->cpw_gid = pwd->pw_gid;
+    if (agrp = mygetgrgid (pwd->pw_gid))
+	strcpy (cpw->cpw_group, agrp->gr_name);
+    else
+	strcpy (cpw->cpw_group, "unknown");
+    strcpy (cpw->cpw_person, pwd->pw_gecos);
+    strcpy (cpw->cpw_dir, pwd->pw_dir);
+    strcpy (cpw->cpw_shell, pwd->pw_shell);
+}
+
+
+/* PromptForID
+ *	queries the user interactively for the identifier of
+ *	an entry in /etc/passwd.  If the ID is numeric, it
+ *	is assumed to be the userid; otherwise, it is assumed
+ *	to be the login.  A pointer to a structure holding
+ *	the 'passwd' entry is returned.  The routine will not
+ *	terminate until a valid entry is found.
+ */
+struct passwd  *PromptForID () {
+    char    resp[BUF_WORD];
+    int     theuid, done;
+    struct passwd  *pwd;
+
+    done = FALSE;
+    while (NOT done) {
+	strcpy(resp, "");
+	printf ("\nEnter user identifier (login or uid): ");
+	gets(resp);
+	if ((resp == NULL) || (strlen(resp) == 0) /*|| freof(stdin) */) {
+	    /* User hit a control-d or carriage return time to quit */
+	    printf ("\n");
+	    exit(OK);
+	}
+	if (isdigit (*resp)) {
+    /* presumably, a uid has been entered */
+	    theuid = atoi (resp);
+    /* search passwd for entry with uid = theuid */
+	    if ((pwd = mygetpwuid (theuid)) == NULL)
+		printf ("Sorry, that uid is not in use\n");
+	    else
+		done = TRUE;
+	}
+	else {
+    /* if the entry is sensible, it is a login-name */
+	    if ((pwd = mygetpwnam (resp)) == NULL)
+		printf ("Sorry, that login is not in use\n");
+	    else
+		done = TRUE;
+	}
+    }
+    return (pwd);
+}
+
+/* GetMod
+ *	asks user to identify a particular passwd entry, prints
+ *	the entry, prompts for changes to the entry, and leaves
+ *	'ent' pointing to an appropriately modified copy of the
+ *	entry.
+ */
+void *GetMod (int allCaps, int uid, char *argv[])
+{
+    struct passwd  *pwd;		/* struct used by system 'getpw--'
+					   routines */
+    struct cpasswd *ent;
+    char    reply[BUF_WORD], saltc[2], niBuf[BUF_LINE];
+    long	salt;
+    ni_id   tempID;
+    ni_status  whatHappened;
+    int     morechgs = TRUE,
+            needID = TRUE,
+	    i, c;
+	    
+    ent = (struct cpasswd *)malloc(sizeof(struct cpasswd));
+    if (allCaps == TRUE) {
+	pwd = mygetpwuid(uid);
+	Xfer (pwd, ent);		/* Copy to local storage */
+	strcpy(ent->cpw_name, argv[3]);
+	strcpy(ent->cpw_asciipw, argv[4]);
+	if (strlen (ent->cpw_asciipw)) {
+	    time (&salt);
+	    salt += getpid ();
+	    saltc[0] = salt & 077;
+	    saltc[1] = (salt >> 6) & 077;
+	    for (i = 0; i < 2; i++) {
+		c = saltc[i] + '.';
+		if (c > '9')
+		    c += 7;
+		if (c > 'Z')
+		    c += 6;
+		saltc[i] = c;
+	    }
+	    strcpy (ent->cpw_passwd, (crypt (ent->cpw_asciipw, saltc)));
+	}
+	else
+	    strcpy (ent->cpw_passwd, "");
+	ent->cpw_uid = atoi(argv[5]);
+	ent->cpw_gid = atoi(argv[6]);
+	strcpy(ent->cpw_person, argv[7]);
+	strcpy(ent->cpw_dir, argv[8]);
+	strcpy(ent->cpw_shell, argv[9]);
+    }
+    else
+    while (morechgs) {
+	if (needID) {
+	    pwd = PromptForID ();
+	    Xfer (pwd, ent);		/* Copy to local storage */
+	    needID = FALSE;
+	}
+	printf ("Entry is now:\n");
+	PwPrint (ent);
+	printf ("\nSelect field to be modified ");
+	printf ("(1-7, q (discard changes), or e (make changes): ");
+	gets (reply);
+	switch (*reply) {
+	    case '1': 			/* get new login */
+		GetLoginName (ent->cpw_name);
+		break;
+	    case '2': 			/* get new password */
+		GetPassword (ent->cpw_asciipw, ent->cpw_passwd);
+		break;
+	    case '3': 			/* get new name */
+		GetRealName (ent->cpw_person);
+		break;
+	    case '5': 			/* get groupid */
+		ent->cpw_gid = GetGroupID (ent->cpw_group);
+		break;
+	    case '6': 			/* get login directory */
+		GetLoginDir (ent);
+		break;
+	    case '7': 			/* get login shell */
+		GetLoginSH (ent->cpw_shell);
+		break;
+	    case 'q': 			/* another entry */
+		needID = TRUE;
+		free(ent);
+		return;
+	    case 'e': 			/* done */
+		morechgs = FALSE;
+		continue;		/* fall out of while loop */
+	    default: 
+		printf ("Sorry, invalid selection: %s\n", reply);
+		continue;
+	}
+    }
+    sprintf (niBuf, "/users/name=%s", pwd->pw_name);
+    whatHappened = ni_pathsearch(niHandle, &tempID, niBuf);
+    if (whatHappened != NI_OK) {
+	printf("Unable to find user being modified in NetInfo. ");
+	exit(ERROR);
+    }
+    whatHappened =  ReplaceInPasswd (ent, tempID);
+    if (whatHappened != NI_OK) {
+	printf("Unable modify user. ");
+	exit(ERROR);
+    }
+    free(ent);
+}
+
+/* Modify
+ *	is the main routine when NU is called in modify mode.  It
+ *	prompts the user for modifications to the passwd file;
+ *	stacks up to MAXMODS of these modified entries; sorts the
+ *	stack by userid; and merges the stack with the current
+ *	passwd file, creating the updated version of the file.
+ */
+void *Modify (int allCaps, int uid, char *argv[]) 
+{
+    struct cpasswd  mods[MAXMODS + 1];
+    int     done;
+
+    if (allCaps == FALSE) {
+	done = FALSE;
+	printf ("\n\t\t>>> Modify mode <<<\n");
+	while (NOT done) {
+	    GetMod (allCaps, uid, argv);
+	    printf ("\nDo you want to modify any more /etc/passwd entries? (y or n) [y] ");
+	    done = NOT YesNo ('y');
+	}
+	printf ("done.\n");
+    }
+    else
+	GetMod (allCaps, uid, argv);
+
+}
+
+/*
+ * Kill various accounts
+ */
+void *KillUser (int where, char *argv[])
+{
+    struct passwd  *pwd;
+    char    pathbuf[BUF_LINE], logindir[BUF_LINE];
+    int     cc;
+    register int    i;
+    ni_id  myDir;
+    ni_status whatHappened;
+
+    pwd = mygetpwnam(argv[where]);
+    if (pwd != NULL) {
+	cc = readlink (pwd->pw_dir, logindir, BUF_LINE);
+	if (cc == -1)
+	    strcpy (logindir, pwd->pw_dir);
+	else
+	    logindir[cc] = 0;
+	
+	sprintf (cmd, "%s %s %s %s %s %d\n",
+		StrV ("DestroyAccts"),
+		pwd->pw_name,
+		logindir,
+		pwd->pw_dir,
+		StrV ("Logfile"),
+		IntV ("Debug")
+	    );
+	DoCommand (cmd, FATAL, SAFE);
+	sprintf(pathbuf, "/users/name=%s", argv[where]);
+	printf("Removing /users/%s from NetInfo domain.\n", pwd->pw_name);
+	whatHappened = ni_pathsearch(niHandle, &myDir, pathbuf);
+	if (whatHappened != NI_OK) {
+	    printf("Unable to find user being deleted in NetInfo. ");
+	    exit(ERROR);
+	}
+	whatHappened = ni_destroy(niHandle, &userDir, myDir);
+	if (whatHappened != NI_OK) {
+	    printf("Unable delete user. ");
+	    exit(ERROR);
+	}
+	if (findUserInHmmm(pwd->pw_name, "groups", "users", groupDir) == TRUE)
+	    printf("User %s still exists in the groups database.\nYou must delete all references to this user by hand.\n",
+		pwd->pw_name);
+	if ((aliasDir.nii_object != userDir.nii_object) && (findUserInHmmm(pwd->pw_name, "aliases", "members", aliasDir) == TRUE))
+	    printf("User %s still exists in the aliases database.\nYou must delete all references to this user by hand.\n",
+		pwd->pw_name);
+    }
+    else
+	printf ("nu: no such user as %s\n", argv[where]);
+    }
+
+/*
+ * Delete accounts: Do what KillUser() does but don't erase
+ * /etc/passwd entries, so accounting information is available.
+ * Also, work interactively; structurally similar to Modify(),
+ * except that it doesn't postpone updates, so it can bomb out
+ * if an error occurs.
+ */
+void *DeleteAccounts(int allCaps, char *argv[])
+{
+    struct cpasswd  del[2];
+    int     done;
+
+
+    if (allCaps == TRUE) {
+	(GetDel (del, del, 0, allCaps, atoi(argv[2])));
+    }
+    else {
+	printf ("\n\t\t>>> Deletion mode <<<\n");
+	done = FALSE;
+	while (NOT done) {
+	    if (GetDel (del, del, 0, allCaps, -2)) {
+		printf ("done.\n");
+	    }
+	    printf("\nDo you want to delete any more users? (y or n) [y] ");
+	    done = NOT YesNo ('y');
+	}
+    }
+}
+
+/* GetDel
+ *	asks user to identify a particular passwd entry, prints
+ *	the entry, prompts to check if entry should be deleted,
+ *	modifies the password field if so, and leaves
+ *	'ent' pointing to an appropriately modified copy of the
+ *	entry.  Returns false if no deletion is wanted
+ */
+int GetDel (struct cpasswd *ent, struct cpasswd *stack, int size, int allCaps, int theuid)
+{
+    struct passwd  *pwd;		/* struct used by system 'getpw--'
+				       routines */
+    char logindir[BUF_LINE];
+    char	delcmd[BUF_LINE], niBuf[BUF_LINE];
+    int cc;
+    ni_id	tempID;
+    ni_status	whatHappened;
+
+    if (allCaps == TRUE) {
+	pwd = mygetpwuid(theuid);
+	Xfer (pwd, ent);		/* Copy to local storage */
+    }
+    else {
+	pwd = PromptForID ();
+	printf ("Entry is now:\n");
+	Xfer (pwd, ent);		/* Copy to local storage */
+	PwPrint (ent);
+	printf ("\nDo you want to delete this entry? (y or n) [y] ");
+	if (NOT YesNo('y')) {
+	    return(FALSE);	/* no deletion */
+	}
+    }
+    if (ent->cpw_passwd[0] == '*') {
+	printf("\nThis account is already disabled.\n");
+	return(0);
+    }
+    cc = readlink(ent->cpw_dir, logindir, BUF_LINE);
+    if (cc == -1)
+	strcpy(logindir, ent->cpw_dir);
+    else
+	logindir[cc] = 0;
+    sprintf(delcmd, "%s %s %s %s %s %d\n",
+	    StrV("DeleteAccts"),
+	    ent->cpw_name,
+	    logindir,
+	    ent->cpw_dir,
+	    StrV("Logfile"),
+	    IntV("Debug")
+	    );
+    DoCommand(delcmd, FATAL, SAFE);
+    strcpy(ent->cpw_asciipw, "[untypeable password]");
+    strcpy(ent->cpw_passwd, "*");	/* cannot match a typed password */
+    strcpy(ent->cpw_shell, "/bin/noshell");
+    strcpy(ent->cpw_dir, "/nosuchdir");
+    sprintf (niBuf, "/users/name=%s", ent->cpw_name);
+    whatHappened = ni_pathsearch(niHandle, &tempID, niBuf);
+    if (whatHappened != NI_OK) {
+	printf("Unable to find user being disabled in NetInfo. ");
+	exit(ERROR);
+    }
+    whatHappened =  ReplaceInPasswd (ent, tempID);
+    if (whatHappened != NI_OK) {
+	printf("Unable disable user. ");
+	exit(ERROR);
+    if (findUserInHmmm(pwd->pw_name, "groups", "users", groupDir) == TRUE)
+	printf("User %s still exists in the groups database.\nYou must delete all references to this user by hand.\n",
+	    pwd->pw_name);
+    if ((aliasDir.nii_object != userDir.nii_object) && (findUserInHmmm(pwd->pw_name, "aliases", "members", aliasDir) == TRUE))
+	printf("User %s still exists in the aliases database.\nYou must delete all references to this user by hand.\n",
+	    pwd->pw_name);
+    }
+}
+
+/* 
+  This procedure reads in the nu.cf configuration file and uses its contents
+  to initialize various tables and configuration variables.
+*/
+void *ReadCf () {
+    FILE * cfile;
+    char    lbuf[BUF_LINE];
+    char    c, *cp, *op, *name, *sv;
+    long    iv;
+    int     i, istat;
+    int     DefaultGroupHasHome = 0;
+    if ((cfile = fopen (CONFIGFILE, "r")) == NULL) {
+	fprintf (stderr, "nu: Unable to open configuration file \"%s\".\n",
+		CONFIGFILE);
+	exit (ERROR);
+    }
+    while (fgets (cp = lbuf, BUF_LINE, cfile) != NULL) {
+	sv = name = (char *) 0;
+	iv = 0;
+	op = (char *) 0;
+	for (cp = lbuf; *cp != 0; cp++) {
+	    switch (*cp) {
+		case '\t': 
+		case ' ': 
+		    *cp = 0;
+		    continue;
+		case ';': 
+		    goto exitforloop;
+		case '=': 
+		    name = (char *) malloc (cp - op + 2);
+		    *cp = 0;
+		    strcpy (name, op);
+		    cp++;
+		    while (*cp == ' ' || *cp == '\t')
+			cp++;
+		    if (strcmp (name, "GroupHome") == 0) {
+			iv = atol (cp);
+			for (; *cp != '"' && *cp != 0; cp++);
+			cp++;
+			for (op = cp; *cp != '"' && *cp != 0; cp++);
+			sv = (char *) malloc (cp - op + 2);
+			*cp = 0;
+			strcpy (sv, op);
+			if (numtopnodes + 1 < MAXGROUPS) {
+			    topnode[numtopnodes].gid = (int) iv;
+			    topnode[numtopnodes].topnodename = sv;
+			    topnode[numtopnodes + 1].gid = 0;
+			}
+			numtopnodes++;
+			if (iv == IntV ("DefaultGroup"))
+			    DefaultGroupHasHome = 1;
+		    }
+		    else {
+			if (*cp == '"') {
+			    cp++;
+			    for (op = cp; *cp != '"' && *cp != 0; cp++);
+			    sv = (char *) malloc (cp - op + 2);
+			    *cp = 0;
+			    strcpy (sv, op);
+			}
+			else {
+			    iv = atol (cp);
+			}
+			if (nsymbols < MAXSYMBOLS) {
+			    Symbols[nsymbols].SymbName = name;
+			    Symbols[nsymbols].Svalue = sv;
+			    Symbols[nsymbols].ivalue = iv;
+			}
+			nsymbols++;
+		    }
+		    goto exitforloop;
+		default: 
+		    if ((int) op == 0)
+			op = cp;
+		    continue;
+	    }
+	}
+exitforloop: continue;
+    }
+    fclose(cfile);
+    if (numtopnodes == 0) {
+	fprintf (stderr, "nu: no GroupHome info in %s\n", CONFIGFILE);
+	exit (ERROR);
+    }
+    if (numtopnodes >= MAXGROUPS) {
+	fprintf (stderr, "nu: %s defines %d GroupHomes; limit is %d.\n",
+		CONFIGFILE, numtopnodes, MAXGROUPS - 1);
+	exit (ERROR);
+    }
+    if (nsymbols > MAXSYMBOLS) {
+	fprintf (stderr, "nu: %s defines %d symbols; limit is %d.\n",
+		CONFIGFILE, nsymbols, MAXSYMBOLS);
+	exit (ERROR);
+    }
+    for (i = 0; topnode[i].gid; i++) {
+	istat = stat (topnode[i].topnodename, &statbuf);
+	if (istat != 0) {
+	    fprintf (stderr, "nu: a GroupHome declaration names %s as the home\n    directory for group %d, but it does not exist. Please fix.\n",
+		    topnode[i].topnodename, topnode[i].gid);
+	    exit (ERROR);
+	}
+	if (!((statbuf.st_mode) & S_IFDIR)) {
+	    fprintf (stderr, "nu: a GroupHome declaration names %s as the home dir for group %d,\n    but it is not a directory. Please fix.\n",
+		    topnode[i].topnodename, topnode[i].gid);
+	    exit (ERROR);
+	}
+    }
+
+    if (!DefaultGroupHasHome) {
+	fprintf (stderr, "nu: %s defines DefaultGroup=%d, but there is no\n GroupHome declaration for group %d. Be careful.\n",
+		CONFIGFILE, IntV ("DefaultGroup"), IntV ("DefaultGroup"));
+    }
+}
+
+/* IntV and StrV return integer and string values that were defined in
+   the configuration file CONFIGFILE. */
+int IntV (char *name)
+{
+    int     j;
+    for (j = 0; j < nsymbols; j++) {
+	if (strcmp (Symbols[j].SymbName, name) == 0)
+	    return (int) (Symbols[j].ivalue);
+    }
+    fprintf (stderr, "nu: no definition of \"%s\" in nu.cf; cannot continue.\n", name);
+    exit (ERROR);
+}
+
+char *StrV (char *name)
+{
+    int     j;
+    for (j = 0; j < nsymbols; j++) {
+	if (strcmp (Symbols[j].SymbName, name) == 0)
+	    return (char *) (Symbols[j].Svalue);
+    }
+    fprintf (stderr, "nu: no definition of \"%s\" in nu.cf; cannot continue.\n", name);
+    exit (ERROR);
+}
+
+
+/*
+ *	M A I N   P R O G R A M
+ */
+
+main (int argc, char *argv[])
+{
+    char   *p;
+    struct passwd  *pwd;
+    ni_status whatHappened = NI_OK;
+    int	index;
+
+    if (argc == 1)
+	goto uusage;
+    incritsect = FALSE;
+    signal (SIGINT, Catch);		/* catch ^C's */
+    gethostname (This_host, sizeof(This_host));
+    printf ("nu NeXT-1.0 [12 July 1989] (%s:%s)\n", This_host, CONFIGFILE);
+    ReadCf ();
+
+    if (argv[1][0] == '-') {
+	if ((argv[1][1] == 'A'))
+	    whatHappened = ni_open(NULL, argv[11], &niHandle);
+	else if ((argv[1][1] == 'M'))
+	    whatHappened = ni_open(NULL, argv[10], &niHandle);
+	else if ((argv[1][1] == 'D') || (argv[1][1] == 'K'))
+	    whatHappened = ni_open(NULL, argv[3], &niHandle);
+	else
+	    whatHappened = ni_open(NULL, StrV("NetInfoDomain"), &niHandle);
+	if (whatHappened != NI_OK) {
+	    printf ("Unable to open destination NetInfo domain.\n");
+	    exit (ERROR);
+	}
+	whatHappened = ni_pathsearch(niHandle, &userDir, "/users");
+	if (whatHappened != NI_OK) {
+	    printf ("Unable to open /users directory in destination NetInfo domain.\n");
+	    exit (ERROR);
+	}
+	whatHappened = ni_pathsearch(niHandle, &groupDir, "/groups");
+	if (whatHappened != NI_OK) {
+	    printf ("Unable to open /groups directory in destination NetInfo domain.\n");
+	    exit (ERROR);
+	}
+	whatHappened = ni_pathsearch(niHandle, &aliasDir, "/aliases");
+	if (whatHappened != NI_OK) {
+	    printf ("Unable to open /aliases directory in destination NetInfo domain. Alias checking disabled.\n");
+	    aliasDir = userDir;
+	}
+	if (IntV ("Debug"))
+	    printf (">>>In debugging mode (no dangerous system calls)<<<\n");
+	else {
+	    if (geteuid ()) {		/* not a super-user */
+		printf ("Sorry, you must have superuser status to run nu without debug mode.\n");
+		exit (ERROR);
+	    }
+	}
+	if (p = getlogin ())
+	    strcpy (editor, p);
+	else {
+	    pwd = mygetpwuid (getuid ());
+	    if (pwd)
+		strcpy (editor, pwd->pw_name);
+	    else
+		strcpy (editor, "UNKNOWN!");
+	}
+	switch (argv[1][1]) {
+	    case 'a': 
+		Additions (FALSE, argv);
+		break;
+	    case 'A': 
+		if (argc < 11) {
+		    printf ("Insufficient data to perform user addition.\n");
+		    exit(ERROR);
+		}
+		Additions (TRUE, argv);
+		break;
+	    case 'm': 
+		Modify (FALSE, -2, argv);
+		break;
+	    case 'M': 
+		if (argc < 10) {
+		    printf ("Insufficient data to perform user modification.\n");
+		    exit(ERROR);
+		}
+		else {
+		    Modify (TRUE, atoi(argv[2]), argv);
+		    break;
+		}
+	    case 'd':
+		DeleteAccounts(FALSE, argv);
+		break;
+	    case 'D':
+		if (argc != 4) {
+		    printf ("Insufficient data to disable user.\n");
+		    exit(ERROR);
+		}
+		DeleteAccounts(TRUE, argv);
+		break;
+	    case 'k': 
+		if (argc < 3) {
+		    fprintf (stderr, "usage: nu -k user ...\n");
+		    exit(ERROR);
+		}
+		else {
+		    for (index = 2; index < argc; index++)
+			KillUser (index, argv);
+		}
+		break;
+	    case 'K': 
+		if (argc != 4) {
+		    fprintf (stderr, "usage: nu -K user domain");
+		    exit(ERROR);
+		}
+		else {
+		    KillUser (2, argv);
+		}
+		break;
+	    default: 
+		goto uusage;
+	}
+    }
+    else
+	goto uusage;
+    exit (OK);
+
+uusage: 
+    fprintf (stderr,
+	    "usage:	nu -a			add new accounts\n");
+    fprintf (stderr, "	nu -m			modify existing accounts\n");
+    fprintf (stderr, "	nu -d			delete existing accounts\n");
+    fprintf (stderr, "	nu -k user1 user2 ...	kill old accounts\n");
+    exit (ERROR);
+}
+@
+
+
+1.2
+log
+@lee's mods.
+@
+text
+@d52 1
+d904 1
+d906 6
+a911 1
+	gets (resp);
+d1372 1
+a1372 1
+    printf ("nu NeXT-0.9 [10 April 1989] (%s:%s)\n", This_host, CONFIGFILE);
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d32 9
+a42 6
+#define CONFIGFILE "/etc/nu.cf"
+		/* configuration info from here */
+#define	ALIASES	   "/etc/aliases"
+		/* sendmail alias file */
+#define MAXSYMBOLS 100			/* limit of configuration symbols */
+#define MAXGROUPS  100			/* limit of GroupHome symbols */
+a43 1
+#include <pwd.h>
+d45 1
+a46 1
+#include <grp.h>
+d51 1
+a51 3
+#ifdef	ACCOUNT
+#include <local/account.h>
+#endif
+a52 7
+#define CR		'\n'
+#define BUF_LINE	250		/* line length buffer */
+#define BUF_WORD	40		/* word length buffer */
+#define TRUE		1		/* return(...) codes */
+#define FALSE		0
+#define	ERROR		1		/* exit(...) codes */
+#define	OK		0
+d54 1
+a54 62
+ /* DoCommand codes ... */
+#define	FATAL		1		/* Errors during System calls exit */
+#define	NONFATAL	0		/* Errors just print message */
+#define SAFE		1		/* Safe to execute during debugging */
+#define	UNSAFE		0		/* Must not execute while debugging */
+
+#define NOT		!
+#define MAXUID		99999		/* assumed to be higher than any
+					   userid */
+#define MAXMODS		50		/* max. modifications in session */
+
+char   *ctime (), *getlogin (), *crypt (), *StrV ();
+int     IntV ();
+struct passwd  *getpwent (), *getpwuid (), *getpwnam ();
+char   *getpass ();
+struct group   *getgrgid (), *getgrnam ();
+
+struct passwd  *pwd;			/* ptr to an entry of the passwd file 
+					*/
+
+/* This is a copy of the passwd structure, values are copied into this
+    structure because getpw--- returns a pointer to a STATIC area that is
+    overwritten on each call. */
+struct cpasswd {
+    char    cpw_name[BUF_WORD];
+    char    cpw_passwd[BUF_WORD];
+    char    cpw_asciipw[BUF_WORD];	/* Extra field: Ascii password */
+    int     cpw_uid;
+    int     cpw_gid;
+    char    cpw_group[BUF_WORD];	/* Extra field: Ascii group name */
+    char    cpw_person[BUF_WORD];
+    char    cpw_dir[BUF_WORD];
+    char    cpw_linkdir[BUF_WORD];	/* Extra field: top-level link dir */
+    char    cpw_shell[BUF_WORD];
+#ifdef	ACCOUNT
+    char    cpw_account[BUF_WORD];	/* Extra field: Account */
+    char    cpw_description[BUF_LINE];	/* Extra Field: Account description */
+#endif
+};
+/* This structure is used to hold the configuration statements from nu.cf
+   Note that no error checking of any kind is done! */
+
+struct Symb {
+    char   *SymbName;			/* Variable name goes here */
+    char   *Svalue;			/* String argument goes here OR */
+    long    ivalue;			/* Integer argument goes here */
+};
+struct Symb Symbols[MAXSYMBOLS];
+long    nsymbols = 0;
+
+/* Definitions for using dbm (to access alias database) */
+typedef struct {
+    char   *dptr;
+    int     dsize;
+}               datum;
+
+int     dbminit ();
+datum fetch (), firstkey (), nextkey ();
+#define	dbm_buf_size 1024		/* dbm(3) guarantees this limit */
+
+/* End of dbm declarations */
+
+a56 5
+struct topnode {
+    int     gid;			/* login group number */
+    char   *topnodename;		/* what comes after /usr */
+};
+
+d78 1
+a78 3
+ncpy (to, from, len)
+char   *to, *from;
+int     len;
+d88 1
+a88 2
+int     YesNo (defaultans)
+char    defaultans;
+d110 1
+a110 2
+UseDefault (str, def)
+char   *str, *def;
+d115 1
+a115 1
+    if (temp[0] == NULL) {
+d134 2
+a135 1
+GetUserID () {
+d138 1
+d142 1
+a142 1
+	    for (newuid = IntV("PWUserBase"); getpwuid(newuid) != NULL;
+a146 1
+	    setpwent ();	/* 'rewinds' passwd file search ptr */
+d148 1
+a148 5
+	    while ((pwd = getpwent ()) != NULL) {
+		    if (pwd->pw_uid > maxuid)
+			    maxuid = pwd->pw_uid;
+	    }
+	    newuid = maxuid + 1;
+d160 1
+a160 2
+	setpwent ();			/* rewind password file search */
+	if ((pwd = getpwuid (newuid)) == NULL)
+d177 1
+a177 2
+GetGroupID (group)
+char   *group;
+d184 1
+a184 2
+    setgrent ();
+    if (agrp = getgrgid (IntV ("DefaultGroup")))
+a194 1
+	    setgrent ();
+d198 1
+a198 10
+	    while ((agrp = getgrent ()) != 0) {
+		if ((gcount++) == 7) {
+		    puts(hptr);
+		    strcpy (hptr, "\t\t     ");
+		    gcount = 0;
+		}
+		strcat (hptr, " ");
+		strcat (hptr, agrp->gr_name);
+	    }
+	    endgrent ();
+d207 1
+a207 2
+	    setgrent ();
+	    if (agrp = getgrgid (gid))
+d219 1
+a219 2
+	    setgrent ();
+	    if (agrp = getgrnam (buf)) {
+d232 1
+a232 2
+MapLowerCase (b)
+char   *b;
+d240 1
+a240 2
+MapUpperCase (b)
+char   *b;
+d245 1
+a245 2
+HasBadChars (b)
+char   *b;
+d259 1
+a259 2
+GetLoginName (buf)
+char   *buf;
+d262 1
+a262 1
+    char   *aptr, aname[dbm_buf_size];
+d264 1
+d269 1
+a269 1
+	if (buf[0] == NULL)
+d288 1
+a288 2
+	setpwent ();
+	if (pwd = getpwnam (buf)) {
+d293 1
+a296 80
+	aliaskey.dptr = buf;
+	aliaskey.dsize = strlen (buf) + 1;
+					/* char count includes the null!! */
+	aliasname = fetch (aliaskey);
+	if (aliasname.dptr != NULL) {
+	    printf ("Sorry, the name '%s' is already in use as a mail alias\n(aliased to '", buf);
+	    if (aliasname.dsize > dbm_buf_size-2)
+		aliasname.dsize = dbm_buf_size-2;
+
+	    aptr = aliasname.dptr;
+	    for (i = 0; (aptr[i] & 0177) == ' ' || (aptr[i] & 0177) == '\t'; i++);
+
+	    if ((aptr[i] & 0177) == '"' && (aptr[aliasname.dsize-2] == '"')) {
+		i++;			/* Unquote quoted names */
+		aptr[aliasname.dsize-2] = 0;
+		aliasname.dsize--;
+	    }
+
+	    for (j = 0; i < aliasname.dsize; i++, j++) {
+		aname[j] = aptr[i] & 0177;
+		if (i < 60 - strlen (buf))
+		    putchar (aname[j]);
+	    }
+	    putchar ('\'');
+	    aname[j] = 0;
+	    if (aliasname.dsize >= 60 - strlen (buf))
+		printf ("...");
+	    puts (")");
+	    printf ("\nBecause some mail aliases are critical to system operation, you must\n");
+	    printf ("resolve that conflict before you can create an account named '%s'.\n\n", buf);
+
+    /* 
+     Try to figure out what the alias entry is. We do this because the person
+     running nu is often an administrative assistant and not a programmer.
+     */
+	    if (aname[0] == '|') {	/* It's a program */
+		printf ("The current alias is a program, automatically run whenever mail is sent\n");
+		printf ("to '%s'. It is almost certainly a bad idea to delete this alias,\n", buf);
+		printf ("but check with a systems programmer to be sure.\n");
+	    }
+	    else
+		if (aname[0] == '/') {	/* A log file */
+		    printf ("The current alias is a log file. All mail sent to '%s' is auto-\n", buf);
+		    printf ("matically added to the end of %s. You can probably negotiate\n", aname);
+		    printf ("with its owner to change from '%s' to a new name.\n", buf);
+		}
+		else {			/* alias or list */
+		    if (index (aname, ',')) {/* mailing list */
+			printf ("The current alias is a mailing list, enabling people to send mail\n");
+			printf ("to '%s@@%s' and have it reach a group of people. To know whether\n", buf, This_host);
+			printf ("it is safe to delete or rename that list, you need to learn who uses it (the\n");
+			printf ("users are not necessarily on this machine). Please investigate before you\nchange anything.\n");
+		    }
+		    else {		/* alias entry */
+			if (index (aname, '@@') ||
+			    index (aname, '!')) {/* network alias */
+			    printf ("The current definition is a network mail alias for a user who does not have\n");
+			    printf ("a login on %s. When somebody sends mail to %s@@%s,\nit is forwarded to %s.\n\n",
+				    This_host, buf, This_host, aname);
+			    printf ("However, if the %s login '%s' that you are currently trying\n", This_host, buf);
+			    printf ("to create is in fact for %s, you probably want to leave this\nforwarding entry in place and create the account anyhow.\n\n", aname);
+			    printf ("Do you want to go ahead and create the account '%s', knowing that\nits mail will be forwarded to %s? (y or n) [y] ",
+				    buf, aname);
+			    if (YesNo ('y')) {
+				done = TRUE;
+				break;
+			    }
+			}
+			else {		/* local alias */
+			    printf ("The current definition is a local nickname or spelling correction\n");
+			    printf ("for %s. It is most likely OK to delete the nickname, but there\n", aname);
+			    printf ("might be people who are accustomed to sending mail to '%s' instead of\nto '%s'. Please investigate before you change anything.\n",
+				    buf, aname);
+			}
+		    }
+		}
+	    puts ("\n");		/* puts will add a second newline */
+	}
+	else
+	    done = TRUE;
+d366 1
+a366 2
+int     GetLoginDir (np)
+struct cpasswd *np;
+d412 1
+a412 2
+GetLoginSH (buf)
+char   *buf;
+a435 11
+#ifdef	ACCOUNT
+/* GetAccount
+ *	obtains an account number for this user. if the account
+ *	doesn't exist, it will be added to the file contained
+ *	in the variable AccountFile.
+ */
+GetAccount(acct, description)
+char	*acct, *description;
+{
+    struct	account *ap;
+    char buf[BUF_WORD], def[BUF_WORD];
+a436 48
+    setacent(NULL);
+    if (ap = getacnam(StrV("DefaultAccount")), NULL)
+	strcpy(def, ap->ac_name);
+    else
+	strcpy(def, "");
+
+    for (;;) {
+	printf("Which account (? for list)? ");
+	UseDefault(buf, def);
+	if (buf[0] == '?' || strcmp(buf, "help") == 0) {
+	    char hbuf[4*BUF_LINE], *hptr = hbuf;
+	    int gcount = 0;
+
+	    setacent(NULL);
+	    sprintf(hptr, "Available accounts are:");
+	    while (ap = getacent()) {
+		if (gcount++ == 5) {
+		    strcat(hptr, "\n\t\t       ");
+		    gcount = 0;
+		}
+		strcat(hptr, " ");
+		strcat(hptr, ap->ac_name);
+	    }
+	    endacent();
+	    puts(hptr);
+	    continue;
+	}
+	setacent(NULL);
+	MapUpperCase(buf);
+	if (ap = getacnam(buf, NULL)) {
+	    strcpy(acct, ap->ac_name);
+	    return;
+	} else {
+	    printf("The account name \"%s\" isn't in the accounting file.\n",
+			buf);
+	    printf("Use it anyway? (y or n)[y] ");
+	    fflush(stdout);
+	    if (YesNo('y')) {
+		strcpy(acct, buf);
+		printf("Please enter the account description: ");
+		UseDefault(description, "");
+		return;
+	    }
+	}
+    }
+}
+#endif
+
+d441 1
+a441 2
+System (cmdstring)
+char   *cmdstring;
+d470 1
+a470 2
+CallSys (cmd)
+char   *cmd;
+d484 1
+a484 3
+DoCommand (cmd, fatal, safe)
+char   *cmd;
+int     fatal, safe;
+d495 1
+a495 1
+		UnlockAndExit (ERROR);
+d503 3
+a505 5
+#ifdef	ACCOUNT
+/* AddToAccount
+ *	takes an account and username as arguments. Adds the username
+ *	under the specified account in the file specified in the
+ *	AccountFile variable.
+d507 1
+a507 2
+AddToAccount(acct, name, desc)
+char	*acct, *name, *desc;
+d509 5
+a513 4
+    FILE *af;
+    register int i, found;
+    int done = 0;
+    struct account *ap;
+d515 41
+a555 5
+    if ((af = fopen(StrV("Tempfile"), "w")) == NULL) {
+	printf("Error: couldn't open %s while rebuilding accounts\n",
+		StrV("Tempfile"));
+	unlink(StrV("Linkfile"));
+	exit(ERROR);
+d557 2
+a558 14
+    setacent(NULL);
+    while (ap = getacent()) {
+	found = strcmp(acct, ap->ac_name) == 0;
+	fprintf(af, "%s:%s:%s:", ap->ac_name, ap->ac_owner, ap->ac_title);
+	for (i=0; ap->ac_mem[i]; i++) {
+	    fprintf(af, "%s", ap->ac_mem[i]);
+	    if (ap->ac_mem[i+1] != NULL)
+		fputc(',', af);
+	}
+	if (found) {
+	    fprintf(af, ",%s", name);
+	    done = 1;
+	}
+	fputc('\n', af);
+a559 6
+    if (!done)				/* entry not found, add it */
+	fprintf(af, "%s::%s:%s\n", acct, desc, name);
+    endacent();
+    fclose(af);
+    SwapFiles(StrV("AccountFile"), StrV("Backupacct"));
+}
+a560 47
+/* KillAccount
+ *	takes a username as an argument. Removes the user from the
+ *	account entry in the /etc/account file. If this user was the
+ *	only user left, the account entry will be removed.
+ */
+KillAccount(user)
+char	*user;
+{
+    FILE *af;
+    register int i, j, found;
+    struct account *ap;
+
+    if ((af = fopen(StrV("Tempfile"), "w")) == NULL) {
+	printf("Error: couldn't open %s while deleting an account\n",
+		StrV("Tempfile"));
+	exit(ERROR);
+    }
+    setacent(NULL);
+    while (ap = getacent()) {
+	for (i=0; ap->ac_mem[i]; i++)
+	    if (found = !strcmp(user, ap->ac_mem[i]))  /* want = */
+		break;			/* found matching user's entry */
+	if (!found) {
+	    fprintf(af, "%s:%s:%s:", ap->ac_name, ap->ac_owner, ap->ac_title);
+	    for (i=0; ap->ac_mem[i]; i++) {
+		fprintf(af, "%s", ap->ac_mem[i]);
+		if (ap->ac_mem[i+1] != NULL)
+		    fputc(',', af);
+	    }
+	    fputc('\n', af);
+	} else
+	    if (i || ap->ac_mem[i+1]) {		/* not only entry */
+		fprintf(af, "%s:%s:%s:", ap->ac_name, ap->ac_owner,
+						      ap->ac_title);
+		for (j=0; ap->ac_mem[j]; j++) {
+		    if (i == j)		/* skip deleted user */
+			continue;
+		    fprintf(af, "%s", ap->ac_mem[j]);
+		    if (ap->ac_mem[j+1] != NULL)
+			fputc(',', af);
+		}
+		fputc('\n', af);
+	    }
+    }
+    endacent();
+    fclose(af);
+    SwapFiles(StrV("AccountFile"), StrV("Backupacct"));
+a561 1
+#endif
+d563 3
+a565 3
+/* AddToPasswd
+ *	takes buf to hold the new entry for the passwd file, and
+ *	inserts this new entry at the end of the file.
+d567 1
+a567 2
+AddToPasswd (buf)
+char   *buf;
+d569 4
+a572 1
+    FILE * pwfile;
+d574 38
+a611 2
+    endpwent();
+    printf ("\nEntry to passwd file looks like:\n%s\n", buf);
+a612 13
+    if ((pwfile = fopen (StrV ("PasswdFile"), "a")) == NULL) {
+	printf ("Error: not able to open %s\n", StrV ("PasswdFile"));
+	UnlockAndExit (ERROR);
+    }
+    else {
+	fprintf (pwfile, "%s", buf);
+	printf ("Written to %s\n", StrV ("PasswdFile"));
+    }
+    fclose (pwfile);
+    if (IntV("HashedPW"))
+	makedb();
+    if (IntV("YellowPages"))
+	makeyp();
+a614 27
+/* makedb()
+ *
+ * Create hashed version of the passwd file
+*/
+makedb()
+{
+    char buffer[BUF_LINE];
+
+    sprintf(buffer, "/bin/rm %s.pag %s.dir\n",
+	StrV("PasswdFile"), StrV("PasswdFile"));
+    DoCommand(buffer, FATAL, SAFE);	/* remove db files */
+    sprintf(buffer, "/usr/etc/mkpasswd %s\n", StrV("PasswdFile"));
+    DoCommand(buffer, FATAL, SAFE);
+}
+/* makeyp()
+ *
+ * Update the yellow pages
+ */
+makeyp()
+{
+    char buffer[BUF_LINE];
+
+    sprintf(buffer, "cd %s; /bin/make passwd", StrV("YPDir"));
+    DoCommand(buffer, FATAL, SAFE);
+}
+    
+
+d621 1
+a621 2
+LogAddition (buf)
+char   *buf;
+d640 1
+a640 2
+CreateDir (np, clobber)
+struct cpasswd *np;
+d658 1
+a658 2
+InstallFiles (np)
+struct cpasswd *np;
+d674 1
+a674 2
+PwPrint (cpw)
+struct cpasswd *cpw;
+a687 4
+#ifdef	ACCOUNT
+    if (IntV("WantAccounting"))
+	printf ("   8)  account .... %s\n", cpw->cpw_account);
+#endif
+d694 1
+a694 2
+Verified (np)
+struct cpasswd *np;
+d716 1
+a716 1
+	    UnlockAndExit (OK);
+a720 8
+/* PasswdLocked
+ *	attempts to get exclusive access to the passwd file.  By
+ *	convention, any program that wants to write to the passwd
+ *	file will try to create a link with the name StrV("Linkfile").  If
+ *	such a link already exists, link() returns -1, indicating
+ *	that someone else is currently writing to the passwd file.
+ */
+int PasswdIsLocked = 0;		/* avoid unlocking when not locked by us */
+a721 33
+PasswdLocked () {
+    creat (StrV ("Dummyfile"), 0);
+
+    if (IntV ("Debug")) {
+	return (0);
+    }
+    else {
+	if (link (StrV ("Dummyfile"), StrV ("Linkfile")) == 0) {
+		/* we got the lock */
+		PasswdIsLocked = 1;
+		return(0);
+	}
+	else
+		return(-1);	/* someone else has the lock */
+    }
+}
+
+/*
+ * Release lock on the password file.  Since this might be called
+ * recursively if an error occurs in StrV() or one of its children,
+ * we give up when called recursively.
+ *
+ * We also refuse to unlock the file if we aren't the process that
+ * locked it.
+ */
+UnlockPasswd()
+{
+	if (PasswdIsLocked == 0)
+		return;
+	PasswdIsLocked = 0;
+	unlink(StrV("Linkfile"));
+}
+
+d728 2
+a729 1
+Catch () {
+d743 1
+a743 1
+	UnlockAndExit (ERROR);
+d751 4
+a754 3
+Additions () {
+    int     done, noclobber;
+    char    buffer[BUF_LINE], access[BUF_WORD];
+d756 3
+d760 2
+a761 5
+    dbminit (ALIASES);
+    done = FALSE;			/* becomes TRUE when the user is
+					   satisfied with */
+    while (NOT done) {			/*   the data, as it has been set up. 
+					*/
+d763 57
+a819 6
+	GetLoginName (new.cpw_name);
+	GetPassword (new.cpw_asciipw, new.cpw_passwd);
+	GetRealName (new.cpw_person);
+	new.cpw_uid = GetUserID ();
+	new.cpw_gid = GetGroupID (new.cpw_group);
+	noclobber = GetLoginDir (&new);
+a826 5
+	GetLoginSH (new.cpw_shell);
+#ifdef	ACCOUNT
+	if (IntV("WantAccounting"))
+	    GetAccount(new.cpw_account, new.cpw_description);
+#endif
+d828 6
+a833 7
+	if (noclobber == 0 
+	    && IntV("WantMHsetup")) {
+	    printf ("Do you want an initialized ~/Mail for MH? (y or n) [y] ");
+	    if (YesNo ('y'))
+		whichmail = 'm';
+	    else
+		whichmail = 'u';
+d835 2
+a836 6
+
+	if (Verified (&new)) {
+	    sprintf (buffer, "%s:%s:%d:%d:%s:%s:%s\n",
+		    new.cpw_name, new.cpw_passwd, new.cpw_uid, new.cpw_gid,
+		    new.cpw_person, new.cpw_linkdir, new.cpw_shell);
+
+d838 2
+a839 6
+	    AddToPasswd (buffer);
+#ifdef	ACCOUNT
+	    if (IntV("WantAccounting"))
+		AddToAccount (new.cpw_account, new.cpw_name, new.cpw_description);
+#endif
+	    if (noclobber) {
+d846 3
+d852 6
+a857 2
+	    printf ("\nDo you wish to add more new users? (y or n)  [y] ");
+	    done = NOT YesNo ('y');
+d865 1
+a865 1
+ *	is static in a system 'getpw---' routine) into a
+d869 1
+a869 3
+Xfer (pwd, cpw)
+struct passwd  *pwd;
+struct cpasswd *cpw;
+d878 1
+a878 1
+    if (agrp = getgrgid (pwd->pw_gid))
+a886 10
+#ifdef	ACCOUNT
+/* XferA
+ *	Transfer accounting information from the static structure
+ *	into the local structure.
+ */
+XferA (cpw)
+struct cpasswd *cpw;
+{
+    register int i;
+    struct account *ap;
+a887 12
+    setacent(NULL);
+    while (ap = getacent())
+	for (i=0; ap->ac_mem[i]; i++)
+	    if (strcmp(cpw->cpw_name, ap->ac_mem[i]) == 0) {
+		strcpy(cpw->cpw_account, ap->ac_name);
+		return;
+	    }
+    endacent();
+    strcpy(cpw->cpw_account, "");
+}
+#endif	ACCOUNT
+
+d909 1
+a909 2
+	    setpwent ();
+	    if ((pwd = getpwuid (theuid)) == NULL)
+d916 1
+a916 2
+	    setpwent ();
+	    if ((pwd = getpwnam (resp)) == NULL)
+a924 15
+/* AlreadyStacked
+ *	returns TRUE iff the stack of modified entries contains an
+ *	entry with uid equal to 'auid'.
+ */
+AlreadyStacked (auid, stack, size)
+int     auid, size;
+struct cpasswd *stack;
+{
+    int     i;
+    for (i = 0; i < size; i++)
+	if (stack[i].cpw_uid == auid)
+	    return (TRUE);
+    return (FALSE);
+}
+
+d931 1
+a931 4
+GetMod (ent, stack, size)
+struct cpasswd *ent;
+struct cpasswd *stack;			/* the stack of modifications */
+int     size;				/* size of the above stack */
+d935 5
+a939 1
+    char    reply[BUF_WORD];
+d941 33
+a973 2
+            needID = TRUE;
+
+a977 4
+#ifdef	ACCOUNT
+	    if (IntV("WantAccounting"))
+		XferA (ent);		/* Get Accounting info */
+#endif
+a981 6
+	if (AlreadyStacked (ent->cpw_uid, stack, size)) {
+	    printf ("\nWARNING: This entry has already been modified\n");
+	    printf ("	 in this session.  The entry above is\n");
+	    printf ("	 the unmodified version.  If you modify\n");
+	    printf ("	 it, the previous changes will be lost.\n");
+	}
+a982 4
+#ifdef	ACCOUNT
+	printf ("(1-%c, q (discard changes), or e (make changes): ",
+		IntV("WantAccounting") ? '8' : '7');
+#else
+a983 1
+#endif	ACCOUNT
+a1003 6
+#ifdef	ACCOUNT
+	    case '8':			/* get account */
+		if (IntV("WantAccounting"))
+		    GetAccount (ent->cpw_account, ent->cpw_description);
+		break;
+#endif	ACCOUNT
+d1006 2
+a1007 1
+		continue;
+d1016 5
+a1020 29
+}
+
+/* SortStack
+ *	sorts the stack of structures holding modified passwd
+ *	entries by userid, so that it can be merged with the
+ *	current /etc/passwd file to produce the updated version.
+ *	It is a straight selection-sort, a la Wirth.
+ */
+SortStack (stk, size)
+struct cpasswd *stk;
+int     size;
+{
+    struct cpasswd  ptemp;
+    int     i, j, k, limit, cpsize;
+
+    cpsize = sizeof (ptemp);
+    limit = size - 1;
+
+    for (i = 0; i < limit; i++) {
+	k = i;
+	ncpy (&ptemp, &stk[i], cpsize);	/* ptemp := stk[i] */
+	for (j = i + 1; j <= limit; j++) {
+	    if (stk[j].cpw_uid < ptemp.cpw_uid) {
+		k = j;
+		ncpy (&ptemp, &stk[j], cpsize);/* ptemp := stk[j]  */
+	    }
+	}
+	ncpy (&stk[k], &stk[i], cpsize);/* stk[k] := stk[i] */
+	ncpy (&stk[i], &ptemp, cpsize);	/* stk[i] := ptemp  */
+d1022 4
+a1025 62
+}
+
+/* Linearize
+ *	takes a 'cpasswd' structure and converts it into the proper
+ *	form for insertion into the passwd file.
+ */
+char   *Linearize (p)
+struct cpasswd *p;
+{
+    static char buff[BUF_LINE];
+    sprintf (buff, "%s:%s:%d:%d:%s:%s:%s\n", p->cpw_name,
+	    p->cpw_passwd, p->cpw_uid, p->cpw_gid, p->cpw_person,
+	    p->cpw_dir, p->cpw_shell);
+    return (buff);
+}
+
+/* SwapFiles
+ *	copies the current passwd file onto the backup file.  The
+ *	modified version of the passwd file is then copied over
+ *	the current version.  The temporary modified version is
+ *	then removed.
+ */
+SwapFiles (FromWhat, ToWhat)
+char   *FromWhat, *ToWhat;
+{
+    sprintf (cmd, "cp %s %s\n", FromWhat, ToWhat);
+    DoCommand (cmd, FATAL, SAFE);
+
+    sprintf (cmd, "cp %s %s\n", StrV ("Tempfile"), FromWhat);
+    DoCommand (cmd, FATAL, SAFE);
+
+    sprintf (cmd, "rm %s\n", StrV ("Tempfile"));
+    DoCommand (cmd, FATAL, SAFE);
+}
+
+/* UpdatePasswd
+ *	merges the stack of modified passwd entries with the current
+ *	version of the passwd file to create the new version.  An
+ *	entry in the stack replaces a file entry with the same userid.
+ *	Changes to the file are logged in a separate file.
+ */
+UpdatePasswd (stk, size)
+struct cpasswd *stk;
+int     size;
+{
+    FILE * tempf;
+    char   *newrec;
+    struct passwd  *pwd;
+    struct cpasswd  cpw_buf;
+    struct cpasswd  *stkent;
+    long    clock;
+
+    tempf = fopen (StrV ("Tempfile"), "w");
+    logf = fopen (StrV ("Logfile"), "a");
+
+    /* If more than one stacked entry has the same userid, only the last on
+       should be used.  If a stable sort has been used, this will correspond
+       to the last attempt at changing a given entry */
+    for (stkent = &stk[0]; stkent < &stk[size]; stkent++) {
+	    if (stkent->cpw_uid == (stkent + 1)->cpw_uid) {
+		    stkent->cpw_uid == MAXUID; /* mark this entry as invalid */
+	    }
+d1027 1
+a1027 38
+
+    setpwent ();			/* rewind passwd file search */
+    stk[size].cpw_uid = MAXUID;		/* put sentinel on top of stack */
+    while (pwd = getpwent ()) {
+	Xfer (pwd, &cpw_buf);
+	for (stkent = &stk[0]; stkent < &stk[size]; stkent++) {
+		if (cpw_buf.cpw_uid == stkent->cpw_uid)
+			break;
+	}
+
+	/* Stacked entry should be substituted for original */
+	if (stkent != &stk[size]) {
+		/* substitute modified version of record in file */
+		newrec = Linearize (stkent);
+		fprintf (tempf, "%s", newrec);
+
+		/* make an entry in the log file */
+		fprintf (logf, "%s\tchanged to\n", Linearize (&cpw_buf));
+		fprintf (logf, "%s", Linearize (stkent));
+		clock = time (0);
+		fprintf (logf, "\tby %s on %s\n", editor, ctime (&clock));
+	}
+	else {
+		/* rewrite old unmodified passwd entry */
+		newrec = Linearize (&cpw_buf);
+		fprintf (tempf, "%s", newrec);
+	}
+    }
+    fclose (tempf);
+    fclose (logf);
+    endpwent ();
+
+ /* Save the old passwd file and replace it with the new version */
+    SwapFiles (StrV ("PasswdFile"), StrV("BackupFile"));
+    if (IntV("HashedPW"))
+	makedb();
+    if (IntV("YellowPages"))
+      makeyp();
+a1029 29
+#ifdef	ACCOUNT
+/* UpdateAccount
+ *	merges the stack of potentialy modified accounts with the
+ *	current /etc/account file.
+ */
+UpdateAccount(stk, size)
+struct cpasswd *stk;
+int size;
+{
+    struct cpasswd  cpw_buf;
+    int     top;
+    long    clock;
+
+    stk[size].cpw_uid = MAXUID;		/* put sentinel on top of stack */
+    top = 0;				/* top of stack of modified entries */
+    do {
+	while (stk[top].cpw_uid == stk[top + 1].cpw_uid)
+	    ++top;
+	strcpy(cpw_buf.cpw_name, stk[top].cpw_name);
+	XferA (&cpw_buf);
+	if (strcmp(cpw_buf.cpw_account, stk[top].cpw_account)) {
+	    KillAccount(cpw_buf.cpw_name);
+	    AddToAccount(stk[top].cpw_account, cpw_buf.cpw_name,
+		stk[top].cpw_description);
+	}
+    } while (++top < size);
+}
+#endif	ACCOUNT
+
+d1037 2
+a1038 1
+Modify () {
+a1039 1
+    int     modtop;			/* next opening in 'mods' stack */
+d1042 5
+a1046 13
+    printf ("\n\t\t>>> Modify mode <<<\n");
+    modtop = 0;
+    done = FALSE;
+    dbminit (ALIASES);
+
+    while (NOT done) {
+	GetMod (&mods[modtop], mods, modtop);
+	if (++modtop >= MAXMODS) {
+	    printf ("\nYou have now made %d modifications, ", MAXMODS);
+	    printf ("you must rerun nu to make more.\n\n");
+	    done = TRUE;
+	}
+	else {
+d1050 1
+d1052 2
+a1053 5
+    printf ("\n%d modified entries stacked. Sorting...", modtop);
+    fflush(stdout);
+    if (modtop == 0) {
+	UnlockAndExit (OK);
+    }
+a1054 10
+    SortStack (mods, modtop);
+    printf ("merging..."); fflush(stdout);
+    incritsect = TRUE;
+    UpdatePasswd (mods, modtop);
+#ifdef	ACCOUNT
+    if (IntV("WantAccounting"))
+	UpdateAccount (mods, modtop);
+#endif	ACCOUNT
+    incritsect = FALSE;
+    printf ("done.\n");
+d1060 1
+a1060 3
+KillUser (argc, argv)
+int     argc;
+char   *argv[];
+d1063 1
+a1063 1
+    char    egrepstr[BUF_LINE], logindir[BUF_LINE];
+d1066 2
+d1069 23
+a1091 25
+    for (i = 2; i < argc; i++)
+	if (pwd = getpwnam (argv[i])) {
+	    cc = readlink (pwd->pw_dir, logindir, BUF_LINE);
+	    if (cc == -1)
+		strcpy (logindir, pwd->pw_dir);
+	    else
+		logindir[cc] = 0;
+
+	    sprintf (cmd, "%s %s %s %s %s %d\n",
+		    StrV ("DestroyAccts"),
+		    pwd->pw_name,
+		    logindir,
+		    pwd->pw_dir,
+		    StrV ("Logfile"),
+		    IntV ("Debug")
+		);
+	    DoCommand (cmd, FATAL, SAFE);
+	    if (IntV("HashedPW"))
+		makedb();
+	    if (IntV("YellowPages"))
+	      makeyp();
+#ifdef	ACCOUNT
+	    if (IntV("WantAccounting"))
+		KillAccount(pwd->pw_name);
+#endif
+d1093 15
+a1107 3
+	else
+	    printf ("nu: no such user as %s\n", argv[i]);
+}
+d1116 1
+a1116 1
+DeleteAccounts()
+d1118 2
+a1119 2
+	struct cpasswd  del[2];
+	int     done;
+d1121 5
+a1127 2
+	dbminit (ALIASES);
+
+d1129 1
+a1129 5
+	    if (GetDel (del, del, 0)) {
+		printf ("merging...");fflush(stdout);
+		incritsect = TRUE;
+		UpdatePasswd (del, 1);
+		incritsect = FALSE;
+d1135 1
+d1145 1
+a1145 4
+GetDel (ent, stack, size)
+struct cpasswd *ent;
+struct cpasswd *stack;			/* the stack of deletions */
+int     size;				/* size of the above stack */
+d1147 7
+a1153 5
+	struct passwd  *pwd;		/* struct used by system 'getpw--'
+					   routines */
+	char logindir[BUF_LINE];
+	char	delcmd[BUF_LINE];
+	int cc;
+d1155 5
+d1161 1
+a1162 5
+#ifdef	ACCOUNT
+	if (IntV("WantAccounting"))
+	    XferA (pwd, ent);
+#endif	ACCOUNT
+	printf ("Entry is now:\n");
+a1163 8
+	if (AlreadyStacked(ent->cpw_uid, stack, size)) {
+	    printf ("\nWARNING: This entry has already been deleted\n");
+	    printf ("	 in this session.\n");
+	}
+	if (ent->cpw_passwd[0] == '*') {
+	    printf("\nThis account is already disabled.\n");
+	    return(0);
+	}
+d1166 1
+a1166 1
+	    return(0);	/* no deletion */
+d1168 40
+a1207 20
+	cc = readlink(ent->cpw_dir, logindir, BUF_LINE);
+	if (cc == -1)
+	    strcpy(logindir, ent->cpw_dir);
+	else
+	    logindir[cc] = 0;
+	sprintf(delcmd, "%s %s %s %s %s %d\n",
+		StrV("DeleteAccts"),
+		ent->cpw_name,
+		logindir,
+		ent->cpw_dir,
+		StrV("Logfile"),
+		IntV("Debug")
+		);
+	DoCommand(delcmd, FATAL, SAFE);
+	strcpy(ent->cpw_asciipw, "[untypeable password]");
+	strcpy(ent->cpw_passwd, "*");	/* cannot match a typed password */
+	strcpy(ent->cpw_shell, "/bin/noshell");
+	strcpy(ent->cpw_dir, "/nosuchdir");
+
+	return(1);
+d1214 1
+a1214 1
+ReadCf () {
+d1292 1
+a1292 1
+	UnlockAndExit (ERROR);
+d1297 1
+a1297 1
+	UnlockAndExit (ERROR);
+d1302 1
+a1302 1
+	UnlockAndExit (ERROR);
+d1309 1
+a1309 1
+	    UnlockAndExit (ERROR);
+d1314 1
+a1314 1
+	    UnlockAndExit (ERROR);
+d1326 1
+a1326 3
+int
+        IntV (name)
+char   *name;
+d1334 1
+a1334 1
+    UnlockAndExit (ERROR);
+d1337 1
+a1337 3
+char
+       *StrV (name)
+char   *name;
+d1345 1
+a1345 1
+    UnlockAndExit (ERROR);
+d1353 1
+a1353 3
+main (argc, argv)
+int     argc;
+char   *argv[];
+d1357 2
+d1365 1
+a1365 1
+    printf ("nu NeXT-0.8 [2 Nov 1988] (%s:%s)\n", This_host, CONFIGFILE);
+d1368 12
+a1379 6
+    if (IntV ("Debug"))
+	printf (">>>In debugging mode (no dangerous system calls)<<<\n");
+    else {
+	if (geteuid ()) {		/* not a super-user */
+	    printf ("Sorry, you must have superuser status to run nu without debug mode.\n");
+	    UnlockAndExit (ERROR);
+d1381 87
+d1469 1
+a1469 15
+
+    if (PasswdLocked ()) {
+	printf ("\nPassword file is locked (see vipw(8))\n");
+	exit (ERROR);
+    }
+    if (p = getlogin ())
+	strcpy (editor, p);
+    else {
+	pwd = getpwuid (getuid ());
+	if (pwd)
+	    strcpy (editor, pwd->pw_name);
+	else
+	    strcpy (editor, "UNKNOWN!");
+    }
+    if (argc == 1)
+d1471 1
+a1471 27
+    else {
+	if (argv[1][0] == '-')
+	    switch (argv[1][1]) {
+		case 'a': 
+		    Additions ();
+		    break;
+		case 'm': 
+		    Modify ();
+		    break;
+		case 'd':
+		    DeleteAccounts();
+		    break;
+		case 'k': 
+		    if (argc < 3) {
+			fprintf (stderr, "usage: nu -k user ...\n");
+		    }
+		    else {
+			KillUser (argc, argv);
+		    }
+		    break;
+		default: 
+		    goto uusage;
+	    }
+	else
+	    goto uusage;
+    }
+    UnlockAndExit (OK);
+d1479 1
+a1479 11
+    UnlockAndExit (ERROR);
+}
+
+/*
+ * Normal way of exiting nu is to unlock password file first.
+ */
+UnlockAndExit(code)
+int code;
+{
+	UnlockPasswd();
+	exit(code);
+@

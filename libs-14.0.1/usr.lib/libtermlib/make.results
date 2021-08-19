@@ -1,0 +1,105 @@
+	/release/sun_root/bin/make machine=next DOVERS=ALWAYS SRCROOT=/rele\
+	ase/NeXT_root LCLROOT=/os/osdev/NeXT_root DSTROOT=/release/NeXT_roo\
+	t local
+cc -O -DCM_N -DCM_GT -DCM_B -DCM_D -c -p termcap.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -DCM_N -DCM_GT -DCM_B -DCM_D -c -p termcap.c -I/os/o\
+	sdev/LIBS/libs1.0b/mach.include -I/os/osdev/LIBS/libs1.0b/include -\
+	I/os/osdev/NeXT_root/usr/mach/include -I/os/osdev/NeXT_root/usr/inc\
+	lude -I/release/NeXT_root/usr/mach/include -I/release/NeXT_root/usr\
+	/include -L/os/osdev/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L\
+	/release/NeXT_root/lib -L/release/NeXT_root/usr/lib
+ld  -x -r -o profiled/termcap.o termcap.o
+	/release/sun_root/bin/ld-0.3.3.SUN -Z -x -r -o profiled/termcap.o t\
+	ermcap.o -L/os/osdev/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L\
+	/release/NeXT_root/lib -L/release/NeXT_root/usr/lib
+cc -O -DCM_N -DCM_GT -DCM_B -DCM_D -c termcap.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -DCM_N -DCM_GT -DCM_B -DCM_D -c termcap.c -I/os/osde\
+	v/LIBS/libs1.0b/mach.include -I/os/osdev/LIBS/libs1.0b/include -I/o\
+	s/osdev/NeXT_root/usr/mach/include -I/os/osdev/NeXT_root/usr/includ\
+	e -I/release/NeXT_root/usr/mach/include -I/release/NeXT_root/usr/in\
+	clude -L/os/osdev/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/re\
+	lease/NeXT_root/lib -L/release/NeXT_root/usr/lib
+ld  -X -r termcap.o
+	/release/sun_root/bin/ld-0.3.3.SUN -Z -X -r termcap.o -L/os/osdev/N\
+	eXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/lib\
+	 -L/release/NeXT_root/usr/lib
+mv -f a.out termcap.o
+cc -O -DCM_N -DCM_GT -DCM_B -DCM_D -c -p tgoto.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -DCM_N -DCM_GT -DCM_B -DCM_D -c -p tgoto.c -I/os/osd\
+	ev/LIBS/libs1.0b/mach.include -I/os/osdev/LIBS/libs1.0b/include -I/\
+	os/osdev/NeXT_root/usr/mach/include -I/os/osdev/NeXT_root/usr/inclu\
+	de -I/release/NeXT_root/usr/mach/include -I/release/NeXT_root/usr/i\
+	nclude -L/os/osdev/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/r\
+	elease/NeXT_root/lib -L/release/NeXT_root/usr/lib
+ld  -x -r -o profiled/tgoto.o tgoto.o
+	/release/sun_root/bin/ld-0.3.3.SUN -Z -x -r -o profiled/tgoto.o tgo\
+	to.o -L/os/osdev/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/rel\
+	ease/NeXT_root/lib -L/release/NeXT_root/usr/lib
+cc -O -DCM_N -DCM_GT -DCM_B -DCM_D -c tgoto.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -DCM_N -DCM_GT -DCM_B -DCM_D -c tgoto.c -I/os/osdev/\
+	LIBS/libs1.0b/mach.include -I/os/osdev/LIBS/libs1.0b/include -I/os/\
+	osdev/NeXT_root/usr/mach/include -I/os/osdev/NeXT_root/usr/include \
+	-I/release/NeXT_root/usr/mach/include -I/release/NeXT_root/usr/incl\
+	ude -L/os/osdev/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/rele\
+	ase/NeXT_root/lib -L/release/NeXT_root/usr/lib
+ld  -X -r tgoto.o
+	/release/sun_root/bin/ld-0.3.3.SUN -Z -X -r tgoto.o -L/os/osdev/NeX\
+	T_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/lib -\
+	L/release/NeXT_root/usr/lib
+mv -f a.out tgoto.o
+cc -O -DCM_N -DCM_GT -DCM_B -DCM_D -c -p tputs.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -DCM_N -DCM_GT -DCM_B -DCM_D -c -p tputs.c -I/os/osd\
+	ev/LIBS/libs1.0b/mach.include -I/os/osdev/LIBS/libs1.0b/include -I/\
+	os/osdev/NeXT_root/usr/mach/include -I/os/osdev/NeXT_root/usr/inclu\
+	de -I/release/NeXT_root/usr/mach/include -I/release/NeXT_root/usr/i\
+	nclude -L/os/osdev/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/r\
+	elease/NeXT_root/lib -L/release/NeXT_root/usr/lib
+ld  -x -r -o profiled/tputs.o tputs.o
+	/release/sun_root/bin/ld-0.3.3.SUN -Z -x -r -o profiled/tputs.o tpu\
+	ts.o -L/os/osdev/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/rel\
+	ease/NeXT_root/lib -L/release/NeXT_root/usr/lib
+cc -O -DCM_N -DCM_GT -DCM_B -DCM_D -c tputs.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -DCM_N -DCM_GT -DCM_B -DCM_D -c tputs.c -I/os/osdev/\
+	LIBS/libs1.0b/mach.include -I/os/osdev/LIBS/libs1.0b/include -I/os/\
+	osdev/NeXT_root/usr/mach/include -I/os/osdev/NeXT_root/usr/include \
+	-I/release/NeXT_root/usr/mach/include -I/release/NeXT_root/usr/incl\
+	ude -L/os/osdev/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/rele\
+	ase/NeXT_root/lib -L/release/NeXT_root/usr/lib
+ld  -X -r tputs.o
+	/release/sun_root/bin/ld-0.3.3.SUN -Z -X -r tputs.o -L/os/osdev/NeX\
+	T_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/lib -\
+	L/release/NeXT_root/usr/lib
+mv -f a.out tputs.o
+ar cr termcap.a termcap.o tgoto.o tputs.o
+	/release/sun_root/bin/ar cr termcap.a termcap.o tgoto.o tputs.o
+cd profiled; ar cr ../termcap_p.a termcap.o tgoto.o tputs.o
+	/release/sun_root/bin/ar cr ../termcap_p.a termcap.o tgoto.o tputs.\
+	o
+install -c -r termcap.a /os/osdev/NeXT_root/usr/lib/libtermcap.a
+	/release/sun_root/usr/bin/install -u -c -r termcap.a /os/osdev/NeXT\
+	_root/usr/lib/libtermcap.a
+cp termcap.a /os/osdev/NeXT_root/usr/lib/libtermcap.a
+	/release/sun_root/bin/ar rlb termcap.o /os/osdev/NeXT_root/usr/lib/\
+	libtermcap.a __.SYMDEF
+rm -f /os/osdev/NeXT_root/usr/lib/libtermlib.a
+ln /os/osdev/NeXT_root/usr/lib/libtermcap.a /os/osdev/NeXT_root/usr/lib/libtermlib.a
+install -c -r termcap_p.a /os/osdev/NeXT_root/usr/lib/libtermcap_p.a
+	/release/sun_root/usr/bin/install -u -c -r termcap_p.a /os/osdev/Ne\
+	XT_root/usr/lib/libtermcap_p.a
+cp termcap_p.a /os/osdev/NeXT_root/usr/lib/libtermcap_p.a
+	/release/sun_root/bin/ar rlb termcap.o /os/osdev/NeXT_root/usr/lib/\
+	libtermcap_p.a __.SYMDEF
+rm -f /os/osdev/NeXT_root/usr/lib/libtermlib_p.a
+ln /os/osdev/NeXT_root/usr/lib/libtermcap_p.a /os/osdev/NeXT_root/usr/lib/libtermlib_p.a

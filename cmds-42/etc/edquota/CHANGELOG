@@ -1,0 +1,5 @@
+1-19-89 btaylor@NeXT.COM
+	Fixed erronuous error message: /etc/mtab should be listed, not fstab
+
+
+

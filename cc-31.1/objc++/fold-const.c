@@ -1,0 +1,1 @@
+../g++/fold-const.c

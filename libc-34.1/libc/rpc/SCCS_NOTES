@@ -1,0 +1,299 @@
+Makefile	1.4 09/21/87 15:18:58
+Replace 'depend' target with 4.3 style; also made new dependencies.
+
+Makefile	1.3 08/28/87 15:06:55
+Removed several spurious SCCS ids.
+
+Makefile	1.2 06/23/87 09:59:55
+Add sccs keyword for 3.2/4.3NFSSRC
+
+Makefile	1.1 06/23/87 09:59:43
+date and time created 87/06/23 09:59:43 by ruggles
+
+auth.h	1.1 06/19/87 14:48:03
+date and time created 87/06/19 14:48:03 by clara
+
+auth_kern.c	1.5 09/09/87 11:54:51
+added #if check to make sure NGRPS is a reasonable value.  If
+NGRPS is greater than NGROUPS or 8 it will generate a compiler error.
+See comment in auth_unix.h for more info.
+
+auth_kern.c	1.4 09/03/87 17:09:11
+We now assume that the uid/gid fields in the u. structure are
+of type uid_t/gid_t.  We now convert from [ug]id_t representation (which
+is a u_short) to that used over the wire (which is an int).  Also note that
+we now use NOGROUP as the indicator of 'end-of-group' list.  We used to
+see if the gid was less than zero (in 4.2, NOGROUP was -1).  Now that
+gid_t is a u_short, NOGROUP is 65535, so the old test wouldn't work.
+
+auth_kern.c	1.3 06/22/87 16:53:36
+changed includes to 4.3 style
+
+auth_kern.c	1.2 06/22/87 10:50:12
+had to silence warning: illegal pointer combination
+
+auth_kern.c	1.1 06/19/87 15:02:01
+date and time created 87/06/19 15:02:01 by clara
+
+auth_none.c	1.1 06/19/87 15:35:01
+date and time created 87/06/19 15:35:01 by clara
+
+auth_unix.c	1.2 09/18/87 10:51:47
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+auth_unix.c	1.1 06/22/87 16:45:37
+date and time created 87/06/22 16:45:37 by clara
+
+auth_unix.h	1.2 09/03/87 17:00:30
+We we're going to set NGRPS to 10, but this will not work since
+the old NGRPS (8) is being used in xdr_authunix_parms() as the maximum
+number of gids in the auth_unix structure that it will accept.  This is
+a violation of the protocol (which allows 10), but so it goes.  I've added
+a comment to this file summarizing this comment.
+
+auth_unix.h	1.1 06/19/87 14:48:06
+date and time created 87/06/19 14:48:06 by clara
+
+authunix_prot.c	1.6 09/18/87 10:36:32
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+authunix_prot.c	1.5 09/10/87 15:42:17
+fixed initialization of groups in xdr_authkern()
+
+authunix_prot.c	1.4 09/03/87 17:04:11
+We now assume that the uid/gid fields in the u. structure are
+of type uid_t/gid_t.  We now convert from [ug]id_t representation (which
+is a u_short) to that used over the wire (which is an int).
+
+authunix_prot.c	1.3 07/20/87 11:29:02
+Changed KERNEL includes to 4.3 style.
+
+authunix_prot.c	1.2 06/22/87 10:40:00
+had to cast illegal pointer combination
+
+authunix_prot.c	1.1 06/19/87 15:02:05
+date and time created 87/06/19 15:02:05 by clara
+
+clnt.h	1.1 06/19/87 14:48:07
+date and time created 87/06/19 14:48:07 by clara
+
+clnt_kudp.c	1.3 09/09/87 11:52:09
+changed type of saveuid to uid_t for consistency
+
+clnt_kudp.c	1.2 06/22/87 17:00:12
+changed includes to 4.3 style
+
+clnt_kudp.c	1.1 06/19/87 15:02:09
+date and time created 87/06/19 15:02:09 by clara
+
+clnt_perror.c	1.3 09/18/87 11:10:24
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+clnt_perror.c	1.2 09/02/87 17:57:12
+Added new function: clnt_syslog, this is the same as clnt_perror
+except that it uses the syslog facility instead of stderr.  Any routine
+using this function should also be calling openlog() first.
+*** CHANGED *** 87/09/02 17:58:27 warrens
+Added new function: clnt_syslog, this is the same as clnt_perror 
+
+clnt_perror.c	1.1 06/19/87 15:02:15
+date and time created 87/06/19 15:02:15 by clara
+
+clnt_raw.c	1.1 06/19/87 15:35:40
+date and time created 87/06/19 15:35:40 by clara
+
+clnt_simple.c	1.3 09/20/87 13:25:27
+clnt_simple is only used in libc (not the kernel), so kernel
+style #include is not needed.
+
+clnt_simple.c	1.2 06/22/87 17:00:36
+changed includes to 4.3 style
+
+clnt_simple.c	1.1 06/19/87 15:35:42
+date and time created 87/06/19 15:35:42 by clara
+
+clnt_tcp.c	1.1 06/19/87 15:35:44
+date and time created 87/06/19 15:35:44 by clara
+
+clnt_udp.c	1.1 06/19/87 15:35:47
+date and time created 87/06/19 15:35:47 by clara
+
+dbx_rpc.c	1.1 06/30/87 16:58:19
+date and time created 87/06/30 16:58:19 by clara
+
+get_myaddress.c	1.1 09/20/87 13:17:56
+date and time created 87/09/20 13:17:56 by sxn
+
+kudp_fastsend.c	1.2 06/30/87 16:53:39
+changed to reflect new structure element in 4.3
+
+kudp_fastsend.c	1.1 06/19/87 15:02:19
+date and time created 87/06/19 15:02:19 by clara
+
+pmap_clnt.c	1.3 09/02/87 17:33:37
+Added openlog() and closelog() calls to go with clnt_syslog().
+
+pmap_clnt.c	1.2 09/02/87 16:14:31
+Converted call to clnt_perror() to clnt_syslog().
+
+pmap_clnt.c	1.1 06/22/87 11:32:49
+date and time created 87/06/22 11:32:49 by clara
+
+pmap_clnt.h	1.1 06/22/87 11:34:10
+date and time created 87/06/22 11:34:10 by clara
+
+pmap_getmaps.c	1.3 09/02/87 17:33:44
+Added openlog() and closelog() calls to go with clnt_syslog().
+
+pmap_getmaps.c	1.2 09/02/87 16:17:02
+Converted a call to clnt_perror() to clnt_syslog().
+
+pmap_getmaps.c	1.1 06/22/87 11:32:53
+date and time created 87/06/22 11:32:53 by clara
+
+pmap_getport.c	1.2 07/20/87 12:02:55
+Added 3.2/4.3NFSSRC keywords
+
+pmap_getport.c	1.1 07/20/87 12:02:01
+date and time created 87/07/20 12:02:01 by sxn
+
+pmap_kgetport.c	1.2 06/22/87 11:35:12
+had to remove time.h as it is now included in user.h
+
+pmap_kgetport.c	1.1 06/19/87 15:02:24
+date and time created 87/06/19 15:02:24 by clara
+
+pmap_prot.c	1.2 09/18/87 10:36:38
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+pmap_prot.c	1.1 06/19/87 15:02:28
+date and time created 87/06/19 15:02:28 by clara
+
+pmap_prot.h	1.1 06/22/87 11:34:14
+date and time created 87/06/22 11:34:14 by clara
+
+pmap_prot2.c	1.1 06/22/87 11:33:01
+date and time created 87/06/22 11:33:01 by clara
+
+pmap_rmt.c	1.3 08/23/87 20:58:43
+Broadcast address aquisition and socket initialization 
+updated to follow 4.3 converntions.
+
+pmap_rmt.c	1.2 07/22/87 14:21:54
+in_addr has different structure in 4.3
+
+pmap_rmt.c	1.1 06/22/87 11:33:03
+date and time created 87/06/22 11:33:03 by clara
+
+rpc.h	1.1 06/19/87 14:48:10
+date and time created 87/06/19 14:48:10 by clara
+
+rpc_callmsg.c	1.2 09/18/87 10:37:08
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+rpc_callmsg.c	1.1 06/19/87 15:35:03
+date and time created 87/06/19 15:35:03 by clara
+
+rpc_msg.h	1.1 06/19/87 15:35:05
+date and time created 87/06/19 15:35:05 by clara
+
+rpc_prot.c	1.2 09/18/87 10:36:43
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+rpc_prot.c	1.1 06/19/87 15:02:31
+date and time created 87/06/19 15:02:31 by clara
+
+subr_kudp.c	1.2 08/18/87 21:55:32
+Changed traversal of socket's mbuf chain from 4.2 style to 4.3 style.
+
+subr_kudp.c	1.1 06/19/87 15:02:36
+date and time created 87/06/19 15:02:36 by clara
+
+svc.c	1.2 09/18/87 10:37:14
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+svc.c	1.1 06/19/87 15:35:08
+date and time created 87/06/19 15:35:08 by clara
+
+svc.h	1.1 06/19/87 14:48:12
+date and time created 87/06/19 14:48:12 by clara
+
+svc_auth.c	1.3 09/18/87 10:37:21
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+svc_auth.c	1.2 08/19/87 14:55:16
+no biggie...  just changed the check for cred_flavor < 0 to be 
+compatible with the Sun OS.
+
+svc_auth.c	1.1 06/19/87 15:35:10
+date and time created 87/06/19 15:35:10 by clara
+
+svc_auth.h	1.1 06/19/87 15:35:12
+date and time created 87/06/19 15:35:12 by clara
+
+svc_auth_unix.c	1.2 09/18/87 10:37:26
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+svc_auth_unix.c	1.1 06/19/87 15:35:14
+date and time created 87/06/19 15:35:14 by clara
+
+svc_kudp.c	1.1 06/19/87 15:35:16
+date and time created 87/06/19 15:35:16 by clara
+
+svc_raw.c	1.1 06/19/87 15:35:19
+date and time created 87/06/19 15:35:19 by clara
+
+svc_simple.c	1.1 06/19/87 15:35:21
+date and time created 87/06/19 15:35:21 by clara
+
+svc_tcp.c	1.1 06/19/87 15:35:23
+date and time created 87/06/19 15:35:23 by clara
+
+svc_udp.c	1.1 06/19/87 15:35:26
+date and time created 87/06/19 15:35:26 by clara
+
+types.h	1.1 06/19/87 14:48:15
+date and time created 87/06/19 14:48:15 by clara
+
+xdr.c	1.2 09/18/87 10:36:50
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+xdr.c	1.1 06/19/87 15:02:40
+date and time created 87/06/19 15:02:40 by clara
+
+xdr.h	1.1 06/19/87 14:48:17
+date and time created 87/06/19 14:48:17 by clara
+
+xdr_array.c	1.2 09/18/87 10:36:57
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+xdr_array.c	1.1 06/19/87 15:02:45
+date and time created 87/06/19 15:02:45 by clara
+
+xdr_float.c	1.2 09/18/87 10:58:15
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+xdr_float.c	1.1 06/19/87 15:35:28
+date and time created 87/06/19 15:35:28 by clara
+
+xdr_mbuf.c	1.1 06/19/87 15:02:49
+date and time created 87/06/19 15:02:49 by clara
+
+xdr_mem.c	1.2 09/18/87 10:37:02
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+xdr_mem.c	1.1 06/19/87 15:02:53
+date and time created 87/06/19 15:02:53 by clara
+
+xdr_rec.c	1.1 06/19/87 15:35:30
+date and time created 87/06/19 15:35:30 by clara
+
+xdr_reference.c	1.2 09/18/87 11:01:23
+Converted #include format, when compiled in the kernel, to 4.3 kernel style.
+
+xdr_reference.c	1.1 06/19/87 15:35:33
+date and time created 87/06/19 15:35:33 by clara
+
+xdr_stdio.c	1.1 06/19/87 15:35:35
+date and time created 87/06/19 15:35:35 by clara
+

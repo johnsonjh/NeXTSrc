@@ -1,0 +1,173 @@
+
+currentshared true setshared
+  % allocate all of these procs in shared VM and leave previous state on 
+  % stack for restore
+
+% global constants & vars
+    nextdict /_windowCoverLock lock _NXCheckAndDef
+      % protects _coverWin and _edgeWindows variables
+    nextdict /_coverWin 0 _NXCheckAndDef
+      % window used to hide resizing glitches
+    nextdict /_edgeWindows 0 _NXCheckAndDef
+      % windows used to "draw" window borders during resizing
+
+windowPackage1.0 begin
+
+/ensureEdgeWindows {		%		ensureEdgeWindows
+  % checks out the _edgeWindows for use by a context, creating them if needed.
+  % _edgeWindows are checked out from nextdict to _NXedgeWindows in
+  % the context's userdict.
+    _windowCoverLock
+    {
+	_edgeWindows 0 eq
+	{
+	    currentshared true setshared
+	    gsave
+	    0.1 setgray
+	    1 1 4 { 
+		pop
+		0 0 0 0 Nonretained window
+		dup currentcontext exch setowner
+		dup 25 exch setwindowlevel
+		dup windowdeviceround
+		setexposurecolor 
+	    } for
+	    4 array astore
+	    grestore
+	    exch setshared
+	}{
+	    _edgeWindows
+	    dup {currentcontext exch setowner} forall
+	    nextdict /_edgeWindows 0 put
+	} ifelse
+	/userdict load /_NXedgeWindows 3 -1 roll put
+    }
+    monitor
+} _NXDefProc
+
+/placeEdgeWindows {		%  <coords[16]> placeEdgeWindows
+  % positions edge windows
+    aload pop /userdict load /_NXedgeWindows get {placewindow} forall
+} _NXDefProc
+
+/showEdgeWindows {		%		showEdgeWindows
+  % makes edge windows visible
+    /userdict load /_NXedgeWindows get {Above 0 3 -1 roll orderwindow} forall
+} _NXDefProc
+
+/hideEdgeWindows {		%		hideEdgeWindows
+  % Hides and checks in _edgeWindows.  If another set was allocated while
+  % these were checked out, we free them, else we save these for next time.
+    /userdict load /_NXedgeWindows get {Out 0 3 -1 roll orderwindow} forall
+    _windowCoverLock
+    {
+	/userdict load /_NXedgeWindows get
+	_edgeWindows 0 eq
+	{
+	    dup {0 exch setowner} forall
+	    nextdict /_edgeWindows 3 -1 roll put
+	}{
+	    {termwindow} forall
+	} ifelse
+	/userdict load /_NXedgeWindows 0 put
+    }
+    monitor
+} _NXDefProc
+
+/_checkOutCoverWin {		%		_checkOutCoverWin
+  % checks out _converWin, creating one if necessary.
+  % _converWin are checked out from nextdict to _NXcoverWindow in the
+  % context's userdict.
+    _windowCoverLock
+    {
+	_coverWin 0 eq
+	{
+	    currentshared true setshared
+	    0 0 0 0 Nonretained window
+	    dup currentcontext exch setowner
+	    dup false exch setautofill
+	    exch setshared
+	}{
+	    _coverWin
+	    dup currentcontext exch setowner
+	    nextdict /_coverWin 0 put
+	} ifelse
+	/userdict load /_NXcoverWindow 3 -1 roll put
+    }
+    monitor
+} _NXDefProc
+
+/_checkInCoverWin {		%		_checkInCoverWin
+  % Checks in _coverWin.  If another was allocated while
+  % this one was checked out, we free it, else we save it for next time.
+    _windowCoverLock
+    {
+	/userdict load /_NXcoverWindow get
+	_coverWin 0 eq
+	{
+	    dup 0 exch setowner
+	    nextdict /_coverWin 3 -1 roll put
+	}{
+	    termwindow
+	} ifelse
+	/userdict load /_NXcoverWindow 0 put
+    }
+    monitor
+} _NXDefProc
+
+/coverWindow {			%      <winnum> coverWindow
+  % checks out the cover window and positions it to cover the window with 
+  % number <winnum>.  Finally, orders OUT <winnum>.   The window operations
+  % are done within "stopped" to catch the error of ordering the cover window
+  % above the target window when the target window has been moved off-screen.
+  % In this case we check the cover window back in, and the corresponding
+  % uncoverWindow will be a NOP.
+    mark exch
+    //_checkOutCoverWin exec			% mk win
+    /userdict load /_NXcoverWindow get		% mk win coverWin
+    {
+	1 index currentwindowlevel
+	1 index setwindowlevel			% mk win coverWin
+	1 index currentwindowbounds		% mk win coverWin x y w h
+	4 index placewindow			% mk win coverWin
+	Above 2 index 3 -1 roll orderwindow	% mk win
+	Out 0 3 -1 roll orderwindow		% mk
+    } stopped {
+	//_checkInCoverWin exec
+    }
+    cleartomark
+} _NXDefProc
+
+/uncoverWindow {		%      <winnum> uncoverWindow
+  % re-shows the <winnum> being resized, hides the cover window, and
+  % checks it in.  If there is no cover window, we do nothing.  When
+  % bringing the window on screen, if its a menu or panel we have to be
+  % sure that it is supposed to be currently visible.
+    /userdict load /_NXcoverWindow get		% win coverWin
+    dup 0 ne {
+	appLock {				% win coverWin
+	    1 index currentwindowdict
+	    dup /hideOnDeact get not		% win coverWin wdict !HOD
+	    exch /kitVisible get		% win coverWin !HOD vis
+	    activeApp currentcontext eq		% win converWin !HOD vis isAct
+	    and or {
+		{
+		    Above 1 index 4 -1 roll
+		    orderwindow			% coverWin
+		} stopped {
+		    pop pop pop			% coverWin
+		} if
+	    }{
+		exch pop			% coverWin
+	    } ifelse
+	} monitor
+	Out 0 3 -1 roll orderwindow
+	//_checkInCoverWin exec
+    }{
+	pop pop
+    } ifelse
+} _NXDefProc
+
+end			% close window dict
+setshared		% restore VM allocation mode
+

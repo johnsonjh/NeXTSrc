@@ -1,0 +1,29 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    osdev:1.1; strict;
+comment  @# @;
+
+
+1.1
+date     89.07.11.16.32.10;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@uucp
+ingres
+root
+@

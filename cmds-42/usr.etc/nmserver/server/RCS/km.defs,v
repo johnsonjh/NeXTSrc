@@ -1,0 +1,100 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    gk:1.1; strict;
+comment  @@;
+
+
+1.1
+date     88.09.30.17.18.11;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@NeXT, Inc.
+@
+
+
+
+1.1
+log
+@Initial NeXT version
+@
+text
+@/* 
+ * Mach Operating System
+ * Copyright (c) 1987 Carnegie-Mellon University
+ * All rights reserved.  The CMU software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ */
+/*
+ * km.defs
+ *
+ * $Source: /afs/cs.cmu.edu/project/mach/member/dpj/netmsg/server/RCS/km.defs,v $
+ *
+ * $Header: km.defs,v 1.8 88/07/01 17:01:56 mach Exp $
+ *
+ */
+
+/*
+ * Mig definitions for Network Server Key Management interface.
+ */
+
+/*
+ * HISTORY:
+ *  1-Jul-88  Mary Thompson (mrt) at Carnegie Mellon
+ *	Changed subsystem base from 11700 to 1000 to be in
+ *	the netnameserver range.
+ *
+ * 14-Oct-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Added a server prefix.
+ *
+ * 30-May-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Changes for the new mig.
+ *
+ * 28-May-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Removed km_set_crypt_algorithm.
+ *
+ * 18-Mar-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Removed km_use_key_for_port.
+ *	Removed the registered_port from the interface.
+ *
+ * 23-Sep-86  Robert Sansom (rds) at Carnegie Mellon University
+ *	Started.
+ *
+ */
+
+
+subsystem km 1000;
+
+serverprefix _;
+
+type key_t	= struct [16] of MSG_TYPE_BYTE;
+type port_t	= MSG_TYPE_PORT;
+type netaddr_t	= MSG_TYPE_INTEGER_32;
+
+import "key_defs.h";
+import "nm_defs.h";
+
+#include <config.h>
+
+#if	NM_USE_KDS
+
+/*
+ * Used by local kds to connect to network server.
+ */
+routine km_kds_connect(		server_port	: port_t;
+				kds_port	: port_t);
+
+
+/*
+ * Used by local kds to set up one end of a secure connection.
+ */
+routine km_use_key_for_host(	server_port	: port_t;
+				host_id		: netaddr_t;
+				key		: key_t);
+#else
+routine km_dummy(server_port: port_t);
+#endif	NM_USE_KDS
+@

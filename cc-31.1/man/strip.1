@@ -1,0 +1,92 @@
+.TH STRIP 1 "September 19, 1990" "NeXT Computer, Inc."
+.SH NAME
+strip \- remove symbols and relocation bits
+.SH SYNOPSIS
+.B strip
+[ option ] name ...
+.SH DESCRIPTION
+.I Strip
+removes the symbol
+table and relocation bits ordinarily attached to the output
+of the assembler and loader.
+This is useful to save space after a program has been
+debugged.
+.PP
+The effect of
+.I strip
+is the same as use of the
+.B \-s
+option
+of
+.IR ld (1).
+The options
+.B \-S,
+.B \-x,
+and
+.B \-X
+have the same effect as the
+.IR ld (1)
+options.
+.PP
+There are mutually exclusive options to
+.IR strip (1)
+(except that 
+.B \-a or 
+.BI \-d " filename"
+maybe used with one of
+.B \-x,
+.B \-S, or
+.BR \-X ):
+.TP
+.BI \-s " filename"
+Save the symbol table entries for the global symbols listed in
+.I filename.
+The symbol names listed in
+.I filename
+must be one per line with no other white space in the file except the newlines
+on the end of each line.
+.TP
+.BI \-d " filename"
+Save the debugging symbol table entries for each source file name listed in
+.I filename.
+The source file names listed in
+.I filename
+must be one per line with no other white space in the file except the newlines
+on the end of each line.  And they must be just the base name of the source file
+without any leading directories.
+.TP
+.B \-S
+`Strip' the output by removing all symbols except locals and globals.  That is
+debugging symbols created by the
+.B \-g
+option to
+.IR cc (1)
+and other compilers.
+.TP
+.B  \-X
+Save local symbols
+except for those whose names begin with `L'.
+.TP 
+.B  \-x
+Do not preserve local
+(non-.globl) symbols in the output symbol table; only save
+external symbols.
+.TP
+.B \-A
+Save all global absolute symbols except those with a value of zero and that are
+not objective-C class symbols.  This is intended for use of programs that use
+.IR rld (3)
+and only want the loaded code to use symbols from the shared libraries.
+.TP
+.B \-gg
+Only strip the symbol segments produced by the (obsolete)
+.B \-gg
+option of the compiler
+.IR cc (1).
+.SH "SEE ALSO"
+ld(1), cc(1)
+.SH LIMITATIONS
+Not every layout of a Mach-O file can be stripped by this program.  But all 
+layouts produced by the compiler system can be stripped.
+.SH BUGS
+The options and how they interplay or don't interplay is a mess.

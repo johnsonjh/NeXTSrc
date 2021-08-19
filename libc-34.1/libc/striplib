@@ -1,0 +1,62 @@
+#!/bin/csh -f
+
+# This script extracts files from an archive, strips off their
+# symbols, and makes a new archive with the same name.  The old archive
+# is saved with a .unstripped appended to the name.  If only a library name is 
+# given, the script will strip the entire library.  If  a filename is
+# specified as a second argument, that file is assumed to contain the
+# names of the .o files you wished stripped in the library.
+
+# get names of all files in archive
+if ($#argv == 0) then
+	echo "Usage: striplib <library> [<namelistfile>]"
+	exit -1
+else if ($#argv == 1) then
+	set FILES = (`ar t $1`)
+	if ($FILES[1] == "__.SYMDEF") then
+	    shift FILES
+	endif
+else if (-r $2) then
+	set FILES = (`sed -e /^\#/d $2`)
+else
+	echo Cannot read file: $2
+	exit -1
+endif
+
+set lib=$cwd/$1
+set tmpdir=/tmp/striplib$$
+set ALLFILES = (`ar t $lib`)
+if( $ALLFILES[1] == "__.SYMDEF" ) then
+    shift ALLFILES
+endif
+echo stripping symbols from $lib
+
+# save the old one
+echo "	copying archive to $1.unstripped"
+/bin/mv $lib $lib.unstripped
+
+# go do this in a safe place
+mkdir $tmpdir
+cd $tmpdir
+
+# extract the files
+echo "	extracting files from archive"
+ar xv $lib.unstripped $ALLFILES
+
+# strip symbols of the files
+foreach f ($FILES)
+echo "	stripping $f"
+ld -x -r -o $f.stripped $f
+/bin/mv $f.stripped $f
+end
+
+# build the new one
+echo "	building new archive"
+ar qv $lib $ALLFILES
+ranlib $lib
+
+# get rid of old files
+echo "	removing scratch files"
+cd ..
+/bin/rm -rf $tmpdir
+#/bin/rm -rf $lib.unstripped

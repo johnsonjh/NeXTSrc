@@ -1,0 +1,32 @@
+***************
+*** 288,293 ****
+  char	*arpafix();
+  char	*calloc();
+  char	*copy();
+  char	*copyin();
+  char	*detract();
+  char	*expand();
+--- 288,294 -----
+  char	*arpafix();
+  char	*calloc();
+  char	*copy();
++ char	*do_quoted_string();
+  char	*copyin();
+  char	*detract();
+  char	*expand();
+***************
+*** 311,316 ****
+  char	*salloc();
+  char	*savestr();
+  char	*skin();
+  char	*snarf();
+  char	*strcat();
+  char	*strcpy();
+--- 312,318 -----
+  char	*salloc();
+  char	*savestr();
+  char	*skin();
++ char	*skip_comment();
+  char	*snarf();
+  char	*strcat();
+  char	*strcpy();

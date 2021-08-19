@@ -1,0 +1,42 @@
+.TH NMCONTROL 1 2/22/88
+.CM 4
+.SH NAME
+nmcontrol \- control the operation of the Mach network server
+.SH SYNOPSIS
+.B nmcontrol
+[ hostname ]
+.SH DESCRIPTION
+.I nmcontrol
+can be used to obtain operating statistics from an operating 
+.I network server
+, set or get operating parameters and debugging switches, and dump the
+debugging log.
+
+.I nmcontrol
+makes contact with the network server by looking up the special port for
+the
+.I LOGSTAT
+service in the name server.
+
+.I hostname
+represents the host on which the network to control is running.
+It is
+prompted for if not supplied on the command line.
+
+.I nmcontrol
+is interactive; all commands can be listed by entering 
+.I ?
+or
+.I h
+at the prompt.
+Commands can be in upper or lower case; several commands
+can be typed on the same line, provided that spaces are used to 
+disambiguate the end of string arguments.
+.SH "SEE ALSO"
+nmxlog(1), nmserver(8)
+.br
+"Network Server Design", internal document from the Mach group.
+.SH HISTORY
+.TP 
+22-Feb-88  Daniel Julin (dpj) at Carnegie-Mellon University
+Created.

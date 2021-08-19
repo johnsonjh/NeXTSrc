@@ -1,0 +1,2 @@
+const char SGS_VERS[160] = "@(#)PROGRAM:diff  PROJECT:cmds-42  DEVELOPER:root  BUILT:Sun Nov 11 13:54:34 PST 1990\n";
+const char VERS_NUM[10] = "42";

@@ -1,0 +1,620 @@
+1d0
+< /* @(#)domain.c	1.2 87/09/08 3.2/4.3NFSSRC */
+3,12c2,17
+< **  Sendmail
+< **  Copyright (c) 1986  Eric P. Allman
+< **  Berkeley, California
+< **
+< **  Copyright (c) 1986 Regents of the University of California.
+< **  All rights reserved.  The Berkeley software License Agreement
+< **  specifies the terms and conditions for redistribution.
+< */
+< # include <sys/param.h>
+< # include "sendmail.h"
+---
+>  * Copyright (c) 1986 Eric P. Allman
+>  * Copyright (c) 1988 Regents of the University of California.
+>  * All rights reserved.
+>  *
+>  * Redistribution and use in source and binary forms are permitted
+>  * provided that the above copyright notice and this paragraph are
+>  * duplicated in all such forms and that any documentation,
+>  * advertising materials, and other materials related to such
+>  * distribution and use acknowledge that the software was developed
+>  * by the University of California, Berkeley.  The name of the
+>  * University may not be used to endorse or promote products derived
+>  * from this software without specific prior written permission.
+>  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+>  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+>  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+>  */
+14,15c19
+< #ifdef MXDOMAIN
+< SCCSID(@(#)domain.c 1.5 87/06/26 SMI); /* from UCB 5.3 7/21/86 */
+---
+> #include <sendmail.h>
+17,25c21,25
+< #if	NeXT_MOD
+< #include <sys/errno.h>
+< #endif	NeXT_MOD
+< # include <arpa/nameser.h>
+< # include <resolv.h>
+< # include <netdb.h>
+< 
+< #ifdef NeXT_MOD
+< #define getshort res_getshort
+---
+> #ifndef lint
+> #ifdef NAMED_BIND
+> static char sccsid[] = "@(#)domain.c	5.19 (Berkeley) 1/1/89 (with name server)";
+> #else
+> static char sccsid[] = "@(#)domain.c	5.19 (Berkeley) 1/1/89 (without name server)";
+26a27
+> #endif /* not lint */
+27a29,36
+> #ifdef NAMED_BIND
+> 
+> #include <sys/param.h>
+> #include <errno.h>
+> #include <arpa/nameser.h>
+> #include <resolv.h>
+> #include <netdb.h>
+> 
+33c42
+< static char hostbuf[BUFSIZ];
+---
+> static char hostbuf[MAXMXHOSTS*PACKETSZ];
+35,55c44,46
+< #if	NeXT_MOD
+< extern int h_errno;
+< extern int errno;
+< #else	NeXT_MOD
+< int h_errno;
+< #endif	NeXT_MOD
+< 
+< /*
+<  * Look up Mail Exchanger records, first in cache, then to name server.
+<  * return values for mx->mx_number:
+<  *	-3 hard host not found
+<  *	-2 hard error looking up MX record
+<  *	-1 server fail, try again
+<  *	 0
+<  *	 1 TOPS-20 FORMERR kludge, or no records but valid name
+<  *	   or we are the first record
+<  */
+< struct mxinfo *getmxrr(host, maxmx, localhost)
+< 	char *host;
+< 	int maxmx;
+< 	char *localhost;
+---
+> getmxrr(host, mxhosts, localhost, rcode)
+> 	char *host, **mxhosts, *localhost;
+> 	int *rcode;
+57c48,51
+< 
+---
+> 	extern int h_errno;
+> 	register u_char *eom, *cp;
+> 	register int i, j, n, nmx;
+> 	register char *bp;
+59,71c53,55
+< 	char *eom, *bp, *cp;
+< 	querybuf buf, answer;
+< 	int n, n1, i, j, nmx, ancount, qdcount, buflen;
+< 	int seenlocal;
+< 	u_short prefer[BUFSIZ];
+< 	u_short pref, localpref, type, class;
+< 	STAB *st;
+< 	register struct mxinfo *mx;
+< 	
+< #ifdef DEBUG
+< 	if (tTd(8, 2)) 
+< 		_res.options |= RES_DEBUG;
+< #endif
+---
+> 	querybuf answer;
+> 	int ancount, qdcount, buflen, seenlocal;
+> 	u_short pref, localpref, type, prefer[MAXMXHOSTS];
+73,84c57,69
+< 	st = stab(host, ST_MX, ST_FIND);
+< 	if (st != NULL) {
+< 	    /*
+< 	     * found in the cache, just return it.
+< 	     */
+< 	     mx = &st->s_value.sv_mxinfo;
+< 	     AlreadyKnown = (mx->mx_number == -1);
+< 	     return(mx);
+< 	}
+< 	AlreadyKnown = FALSE;
+< 	st = stab(host, ST_MX, ST_ENTER);
+< 	mx = &st->s_value.sv_mxinfo;
+---
+> 	errno = 0;
+> 	n = res_search(host, C_IN, T_MX, (char *)&answer, sizeof(answer));
+> 	if (n < 0)
+> 	{
+> 		if (tTd(8, 1))
+> 			printf("getmxrr: res_search failed (errno=%d, h_errno=%d)\n",
+> 			    errno, h_errno);
+> 		switch (h_errno)
+> 		{
+> 		  case NO_DATA:
+> 		  case NO_RECOVERY:
+> 			/* no MX data on this host */
+> 			goto punt;
+86,104c71,83
+< 	n = res_mkquery(QUERY, host, C_IN, T_MX, (char *)NULL, 0, NULL,
+< 		(char *)&buf, sizeof(buf));
+< 	if (n < 0) {
+< #ifdef DEBUG
+< 		if (tTd(8, 1) || _res.options & RES_DEBUG)
+< 			printf("res_mkquery failed\n");
+< #endif
+< 		h_errno = NO_RECOVERY;
+< 		mx->mx_number = -2;
+< 		return(mx);
+< 	}
+< 	n = res_send((char *)&buf, n, (char *)&answer, sizeof(answer));
+< 	if (n < 0) {
+< #ifdef DEBUG
+< #if	NeXT_MOD
+< 		if (tTd(8, 1) || _res.options & RES_DEBUG) {
+< 			int terrno = errno;
+< 			printf("res_send failed\n");
+< 			errno = terrno;
+---
+> 		  case HOST_NOT_FOUND:
+> 			/* the host just doesn't exist */
+> 			*rcode = EX_NOHOST;
+> 			break;
+> 
+> 		  case TRY_AGAIN:
+> 			/* couldn't connect to the name server */
+> 			if (!UseNameServer && errno == ECONNREFUSED)
+> 				goto punt;
+> 
+> 			/* it might come up later; better queue it up */
+> 			*rcode = EX_TEMPFAIL;
+> 			break;
+106,128c85,87
+< #else	NeXT_MOD
+< 		if (tTd(8, 1) || _res.options & RES_DEBUG)
+< 			printf("res_send failed\n");
+< #endif	NeXT_MOD
+< #endif
+< #if	NeXT_MOD
+< 		if (errno == ECONNREFUSED) {
+< 			/*
+< 			 * No domain name server there.  We'll assume
+< 			 * that the resolver has not been configured
+< 			 * and we will leave the hostname unchanged.
+< 			 */
+< 			h_errno = HOST_NOT_FOUND;
+< 			mx->mx_number = -3;
+< 		} else {
+< 			h_errno = TRY_AGAIN;
+< 			mx->mx_number = -1;
+< 		}
+< #else	NeXT_MOD
+< 		h_errno = TRY_AGAIN;
+< 		mx->mx_number = -1;
+< #endif	NeXT_MOD
+< 		return(mx);
+---
+> 
+> 		/* irreconcilable differences */
+> 		return (-1);
+130,183c89,96
+< 	eom = (char *)&answer + n;
+< 	/*
+< 	 * find first satisfactory answer
+< 	 */
+< 	hp = (HEADER *) &answer;
+< 	ancount = ntohs(hp->ancount);
+< 	qdcount = ntohs(hp->qdcount);
+< 	if (hp->rcode != NOERROR || ancount == 0) {
+< #ifdef DEBUG
+< 		if (tTd(8, 1) || _res.options & RES_DEBUG)
+< 			printf("rcode = %d, ancount=%d\n", hp->rcode, ancount);
+< #endif
+< 		switch (hp->rcode) {
+< 			case NXDOMAIN:
+< 				/* Check if it's an authoritive answer */
+< 				if (hp->aa) {
+< 					h_errno = HOST_NOT_FOUND;
+< 					mx->mx_number = -3;
+< 				} else {
+< 					h_errno = TRY_AGAIN;
+< 					mx->mx_number = -1;
+< 				}
+< 				return(mx);
+< 			case SERVFAIL:
+< 				h_errno = TRY_AGAIN;
+< 				mx->mx_number = -1;
+< 				return(mx);
+< # define OLDJEEVES
+< #ifdef OLDJEEVES
+< 			/*
+< 			 * Jeeves (TOPS-20 server) still does not
+< 			 * support MX records.  For the time being,
+< 			 * we must accept FORMERRs as the same as
+< 			 * NOERROR.
+< 			 */
+< 			case FORMERR:
+< #endif OLDJEEVES
+< 			case NOERROR:
+< 				mx->mx_hosts[0] = newstr(host);
+< 				mx->mx_number = 1;
+< 				return(mx);
+< #ifndef OLDJEEVES
+< 			case FORMERR:
+< #endif OLDJEEVES
+< 			case NOTIMP:
+< 			case REFUSED:
+< 				h_errno = NO_RECOVERY;
+< 				mx->mx_number = -2;
+< 				return(mx);
+< 		}
+< 		mx->mx_number = -1;
+< 		return(mx);
+< 	}
+< 	bp = hostbuf;
+---
+> 
+> 	/* find first satisfactory answer */
+> 	hp = (HEADER *)&answer;
+> 	cp = (u_char *)&answer + sizeof(HEADER);
+> 	eom = (u_char *)&answer + n;
+> 	for (qdcount = ntohs(hp->qdcount); qdcount--; cp += n + QFIXEDSZ)
+> 		if ((n = dn_skipname(cp, eom)) < 0)
+> 			goto punt;
+187,193c100,102
+< 	cp = (char *)&answer + sizeof(HEADER);
+< 	if (qdcount) {
+< 		cp += dn_skip(cp) + QFIXEDSZ;
+< 		while (--qdcount > 0)
+< 			cp += dn_skip(cp) + QFIXEDSZ;
+< 	}
+< 	while (--ancount >= 0 && cp < eom && nmx < maxmx) {
+---
+> 	bp = hostbuf;
+> 	ancount = ntohs(hp->ancount);
+> 	while (--ancount >= 0 && cp < eom && nmx < MAXMXHOSTS) {
+197,201c106
+< 		type = getshort(cp);
+<  		cp += sizeof(u_short);
+< 		/*
+< 		class = getshort(cp);
+< 		*/
+---
+> 		GETSHORT(type, cp);
+203,204c108
+< 		n = getshort(cp);
+< 		cp += sizeof(u_short);
+---
+> 		GETSHORT(n, cp);
+206d109
+< #ifdef DEBUG
+209,210c112
+< 					type, n);
+< #endif
+---
+> 				    type, n);
+214,215c116
+< 		pref = getshort(cp);
+< 		cp += sizeof(u_short);
+---
+> 		GETSHORT(pref, cp);
+219,220c120,122
+< 		if (sameword(bp, localhost))
+< 		{
+---
+> 		if (!strcasecmp(bp, localhost)) {
+> 			if (seenlocal == 0 || pref < localpref)
+> 				localpref = pref;
+222d123
+< 			localpref = pref;
+226,229c127,130
+< 		mx->mx_hosts[nmx++] = newstr(bp);
+< 		n1 = strlen(bp)+1;
+< 		bp += n1;
+< 		buflen -= n1;
+---
+> 		mxhosts[nmx++] = bp;
+> 		n = strlen(bp) + 1;
+> 		bp += n;
+> 		buflen -= n;
+231,281d131
+< 	  /*
+< 	   * Scan the response for useful additional records, too.
+< 	   * Normally these will be address records for the forwarder,
+< 	   * or the host itself (if there are no MX records).
+< 	   */
+< 	for (ancount = ntohs(hp->arcount);
+< 	   --ancount >= 0 && cp < eom; cp += n) {
+< 		struct in_addr sin, *addlist;
+< 
+< 		if ((n = dn_expand((char *)&answer, eom, cp, bp, buflen)) < 0)
+< 			break;
+< 		cp += n;
+< 		type = getshort(cp);
+<  		cp += sizeof(u_short);
+< 		class = getshort(cp);
+<  		cp += sizeof(u_short) + sizeof(u_long);
+< 		n = getshort(cp);
+< 		cp += sizeof(u_short);
+< 		if (type != T_A || class != C_IN)  {
+< #ifdef DEBUG
+< 			if (tTd(8, 1) || _res.options & RES_DEBUG)
+< 				printf("unexpected add. type %d, size %d\n",
+< 					type, n);
+< #endif
+< 			continue;
+< 		}
+< 		(void) bcopy(cp, &sin, n);
+< 		st = stab(bp, ST_HOST, ST_FIND);
+< 		if (st == NULL) {
+< 		    /*
+< 		     * not found in the cache, add it.
+< 		     */
+< 		    st = stab(bp, ST_HOST, ST_ENTER);
+< 		    if (st == NULL)
+< 			continue;
+< 		    st->s_value.sv_host.h_addrlist[0].s_addr = INADDR_ANY;
+< 		    st->s_value.sv_host.h_down = 0;
+< 		}
+< 		st->s_value.sv_host.h_valid = 1;
+< 		st->s_value.sv_host.h_exists = 1;
+< 		addlist = st->s_value.sv_host.h_addrlist;
+< 		while (addlist->s_addr != INADDR_ANY) {
+< 		    if (addlist->s_addr == sin.s_addr)
+< 			break;
+< 		    addlist++;
+< 		}
+< 		if (addlist->s_addr == INADDR_ANY) {
+< 		    addlist++->s_addr = sin.s_addr;
+< 		    addlist->s_addr = INADDR_ANY;
+< 		}
+< 	}
+283,285c133,134
+< 		mx->mx_hosts[0] = newstr(host);
+< 		mx->mx_number = 1;
+< 		return(mx);
+---
+> punt:		mxhosts[0] = strcpy(hostbuf, host);
+> 		return(1);
+286a136
+> 
+290,292c140,143
+< 			if (prefer[i] > prefer[j]) {
+< 				int temp;
+< 				char *temp1;
+---
+> 			if (prefer[i] > prefer[j] ||
+> 			    (prefer[i] == prefer[j] && rand() % 1 == 0)) {
+> 				register int temp;
+> 				register char *temp1;
+297,299c148,150
+< 				temp1 = mx->mx_hosts[i];
+< 				mx->mx_hosts[i] = mx->mx_hosts[j];
+< 				mx->mx_hosts[j] = temp1;
+---
+> 				temp1 = mxhosts[i];
+> 				mxhosts[i] = mxhosts[j];
+> 				mxhosts[j] = temp1;
+302,304c153
+< 		if (seenlocal && (prefer[i] >= localpref))
+< 		{
+< 			nmx = i;
+---
+> 		if (seenlocal && prefer[i] >= localpref) {
+306,307c155,157
+< 			 * We are the first MX, might as well try delivering
+< 			 * since nobody is supposed to have more info.
+---
+> 			 * truncate higher pref part of list; if we're
+> 			 * the best choice left, we should have realized
+> 			 * awhile ago that this was a local delivery.
+309,313c159,161
+< 			if (nmx == 0)
+< 			{
+< 				mx->mx_hosts[0] = newstr(host);
+< 				mx->mx_number = 1;
+< 				return(mx);
+---
+> 			if (i == 0) {
+> 				*rcode = EX_CONFIG;
+> 				return(-1);
+314a163
+> 			nmx = i;
+318,319c167
+< 	mx->mx_number = nmx;
+< 	return(mx);
+---
+> 	return(nmx);
+322d169
+< 
+327c174,175
+< 
+---
+> 	register u_char *eom, *cp;
+> 	register int n; 
+329,331c177
+< 	char *eom, *cp;
+< 	querybuf buf, answer;
+< 	int n, ancount, qdcount;
+---
+> 	querybuf answer;
+333,334c179,180
+< 	char nbuf[BUFSIZ];
+< 	int first;
+---
+> 	int first, ancount, qdcount, loopcnt;
+> 	char nbuf[PACKETSZ];
+336,337c182,196
+< 	n = res_mkquery(QUERY, host, C_IN, T_ANY, (char *)NULL, 0, NULL,
+< 		(char *)&buf, sizeof(buf));
+---
+> 	loopcnt = 0;
+> loop:
+> 	/*
+> 	 * Use query type of ANY if possible (NO_WILDCARD_MX), which will
+> 	 * find types CNAME, A, and MX, and will cause all existing records
+> 	 * to be cached by our local server.  If there is (might be) a
+> 	 * wildcard MX record in the local domain or its parents that are
+> 	 * searched, we can't use ANY; it would cause fully-qualified names
+> 	 * to match as names in a local domain.
+> 	 */
+> # ifdef NO_WILDCARD_MX
+> 	n = res_search(host, C_IN, T_ANY, (char *)&answer, sizeof(answer));
+> # else
+> 	n = res_search(host, C_IN, T_CNAME, (char *)&answer, sizeof(answer));
+> # endif
+339,343c198,200
+< #ifdef DEBUG
+< 		if (tTd(8, 1) || _res.options & RES_DEBUG)
+< 			printf("res_mkquery failed\n");
+< #endif
+< 		h_errno = NO_RECOVERY;
+---
+> 		if (tTd(8, 1))
+> 			printf("getcanonname:  res_search failed (errno=%d, h_errno=%d)\n",
+> 			    errno, h_errno);
+346,380c203,205
+< 	n = res_send((char *)&buf, n, (char *)&answer, sizeof(answer));
+< 	if (n < 0) {
+< #ifdef DEBUG
+< #if	NeXT_MOD
+< 		if (tTd(8, 1) || _res.options & RES_DEBUG) {
+< 			int terrno = errno;
+< 			printf("res_send failed\n");
+< 			errno = terrno;
+< 		}
+< #else	NeXT_MOD
+< 		if (tTd(8, 1) || _res.options & RES_DEBUG)
+< 			printf("res_send failed\n");
+< #endif	NeXT_MOD
+< #endif
+< #if	NeXT_MOD
+< 		if (errno == ECONNREFUSED) {
+< 			/*
+< 			 * No domain name server there.  We'll assume
+< 			 * that the resolver has not been configured
+< 			 * and we will leave the hostname unchanged.
+< 			 */
+< 			h_errno = HOST_NOT_FOUND;
+< 		} else {
+< 			h_errno = TRY_AGAIN;
+< 		}
+< #else	NeXT_MOD
+< 		h_errno = TRY_AGAIN;
+< #endif	NeXT_MOD
+< 		return;
+< 	}
+< 	eom = (char *)&answer + n;
+< 	/*
+< 	 * find first satisfactory answer
+< 	 */
+< 	hp = (HEADER *) &answer;
+---
+> 
+> 	/* find first satisfactory answer */
+> 	hp = (HEADER *)&answer;
+382,385c207,208
+< 	qdcount = ntohs(hp->qdcount);
+< 	/*
+< 	 * We don't care about errors here, only if we got an answer
+< 	 */
+---
+> 
+> 	/* we don't care about errors here, only if we got an answer */
+387,388c210
+< #ifdef DEBUG
+< 		if (tTd(8, 1) || _res.options & RES_DEBUG)
+---
+> 		if (tTd(8, 1))
+390d211
+< #endif
+393,400c214,225
+< 	cp = (char *)&answer + sizeof(HEADER);
+< 	if (qdcount) {
+< 		cp += dn_skip(cp) + QFIXEDSZ;
+< 		while (--qdcount > 0)
+< 			cp += dn_skip(cp) + QFIXEDSZ;
+< 	}
+< 	first = 1;
+< 	while (--ancount >= 0 && cp < eom) {
+---
+> 	cp = (u_char *)&answer + sizeof(HEADER);
+> 	eom = (u_char *)&answer + n;
+> 	for (qdcount = ntohs(hp->qdcount); qdcount--; cp += n + QFIXEDSZ)
+> 		if ((n = dn_skipname(cp, eom)) < 0)
+> 			return;
+> 
+> 	/*
+> 	 * just in case someone puts a CNAME record after another record,
+> 	 * check all records for CNAME; otherwise, just take the first
+> 	 * name found.
+> 	 */
+> 	for (first = 1; --ancount >= 0 && cp < eom; cp += n) {
+404c229
+< 		if (first) {
+---
+> 		if (first) {			/* XXX */
+410,411c235
+< 		type = getshort(cp);
+<  		cp += sizeof(u_short);
+---
+> 		GETSHORT(type, cp);
+413,414c237
+< 		n = getshort(cp);
+< 		cp += sizeof(u_short);
+---
+> 		GETSHORT(n, cp);
+417,418c240,242
+< 			 * Assume that only one cname will be found.  More
+< 			 * than one is undefined.
+---
+> 			 * assume that only one cname will be found.  More
+> 			 * than one is undefined.  Copy so that if dn_expand
+> 			 * fails, `host' is still okay.
+423c247
+< 			(void)strncpy(host, nbuf, hbsize);
+---
+> 			(void)strncpy(host, nbuf, hbsize); /* XXX */
+425,426c249,251
+< 			getcanonname(host, hbsize);
+< 			break;
+---
+> 			if (++loopcnt > 8)	/* never be more than 1 */
+> 				return;
+> 			goto loop;
+428d252
+< 		cp += n;
+430d253
+< 	return;
+432c255,276
+< #endif MXDOMAIN
+---
+> 
+> #else /* not NAMED_BIND */
+> 
+> #include <netdb.h>
+> 
+> getcanonname(host, hbsize)
+> 	char *host;
+> 	int hbsize;
+> {
+> 	struct hostent *hp;
+> 
+> 	hp = gethostbyname(host);
+> 	if (hp == NULL)
+> 		return;
+> 
+> 	if (strlen(hp->h_name) >= hbsize)
+> 		return;
+> 
+> 	(void) strcpy(host, hp->h_name);
+> }
+> 
+> #endif /* not NAMED_BIND */

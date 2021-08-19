@@ -1,0 +1,1120 @@
+#NO_APP
+Ltext:	.stabs "cthreads.c",100,0,0,Ltext
+.stabs "int:t1=r1;-2147483648;2147483647;",128,0,0,0
+.stabs "char:t2=r2;0;127;",128,0,0,0
+.stabs "void:t3=3",128,0,0,0
+.stabs "long double:t4=r1;8;0;",128,0,0,0
+.stabs "double:t5=r1;8;0;",128,0,0,0
+.stabs "float:t6=r1;4;0;",128,0,0,0
+.stabs "unsigned char:t7=r1;0;255;",128,0,0,0
+.stabs "signed char:t8=r1;-128;127;",128,0,0,0
+.stabs "long unsigned int:t9=r1;0;-1;",128,0,0,0
+.stabs "short unsigned int:t10=r1;0;65535;",128,0,0,0
+.stabs "long int:t11=r1;-2147483648;2147483647;",128,0,0,0
+.stabs "short int:t12=r1;-32768;32767;",128,0,0,0
+.stabs "unsigned int:t13=r1;0;-1;",128,0,0,0
+.stabs "char:t2",128,0,0,0
+.stabs "int:t1",128,0,0,0
+.stabs "cproc:T14=s36next:15=*14,0,32;incarnation:16=*17=s208next:16,0,32;\\",128,0,0,0
+.stabs "lock:18=s8lock:1,0,32;name:19=*2,32,32;;,32,64;\\",128,0,0,0
+.stabs "done:20=s16lock:1,0,32;queue:21=s8head:22=*23=s4next:22,0,32;;,0,32;\\",128,0,0,0
+.stabs "tail:22,32,32;;,32,64;name:19,96,32;;,96,128;\\",128,0,0,0
+.stabs "state:1,224,32;catch:24=ar1;0;38;1,256,1248;\\",128,0,0,0
+.stabs "func:25=*26=f19,1504,32;arg:19,1536,32;result:19,1568,32;\\",128,0,0,0
+.stabs "name:19,1600,32;data:19,1632,32;;,32,32;\\",128,0,0,0
+.stabs "state:1,64,32;reply_port:1,96,32;wait_port:1,128,32;\\",128,0,0,0
+.stabs "id:1,160,32;link:15,192,32;stack_base:13,224,32;\\",128,0,0,0
+.stabs "stack_size:13,256,32;;",128,0,0,0
+.stabs "_iobuf:T27=s20_cnt:1,0,32;_ptr:19,32,32;\\",128,0,0,0
+.stabs "_base:19,64,32;_bufsiz:1,96,32;_flag:12,128,16;\\",128,0,0,0
+.stabs "_file:2,144,8;;",128,0,0,0
+.stabs "ur_cthread:T28=s8next:29=*28,0,32;incarnation:16,32,32;;",128,0,0,0
+.stabs "cthread:T17",128,0,0,0
+.stabs "condition:T20",128,0,0,0
+.stabs "mutex:T18",128,0,0,0
+.stabs "queue_item:T23",128,0,0,0
+.stabs "queue:T21",128,0,0,0
+.stabs "task_events_info:T30=s28faults:11,0,32;zero_fills:11,32,32;\\",128,0,0,0
+.stabs "reactivations:11,64,32;pageins:11,96,32;cow_faults:11,128,32;\\",128,0,0,0
+.stabs "messages_sent:11,160,32;messages_received:11,192,32;;",128,0,0,0
+.stabs "task_basic_info:T31=s32suspend_count:1,0,32;base_priority:1,32,32;\\",128,0,0,0
+.stabs "virtual_size:13,64,32;resident_size:13,96,32;user_time:32=s8seconds:11,0,32;\\",128,0,0,0
+.stabs "microseconds:11,32,32;;,128,64;system_time:32,192,64;;",128,0,0,0
+.stabs "thread_basic_info:T33=s44user_time:32,0,64;system_time:32,64,64;\\",128,0,0,0
+.stabs "cpu_usage:1,128,32;base_priority:1,160,32;cur_priority:1,192,32;\\",128,0,0,0
+.stabs "run_state:1,224,32;flags:1,256,32;suspend_count:1,288,32;\\",128,0,0,0
+.stabs "sleep_time:11,320,32;;",128,0,0,0
+.stabs "time_value:T32",128,0,0,0
+.stabs "xxx_thread_status:T34=s256data:35=ar1;0;63;1,0,2048;;",128,0,0,0
+.stabs "NeXT_thread_state_68882:T36=s112regs:37=ar1;0;7;38=s12fp:39=ar1;0;2;1,0,96;;,0,768;\\",128,0,0,0
+.stabs "cr:1,768,32;sr:1,800,32;iar:1,832,32;\\",128,0,0,0
+.stabs "state:1,864,32;;",128,0,0,0
+.stabs "NeXT_thread_state_regs:T40=s72dreg:41=ar1;0;7;1,0,256;\\",128,0,0,0
+.stabs "areg:42=ar1;0;7;1,256,256;pad0:12,512,16;\\",128,0,0,0
+.stabs "sr:12,528,16;pc:1,544,32;;",128,0,0,0
+.stabs "regs:T43=s76r_dreg:44=ar1;0;7;1,0,256;r_areg:45=ar1;0;7;1,256,256;\\",128,0,0,0
+.stabs "pad:12,512,16;r_evec:46=s10e_fsize:12,0,16;\\",128,0,0,0
+.stabs "e_sr:12,16,16;e_pc:1,32,32;e_format:1,64,4;\\",128,0,0,0
+.stabs "e_vector:1,68,12;;,528,80;;",128,0,0,0
+.stabs "excp_longbus:T47=s84e_internal1:12,0,16;e_ss:48=s2ss_faultc:1,0,1;\\",128,0,0,0
+.stabs "ss_faultb:1,1,1;ss_rerunc:1,2,1;ss_rerunb:1,3,1;\\",128,0,0,0
+.stabs "ss_faultrerund:1,7,1;ss_rmw:1,8,1;ss_read:1,9,1;\\",128,0,0,0
+.stabs "ss_cyclesize:1,10,2;ss_fcode:1,13,3;;,16,16;\\",128,0,0,0
+.stabs "e_ipipec:12,32,16;e_ipipeb:12,48,16;e_faultaddr:1,64,32;\\",128,0,0,0
+.stabs "e_internal2:49=ar1;0;1;12,96,32;e_dob:1,128,32;\\",128,0,0,0
+.stabs "e_internal3:50=ar1;0;3;12,160,64;e_stagebaddr:1,224,32;\\",128,0,0,0
+.stabs "e_internal4:51=ar1;0;1;12,256,32;e_dib:1,288,32;\\",128,0,0,0
+.stabs "e_internal5:52=ar1;0;21;12,320,352;;",128,0,0,0
+.stabs "excp_shortbus:T53=s24e_internal1:12,0,16;e_ss:48,16,16;\\",128,0,0,0
+.stabs "e_ipipec:12,32,16;e_ipipeb:12,48,16;e_faultaddr:1,64,32;\\",128,0,0,0
+.stabs "e_internal2:54=ar1;0;1;12,96,32;e_dob:1,128,32;\\",128,0,0,0
+.stabs "e_internal3:55=ar1;0;1;12,160,32;;",128,0,0,0
+.stabs "excp_coproc:T56=s12e_ia:1,0,32;e_internal:12,32,16;\\",128,0,0,0
+.stabs "e_op:12,48,16;e_effaddr:1,64,32;;",128,0,0,0
+.stabs "excp_normal6:T57=s4e_ia:1,0,32;;",128,0,0,0
+.stabs "special_status:T48",128,0,0,0
+.stabs "excp_frame:T46",128,0,0,0
+.stabs "machine_slot:T58=s32is_cpu:1,0,32;cpu_type:1,32,32;\\",128,0,0,0
+.stabs "cpu_subtype:1,64,32;running:1,96,32;cpu_ticks:59=ar1;0;2;11,128,96;\\",128,0,0,0
+.stabs "clock_freq:1,224,32;;",128,0,0,0
+.stabs "machine_info:T60=s20major_version:1,0,32;minor_version:1,32,32;\\",128,0,0,0
+.stabs "max_cpus:1,64,32;avail_cpus:1,96,32;memory_size:13,128,32;;",128,0,0,0
+.stabs "fd_set:T61=s32fds_bits:62=ar1;0;7;11,0,256;;",128,0,0,0
+.stabs "_quad:T63=s8val:64=ar1;0;1;11,0,64;;",128,0,0,0
+.stabs "label_t:T65=s52val:66=ar1;0;12;1,0,416;;",128,0,0,0
+.stabs "_physadr:T67=s2r:68=ar1;0;0;12,0,16;;",128,0,0,0
+.stabs "pmap_statistics:T69=s8resident_count:11,0,32;wired_count:11,32,32;;",128,0,0,0
+.stabs "vm_statistics:T70=s52pagesize:11,0,32;free_count:11,32,32;\\",128,0,0,0
+.stabs "active_count:11,64,32;inactive_count:11,96,32;wire_count:11,128,32;\\",128,0,0,0
+.stabs "zero_fill_count:11,160,32;reactivations:11,192,32;\\",128,0,0,0
+.stabs "pageins:11,224,32;pageouts:11,256,32;faults:11,288,32;\\",128,0,0,0
+.stabs "cow_faults:11,320,32;lookups:11,352,32;hits:11,384,32;;",128,0,0,0
+.stabs "pager_struct:T71=s4is_device:1,0,32;;",128,0,0,0
+.stabs "cproc_t:t15",128,0,0,0
+.stabs "ur_cthread_t:t29",128,0,0,0
+.stabs "cthread_t:t16",128,0,0,0
+.stabs "jmp_buf:t24",128,0,0,0
+.stabs "cthread_fn_t:t25",128,0,0,0
+.stabs "condition_t:t72=*20",128,0,0,0
+.stabs "mutex_t:t73=*18",128,0,0,0
+.stabs "queue_t:t74=*21",128,0,0,0
+.stabs "queue_item_t:t22",128,0,0,0
+.stabs "vm_page_data_t:t75=ar1;0;4095;2",128,0,0,0
+.stabs "vm_region_array_t:t76=*13",128,0,0,0
+.stabs "network_port_t:t77=s24np_receiver:9,0,32;np_owner:9,32,32;\\",128,0,0,0
+.stabs "np_puid:78=s8np_uid_high:11,0,32;np_uid_low:11,32,32;;,64,64;\\",128,0,0,0
+.stabs "np_sid:78,128,64;;",128,0,0,0
+.stabs "np_uid_t:t78",128,0,0,0
+.stabs "task_events_info_t:t79=*30",128,0,0,0
+.stabs "task_events_info_data_t:t30",128,0,0,0
+.stabs "task_basic_info_t:t80=*31",128,0,0,0
+.stabs "task_basic_info_data_t:t31",128,0,0,0
+.stabs "task_info_data_t:t81=ar1;0;1023;1",128,0,0,0
+.stabs "thread_basic_info_t:t82=*33",128,0,0,0
+.stabs "thread_basic_info_data_t:t33",128,0,0,0
+.stabs "thread_info_data_t:t83=ar1;0;1023;1",128,0,0,0
+.stabs "time_value_t:t32",128,0,0,0
+.stabs "xxx_thread_status_t:t84=*34",128,0,0,0
+.stabs "xxx_thread_status_data_t:t34",128,0,0,0
+.stabs "thread_state_data_t:t85=ar1;0;1023;1",128,0,0,0
+.stabs "machine_slot_t:t86=*58",128,0,0,0
+.stabs "machine_slot_data_t:t58",128,0,0,0
+.stabs "machine_info_t:t87=*60",128,0,0,0
+.stabs "machine_info_data_t:t60",128,0,0,0
+.stabs "fd_set:t61",128,0,0,0
+.stabs "quad:t63",128,0,0,0
+.stabs "label_t:t65",128,0,0,0
+.stabs "physadr:t88=*67",128,0,0,0
+.stabs "pmap_statistics_t:t89=*69",128,0,0,0
+.stabs "vm_statistics_t:t90=*70",128,0,0,0
+.stabs "vm_statistics_data_t:t70",128,0,0,0
+.stabs "vm_pager_t:t91=*71",128,0,0,0
+.stabs "cthread_debug:G1",32,0,0,0
+.globl _cthread_debug
+.data
+	.even
+_cthread_debug:
+	.long 0
+.stabs "cthreads:G21",32,0,0,0
+.globl _cthreads
+.data
+	.even
+_cthreads:
+	.long 0
+	.long 0
+.stabs "cthread_lock:G18",32,0,0,0
+.globl _cthread_lock
+.data
+	.even
+_cthread_lock:
+	.long 0
+	.long 0
+.stabs "cthread_needed:G20",32,0,0,0
+.globl _cthread_needed
+.data
+	.even
+_cthread_needed:
+	.long 0
+	.long 0
+	.long 0
+	.long 0
+.stabs "cthread_idle:G20",32,0,0,0
+.globl _cthread_idle
+.data
+	.even
+_cthread_idle:
+	.long 0
+	.long 0
+	.long 0
+	.long 0
+.stabs "n_cprocs:G1",32,0,0,0
+.globl _n_cprocs
+.data
+	.even
+_n_cprocs:
+	.long 0
+.stabs "n_cthreads:G1",32,0,0,0
+.globl _n_cthreads
+.data
+	.even
+_n_cthreads:
+	.long 0
+.stabs "max_cprocs:G1",32,0,0,0
+.globl _max_cprocs
+.data
+	.even
+_max_cprocs:
+	.long 0
+.stabs "free_cthreads:G16",32,0,0,0
+.globl _free_cthreads
+.data
+	.even
+_free_cthreads:
+	.long 0
+.stabs "free_lock:G1",32,0,0,0
+.globl _free_lock
+.data
+	.even
+_free_lock:
+	.long 0
+.stabs "initial_cthread:G17",32,0,0,0
+.globl _initial_cthread
+.data
+	.even
+_initial_cthread:
+	.long 0
+	.skip 204
+.text
+	.even
+.globl _cthread_alloc
+_cthread_alloc:
+	.stabd 68,0,45
+	link a6,#0
+	movel a2,sp@-
+LBB2:
+	.stabd 68,0,48
+	subl a2,a2
+	.stabd 68,0,50
+	tstl _free_cthreads
+	jeq L2
+	.stabd 68,0,56
+	pea _free_lock
+	lea _spin_lock,a0
+	jbsr a0@
+	.stabd 68,0,57
+	movel _free_cthreads,a2
+	.stabd 68,0,58
+	addql #4,sp
+	tstl a2
+	jeq L3
+	.stabd 68,0,59
+	movel a2@,_free_cthreads
+L3:
+	.stabd 68,0,60
+	clrl _free_lock
+L2:
+	.stabd 68,0,62
+	tstl a2
+	jne L4
+	.stabd 68,0,69
+	pea 208:w
+	lea _malloc,a0
+	jbsr a0@
+	movel d0,a2
+	addql #4,sp
+L4:
+	.stabd 68,0,71
+	pea 208:w
+	movel a2,sp@-
+	pea _initial_cthread
+	lea _bcopy,a0
+	jbsr a0@
+	addw #12,sp
+	.stabd 68,0,72
+	movel a6@(8),a2@(188)
+	.stabd 68,0,73
+	movel a6@(12),a2@(192)
+	.stabd 68,0,74
+	movel a2,d0
+	jra L1
+LBE2:
+L1:
+	movel a6@(-4),a2
+	unlk a6
+	rts
+.stabs "cthread_alloc:F16",36,0,0,_cthread_alloc
+.stabs "func:p25",160,0,0,8
+.stabs "arg:p19",160,0,0,12
+.stabs "t:r16",64,0,0,10
+.stabn 192,0,0,LBB2
+.stabn 224,0,0,LBE2
+.text
+	.even
+.globl _cthread_free
+_cthread_free:
+	.stabd 68,0,79
+	link a6,#0
+	movel a2,sp@-
+	movel a6@(8),a2
+	.stabd 68,0,81
+	pea _free_lock
+	lea _spin_lock,a0
+	jbsr a0@
+	.stabd 68,0,82
+	movel _free_cthreads,a2@
+	.stabd 68,0,83
+	movel a2,_free_cthreads
+	.stabd 68,0,84
+	clrl _free_lock
+	addql #4,sp
+L5:
+	movel a6@(-4),a2
+	unlk a6
+	rts
+.stabs "cthread_free:F3",36,0,0,_cthread_free
+.stabs "t:p16",160,0,0,8
+.stabs "t:r16",64,0,0,10
+.stabs "cthreads_started:v1",38,0,0,_cthreads_started.0
+.data
+	.even
+_cthreads_started.0:
+	.long 0
+.data
+LC0:
+	.ascii "main\0"
+.text
+	.even
+.globl _cthread_init
+_cthread_init:
+	.stabd 68,0,89
+	link a6,#0
+	movel d2,sp@-
+LBB3:
+	.stabd 68,0,93
+	tstl _cthreads_started.0
+	jeq L7
+	.stabd 68,0,94
+	jra L6
+L7:
+	.stabd 68,0,95
+	lea _cproc_init,a0
+	jbsr a0@
+	.stabd 68,0,96
+	moveq #1,d1
+	movel d1,_n_cprocs
+	.stabd 68,0,97
+	clrl sp@-
+	clrl sp@-
+	lea _cthread_alloc,a0
+	jbsr a0@
+	movel d0,d2
+	.stabd 68,0,98
+	moveq #1,d1
+	movel d1,_n_cthreads
+	.stabd 68,0,99
+	movel d2,a0
+	orl d1,a0@(28)
+	.stabd 68,0,100
+	pea LC0
+	movel d2,sp@-
+	lea _cthread_set_name,a0
+	jbsr a0@
+	.stabd 68,0,101
+	lea _cthread_sp,a0
+	jbsr a0@
+	movel d0,d0
+	andl _cthread_stack_mask,d0
+	movel d0,a1
+	movel a1@,a0
+	movel d2,a0@(4)
+	.stabd 68,0,102
+	moveq #1,d1
+	movel d1,_cthreads_started.0
+	.stabd 68,0,103
+	pea 1:w
+	lea _mig_init,a0
+	jbsr a0@
+LBE3:
+	addw #20,sp
+L6:
+	movel a6@(-4),d2
+	unlk a6
+	rts
+.stabs "cthread_init:F3",36,0,0,_cthread_init
+.stabs "cthreads_started:v1",38,0,0,_cthreads_started.0
+.stabs "t:r16",64,0,0,2
+.stabn 192,0,0,LBB3
+.stabn 224,0,0,LBE3
+.stabs "_cthread_init_routine:G92=*93=f1",32,0,0,0
+.globl __cthread_init_routine
+.data
+	.even
+__cthread_init_routine:
+	.long _cthread_init
+.data
+LC1:
+	.ascii "cthreads.c\0"
+.data
+LC2:
+	.ascii "File %s, line %d: assertion p failed.\12\0"
+.data
+LC3:
+	.ascii "[idle] cthread_body(%x)\12\0"
+.data
+LC4:
+	.ascii "[%s] done()\12\0"
+.text
+	.even
+.globl _cthread_body
+_cthread_body:
+	.stabd 68,0,117
+	link a6,#0
+	movel a2,sp@-
+LBB4:
+	.stabd 68,0,121
+	lea _cthread_sp,a0
+	jbsr a0@
+	movel d0,d0
+	andl _cthread_stack_mask,d0
+	movel d0,a1
+	movel a1@,d1
+	cmpl a6@(8),d1
+	jeq L9
+	pea 121:w
+	pea LC1
+	pea LC2
+	moveq #40,d0
+	addl #__iob,d0
+	movel d0,sp@-
+	lea _fprintf,a0
+	jbsr a0@
+	lea _abort,a0
+	jbsr a0@
+	addw #16,sp
+	jra L10
+L9:
+L10:
+	.stabd 68,0,122
+	tstl _cthread_debug
+	jeq L11
+	movel a6@(8),sp@-
+	pea LC3
+	lea _printf,a0
+	jbsr a0@
+	addql #8,sp
+	jra L12
+L11:
+L12:
+	.stabd 68,0,123
+	pea _cthread_lock
+	lea _mutex_try_lock,a0
+	jbsr a0@
+	movel d0,d0
+	addql #4,sp
+	tstl d0
+	jne L13
+	pea _cthread_lock
+	lea _mutex_wait_lock,a0
+	jbsr a0@
+	addql #4,sp
+	jra L14
+L13:
+L14:
+	.stabd 68,0,124
+L15:
+	.stabd 68,0,128
+	movel _cthreads,a2
+	tstl a2
+	jeq L18
+	movel a2@,d0
+	movel d0,_cthreads
+	tstl d0
+	jne L18
+	clrl _cthreads+4
+	jra L19
+L18:
+L19:
+	.stabd 68,0,129
+	tstl a2
+	jeq L20
+	.stabd 68,0,133
+	clrl _cthread_lock
+	.stabd 68,0,134
+	movel a6@(8),a0
+	movel a2,a0@(4)
+	.stabd 68,0,135
+	moveq #32,d0
+	addl a2,d0
+	movel d0,sp@-
+	lea __setjmp,a0
+	jbsr a0@
+	movel d0,d0
+	addql #4,sp
+	tstl d0
+	jne L21
+	.stabd 68,0,139
+	movel a2@(192),sp@-
+	movel a2@(188),a0
+	jbsr a0@
+	movel d0,d0
+	movel d0,a2@(196)
+	addql #4,sp
+L21:
+	.stabd 68,0,144
+	tstl _cthread_debug
+	jeq L22
+	movel a2,sp@-
+	lea _cthread_name,a0
+	jbsr a0@
+	movel d0,d0
+	movel d0,sp@-
+	pea LC4
+	lea _printf,a0
+	jbsr a0@
+	addw #12,sp
+	jra L23
+L22:
+L23:
+	.stabd 68,0,145
+	movel a2,d0
+	addql #4,d0
+	movel d0,sp@-
+	lea _mutex_try_lock,a0
+	jbsr a0@
+	movel d0,d0
+	addql #4,sp
+	tstl d0
+	jne L24
+	movel a2,d0
+	addql #4,d0
+	movel d0,sp@-
+	lea _mutex_wait_lock,a0
+	jbsr a0@
+	addql #4,sp
+	jra L25
+L24:
+L25:
+	.stabd 68,0,146
+	moveq #4,d0
+	andl a2@(28),d0
+	tstl d0
+	jeq L26
+	.stabd 68,0,147
+	clrl a2@(4)
+	.stabd 68,0,148
+	movel a2,sp@-
+	lea _cthread_free,a0
+	jbsr a0@
+	addql #4,sp
+	jra L27
+L26:
+	.stabd 68,0,150
+	movel a2,a0
+	moveq #2,d1
+	orl d1,a0@(28)
+	.stabd 68,0,151
+	clrl a2@(4)
+	.stabd 68,0,152
+	tstl a2@(16)
+	jeq L28
+	moveq #12,d0
+	addl a2,d0
+	movel d0,sp@-
+	lea _cond_signal,a0
+	jbsr a0@
+	addql #4,sp
+	jra L29
+L28:
+L29:
+L27:
+	.stabd 68,0,154
+	movel a6@(8),a0
+	clrl a0@(4)
+	.stabd 68,0,155
+	pea _cthread_lock
+	lea _mutex_try_lock,a0
+	jbsr a0@
+	movel d0,d0
+	addql #4,sp
+	tstl d0
+	jne L30
+	pea _cthread_lock
+	lea _mutex_wait_lock,a0
+	jbsr a0@
+	addql #4,sp
+	jra L31
+L30:
+L31:
+	.stabd 68,0,156
+	subql #1,_n_cthreads
+	jra L32
+L20:
+	.stabd 68,0,163
+	tstl _cthread_idle+4
+	jeq L33
+	pea _cthread_idle
+	lea _cond_signal,a0
+	jbsr a0@
+	addql #4,sp
+	jra L34
+L33:
+L34:
+	.stabd 68,0,164
+	pea _cthread_lock
+	pea _cthread_needed
+	lea _condition_wait,a0
+	jbsr a0@
+	addql #8,sp
+L32:
+	.stabd 68,0,124
+L17:
+	jra L15
+L16:
+LBE4:
+L8:
+	movel a6@(-4),a2
+	unlk a6
+	rts
+.stabs "cthread_body:F3",36,0,0,_cthread_body
+.stabs "self:p15",160,0,0,8
+.stabs "t:r16",64,0,0,10
+.stabn 192,0,0,LBB4
+.stabn 224,0,0,LBE4
+.data
+LC5:
+	.ascii "[%s] fork()\12\0"
+.text
+	.even
+.globl _cthread_fork
+_cthread_fork:
+	.stabd 68,0,171
+	link a6,#0
+	movel a2,sp@-
+LBB5:
+	.stabd 68,0,176
+	tstl _cthread_debug
+	jeq L36
+	lea _cthread_sp,a0
+	jbsr a0@
+	movel d0,d0
+	andl _cthread_stack_mask,d0
+	movel d0,a1
+	movel a1@,a0
+	movel a0@(4),sp@-
+	lea _cthread_name,a0
+	jbsr a0@
+	movel d0,d0
+	movel d0,sp@-
+	pea LC5
+	lea _printf,a0
+	jbsr a0@
+	addw #12,sp
+	jra L37
+L36:
+L37:
+	.stabd 68,0,177
+	pea _cthread_lock
+	lea _mutex_try_lock,a0
+	jbsr a0@
+	movel d0,d0
+	addql #4,sp
+	tstl d0
+	jne L38
+	pea _cthread_lock
+	lea _mutex_wait_lock,a0
+	jbsr a0@
+	addql #4,sp
+	jra L39
+L38:
+L39:
+	.stabd 68,0,178
+	movel a6@(12),sp@-
+	movel a6@(8),sp@-
+	lea _cthread_alloc,a0
+	jbsr a0@
+	movel d0,a2
+	.stabd 68,0,179
+	clrl a2@
+	addql #8,sp
+	tstl _cthreads+4
+	jne L40
+	movel a2,_cthreads
+	jra L41
+L40:
+	movel _cthreads+4,a0
+	movel a2,a0@
+L41:
+	movel a2,_cthreads+4
+	.stabd 68,0,180
+	addql #1,_n_cthreads
+	movel _n_cthreads,a1
+	cmpl _n_cprocs,a1
+	jle L42
+	tstl _max_cprocs
+	jeq L43
+	movel _n_cprocs,a1
+	cmpl _max_cprocs,a1
+	jlt L43
+	jra L42
+L43:
+	.stabd 68,0,181
+	addql #1,_n_cprocs
+	.stabd 68,0,182
+	lea _cproc_create,a0
+	jbsr a0@
+L42:
+	.stabd 68,0,184
+	clrl _cthread_lock
+	.stabd 68,0,185
+	tstl _cthread_needed+4
+	jeq L44
+	pea _cthread_needed
+	lea _cond_signal,a0
+	jbsr a0@
+	addql #4,sp
+	jra L45
+L44:
+L45:
+	.stabd 68,0,186
+	movel a2,d0
+	jra L35
+LBE5:
+L35:
+	movel a6@(-4),a2
+	unlk a6
+	rts
+.stabs "cthread_fork:F16",36,0,0,_cthread_fork
+.stabs "func:p25",160,0,0,8
+.stabs "arg:p19",160,0,0,12
+.stabs "t:r16",64,0,0,10
+.stabn 192,0,0,LBB5
+.stabn 224,0,0,LBE5
+.data
+LC6:
+	.ascii "[%s] detach(%s)\12\0"
+.text
+	.even
+.globl _cthread_detach
+_cthread_detach:
+	.stabd 68,0,191
+	link a6,#0
+	moveml #0x2020,sp@-
+	.stabd 68,0,193
+	tstl _cthread_debug
+	jeq L47
+	movel a6@(8),sp@-
+	lea _cthread_name,a0
+	jbsr a0@
+	movel d0,d0
+	movel d0,sp@-
+	lea _cthread_sp,a0
+	jbsr a0@
+	movel d0,d0
+	andl _cthread_stack_mask,d0
+	movel d0,a1
+	movel a1@,a0
+	movel a0@(4),sp@-
+	lea _cthread_name,a0
+	jbsr a0@
+	addql #4,sp
+	movel d0,d0
+	movel d0,sp@-
+	pea LC6
+	lea _printf,a0
+	jbsr a0@
+	addw #16,sp
+	jra L48
+L47:
+L48:
+	.stabd 68,0,194
+	movel a6@(8),d0
+	addql #4,d0
+	movel d0,sp@-
+	lea _mutex_try_lock,a0
+	jbsr a0@
+	movel d0,d0
+	addql #4,sp
+	tstl d0
+	jne L49
+	movel a6@(8),d0
+	addql #4,d0
+	movel d0,sp@-
+	lea _mutex_wait_lock,a0
+	jbsr a0@
+	addql #4,sp
+	jra L50
+L49:
+L50:
+	.stabd 68,0,195
+	movel a6@(8),a0
+	moveq #2,d0
+	andl a0@(28),d0
+	tstl d0
+	jeq L51
+	.stabd 68,0,196
+	movel a6@(8),a0
+	addql #4,a0
+	clrl a0@
+	.stabd 68,0,197
+	movel a6@(8),sp@-
+	lea _cthread_free,a0
+	jbsr a0@
+	addql #4,sp
+	jra L52
+L51:
+	.stabd 68,0,199
+	movel a6@(8),d2
+	movel d2,a2
+	moveq #4,d1
+	orl d1,a2@(28)
+	.stabd 68,0,200
+	movel a6@(8),a2
+	addql #4,a2
+	clrl a2@
+L52:
+L46:
+	moveml a6@(-8),#0x404
+	unlk a6
+	rts
+.stabs "cthread_detach:F3",36,0,0,_cthread_detach
+.stabs "t:p16",160,0,0,8
+.data
+LC7:
+	.ascii "[%s] join(%s)\12\0"
+.data
+LC8:
+	.ascii "cthreads.c\0"
+.data
+LC9:
+	.ascii "File %s, line %d: assertion p failed.\12\0"
+.text
+	.even
+.globl _cthread_join
+_cthread_join:
+	.stabd 68,0,206
+	link a6,#-4
+LBB6:
+	.stabd 68,0,210
+	tstl _cthread_debug
+	jeq L54
+	movel a6@(8),sp@-
+	lea _cthread_name,a0
+	jbsr a0@
+	movel d0,d0
+	movel d0,sp@-
+	lea _cthread_sp,a0
+	jbsr a0@
+	movel d0,d0
+	andl _cthread_stack_mask,d0
+	movel d0,a1
+	movel a1@,a0
+	movel a0@(4),sp@-
+	lea _cthread_name,a0
+	jbsr a0@
+	addql #4,sp
+	movel d0,d0
+	movel d0,sp@-
+	pea LC7
+	lea _printf,a0
+	jbsr a0@
+	addw #16,sp
+	jra L55
+L54:
+L55:
+	.stabd 68,0,211
+	movel a6@(8),d0
+	addql #4,d0
+	movel d0,sp@-
+	lea _mutex_try_lock,a0
+	jbsr a0@
+	movel d0,d0
+	addql #4,sp
+	tstl d0
+	jne L56
+	movel a6@(8),d0
+	addql #4,d0
+	movel d0,sp@-
+	lea _mutex_wait_lock,a0
+	jbsr a0@
+	addql #4,sp
+	jra L57
+L56:
+L57:
+	.stabd 68,0,212
+	movel a6@(8),a0
+	moveq #4,d0
+	andl a0@(28),d0
+	tstl d0
+	jeq L58
+	pea 212:w
+	pea LC8
+	pea LC9
+	moveq #40,d0
+	addl #__iob,d0
+	movel d0,sp@-
+	lea _fprintf,a0
+	jbsr a0@
+	lea _abort,a0
+	jbsr a0@
+	addw #16,sp
+	jra L59
+L58:
+L59:
+	.stabd 68,0,213
+L60:
+	movel a6@(8),a0
+	moveq #2,d0
+	andl a0@(28),d0
+	tstl d0
+	jne L61
+	.stabd 68,0,214
+	movel a6@(8),d0
+	addql #4,d0
+	movel d0,sp@-
+	moveq #12,d0
+	addl a6@(8),d0
+	movel d0,sp@-
+	lea _condition_wait,a0
+	jbsr a0@
+	addql #8,sp
+	jra L60
+L61:
+	.stabd 68,0,215
+	movel a6@(8),a0
+	movel a0@(196),a6@(-4)
+	.stabd 68,0,216
+	movel a6@(8),a0
+	addql #4,a0
+	clrl a0@
+	.stabd 68,0,217
+	movel a6@(8),sp@-
+	lea _cthread_free,a0
+	jbsr a0@
+	.stabd 68,0,218
+	movel a6@(-4),d0
+	addql #4,sp
+	jra L53
+LBE6:
+L53:
+	unlk a6
+	rts
+.stabs "cthread_join:F19",36,0,0,_cthread_join
+.stabs "t:p16",160,0,0,8
+.stabs "result:19",128,0,0,-4
+.stabn 192,0,0,LBB6
+.stabn 224,0,0,LBE6
+.data
+LC10:
+	.ascii "[%s] exit()\12\0"
+.text
+	.even
+.globl _cthread_exit
+_cthread_exit:
+	.stabd 68,0,223
+	link a6,#0
+	movel a2,sp@-
+LBB7:
+	.stabd 68,0,225
+	lea _cthread_sp,a0
+	jbsr a0@
+	movel d0,d0
+	andl _cthread_stack_mask,d0
+	movel d0,a1
+	movel a1@,a0
+	movel a0@(4),a2
+	.stabd 68,0,227
+	tstl _cthread_debug
+	jeq L63
+	movel a2,sp@-
+	lea _cthread_name,a0
+	jbsr a0@
+	movel d0,d0
+	movel d0,sp@-
+	pea LC10
+	lea _printf,a0
+	jbsr a0@
+	addw #12,sp
+	jra L64
+L63:
+L64:
+	.stabd 68,0,228
+	movel a6@(8),a2@(196)
+	.stabd 68,0,229
+	moveq #1,d0
+	andl a2@(28),d0
+	tstl d0
+	jeq L65
+	.stabd 68,0,230
+	pea _cthread_lock
+	lea _mutex_try_lock,a0
+	jbsr a0@
+	movel d0,d0
+	addql #4,sp
+	tstl d0
+	jne L66
+	pea _cthread_lock
+	lea _mutex_wait_lock,a0
+	jbsr a0@
+	addql #4,sp
+	jra L67
+L66:
+L67:
+	.stabd 68,0,231
+L68:
+	moveq #1,d1
+	cmpl _n_cthreads,d1
+	jge L69
+	.stabd 68,0,232
+	pea _cthread_lock
+	pea _cthread_idle
+	lea _condition_wait,a0
+	jbsr a0@
+	addql #8,sp
+	jra L68
+L69:
+	.stabd 68,0,233
+	clrl _cthread_lock
+	.stabd 68,0,234
+	movel a6@(8),sp@-
+	lea _exit,a0
+	jbsr a0@
+	addql #4,sp
+	jra L70
+L65:
+	.stabd 68,0,236
+	pea 1:w
+	moveq #32,d0
+	addl a2,d0
+	movel d0,sp@-
+	lea __longjmp,a0
+	jbsr a0@
+	addql #8,sp
+L70:
+LBE7:
+L62:
+	movel a6@(-4),a2
+	unlk a6
+	rts
+.stabs "cthread_exit:F3",36,0,0,_cthread_exit
+.stabs "result:p19",160,0,0,8
+.stabs "t:r16",64,0,0,10
+.stabn 192,0,0,LBB7
+.stabn 224,0,0,LBE7
+.stabs "_cthread_exit_routine:G92",32,0,0,0
+.globl __cthread_exit_routine
+.data
+	.even
+__cthread_exit_routine:
+	.long _cthread_exit
+.text
+	.even
+.globl _cthread_set_name
+_cthread_set_name:
+	.stabd 68,0,248
+	link a6,#0
+	movel a2,sp@-
+	.stabd 68,0,251
+	movel a6@(8),a2
+	movel a6@(12),a2@(200)
+L71:
+	movel a6@(-4),a2
+	unlk a6
+	rts
+.stabs "cthread_set_name:F3",36,0,0,_cthread_set_name
+.stabs "t:p16",160,0,0,8
+.stabs "name:p19",160,0,0,12
+.data
+LC11:
+	.ascii "idle\0"
+.data
+LC12:
+	.ascii "?\0"
+.text
+	.even
+.globl _cthread_name
+_cthread_name:
+	.stabd 68,0,256
+	link a6,#0
+	movel a2,sp@-
+	.stabd 68,0,258
+	tstl a6@(8)
+	jne L73
+	movel #LC11,d0
+	jra L74
+L73:
+	movel a6@(8),a2
+	tstl a2@(200)
+	jne L75
+	movel #LC12,d0
+	jra L76
+L75:
+	movel a6@(8),a2
+	movel a2@(200),d0
+L76:
+L74:
+	jra L72
+L72:
+	movel a6@(-4),a2
+	unlk a6
+	rts
+.stabs "cthread_name:F19",36,0,0,_cthread_name
+.stabs "t:p16",160,0,0,8
+.text
+	.even
+.globl _cthread_limit
+_cthread_limit:
+	.stabd 68,0,265
+	link a6,#0
+	.stabd 68,0,266
+	movel _max_cprocs,d0
+	jra L77
+L77:
+	unlk a6
+	rts
+.stabs "cthread_limit:F1",36,0,0,_cthread_limit
+.text
+	.even
+.globl _cthread_set_limit
+_cthread_set_limit:
+	.stabd 68,0,271
+	link a6,#0
+	.stabd 68,0,273
+	movel a6@(8),_max_cprocs
+L78:
+	unlk a6
+	rts
+.stabs "cthread_set_limit:F3",36,0,0,_cthread_set_limit
+.stabs "n:p1",160,0,0,8
+.text
+	.even
+.globl _cthread_count
+_cthread_count:
+	.stabd 68,0,278
+	link a6,#0
+	.stabd 68,0,279
+	movel _n_cthreads,d0
+	jra L79
+L79:
+	unlk a6
+	rts
+.stabs "cthread_count:F1",36,0,0,_cthread_count

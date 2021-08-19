@@ -1,0 +1,17 @@
+trsp.o: trsp.c /usr/include/sys/param.h /usr/include/sys/features.h
+trsp.o: /usr/include/machine/machparam.h /usr/include/sys/assert.h
+trsp.o: /usr/include/next/vm_param.h /usr/include/sys/types.h
+trsp.o: /usr/include/next/eventc.h /usr/include/sys/signal.h
+trsp.o: /usr/include/machine/signal.h /usr/include/stddef.h
+trsp.o: /usr/include/sys/types.h /usr/include/sys/socket.h
+trsp.o: /usr/include/sys/socketvar.h /usr/include/sys/protosw.h
+trsp.o: /usr/include/net/route.h /usr/include/net/if.h
+trsp.o: /usr/include/net/if_arp.h /usr/include/netinet/tcp_fsm.h
+trsp.o: /usr/include/netinet/tcp_timer.h /usr/include/netns/ns.h
+trsp.o: /usr/include/netns/ns_pcb.h /usr/include/netns/idp.h
+trsp.o: /usr/include/netns/idp_var.h /usr/include/netns/sp.h
+trsp.o: /usr/include/netns/spidp.h /usr/include/netns/spp_var.h
+trsp.o: /usr/include/netns/spp_debug.h /usr/include/stdio.h
+trsp.o: /usr/include/stddef.h /usr/include/stdarg.h /usr/include/errno.h
+trsp.o: /usr/include/sys/errno.h /usr/include/stddef.h /usr/include/stddef.h
+trsp.o: /usr/include/nlist.h

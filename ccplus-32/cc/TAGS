@@ -1,0 +1,1613 @@
+
+config.h,0
+
+tm.h,317
+#define ASM_IDENTIFY_GCC(76,2054
+#define ASM_OUTPUT_DOUBLE(97,2583
+#define ASM_OUTPUT_DOUBLE_OPERAND(117,3328
+#define ASM_OUTPUT_FLOAT(105,2883
+#define ASM_OUTPUT_FLOAT_OPERAND(111,3113
+#define WORD_SWITCH_TAKES_ARG(15,330
+#define WORD_SWITCH_TAKES_THREE_ARGS(22,558
+#define WORD_SWITCH_TAKES_TWO_ARGS(19,486
+
+aux-output.c,246
+find_addr_reg 267,8307
+output_btst 34,1168
+output_move_const_double 289,8760
+output_move_const_single 321,9331
+output_move_double 94,2710
+singlemove_string 78,2325
+standard_68881_constant_p 358,10078
+standard_sun_fpa_constant_p 414,11723
+
+objc-actions.c,4315
+#define HASHFUNCTION(2763,82411
+#define RAW_TYPESPEC(4393,127914
+#define TREE_STATIC_TEMPLATE(155,5023
+#define TYPED_OBJECT(156,5092
+#define USERTYPE(1554,47448
+void add_category(3025,88622
+tree add_class(3016,88442
+add_class_method(2936,86246
+add_class_reference(1165,36107
+add_instance_method(2976,87338
+add_instance_variable(3036,88958
+add_objc_decls(3956,116097
+add_objc_string(1233,37668
+add_selector_reference(1194,36709
+void adornDecl(4090,119873
+static tree build_category_initializer(2033,61540
+static void build_category_template(1382,41459
+static void build_class_template(1434,43265
+static tree build_dispatch_table_initializer(1870,56569
+build_encode_expr(2739,81805
+static tree build_ivar_chain(1302,39402
+static tree build_ivar_list_initializer(1767,53495
+static tree build_ivar_list_template(1694,51368
+build_ivar_reference(2752,82100
+static tree build_ivar_template(1651,50144
+build_keyword_decl 2272,68381
+build_keyword_selector 2294,68961
+build_message_expr(2490,74515
+static void build_message_selector_pool(1045,32345
+build_method_decl 2332,69925
+static tree build_method_list_template(1730,52357
+static tree build_method_template(1906,57552
+static void build_module_descriptor(975,30011
+static tree build_msg_pool_reference(1086,33649
+static void build_objc_selector_template(484,15238
+static void build_objc_symtab_template(746,23366
+static tree build_private_template(1346,40510
+build_selector_expr(2713,81081
+static void build_selector_translation_table(1107,34196
+static tree build_shared_structure_initializer(2071,62578
+static tree build_super_template(1613,49021
+static tree check_duplicates(2425,72729
+void check_ivars(1559,47583
+void check_methods(3146,91897
+static int comp_method_with_proto(3785,110429
+static int comp_proto_with_proto(3809,111153
+compiling_a_method(4049,118913
+tree continue_class(3280,95887
+void continue_method_def(3931,115463
+static tree define_decl(397,13235
+dump_interface(4461,129594
+static void encode_aggregate(3447,100610
+static void encode_array(3435,100287
+static void encode_bitfield(3541,103817
+void encode_field_decl(3636,106243
+void encode_method_decl(3616,105749
+static void encode_pointer(3390,99187
+static void encode_type(3551,104025
+static void error_with_ivar(1544,47161
+static void error_with_method(3766,109823
+static tree expr_last(3644,106476
+finish_class(3340,97445
+finish_method_def(4039,118676
+void finish_objc(4519,130871
+static void forward_declare_categories(887,27719
+char *genDeclaration(4325,126042
+char *genDeclarator(4131,120865
+char *genMethodDecl(4396,127993
+void genPrototype(4450,129368
+void gen_declspecs(4206,122694
+static void generate_category(2122,63882
+static tree generate_dispatch_table(1963,59337
+static void generate_dispatch_tables(1981,59908
+static void generate_forward_declaration_to_string_table(1028,31815
+static void generate_ivar_lists(1814,54813
+static tree generate_ivars_list(1797,54305
+static void generate_objc_symtab_decl(909,28339
+static void generate_shared_structures(2154,64839
+tree getArgTypeList(2382,71537
+get_class_ivars(3124,91411
+get_class_reference(3130,91491
+tree get_static_reference(473,15043
+tree get_super_receiver(3974,116516
+static void hash_add_attr(2823,83825
+static void hash_enter(2784,82896
+static void hash_init(2765,82473
+static hash hash_lookup(2807,83546
+static tree init_def_list(817,25939
+static tree init_module_descriptor(941,29150
+void init_objc(4511,130735
+static tree init_objc_symtab(853,26836
+static tree init_selector(1100,34037
+int isComplexDecl(4058,119054
+tree is_ivar(3063,89675
+int is_public(3073,89944
+tree lookup_class_method_static(2900,85480
+tree lookup_instance_method_static(2864,84709
+tree lookup_interface(1262,38284
+tree lookup_method(2845,84394
+static tree my_build_string(717,22669
+void objc_check_decl(455,14574
+int objc_comptypes(415,13705
+static tree objc_copy_list(1274,38502
+static void objc_debug(4666,135035
+static void reallyStartMethod(3841,112309
+static tree receiver_is_class_object(2452,73375
+start_class(3173,92633
+start_method_def(3661,106805
+void synth_forward_declarations(1513,46157
+static tree synth_id_with_class_suffix(2236,67325
+static void synth_module_prologue(515,16113
+static void warn_with_method(3776,110120
+
+c-decl.c,1254
+#define MAX(44,1613
+#define MIN(43,1572
+build_enumerator 3399,106008
+builtin_function 1687,53262
+complete_array_type 2057,64765
+declare_parm_level 474,13518
+define_label 1289,40075
+duplicate_decls 736,21416
+finish_decl 1894,59613
+finish_enum 3335,104334
+finish_function 3814,119469
+finish_struct 3069,96332
+get_parm_info 2893,91031
+getdecls 1315,40731
+gettags 1323,40870
+global_bindings_p 449,13048
+grokdeclarator 2138,67310
+grokfield 3052,95902
+grokparms 2800,88134
+groktypename 1761,55188
+implicitly_declare 1156,35774
+in_parm_level_p 481,13640
+init_decl_processing 1458,44409
+keep_next_level 455,13135
+kept_level_p 463,13259
+lang_decode_option 377,11018
+lookup_label 1263,39489
+lookup_name 1417,43423
+lookup_name_current_level 1434,43842
+lookup_tag 1359,41886
+lookup_tag_reverse 1394,42833
+make_binding_level 440,12860
+parmlist_tags_warning 2949,92760
+poplevel 547,15508
+push_parm_decl 2042,64310
+pushdecl 955,28958
+pushlevel 491,13850
+pushtag 707,20679
+redeclaration_error_message 1209,37500
+shadow_tag 1709,54016
+start_decl 1791,56241
+start_enum 3287,102894
+start_function 3448,107513
+start_struct 3015,94825
+store_parm_decls 3546,111046
+storedecls 1333,41140
+storetags 1342,41297
+xref_tag 2975,93461
+
+c-typeck.c,1439
+actualparameterlist 1036,30394
+binary_op_error 1752,53796
+build_array_ref 866,24842
+build_binary_op 1131,33224
+build_binary_op_nodefault 1158,34339
+build_c_cast 2838,84577
+build_component_ref 769,22029
+build_compound_expr 2811,83879
+build_conditional_expr 2632,78261
+build_function_call 944,27359
+build_indirect_ref 828,23638
+build_modify_expr 2903,86516
+build_unary_op 2090,63610
+c_alignof 628,17634
+c_expand_asm_operands 3614,107982
+c_expand_return 3669,109870
+c_expand_start_case 3706,111040
+c_sizeof 586,16647
+c_sizeof_nowarn 610,17196
+commontype 177,4956
+comp_target_types 414,11807
+compparms 430,12280
+compparms1 462,13030
+comptypes 318,9015
+convert_for_assignment 3068,91658
+convert_sequence 2367,71108
+datatype 61,2013
+decl_constant_value 645,17996
+default_conversion 673,19063
+digest_init 3278,98059
+get_floating_type 573,16344
+incomplete_type_error 95,2881
+initializer_constant_valid_p 3167,94969
+invert_truthvalue 2521,75726
+language_lvalue_valid 3053,91241
+mark_addressable 2589,77381
+pointer_diff 1715,52722
+pointer_int_sum 1645,50527
+process_init_constructor 3485,104618
+qualify_type 158,4350
+readonly_warning 2424,72524
+require_complete_type 76,2406
+shorten_compare 1819,55606
+signed_or_unsigned_type 525,14582
+signed_type 505,14033
+store_init_value 3225,96493
+truthvalue_conversion 2462,73601
+type_for_size 549,15602
+unary_complex_lvalue 2396,71803
+unsigned_type 486,13509
+
+c-convert.c,101
+convert 365,11693
+convert_to_integer 113,3457
+convert_to_pointer 49,1887
+convert_to_real 83,2663
+
+toplev.c,868
+#define TIMEVAR(442,11381
+announce_function 528,13111
+botch 805,19823
+compile_file 902,21745
+count_error 458,11729
+error 597,14880
+error_for_asm 659,16373
+error_with_decl 632,15647
+error_with_file_and_line 609,15171
+exact_log2 839,20437
+fancy_abort 796,19658
+fatal 493,12259
+fatal_insn_not_found 506,12502
+fatal_io_error 485,12138
+float_signal 881,21338
+floor_log2 853,20727
+gettime 406,10697
+main 1809,47249
+pfatal_with_name 476,12019
+pipe_closed 893,21544
+print_target_switch_defaults 2210,56954
+print_time 446,11493
+really_sorry 778,19238
+report_error_function 544,13492
+rest_of_compilation 1443,37408
+rest_of_decl_compilation 1374,35348
+set_float_handler 870,21126
+set_target_switch 2191,56511
+sorry 759,18818
+warning 719,17835
+warning_with_decl 732,18162
+warning_with_file_and_line 693,17334
+xmalloc 813,19920
+xrealloc 825,20150
+
+tree.c,2273
+#define DEFTREECODE(121,3944
+#define DEFTREECODE(132,4218
+#define TYPE_HASH(1603,41372
+allocation_temporary_p 214,6569
+array_type_nelts 1068,28038
+build 1260,33058
+build_array_type 1898,49615
+build_asm_stmt 1453,37224
+build_case 1466,37477
+build_complex 815,22278
+build_compound 1493,38015
+build_decl 1345,34923
+build_exit 1440,36983
+build_expr_stmt 1410,36390
+build_function_type 1935,50563
+build_goto 1383,35903
+build_if 1424,36637
+build_index_type 1877,48821
+build_int_2 704,19513
+build_let 1512,38507
+build_loop 1480,37774
+build_method_type 2003,52384
+build_nt 1306,34125
+build_offset_type 2040,53387
+build_op_identifier 1329,34504
+build_pointer_type 1837,47624
+build_real 717,19787
+build_real_from_int_cst 771,21204
+build_reference_type 1965,51337
+build_return 1396,36147
+build_string 799,21842
+build_tree_list 912,24376
+build_type_variant 1542,39486
+chainon 893,24015
+clear_momentary 309,8985
+copy_list 602,16974
+copy_node 517,14560
+end_temporary_allocation 192,5995
+get_identifier 629,17514
+get_narrower 2175,58199
+int get_obstack_code 362,10242
+get_unwidened 2086,55047
+init_tree 154,4739
+int_fits_type_p 2267,61009
+int_size_in_bytes 1049,27561
+integer_all_onesp 850,22978
+integer_onep 838,22720
+integer_zerop 827,22505
+list_length 876,23684
+lvalue_or_else 1156,30164
+lvalue_p 1117,29386
+make_node 386,10901
+nreverse 1010,26624
+oballoc 250,7558
+obfree 261,7816
+perm_tree_cons 939,24966
+permalloc 271,7982
+permanent_allocation 224,6826
+pop_momentary 320,9289
+preserve_data 239,7295
+push_momentary 293,8501
+real_value_from_int_cst 741,20372
+resume_momentary 346,10026
+resume_temporary_allocation 203,6273
+save_expr 1172,30642
+saveable_tree_cons 977,25883
+savealloc 281,8172
+set_identifier_size 693,19259
+simple_cst_equal 1763,45682
+size_in_bytes 1030,27127
+stabilize_reference 1196,31410
+start_identifier_warnings 684,19069
+staticp 1083,28499
+suspend_momentary 333,9669
+temp_tree_cons 958,25420
+temporary_allocation 179,5610
+tree_cons 926,24680
+tree_int_cst_equal 1730,44951
+tree_int_cst_lt 1749,45433
+tree_last 996,26347
+type_hash_add 1651,42860
+type_hash_canon 1679,43797
+type_hash_list 1610,41584
+type_hash_lookup 1624,41930
+type_list_equal 1710,44498
+type_precision 2254,60680
+
+print-tree.c,270
+#define DEFTREECODE(28,939
+#define MIN(41,1170
+cpart 101,2115
+cwalk 134,2608
+debug_dump_tree 55,1393
+dump 317,6466
+dump_tree 62,1470
+part 88,1848
+prdeclmodeinfo 277,5581
+prtypeinfo 145,2772
+prtypemodeinfo 291,5897
+skip 305,6213
+walk 124,2469
+wruid 75,1692
+
+stor-layout.c,493
+#define CEIL(29,987
+#define GET_MODE_ALIGNMENT(45,1355
+#define MAX(27,905
+#define MIN(28,946
+agg_mode 181,4654
+build_int 206,5194
+chain_type 73,2220
+convert_units 279,7156
+fixup_unsigned_type 1038,30833
+genop 240,5962
+get_pending_sizes 138,3599
+get_permanent_types 108,2978
+get_temporary_types 120,3211
+layout_decl 327,9060
+layout_record 443,13029
+layout_type 738,22435
+layout_union 642,19349
+make_signed_type 975,29253
+make_unsigned_type 1016,30338
+variable_size 149,3832
+
+fold-const.c,383
+add_double 149,4510
+combine 775,19723
+decode 79,2662
+div_and_round_double 429,10066
+encode 60,2170
+fold 1225,30805
+fold_convert 1100,26918
+force_fit_type 92,3044
+lrotate_double 353,8526
+lshift_double 277,7046
+mul_double 200,5567
+neg_double 177,5105
+operand_equal_p 1178,29156
+real_zerop 1204,30048
+rrotate_double 392,9242
+rshift_double 318,7860
+split_tree 695,17261
+
+rtl.c,440
+#define DEF_MACHMODE(63,1952
+#define DEF_MACHMODE(74,2191
+#define DEF_MACHMODE(85,2441
+#define DEF_MACHMODE(97,2707
+#define DEF_MACHMODE(110,3053
+#define DEF_RTL_EXPR(52,1673
+#define MIN(40,1322
+copy_rtx 205,5677
+debug_rtx 413,10097
+dump_and_abort 463,11017
+init_rtl 783,18378
+print_rtl 428,10407
+print_rtx 276,7241
+read_name 527,12409
+read_rtx 565,13209
+read_skip_spaces 491,11736
+rtvec_alloc 162,4797
+rtx_alloc 184,5245
+
+rtlanal.c,461
+dead_or_set_p 472,11729
+find_reg_note 504,12556
+find_regno_note 522,12996
+may_trap_p 619,14697
+no_labels_between 539,13350
+note_stores 426,10258
+refers_to_regno_p 246,5897
+reg_mentioned_p 128,3229
+reg_overlap_mentioned_p 314,7371
+reg_set_between_p 202,4900
+reg_set_p 229,5477
+reg_set_p_1 221,5363
+reg_used_between_p 184,4353
+rtx_addr_varies_p 101,2622
+rtx_equal_p 329,7769
+rtx_unstable_p 33,1102
+rtx_varies_p 68,1929
+volatile_refs_p 560,13702
+
+expr.c,1382
+#define DEFTREECODE(118,3832
+clear_pending_stack_adjust 3694,114583
+clear_storage 1011,27331
+compare 5114,159514
+compare1 5168,161199
+compare_constants 5045,158021
+convert_move 285,8542
+convert_to_mode 616,16915
+do_jump 4858,152889
+do_pending_stack_adjust 3707,114893
+do_store_flag 5211,162344
+do_tablejump 5345,166311
+emit_block_move 867,23836
+emit_call_1 3647,113260
+emit_library_call 1489,41429
+emit_move_insn 1041,28114
+emit_push_insn 1174,31870
+emit_queue 262,8052
+enqueue_insn 160,4851
+expand_assignment 1678,46997
+expand_builtin 3231,99088
+expand_call 3755,116488
+expand_expr 2157,62299
+expand_increment 3400,104927
+force_operand 2040,58449
+gen_push_operand 1135,30741
+init_comparisons 128,4005
+init_expr 141,4321
+init_pending_stack_adjust 3685,114399
+init_queue 273,8233
+integer_mode_p 634,17346
+jumpif 4842,152469
+jumpifnot 4832,152297
+move_block_from_reg 975,26510
+move_block_to_reg 946,25736
+move_by_pieces 665,18029
+move_by_pieces_1 809,22127
+move_by_pieces_ninsns 770,21012
+preexpand_calls 3514,108956
+prepare_call_address 3579,110825
+protect_from_queue 184,5778
+push_block 1108,30143
+queued_subexp_p 240,7660
+save_noncopied_parts 2117,61233
+store_constructor 1873,53159
+store_expr 1785,50247
+store_field 1986,56791
+store_one_arg 4634,145797
+target_for_arg 4599,144584
+use_regs 998,27044
+validate_subtarget 2144,62045
+
+stmt.c,2546
+#define MAX(62,2472
+#define MIN(63,2515
+#define POPSTACK(327,11345
+aggregate_value_p 3935,122337
+assign_parms 3954,122827
+assign_stack_local 3242,101613
+balance_case_nodes 2852,89466
+check_for_full_enumeration_handling 2458,76857
+clear_last_expr 1053,34161
+do_jump_if_equal 2790,87749
+drop_through_at_end_p 1597,50103
+emit_case_nodes 3035,94711
+emit_jump 386,12852
+emit_jump_if_reachable 3007,93630
+emit_nop 358,12288
+expand_anon_union_decl 2104,66299
+expand_asm 734,24742
+expand_asm_operands 758,25594
+expand_cleanups 2147,67427
+expand_continue_loop 1318,41925
+expand_decl 1868,58856
+expand_decl_init 2074,65379
+expand_end_bindings 1757,55127
+expand_end_case 2520,79191
+expand_end_case_dummy 2278,71304
+expand_end_cond 1153,36890
+expand_end_else 1182,37597
+expand_end_loop 1256,39760
+expand_end_stmt_expr 1090,35286
+expand_exit_loop 1331,42245
+expand_exit_loop_if_false 1345,42597
+expand_exit_something 1373,43324
+expand_expr_stmt 973,31934
+expand_fixup 550,18151
+expand_function_end 4728,148695
+expand_function_start 4604,144468
+expand_goto 474,15811
+expand_goto_internal 486,16146
+expand_label 452,15254
+expand_loop_continue_here 1245,39483
+expand_null_return 1391,43693
+expand_null_return_1 1413,44323
+expand_return 1451,45272
+expand_start_bindings 1679,52514
+expand_start_case 2218,69483
+expand_start_case_dummy 2255,70685
+expand_start_cond 1128,36167
+expand_start_else 1168,37174
+expand_start_loop 1204,38228
+expand_start_loop_continue_elsewhere 1232,39125
+expand_start_stmt_expr 1063,34385
+fixup_cleanups 2167,68008
+fixup_gotos 647,21599
+fixup_memory_subreg 3617,112934
+fixup_stack_1 3711,115629
+fixup_stack_slots 3687,114831
+fixup_var_refs 3321,103810
+fixup_var_refs_1 3400,106080
+fixup_var_refs_insns 3363,104979
+get_first_nonparm_insn 3911,121722
+get_frame_size 3229,101351
+get_structure_value_addr 4404,138179
+group_case_nodes 2813,88271
+init_function_start 4490,141007
+inside_loop 1358,42835
+label_rtx 371,12574
+max_parm_reg_num 3903,121595
+move_cleanups_up 2188,68617
+node_has_high_bound 2966,92522
+node_has_low_bound 2931,91402
+node_is_bounded 2996,93377
+optimize_bit_field 3764,117071
+parm_stack_loc 3923,122067
+pushcase 2296,71875
+pushcase_range 2376,74361
+put_var_into_stack 3287,102835
+setjmp_protect 4470,140398
+tail_recursion_args 1612,50577
+this_contour_has_cleanups_p 2200,68868
+uninitialized_vars_warning 4436,139142
+use_variable 1715,53745
+use_variable_after 1733,54281
+walk_fixup_memory_subreg 3648,113952
+warn_if_unused_value 997,32696
+
+expmed.c,408
+expand_bit_and 1292,42612
+expand_dec 1116,37048
+expand_divmod 1396,45889
+expand_inc 1103,36784
+expand_mult 1314,43290
+expand_mult_add 1630,52498
+expand_shift 1139,37805
+extract_bit_field 561,18573
+extract_fixed_bit_field 902,29455
+extract_split_bit_field 1050,34892
+make_tree 1601,51866
+negate_rtx 42,1346
+store_bit_field 70,2185
+store_fixed_bit_field 294,9632
+store_split_bit_field 469,15277
+
+explow.c,536
+adjust_stack 495,13861
+anti_adjust_stack 511,14260
+break_out_memory_refs 184,4971
+copy_addr_to_reg 406,11729
+copy_all_regs 219,6194
+copy_to_mode_reg 416,11905
+copy_to_reg 386,11310
+copy_to_suggested_reg 479,13482
+eliminate_constant_term 119,3377
+expr_size 156,4235
+force_not_mem 464,13203
+force_reg 443,12671
+hard_function_value 560,15505
+hard_libcall_value 571,15765
+lookup_static_chain 165,4402
+memory_address 245,6920
+memory_address_noforce 341,10196
+plus_constant 30,961
+round_push 527,14662
+stabilize 360,10707
+
+optabs.c,666
+#define INC_MODE(33,1095
+can_fix_p 1006,28907
+can_float_p 1024,29462
+emit_0_to_1_insn 707,20225
+emit_clr_insn 697,20072
+emit_cmp_insn 723,20621
+emit_unop_insn 651,18820
+expand_binop 104,2935
+expand_fix 1284,36350
+expand_float 1158,32721
+expand_twoval_binop 428,12657
+expand_twoval_binop_convert 487,14070
+expand_unop 521,15117
+ftruncify 1276,36210
+gen_add2_insn 916,26303
+gen_extend_insn 968,27522
+gen_move_insn 950,26952
+gen_sub2_insn 933,26628
+have_add2_insn 924,26433
+have_sub2_insn 941,26758
+init_extends 979,27767
+init_fixtab 1031,29601
+init_floattab 1125,31927
+init_optab 1398,39456
+init_optabs 1416,39858
+sign_expand_binop 366,10473
+
+varasm.c,1041
+#define MIN(39,1319
+assemble_asm 270,7738
+assemble_external 579,16554
+assemble_function 282,7975
+assemble_integer_zero 341,9542
+assemble_name 600,17199
+assemble_static_space 614,17479
+assemble_string 349,9698
+assemble_variable 410,11428
+clear_const_double_mem 787,22659
+compare_constant 947,26845
+compare_constant_1 964,27440
+compare_constant_rtx 1416,39700
+const_hash 880,24887
+const_hash_rtx 1393,39193
+data_section 101,2752
+decode_addr_const 812,23166
+decode_reg_name 142,3720
+decode_rtx_const 1317,37504
+force_const_double_mem 760,21755
+force_const_mem 1465,40919
+get_or_assign_label 1175,33411
+immed_double_const 657,18954
+immed_real_const 748,21392
+immed_real_const_1 693,19871
+init_const_rtx_hash_table 1297,37066
+make_decl_rtl 172,4351
+make_function_rtl 125,3274
+output_addressed_constants 1614,44946
+output_constant 1682,46934
+output_constant_def 1258,35953
+output_constructor 1832,50286
+record_constant 1070,30268
+record_constant_1 1088,30797
+record_constant_rtx 1442,40318
+text_section 89,2548
+
+symout.c,678
+#define TYPE_OUTPUT_ADDRESS(50,1539
+filter_undefined_types 518,12889
+subrange_p 539,13373
+symout_array_domain 586,14918
+symout_block 899,24106
+symout_block_symbols 702,18199
+symout_block_tags 865,23090
+symout_enum_value_names 682,17544
+symout_enum_values 644,16379
+symout_finish 1176,31911
+symout_function 967,26148
+symout_function_end 1003,26938
+symout_init 119,3369
+symout_range_bounds 599,15193
+symout_record_field_names 669,17229
+symout_record_fields 618,15710
+symout_source_file 1107,29924
+symout_sources 1141,30922
+symout_strings 171,4822
+symout_strings_print 184,5081
+symout_strings_skip 214,5589
+symout_top_blocks 1018,27443
+symout_types 248,6494
+
+dbxout.c,507
+#define CHARS(152,5597
+dbxout_args 1044,32524
+dbxout_block 1121,34627
+dbxout_continue 217,7414
+dbxout_finish_symbol 835,25349
+dbxout_function 1190,36562
+dbxout_function 1227,37184
+dbxout_init 181,6321
+dbxout_init 1205,36917
+dbxout_parms 880,26663
+dbxout_reg_parms 988,30507
+dbxout_symbol 584,17446
+dbxout_symbol 1211,37015
+dbxout_syms 857,25938
+dbxout_tags 1080,33391
+dbxout_tags 1222,37140
+dbxout_type 240,8088
+dbxout_type_name 557,16778
+dbxout_types 1061,32864
+dbxout_types 1217,37084
+
+sdbout.c,1229
+#define KNOWN_TYPE_TAG(149,3903
+#define PUSH_DERIVED_LEVEL(256,6779
+#define PUT_SDB_BLOCK_END(114,2970
+#define PUT_SDB_BLOCK_START(107,2792
+#define PUT_SDB_DEF(73,1933
+#define PUT_SDB_DIM(96,2502
+#define PUT_SDB_EPILOGUE_END(135,3516
+#define PUT_SDB_FUNCTION_END(128,3334
+#define PUT_SDB_FUNCTION_START(121,3150
+#define PUT_SDB_INT_VAL(62,1668
+#define PUT_SDB_PLAIN_DEF(80,2131
+#define PUT_SDB_SCL(58,1571
+#define PUT_SDB_SIZE(92,2409
+#define PUT_SDB_TAG(100,2593
+#define PUT_SDB_TYPE(88,2314
+#define PUT_SDB_VAL(66,1766
+#define SDB_GENERATE_FAKE(142,3681
+#define SET_KNOWN_TYPE_TAG(153,4030
+#define TAG_NAME(159,4259
+gen_fake_label 228,5804
+plain_type 260,6905
+plain_type_1 309,7853
+sdbout_begin_block 877,23360
+sdbout_begin_function 922,24482
+sdbout_block 402,9983
+sdbout_end_block 899,23931
+sdbout_end_epilogue 948,25123
+sdbout_end_function 935,24814
+sdbout_field_types 639,16279
+sdbout_filename 172,4689
+sdbout_init 197,5179
+sdbout_mark_begin_function 910,24146
+sdbout_one_type 655,16818
+sdbout_parms 768,19665
+sdbout_record_type_name 276,7228
+sdbout_reg_parms 827,21539
+sdbout_symbol 460,11184
+sdbout_syms 446,10933
+sdbout_tags 593,15236
+sdbout_type 622,15789
+sdbout_types 612,15621
+
+emit-rtl.c,1568
+add_insn 830,21878
+add_insn_after 849,22210
+change_address 487,14150
+classify_insn 1256,31065
+copy_rtx_if_shared 584,16818
+delete_insns_since 875,22802
+emit 1294,31997
+emit_barrier 1168,29263
+emit_barrier_after 1028,26359
+emit_call_insn 1133,28526
+emit_call_insn_before 976,25218
+emit_insn 1077,27455
+emit_insn_after 988,25488
+emit_insn_before 922,23997
+emit_insns 1101,27911
+emit_jump_insn 1116,28169
+emit_jump_insn_after 1015,26099
+emit_jump_insn_before 955,24754
+emit_label 1150,28866
+emit_label_after 1042,26600
+emit_line_note 1182,29606
+emit_line_note_force 1235,30592
+emit_note 1203,30011
+emit_note_after 1058,26987
+end_sequence 1352,33403
+force_next_line_note 1247,30866
+gen_highpart 422,12425
+gen_inline_header_rtx 524,15029
+gen_label_rtx 511,14718
+gen_lowpart 364,10504
+gen_reg_rtx 294,8809
+gen_rtvec 250,8002
+gen_rtvec_v 272,8359
+gen_rtx 179,6386
+gen_sequence 1367,33794
+get_first_label_num 352,10129
+get_insns 735,20236
+get_last_insn 743,20357
+get_max_uid 762,20641
+init_emit 1540,37611
+init_emit_once 1570,38390
+make_insn_raw 788,21043
+make_jump_insn_raw 808,21409
+make_safe_from 696,19381
+mark_reg_pointer 327,9741
+#define max(48,1637
+max_label_num 344,10007
+max_reg_num 336,9905
+#define min(49,1678
+next_insn 768,20688
+previous_insn 776,20778
+push_to_sequence 1332,32870
+reorder_insns 890,23134
+restore_reg_data 1411,34897
+restore_reg_data_1 1448,35601
+set_last_insn 751,20457
+set_new_first_and_last_insn 544,15647
+start_sequence 1317,32529
+subreg_lowpart_p 463,13513
+unshare_all_rtl 560,16050
+
+integrate.c,415
+#define INTEGRATE_THRESHOLD(50,1493
+#define MIN(42,1262
+access_parm_map 1536,49344
+copy_address 1628,51999
+copy_decl_tree 1123,36455
+copy_for_inline 423,14335
+copy_parm_decls 1101,35871
+copy_rtx_and_substitute 1172,37958
+expand_inline_function 584,18844
+fold_out_const_cc0 1808,56524
+function_cannot_inline_p 125,4488
+output_inline_function 1948,60441
+save_for_inline 234,8609
+try_fold_cc0 1731,54292
+
+jump.c,657
+condjump_p 853,25557
+delete_for_peephole 1264,36215
+delete_insn 1148,33028
+delete_jump 1115,32079
+do_cross_jump 703,21783
+find_cross_jump 621,19664
+follow_jumps 979,28348
+invert_exp 1321,37513
+invert_jump 1303,37078
+jump_back_p 745,23055
+jump_optimize 114,4369
+mark_jump_label 1058,30600
+next_label 965,27963
+next_nondeleted_insn 1250,35864
+next_real_insn 943,27558
+no_labels_between_p 906,26861
+prev_real_insn 920,27142
+redirect_exp 1389,38974
+redirect_jump 1368,38551
+reverse_condition 792,24707
+rtx_renumbered_equal_p 1422,39660
+sets_cc0_p 880,26272
+simplejump_p 836,25232
+tension_vector_labels 1022,29536
+true_regnum 1545,42249
+
+cse.c,1103
+#define CHEAPER(914,28912
+#define FIXED_BASE_PLUS_P(407,15880
+#define HASH(364,14348
+#define HASHREG(1297,39795
+#define INSN_CUID(287,11607
+canon_hash 1301,39886
+canon_reg 1693,49085
+cse_basic_block 3770,109763
+cse_end_of_basic_block 3612,105167
+cse_insn 2770,77336
+cse_main 3672,107058
+cse_rtx_addr_varies_p 1678,48741
+equiv_constant 2462,68416
+exp_equiv_p 1463,43919
+fold_cc0 2505,69872
+fold_rtx 1764,51035
+free_element 725,23985
+get_element 735,24183
+get_integer_term 1176,36641
+get_related_value 1195,37056
+insert 924,29361
+insert_regs 668,22293
+invalidate 1056,33554
+invalidate_from_clobbers 3570,104053
+invalidate_memory 1149,35952
+lookup 823,26348
+lookup_as_function 872,27527
+lookup_for_remove 841,26788
+make_new_qty 515,18370
+make_regs_eqv 529,18608
+mention_regs 624,21145
+new_basic_block 473,17468
+note_mem_written 3527,102570
+predecide_loop_entry 2630,72881
+refers_to_mem_p 1606,47072
+refers_to_p 1544,45692
+reg_invalidate 578,20120
+remove 753,24651
+remove_invalid_refs 1129,35491
+rtx_cost 433,16702
+safe_hash 1441,43188
+use_related_value 1221,37718
+
+loop.c,1257
+#define INSN_LUID(58,2097
+addr_overlap_p 1936,58886
+all_sets_invariant_p 2033,61253
+basic_induction_var 3514,107767
+can_eliminate_biv_p 4771,143173
+can_jump_into_range_p 1704,52982
+check_dbra_loop 4400,131017
+check_eliminate_biv 4689,140891
+combine_movables 809,27703
+consec_sets_giv 4193,125298
+consec_sets_invariant_p 1967,59680
+constant_high_bytes 1556,48896
+count_loop_regs_set 2070,62302
+count_nonfixed_reads 1504,47819
+delete_insn_forces 3457,106298
+eliminate_biv 4905,146763
+emit_iv_inc 4325,128834
+emit_iv_init_code 4296,128043
+final_biv_value 5117,152851
+find_mem_givs 3172,98316
+force_movables 772,26587
+gen_iv_mult 4264,127206
+general_induction_var 3606,110386
+ignore_some_movables 743,25695
+invariant_p 1819,55782
+labels_in_range_p 1742,53766
+last_use_this_basic_block 5129,153102
+loop_optimize 238,8293
+loop_reg_used_before_p 2192,66633
+loop_skip_over 1343,43737
+move_movables 1038,34151
+note_addr_stored 1759,54047
+only_reg_use_p 3114,97125
+product_cheap_p 4338,129333
+record_giv 3255,100547
+regs_match_p 915,31116
+replace_call_address 1445,46601
+replace_regs 1395,45524
+rtx_equal_for_loop_p 941,31675
+scan_loop 330,11007
+skip_consec_insns 709,24860
+strength_reduce 2362,74350
+verify_loop 1597,50020
+
+flow.c,577
+#define BLOCK_NUM(108,3935
+#define INSN_VOLATILE(118,4260
+allocate_for_life_analysis 849,27768
+dump_flow_info 1976,61903
+find_basic_blocks 330,10897
+find_use_as_address 1914,60472
+flow_analysis 272,9166
+init_regset_vector 891,29330
+insn_dead_p 1196,39060
+libcall_dead_p 1264,41288
+life_analysis 562,17723
+mark_label_ref 507,16105
+mark_set_1 1348,43363
+mark_set_regs 1322,42769
+mark_used_regs 1505,48442
+propagate_block 927,30476
+regno_clobbered_at_setjmp 1302,42154
+regno_uninitialized 1288,41807
+try_pre_increment 1829,58050
+try_pre_increment_1 1790,56729
+
+stupid.c,176
+#define INSN_SUID(59,2408
+#define MARK_LIVE_AFTER(104,3667
+stupid_find_reg 336,10577
+stupid_life_analysis 120,4314
+stupid_mark_refs 403,12428
+stupid_reg_compare 303,9481
+
+combine.c,682
+#define INSN_CUID(116,4588
+add_incs 2298,75057
+add_links 2240,73720
+adjacent_insns_p 2192,72574
+check_asm_operands 2208,72963
+combine_instructions 208,6950
+copy_substitutions 785,26454
+dump_combine_stats 2717,86272
+dump_combine_total_stats 2732,86727
+gen_lowpart_for_combine 1885,64501
+#define max(73,3194
+#define min(74,3235
+move_deaths 2341,76126
+move_deaths_2 2387,77287
+record_dead_and_set_regs 2067,69365
+regno_dead_p 2172,72138
+remove_death 2312,75388
+remove_links 2274,74590
+simplify_and_const_int 1720,57995
+simplify_set_cc0_and 1930,65977
+subst 811,27367
+try_combine 362,12044
+try_distrib 2469,79687
+undo_all 768,26006
+use_crosses_set_p 2127,71102
+
+regclass.c,332
+fix_register 263,7623
+init_reg_sets 123,3934
+init_reg_sets_1 210,6250
+#define max(34,1182
+#define min(35,1223
+record_address_regs 652,17696
+reg_class_record 519,15043
+reg_preferred_class 323,9113
+reg_preferred_or_nothing 332,9257
+reg_scan 829,22281
+reg_scan_mark_refs 859,23031
+regclass 354,9769
+regclass_init 343,9459
+
+local-alloc.c,398
+alloc_qty 200,7257
+block_alloc 317,10657
+combine_regs 661,22498
+dump_local_alloc 1165,37488
+find_free_reg 1021,33745
+local_alloc 220,7801
+mark_life 1114,36407
+post_mark_life 1129,36731
+qty_compare 622,21111
+qty_compare_1 632,21414
+reg_class_subset_p 860,28832
+reg_is_born 965,32030
+reg_is_set 894,29687
+reg_meets_class_p 847,28455
+update_qty_class 878,29193
+wipe_dead_reg 980,32420
+
+global-alloc.c,636
+#define ALLOCNO_LIVE_P(156,5319
+#define CLEAR_ALLOCNO_LIVE(162,5500
+#define CONFLICTP(108,3889
+#define REGBITP(141,4891
+#define SET_ALLOCNO_LIVE(159,5408
+#define SET_CONFLICT(112,4001
+#define SET_REGBIT(145,5031
+allocno_compare 316,10354
+check_frame_pointer_required 659,20994
+dump_conflicts 1044,32467
+dump_global_regs 1073,33265
+find_reg 483,15457
+global_alloc 187,6256
+global_conflicts 344,11268
+mark_reg_clobber 855,27108
+mark_reg_death 912,28524
+mark_reg_live_nc 948,29653
+mark_reg_store 792,25555
+record_conflicts 757,24367
+record_one_conflict 725,23351
+retry_global_alloc 627,19996
+set_preference 970,30377
+
+reload.c,632
+alternative_allows_memconst 2168,70629
+combine_reloads 538,19700
+decompose 908,30409
+find_dummy_reload 611,22024
+find_equiv_reg 2906,92119
+find_inc_amount 3202,101153
+find_reloads 1063,34483
+find_reloads_address 2308,74842
+find_reloads_address_1 2600,82968
+find_reloads_toplev 2195,71485
+forget_volatility 2836,90300
+hard_reg_set_here_p 708,25259
+immune_p 1005,32666
+make_memloc 2282,74023
+n_occurrences 880,29778
+operands_match_p 769,26906
+push_reload 251,10057
+push_replacement 515,19065
+strict_memory_address_p 741,26050
+subst_indexed_address 2524,80532
+subst_reg_equivs 2471,79354
+subst_reloads 2798,89160
+
+reload1.c,795
+alter_frame_pointer_addresses 1157,39540
+alter_reg 1242,41608
+choose_reload_regs 1861,61124
+constraint_accepts_reg_p 3032,101770
+count_occurrences 3069,102622
+delete_output_reload 2840,95565
+eliminate_frame_pointer 1052,36187
+emit_reload_insns 2374,79045
+forget_old_reloads_1 1638,53921
+gen_input_reload 2811,94695
+hard_reg_use_compare 1390,45841
+inc_for_reload 2940,98833
+mark_home_live 1309,43649
+mark_reload_reg_in_use 1727,57074
+#define max(33,1067
+#define min(32,1026
+modes_equiv_for_class_p 968,33643
+new_spill_reg 997,34748
+order_regs_for_reload 1405,46334
+reload 228,9094
+reload_as_needed 1499,49259
+reload_reg_class_lower 1681,55196
+reload_reg_free_before_p 1784,58698
+reload_reg_free_p 1756,57747
+reload_reg_reaches_end_p 1813,59581
+spill_hard_reg 1328,44123
+
+caller-save.c,220
+choose_hard_reg_mode 334,9735
+clear_reg_live 171,4779
+emit_mult_restore 265,7735
+emit_mult_save 241,7008
+grow_save_block 285,8251
+insert_call_saves 198,5527
+save_call_clobbered_regs 53,1652
+set_reg_live 129,3703
+
+final.c,559
+alter_cond 1205,33710
+alter_subreg 1140,32099
+app_disable 318,9941
+app_enable 305,9724
+dbr_sequence_length 332,10165
+end_final 234,7315
+final 517,15244
+final_end_function 470,13886
+final_scan_insn 547,15937
+final_start_function 359,11075
+init_final 217,6943
+#define min(77,2677
+output_addr_const 1540,41251
+output_address 1528,40982
+output_asm_insn 1375,36894
+output_asm_label 1488,39820
+output_operand 1514,40645
+output_operand_lossage 1347,35934
+output_source_line 1064,30031
+set_current_gdbfile 1039,29460
+walk_alter_subreg 1173,32944
+
+recog.c,749
+address_operand 252,6366
+adj_offsettable_operand 823,22063
+asm_noperands 439,11107
+constrain_operands 880,23474
+decode_asm_operands 517,13694
+find_constant_term_loc 663,18049
+general_operand 194,4916
+immediate_operand 297,7581
+indirect_operand 426,10761
+inequality_comparisons_p 127,3428
+init_recog 60,1789
+memory_address_p 382,9661
+memory_operand 400,10039
+mode_dependent_address_p 784,21283
+mode_independent_operand 797,21515
+next_insn_tests_no_inequality 90,2590
+next_insns_test_no_inequality 104,2913
+nonimmediate_operand 310,7905
+nonmemory_operand 321,8173
+offsettable_address_p 735,19822
+offsettable_memref_p 717,19315
+push_operand 357,9234
+recog_memoized 76,2269
+reg_fits_class_p 1076,28090
+register_operand 266,6719
+
+basic-block.h,0
+
+c-parse.h,0
+
+c-tree.h,243
+#define C_TYPE_FIELDS_READONLY(46,1679
+#define IDENTIFIER_ERROR_LOCUS(39,1420
+#define IDENTIFIER_GLOBAL_VALUE(31,1050
+#define IDENTIFIER_IMPLICIT_DECL(37,1325
+#define IDENTIFIER_LABEL_VALUE(35,1234
+#define IDENTIFIER_LOCAL_VALUE(33,1143
+
+conditions.h,0
+
+expr.h,376
+#define ADD_PARM_SIZE(81,3112
+#define ARGS_SIZE_RTX(100,3752
+#define FUNCTION_ARG_PADDING(112,4202
+#define FUNCTION_ARG_PADDING(119,4462
+#define GEN_FCN(161,5755
+#define QUEUED_BODY(35,1454
+#define QUEUED_COPY(32,1317
+#define QUEUED_INSN(29,1159
+#define QUEUED_NEXT(37,1522
+#define QUEUED_VAR(26,993
+#define RETURN_IN_MEMORY(128,4709
+#define SUB_PARM_SIZE(90,3379
+
+flags.h,0
+
+gdbfiles.h,0
+
+hard-reg-set.h,877
+#define AND_COMPL_HARD_REG_SET(93,3217
+#define AND_COMPL_HARD_REG_SET(135,4751
+#define AND_HARD_REG_SET(92,3165
+#define AND_HARD_REG_SET(129,4528
+#define CLEAR_HARD_REG_BIT(79,2732
+#define CLEAR_HARD_REG_BIT(100,3466
+#define CLEAR_HARD_REG_SET(84,2862
+#define CLEAR_HARD_REG_SET(105,3698
+#define COMPL_HARD_REG_SET(88,2998
+#define COMPL_HARD_REG_SET(123,4302
+#define COPY_HARD_REG_SET(87,2946
+#define COPY_HARD_REG_SET(117,4079
+#define GO_IF_HARD_REG_SUBSET(95,3278
+#define GO_IF_HARD_REG_SUBSET(153,5436
+#define IOR_COMPL_HARD_REG_SET(91,3105
+#define IOR_COMPL_HARD_REG_SET(147,5205
+#define IOR_HARD_REG_SET(90,3053
+#define IOR_HARD_REG_SET(141,4982
+#define SET_HARD_REG_BIT(77,2671
+#define SET_HARD_REG_BIT(98,3354
+#define SET_HARD_REG_SET(85,2904
+#define SET_HARD_REG_SET(111,3889
+#define TEST_HARD_REG_BIT(81,2798
+#define TEST_HARD_REG_BIT(102,3583
+
+input.h,0
+
+objc-actions.h,0
+
+output.h,0
+
+real.h,347
+#define CONST_DOUBLE_CHAIN(84,2619
+#define CONST_DOUBLE_HIGH(81,2506
+#define CONST_DOUBLE_LOW(80,2466
+#define CONST_DOUBLE_MEM(88,2824
+#define REAL_VALUES_EQUAL(34,1187
+#define REAL_VALUES_LESS(39,1320
+#define REAL_VALUE_ATOF(50,1582
+#define REAL_VALUE_LDEXP(44,1428
+#define REAL_VALUE_NEGATE(56,1717
+#define REAL_VALUE_TRUNCATE(61,1854
+
+recog.h,0
+
+regs.h,236
+#define CALLER_SAVE_PROFITABLE(139,4983
+#define PSEUDO_REGNO_BYTES(60,2118
+#define PSEUDO_REGNO_MODE(65,2237
+#define PSEUDO_REGNO_SIZE(54,1935
+#define REGNO_POINTER_FLAG(122,4437
+#define REG_BYTES(22,809
+#define REG_SIZE(28,1076
+
+reload.h,0
+
+rtl.h,2693
+#define ASM_OPERANDS_INPUT(402,14764
+#define ASM_OPERANDS_INPUT_CONSTRAINT(403,14823
+#define ASM_OPERANDS_INPUT_CONSTRAINT_VEC(401,14701
+#define ASM_OPERANDS_INPUT_MODE(404,14903
+#define ASM_OPERANDS_INPUT_VEC(400,14649
+#define ASM_OPERANDS_OUTPUT_CONSTRAINT(398,14536
+#define ASM_OPERANDS_OUTPUT_IDX(399,14596
+#define ASM_OPERANDS_SOURCE_FILE(405,14978
+#define ASM_OPERANDS_SOURCE_LINE(406,15032
+#define ASM_OPERANDS_TEMPLATE(397,14485
+#define CODE_LABEL_NUMBER(297,10678
+#define CONST0_RTX(524,19051
+#define CONSTANT_P(203,6273
+#define CONSTANT_POOL_ADDRESS_P(421,15595
+#define CONTAINING_INSN(371,13680
+#define DEF_MACHMODE(51,1600
+#define FIRST_FUNCTION_INSN(437,16414
+#define FIRST_LABELNO(439,16516
+#define FIRST_PARM_INSN(438,16467
+#define FUNCTION_ARGS_SIZE(443,16706
+#define GET_CODE(170,5334
+#define GET_CODE(173,5456
+#define GET_MODE(177,5552
+#define GET_MODE_BITSIZE(93,2697
+#define GET_MODE_CLASS(79,2279
+#define GET_MODE_MASK(98,2859
+#define GET_MODE_NAME(70,1971
+#define GET_MODE_SIZE(84,2417
+#define GET_MODE_UNIT_SIZE(89,2577
+#define GET_MODE_WIDER_MODE(105,3112
+#define GET_NOTE_INSN_NAME(345,12590
+#define GET_NUM_ELEM(194,6033
+#define GET_REG_NOTE_NAME(292,10447
+#define GET_RTX_FORMAT(44,1465
+#define GET_RTX_LENGTH(38,1303
+#define GET_RTX_NAME(41,1385
+#define INSN_CODE(232,7310
+#define INSN_DELETED_P(242,7749
+#define INSN_UID(221,6937
+#define INTVAL(387,14174
+#define JUMP_LABEL(354,13040
+#define LABEL_NEXTREF(366,13513
+#define LABEL_NUSES(349,12788
+#define LABEL_REFS(360,13302
+#define LAST_LABELNO(440,16565
+#define LOG_LINKS(239,7667
+#define MAX_PARMREG(441,16613
+#define MAX_REGNUM(442,16660
+#define MEM_IN_STRUCT_P(413,15291
+#define MEM_VOLATILE_P(410,15173
+#define NEXT_INSN(225,7070
+#define NOTE_DECL_CODE(337,12292
+#define NOTE_DECL_IDENTIFIER(339,12393
+#define NOTE_DECL_NAME(336,12240
+#define NOTE_DECL_RTL(338,12344
+#define NOTE_DECL_TYPE(340,12451
+#define NOTE_LINE_NUMBER(308,11046
+#define NOTE_SOURCE_FILE(304,10860
+#define PATTERN(228,7144
+#define PREV_INSN(224,7025
+#define PUT_CODE(171,5389
+#define PUT_CODE(174,5493
+#define PUT_MODE(178,5589
+#define PUT_NUM_ELEM(195,6082
+#define REGNO(375,13789
+#define REG_FUNCTION_VALUE_P(380,13940
+#define REG_NOTES(279,10008
+#define REG_NOTE_KIND(287,10304
+#define REG_P(199,6178
+#define REG_USERVAR_P(383,14071
+#define RTX_INTEGRATED_P(180,5641
+#define RTX_UNCHANGING_P(181,5691
+#define SET_DEST(417,15438
+#define SET_SRC(418,15480
+#define SUBREG_REG(392,14335
+#define SUBREG_WORD(393,14379
+#define XEXP(210,6498
+#define XINT(211,6539
+#define XSTR(212,6582
+#define XVEC(213,6625
+#define XVECEXP(215,6724
+#define XVECLEN(214,6668
+
+stab.h,28
+#define __define_stab(7,87
+
+symseg.h,0
+
+tree.h,3792
+#define CALL_EXPR_RTL(397,13708
+#define CONSTRUCTOR_ELTS(400,13815
+#define DECL_ALIGN(491,17557
+#define DECL_ARGUMENTS(483,17096
+#define DECL_ARG_TYPE(484,17176
+#define DECL_ASSEMBLER_NAME(480,16926
+#define DECL_BLOCK_SYMTAB_ADDRESS(494,17689
+#define DECL_CONTEXT(481,16990
+#define DECL_FIELD_CONTEXT(482,17040
+#define DECL_FRAME_SIZE(497,17891
+#define DECL_FUNCTION_CODE(476,16669
+#define DECL_INITIAL(486,17300
+#define DECL_LANG_SPECIFIC(498,17947
+#define DECL_MODE(492,17603
+#define DECL_NAME(478,16826
+#define DECL_OFFSET(475,16621
+#define DECL_PRINT_NAME(479,16870
+#define DECL_RESULT(485,17252
+#define DECL_RESULT_TYPE(473,16481
+#define DECL_RTL(493,17647
+#define DECL_SAVED_INSNS(496,17833
+#define DECL_SET_FUNCTION_CODE(477,16749
+#define DECL_SIZE(489,17459
+#define DECL_SIZE_UNIT(490,17503
+#define DECL_SOURCE_FILE(487,17350
+#define DECL_SOURCE_LINE(488,17405
+#define DECL_SYMTAB_INDEX(495,17765
+#define DECL_VOFFSET(472,16386
+#define DECL_VOFFSET_UNIT(474,16561
+#define DEFTREECODE(23,809
+#define DEF_MACHMODE(51,1551
+#define IDENTIFIER_LENGTH(366,12840
+#define IDENTIFIER_POINTER(367,12900
+#define INT_CST_LT(298,10822
+#define INT_CST_LT_UNSIGNED(303,11035
+#define RTL_EXPR_RTL(394,13604
+#define RTL_EXPR_SEQUENCE(393,13524
+#define SAVE_EXPR_RTL(390,13420
+#define STMT_BIND_SIZE(609,21141
+#define STMT_BODY(576,20322
+#define STMT_CASE_INDEX(624,21548
+#define STMT_CASE_LIST(625,21604
+#define STMT_COND(590,20587
+#define STMT_ELSE(592,20685
+#define STMT_SOURCE_FILE(575,20267
+#define STMT_SOURCE_LINE(574,20213
+#define STMT_SUBBLOCKS(611,21259
+#define STMT_SUPERCONTEXT(608,21076
+#define STMT_THEN(591,20634
+#define STMT_TYPE_TAGS(610,21200
+#define STMT_VARS(607,21027
+#define TREE_ADDRESSABLE(217,6968
+#define TREE_ASM_WRITTEN(275,9777
+#define TREE_CHAIN(187,5535
+#define TREE_CODE(170,4719
+#define TREE_COMPLEXITY(404,13968
+#define TREE_CST_RTL(319,11590
+#define TREE_EXTERNAL(194,5787
+#define TREE_IMAGPART(353,12504
+#define TREE_INLINE(279,9939
+#define TREE_INT_CST_HIGH(296,10758
+#define TREE_INT_CST_LOW(295,10697
+#define TREE_LANG_FLAG_1(284,10107
+#define TREE_LANG_FLAG_2(285,10167
+#define TREE_LANG_FLAG_3(286,10227
+#define TREE_LANG_FLAG_4(287,10287
+#define TREE_LITERAL(251,8644
+#define TREE_NONLOCAL(260,9072
+#define TREE_OPERAND(403,13912
+#define TREE_PACKED(245,8401
+#define TREE_PERMANENT(265,9290
+#define TREE_PUBLIC(202,6142
+#define TREE_PURPOSE(377,13095
+#define TREE_READONLY(238,8020
+#define TREE_REALPART(352,12453
+#define TREE_REAL_CST(326,11829
+#define TREE_REGDECL(220,7095
+#define TREE_SET_CODE(171,4782
+#define TREE_STATIC(198,5979
+#define TREE_STRING_LENGTH(339,12116
+#define TREE_STRING_POINTER(340,12173
+#define TREE_THIS_VOLATILE(233,7763
+#define TREE_TYPE(176,5068
+#define TREE_UID(166,4589
+#define TREE_UNSIGNED(269,9476
+#define TREE_USED(282,10055
+#define TREE_VALUE(378,13145
+#define TREE_VOLATILE(228,7536
+#define TYPE_ALIGN(421,14489
+#define TYPE_ARG_TYPES(425,14679
+#define TYPE_BASETYPES(440,15481
+#define TYPE_DOMAIN(423,14583
+#define TYPE_FIELDS(424,14631
+#define TYPE_LANG_SPECIFIC(442,15601
+#define TYPE_MAIN_VARIANT(439,15421
+#define TYPE_MAX_VALUE(433,15096
+#define TYPE_METHOD_BASETYPE(426,14730
+#define TYPE_MIN_VALUE(432,15048
+#define TYPE_MODE(420,14445
+#define TYPE_NAME(437,15317
+#define TYPE_NEXT_VARIANT(438,15361
+#define TYPE_NONCOPIED_PARTS(441,15535
+#define TYPE_OFFSET_BASETYPE(427,14784
+#define TYPE_PARSE_INFO(435,15197
+#define TYPE_POINTER_TO(430,14932
+#define TYPE_PRECISION(434,15144
+#define TYPE_REFERENCE_TO(431,14988
+#define TYPE_SEP(428,14838
+#define TYPE_SEP_UNIT(429,14880
+#define TYPE_SIZE(418,14347
+#define TYPE_SIZE_UNIT(419,14391
+#define TYPE_SYMTAB_ADDRESS(436,15253
+#define TYPE_VALUES(422,14535
+
+typeclass.h,0
+
+objc-parse.y,2515
+%token INTERFACE IMPLEMENTATION END SELECTOR DEFS ENCODE 107,3311
+		   IDENTIFIER_POINTER 800,22815
+		     IDENTIFIER_POINTER 808,23127
+		   IDENTIFIER_POINTER 812,23259
+		  STMT_BODY 568,16724
+	      || TREE_CODE 805,22999
+		  if ((TREE_CODE 1148,32635
+		      || TREE_CODE 1150,32712
+	      || TREE_INT_CST_LOW 806,23039
+		      && TREE_PACKED 343,9533
+		      && TREE_PACKED 350,9828
+		  TREE_TYPE 567,16682
+		      && TREE_TYPE 1219,34810
+		  TREE_USED 563,16548
+		  TREE_USED 1298,37698
+		  TREE_VOLATILE 566,16654
+		{ $$ = build_nt 823,23498
+		{ $$ = build_nt 825,23583
+		    $$ = c_alignof 369,10475
+		{ $$ = c_alignof 371,10562
+		  c_expand_asm_operands 1276,36722
+		  c_expand_asm_operands 1283,37083
+		  c_expand_asm_operands 1291,37464
+		  $$ = c_sizeof 345,9629
+		{ $$ = c_sizeof 347,9712
+		{ chainon 332,9233
+		{ $$ = chainon 670,19459
+		{ $$ = chainon 705,20501
+		{ $$ = chainon 1426,40727
+check_newline 2492,67002
+combine_strings 2007,53099
+		  $$ = digest_init 383,10917
+do_pragma 2707,72137
+		  if (! expand_continue_loop 1260,36075
+		  expand_exit_loop_if_false 1166,33146
+		  expand_exit_loop_if_false 1177,33473
+		  if ( ! expand_exit_something 1256,35916
+extend_token_buffer 2475,66543
+		{ $$ = finish_enum 933,27146
+		{ $$ = finish_enum 939,27348
+hash 2174,58064
+		{ if 233,7111
+		  if 235,7184
+		{ if 241,7307
+		{ if 256,7742
+		{ if 342,9493
+		{ if 349,9788
+		  if 352,9927
+		  if 381,10841
+		  if 384,10999
+		  if 539,15939
+		{ if 550,16149
+		  if 559,16402
+                  if 575,16941
+                  if 589,17361
+		  if 727,21049
+		  if 731,21167
+		{ if 756,21548
+		  if 758,21613
+		  if 820,23399
+		{ if 953,27574
+		{ if 961,27798
+		{ if 996,28871
+		  if 1104,31607
+		  if 1184,33669
+		  if 1188,33810
+		  if 1198,34155
+		  if 1218,34772
+		  if 1222,34919
+		  if 1231,35209
+		  if 1248,35681
+		  else if 1250,35764
+		{ if 1269,36394
+		{ if 1274,36625
+		{ if 1281,36986
+		{ if 1289,37367
+		  if 1303,37845
+		{ if 1313,38019
+		{ if 1317,38152
+		  if 1437,40869
+                  if 1584,44501
+		  if 1642,46027
+		  if 1665,46500
+		  if 1906,51301
+init_lex 2340,63539
+is_reserved_word 2231,59951
+#define isalnum(2697,71808
+#define isdigit(2698,71925
+		       && lvalue_p 1149,32685
+readescape 2762,73427
+reinit_parse_for_function 2376,64996
+skip_white_space 2384,65150
+		{ if (! start_function 262,7885
+		{ if (! start_function 272,8151
+%token 103,3209
+yyerror 2860,75360
+yylex 2888,76117

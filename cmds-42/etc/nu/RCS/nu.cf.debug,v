@@ -1,0 +1,80 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    osdev:1.2; strict;
+comment  @@;
+
+
+1.2
+date     89.07.15.21.20.04;  author osdev;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.07.15.21.19.44;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+1.2
+log
+@Bug fixes from Lee.
+@
+text
+@; /etc/nu.cf.debug
+;
+; This configuration file is used to control the behavior of the nu (new
+; user) program. Case is significant in variable names. Please read nu(8)
+; before changing anything.
+;
+; Modified for NeXT:	 9 Jun 89	Lee Tucker
+; Modified for NeXT:	 2 Nov 88	Peter King
+; Created:  		25 Aug 84	Brian Reid
+;
+Debug=1				; 0 -> no debugging, 1 -> debugging
+WantMHsetup = 0			; 0 -> Don't ask about setting up MH mailbox
+NetInfoDomain = "."		; "." -> Local domain
+WantSymbolicLinks = 1		; 0 -> Don't make everybody be /user/name ?
+SymbolicLinkDir="debugdir/user"	; see above.
+NoviceUser = 0			; 1 -> don't show shell script details
+PWFillHoles = 1			; 1 -> Fill the hole in the password file
+PWUserBase = 20			; Fill passwd file starting at uid 20
+
+DefaultGroup=20 		; default user-group number
+DefaultShell="/bin/csh"		; login shell
+MaxNameLength=8			; limit on chars in a login id
+Logfile="debugdir/nu.log"	;
+CreateDir="nu1.sh"		; shell script to make new directory
+CreateFiles="nu2.sh"		; script to load it with some contents
+DestroyAccts="nu3.sh"		; script to get rid of old accounts
+DeleteAccts="nu4.sh"		; script to get rid of an account
+
+DefaultHome =	   "debugdir/usr"	; home for undefined groups
+GroupHome=	20 "debugdir/usr"
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d7 1
+a11 2
+HashedPW = 0			; 0 -> Don't hash the passwd file
+YellowPages = 0			; 0 -> Don't compile the YP "hosts" database
+d13 1
+a22 2
+PasswdFile="debugdir/etc.passwd"	;
+BackupFile="debugdur/nu.passwd"	;
+a23 3
+Tempfile="debugdir/nu.temp"
+Dummyfile="debugdir/vipw.lock"	; Think twice before changing this
+Linkfile="debugdir/etc.ptmp"		; for locking
+@

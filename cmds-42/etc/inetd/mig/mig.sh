@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# HISTORY
+# 27-May-87  Richard Draves (rpd) at Carnegie-Mellon University
+#	Created.
+#
+
+#CPP=`/usr/cs/bin/wh -Lq cpp`
+#MIGCOM=`/usr/cs/bin/wh -Lq migcom`
+# includeflags can be removed when cc -E works for CPP
+CPP=/lib/cpp
+MIGCOM=/usr/lib/migcom
+
+cppflags=
+migflags=
+files=
+
+until [ $# -eq 0 ]
+do
+    case $1 in
+	-[qQvVtTrRsSi] ) migflags="$migflags $1"; shift;;
+	-user   ) migflags="$migflags $1 $2"; shift; shift;;
+	-server ) migflags="$migflags $1 $2"; shift; shift;;
+	-header ) migflags="$migflags $1 $2"; shift; shift;;
+	-p ) migflags="$migflags $1 $2"; shift; shift;;
+#	-MD ) sawMD=1; cppflags="$cppflags $1"; shift;;
+	-MD ) shift;;
+	-* ) cppflags="$cppflags $1"; shift;;
+	* ) files="$files $1"; shift;;
+    esac
+done
+
+for file in $files
+do
+    base="`/usr/bin/basename "$file" .defs`"
+    rm -f "$base".d "$base".d~
+    $CPP $cppflags "$file" - ${sawMD+"$base".d~} | $MIGCOM $migflags || exit
+    if [ $sawMD ]
+    then
+	sed 's/^'"$base"'.o/'"$base"'.h '"$base"'User.c '"$base"'Server.c/' \
+		< "$base".d~ > "$base".d
+	rm -f "$base".d~
+    fi
+done
+
+exit 0

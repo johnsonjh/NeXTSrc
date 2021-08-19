@@ -1,0 +1,2 @@
+libc-22:
+	Optimized strcpy for 040.

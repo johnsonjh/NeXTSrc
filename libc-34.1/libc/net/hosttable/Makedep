@@ -1,0 +1,6 @@
+gethostent.o : gethostent.c ../../../usr.include/stdio.h \
+  ../../../usr.include/stddef.h ../../../usr.include/stdarg.h \
+  /usr/include/sys/types.h /usr/include/sys/socket.h /usr/include/sys/file.h \
+  /usr/include/sys/fcntl.h ../../../usr.include/netdb.h \
+  ../../../usr.include/rpcsvc/ypclnt.h ../../../usr.include/ndbm.h \
+  ../../../usr.include/ctype.h 

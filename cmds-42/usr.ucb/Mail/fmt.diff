@@ -1,0 +1,48 @@
+25a26,33
+>  *
+>  * Indententation problem (sometimes indented two lines when it shouldn't)
+>  * fixed by Patrick White    Purdue University Computing Center, 6/10/88
+>  *    I added a flag and a history of what prefix the line was leadin'ed with.
+>  * The flag gets set when the prefix is actually output, and the leadin'ed
+>  * prefix is forced to be used till the prefix is used once -- then the lesser
+>  * of the leadin'ed prefix and the current one is used.  The revelant variables
+>  * are pfx_orig, and pfx_flag.
+37a46,48
+> int     pfx_flag = 0;		/* 1 if output done with pfx_orig yet */
+> int     pfx_orig = 0;		/* origional pfx added to current line */
+> 
+324a336,337
+> 	register  int  skip = 0;	/* amount of pfx_orig to skip */
+> 
+328c341,351
+< 	tabulate(outbuf);
+---
+> 
+> 	/* want to use min of current pfx and pfx_orig unless haven't done
+> 	 * output at pfx_orig yet -- then wnat to use pfx_orig
+> 	 * comprende?
+> 	 */
+> 	if (1 == pfx_flag)  {
+> 	   /* have already done an output -- use min of pfx and pfx_orig */
+> 	   skip = (pfx_orig > pfx) ? (pfx_orig - pfx) : 0;
+> 	   }
+> 	tabulate(outbuf + skip);
+> 	pfx_flag = 1;		/* output done */
+386a410,416
+> 
+> 	/* save pfx used and set pfx_flag to no output done yet */
+> 	if (pfx_orig != pfx)  /* if different leadin, then not used this
+> 			       * one yet
+> 			       */
+> 	   pfx_flag = 0;
+> 	pfx_orig = pfx;
+
+--------------------
+Gerrit Huizenga
+NeXT Workstation Support
+Purdue University Computing Center
+gerrit@mentor.cc.purdue.edu
+
+
+
+

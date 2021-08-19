@@ -1,0 +1,454 @@
+{\rtf0\ansi{\fonttbl\f0\froman Times;\f1\fmodern Courier;\f2\fswiss Helvetica;}
+\paperw12220
+\paperh9940
+\margl180
+\margr300
+{\colortbl\red0\green0\blue0;}
+\f0\b0\i0\ul0\ql\fs48\fi0\li1440\gray0\up0\dn0 \
+Preliminary 2.0 Release Notes: \
+Objective-C Runtime System\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\fs28\li1440 \
+\
+\
+
+\pard\tx1800\li1440 This file contains information about the following topics:\
+
+\pard\tx1800\tx2160\tx2520\li1440 \
+
+\pard\tx1800\li1440 ·	New features
+\pard\tx2160\tx2520\tx2880\fi-380\li1800 \
+
+\pard\tx1800\li1440 ·	Implementation changes
+\pard\tx2160\tx2520\tx2880\fi-380\li1800 \
+
+\pard\tx1800\li1440 ·	Incompatible changes\
+·	Organizational changes\
+·	Conventions that have changed \
+
+\pard\tx2160\tx2520\tx2880\fi-380\li1800 \
+
+\pard\tx0\tx2520\tx2880\tx3240\b\li720 New Features\
+
+\pard\tx1800\tx2160\tx2520\li1440 \
+
+\b0 The following are new features that have been added to the Objective-C runtime system since Release 1.0. \
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\fi-360\li1800\fc0 \
+·	Dynamically loading Objective-C object modules.\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\fi-520\li3120 \
+
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\f1\fi-380\li1800 	long objc_loadModules(\
+		char *files[], \
+		NXStream *errorStream,\
+		void€(*callback)(Class,€Category), 		struct€mach_header **header, \
+		char€*debugFilename\
+	);\
+	long objc_unloadModules(\
+		NXStream *errorStream,\
+		void€(*callback)(Class,€Category)\
+	);\
+
+\f0\fs16 \
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\fs28\fi-20\li1800 Dynamic loading was added to Objective-C to give developers the flexibility to extend or customize an application without having to build new versions of the application, which can be inefficient and cumbersome. For example, InterfaceBuilder uses 
+\f1 objc_loadModules()
+\f0  to implement 
+\i custom palettes
+\i0 , a feature that gives 
+\fc0 users of InterfaceBuilder the ability to tailor it to their needs. For example, InterfaceBuilder is shipped with 4 builtin palettes, one for Menus, Windows, Basic Views, and Scrolling Views - adding a custom (application specific) palette means InterfaceBuilder can be extended by users to make building custom software much easier. \
+
+\pard\tx1800\tx2160\tx2520\li1440\fc0 \
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\fi-20\li1800\fc0 If you are developing an application that would benefit from this type of customization, here is brief overview of the process:\
+\
+·	Decide on a methodology for how you will integrate the object modules into the running application. For example, you must decide whose responsibility is it to integrate the newly loaded class into the running program. There are 3 choices: the application, the class that is being loaded, or some hybrid. \
+\
+·	By default, a module will be able to link against any program symbols that are global to the application or any library symbols used by the application. For example, if your application uses the symbol  
+\f1 printf()
+\f0 , the module that is dynamically loaded will also have access to itÐotherwise the symbol will be undefined. If you would like modules that are dynamically loaded to have access to 
+\i all symbols
+\i0  defined by  libNeXT_s or libsys_s, (not just the ones the application uses) you must link your application with 
+\f1 -u libNeXT_s -u libsys_s
+\f0  . \
+\
+·	Use  
+\f1 objc_loadModules()
+\f0\b  
+\b0 to perform the linking and loading of the list of files that contain the particular customization.\
+\
+For more information on custom palettes see the release notes for InterfaceBuilder. \
+
+\fi-360 \
+·	Initializing and cleaning up classes that have been dynamically loaded/unloaded.\
+
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\fi-380\li1800\fc0 \
+	
+\pard\tx720\tx1440\tx2160\tx2900\tx6480\f1\li360 @interface Object (DynamicLoading)\
+			+ finishLoading:(struct mach_header *)hdr;\
+			+ startUnloading;\
+			@end\
+
+\pard\tx720\tx1440\tx2160\tx2900\tx6820\fs26\li360 		
+\f0\fs22 \
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\fs28\fi-20\li1800\fc0 If you are developing a class or category that is going to be dynamically loaded , you may want to provide a 
+\f1 +finishLoading:
+\f0  method. This message (if implemented) will be sent by the Objective-C run-time system immediately after the class has been dynamically loaded - it can be used to perform any initialization required to "plug" itself into the running application. 
+\f1 +startUnloading
+\f0  is similiar, however it is sent by the run-time system just prior to unloading the class - it can used to perform any cleanup required to "unplug" itself from the running application. Both methods are specific to the class or category where they are defined, and are not inherited by subclasses.  
+\f1 \
+
+\pard\tx720\tx1440\tx2160\tx2900\tx6480\b\fs24\li360 	
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\f0\b0\fs28\fi-360\li1800\fc0 \
+·	Forwarding unrecognized messages\
+
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\fi-380\li1800\fc0 \
+	
+\pard\tx720\tx1440\tx2160\tx2900\tx6480\f1\li360 - forward: (SEL) sel : (
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\fi-380\li1800 marg_list
+\pard\tx720\tx1440\tx2160\tx2900\tx6480\li360 ) args;\
+			- performv: (SEL) sel : (marg_list) args;\
+
+\b\fs24 	
+\b0 	\
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\fi-20\li1800 	
+\f0\fs28\fc0 In Release 1.0, the runtime system would send the  
+\f1 -doesNotRecognize:
+\f0   message to an object that could not directly respond to 
+\i aSelector
+\i0 . Because this method was only passed 
+\i aSelector
+\i0 , this method was rarely overriden. \
+	\
+	In Release 2.0, the runtime system now sends the  
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\fi-1020\li3620 -forward::
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\f0\fi-20\li1800\fc0  message in this situation
+\i . 
+\i0 This method gives classes the flexibility indirectly respond to 
+\i aSelector
+\i0  by re-sending the original message to an object that 
+\i can
+\i0  respond to the message. Determining which object is appropriate for a particular selector is the classes responsibility, the runtime system has no builtin assumptions. Once the object (that can respond to the message) has been obtained, you can re-send the message by using the  
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f1\fi-1020\li3620 -performv:: 
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\f0\fi-20\li1800\fc0 message
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\i\fi-1020\li3620 . \
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\fi-20\li1800 \
+	
+\b\i0 I
+\fc0 f you do not use this feature, your objects will behave just as they did in Release 1.0
+\b0  - the default implementation for forward:: just sends the doesNotRecognize: message.\
+	\
+	The following functions are used by  
+\f1 performv::
+\f0  when re-sending the message. The API allows you to obtain more detailed information about methods (such as their types, offsets on the argument frame, and values). Unless you plan on implementing your own version of  
+\f1 performv::
+\f0 , the following methods are not important for you to know about. \
+
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\fi-380\li1800 \
+	
+\f1 unsigned int method_getNumberOfArguments(\
+		Method aMethod\
+	);\
+	unsigned int method_getSizeOfArguments(\
+		Method aMethod\
+	);\
+	unsigned int method_getArgumentInfo(\
+		Method aMethod, \
+		int index, \
+		char **type, \
+		int€*offset\
+	);\
+
+\f0 	
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f1\fc0 typedef void *marg_list;\
+\
+				#define marg_getRef(margs, offset, type) \\\
+					
+\pard\tx533\tx1067\tx1601\tx2135\tx2668\tx3202\tx3736\tx4270\tx4803\tx5337\fc0 ( (type *)((char *)margs + offset) )
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\fc0 \
+\
+				#define marg_getValue(margs, offset, type) \\\
+					( 
+\pard\tx533\tx1067\tx1601\tx2135\tx2668\tx3202\tx3736\tx4270\tx4803\tx5337\fc0 *marg_getRef(margs, offset, type)
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\fc0  )\
+\
+				#define marg_setValue(margs, offset, type, value) \\\
+					( marg_getValue(margs, offset, type) = (value) )\
+
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\fi-380\li1800 	\
+	id objc_msgSendv(\
+		id theReceiver, \
+		SEL theSelector, \
+		unsigned int argSize, \
+		marg_list argFrame\
+	);\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\f0\fs16\li2100 \
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\fs28\fi-20\li1800\fc0 	 
+\fi-360 \
+·	Support for zone allocation\
+
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\fi-380\li1800\fc0 \
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\f1\b\fs24\fi-20\li1800 	
+\f0\b0\fs28\fc0 In version 1.0, objects were typically allocated through Object's 
+\f1 +new
+\f0  method. +new accomplished several things, it used 
+\f1 malloc()
+\f0  to allocated memory for the object, it initialized the 
+\f1 isa
+\f0  variable, and it initialized all other instance variables to 0. In version 2.0, the Objective-C runtime has been converted to use 
+\f1 NXZoneMalloc()
+\f0 .  +new has not changed, it just allocates objects from the default zone (
+\f1 NXDefaultMallocZone()
+\f0 ). However, the following methods were added (to Object) so objects could be allocated from zones that are managed by the application:
+\f1\fs24 \
+
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\fs28\fi-380\li1800 	\
+	
+\fc0 + allocFromZone:(NXZone *)zone;\
+	- copyFromZone:(NXZone *)zone;\
+	- (NXZone *)zone;\
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\b\fs24\fi-20\li1800 \
+	
+\f0\fs28\fc0 Allocating objects from specific zones can improve your applications performance by minimizing memory fragmentation and maximizing the locality of related memory references.
+\b0  Here are other Objective-C runtime functions that were added to support zone allocation:
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\f1\fi-380\li1800 \
+	\
+	id class_createInstanceFromZone(\
+		Class aClass, \
+		unsigned int indexedIvarBytes, \
+		NXZone€*zone\
+	);\
+	id object_copyFromZone(\
+		Object *anObject, \
+		unsigned int indexedIvarBytes, \
+		NXZone€*zone\
+	);\
+	id object_reallocFromZone(\
+		Object *anObject, \
+		unsigned int numBytes, \
+		NXZone€*zone\
+	);\
+	id (*_zoneAlloc)(\
+		Class aClass, \
+		unsigned int indexedIvarBytes, \
+		NXZone *zone\
+	);\
+	id (*_zoneCopy)(\
+		Object *anObject, \
+		unsigned int indexedIvarBytes, \
+		NXZone *zone\
+	);\
+	id (*_zoneRealloc)(\
+		Object *anObject, \
+		unsigned int numBytes, \
+		NXZone *zone\
+	);\
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\f0\fi-360\li1800\fc0 \
+·	NXStringTable, a new class to support the 
+\pard\tx1800\tx2160\tx2520\li1440\fc0 internationalization of applications
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\fi-360\li1800\fc0 \
+
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\f1\fi-380\li1800\fc0 \
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\f0\fi-20\li1800 By using an NXStringTable object to store your application's character strings,  you can reduce the effort required to adapt the application to different language markets.  Interface Builder give you direct access to NXStringTables, allowing you to create and initialize a string table and to connect it into your application.\
+
+\fi-360\fc0 \
+·	Protocol added to 
+\pard\tx1800\li1440 prepare an object for being archived
+\pard\i\fi-1020\li3620 \
+
+\pard\tx1800\f1\i0\li1440 \
+	- startArchiving:(NXTypedStream *)stream
+\f0\b \
+
+\pard\b0\i\fs16\fi-1020\li3620 \
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\i0\fs28\fi-20\li1800 A 
+\b startArchiving:
+\b0  message is sent to an object just before it's archived (using 
+\b write:
+\b0 ), but only if it implements a method that can respond.\
+
+\fi-360\fc0 \
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620 \
+
+\pard\tx0\tx2520\tx2880\tx3240\b\fs28\li720 Implementation changes\
+
+\pard\tx180\tx2520\tx2880\tx3240\li1440 \
+Type descriptors now include a type code for SEL
+\fs24 \
+
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\f1\b0\fs28\fi-380\li1800 \
+
+\pard\tx1800\f0\li1440 In version 1.0, selectors (type SEL) were encoded as their basic C type (unsigned int). In version 2.0, selectors now have their own unique code in the type descriptors for instance variables and methods. This allows programs to distinquish between a SEL, and an unsigned int. The following macro was added to 
+\f1  objc-class.h
+\f0 :\
+ 
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\f1\fi-380\li1800 \
+
+\pard\tx0\tx2160\tx2540\tx2880\tx5400\fi-380\li1800 	#define _C_SEL	':'\
+
+\pard\tx180\tx2520\tx2880\tx3240\f0\b\li1440 \
+Method type field now contains stack size and argument offset information
+\fs24 \
+
+\pard\tx1800\tx2160\tx2520\b0\fs22\li1440 \
+
+\pard\tx1800\fs28\li1440 The 
+\f1 method_types
+\f0  field in 
+\f1 struct objc_method
+\f0  was extended to include the stack offset of each element on the stack and the total size (in bytes) of the user supplied arguments that were pushed onto the stack. For example, the following method prototype  
+\f1 -(void)name:(char *)aname value:(long)avalue
+\f0 \
+would have the following type descriptor in version 1.0:\
+\
+
+\pard\tx0\tx2160\tx2540\tx4300\tx7920\fi-380\li1800 "
+\f1 v@I*l
+\f0 " 	a method that returns void, and takes 4 arguments: id (self), 			SEL (_cmd), char* (aname), and long (avalue).\
+
+\pard\tx1800\li1440 \
+In version 2.0, the type descriptor has the following additional information:\
+
+\pard\tx0\tx2160\tx2540\tx4300\tx7920\fi-380\li1800 		\
+"
+\f1 v
+\f0\b 16
+\f1\b0\ul @
+\f0\b 8
+\f1\b0 :
+\f0\b 12
+\f1\b0 *
+\f0\b 16
+\f1\b0 l
+\f0\b 20
+\b0\ul0 " 	a method that pushes 16 bytes onto the stack. Argument 1 is 8 			bytes, argument 2 is 12 bytes, argument 3 is 16 bytes, and 			argument 4 is 20 bytes 
+\b offset from the frame pointer , a6 (for 			the original stack frame)
+\b0 .\
+
+\pard\tx1800\tx2160\tx2520\fs22\li1440 \
+
+\pard\tx1800\fs28\li1440 This change was made to support forwarding, a new featureÐit will not affect anyone who isn't making very low-level assumptions about the format of the Objective-C runtime information.  An API for accessing this information was previously discussed under new features.\
+
+\pard\tx180\tx2520\tx2880\tx3240\b\fs24\li1440 \
+
+\fs28 The organization of the Objective-C segment has been optimized\
+
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\b0\fi-380\li1800\fc0 \
+
+\pard\tx1800\tx2160\tx2520\li1440 The standard sections of the 
+\b __OBJC
+\b0  segment for version 2.0 are:\
+\
+	
+\b __class
+\b0 :  Class objects.\
+	
+\b __meta_class
+\b0 :  Metaclass objects.\
+	
+\b __cat_cls_meth
+\b0 :  Category class method descriptors.\
+	
+\b __cat_inst_meth
+\b0 :  Category instance method descriptors.\
+	
+\b __cls_meth
+\b0 :  Class method descriptors.\
+	
+\b __inst_meth
+\b0 :  Instance method descriptors.\
+	
+\b __message_refs
+\b0 :  Selector references. (uniqued by the 
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\fc0 link editor
+\pard\tx1800\tx2160\tx2520\li1440 )\
+	
+\b __symbols
+\b0 :  Objective-C symbol index.\
+	
+\b __category
+\b0 :  Category descriptors.\
+	
+\b __class_vars
+\b0 :  Class variable descriptors (present only in the Object Class).\
+	
+\b __instance_vars
+\b0 :  Instance variable descriptors.\
+	
+\b __module_info
+\b0 :  Module information.\
+	
+\b __selector_strings
+\b0 :  Objective-C strings (uniqued by the 
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\fc0 link editor
+\pard\tx1800\tx2160\tx2520\li1440 ).\
+\
+The class objects and category method descriptors are always modified by the Objective-C runtime at startup.  The remaining method descriptors and the selector references are modified for all but the largest Mach-O in the program (usually libNeXT).  All other sections are never modified by the Objective-C runtime.\
+
+\fs22 \
+\
+\
+
+\pard\b\fs28\li720 Incompatible Changes\
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\b0\fi-360\li1800 \
+·	The following methods were removed from Object:\
+
+\pard\tx1800\tx2160\tx2520\fs22\li1440 \
+
+\pard\tx720\tx1440\tx2160\tx2900\tx6480\f1\fs28\li360 		- findClass:
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\fi-1020\li3620 (STR)aClassName;
+\pard\tx720\tx1440\tx2160\tx2900\tx6480\li360 \
+		
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\fi-1020\li3620 - shouldNotImplement:(SEL)aSelector;\
+		
+\pard\tx1800\tx2160\tx2520\f0\fs22\li1440 \
+
+\pard\tx0\tx1800\tx2160\tx2540\tx2880\tx7920\fs28\fi-360\li1800 ·	
+\pard\tx1800\li1440 NXIsEqualHashTable() was renamed NXCompareHashTables().\
+
+\pard\tx0\tx2520\tx2880\tx3240\b\fs26\li720 \
+\
+
+\pard\fs28\li720 Organizational Changes\
+
+\pard\tx1800\tx2160\tx2520\b0\fs22\li1440 \
+
+\pard\tx1800\fs28\li1440 The include file 
+\f1 <streams/error.h>
+\f0  has been move to 
+\f1 <objc/error.h>
+\f0 , which will cause the following error for any file that's recompiled using it:\
+
+\pard\tx2160\tx2520\tx2880\fs22\li1440 \
+
+\pard\tx1800\fs28\li1440 	x.c:1: streams/error.h: No such file or directory \
+
+\pard\tx2160\tx2520\tx2880\fs22\li1440 \
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\b\fs28\li720 Conventions\
+
+\pard\tx180\tx2520\tx2880\tx3240\li1440 \
+Separating object allocation from initialization.\
+
+\pard\tx1800\b0\li1440 \
+
+\pard\tx0\tx2160\tx2540\tx2880\tx7920\f1\fi-380\li1800\fc0 	+ alloc;\
+	- init;\
+\
+
+\pard\tx1800\f0\li1440 <<description forthcoming>>\
+
+}

@@ -1,0 +1,104 @@
+
+% The routines that run in the beep thread cannot use _NXDefProc, since they
+% share VM space (including userdict) with the context that forks the thread.
+% Since the backtrace mechanism relies on a "global" stack in userdict,
+% both threads cant use the facility.
+
+currentshared true setshared
+  % allocate all of these procs in shared VM and leave previous state on 
+  % stack for restore
+
+% global constants & vars
+    nextdict /Beepfile (SystemBeep) _NXCheckAndDef
+      % soundfile to play for a beep
+    nextdict /Beepwindow 0 _NXCheckAndDef
+      % real window number to flash for visual beep
+      % Beepfile and Beepwindow must be null and 0, resp., to get visual beep
+    nextdict /_beepContext null _NXCheckAndDef
+      % separate thread to actually play the beep sound
+    nextdict /_beepCondition condition _NXCheckAndDef
+      % used to notify thread that implements beep that a beep is requested
+    nextdict /_beepLock lock _NXCheckAndDef
+      % lock to protect the _mustBeep variable
+    nextdict /_mustBeep false _NXCheckAndDef
+      % variable that says whether a beep has been requested
+
+windowPackage1.0 begin
+
+/_doBeep {			%		_doBeep
+  % actually does the beep by playing the Beepfile or flashing the Beepwindow
+    mark
+    {
+	Beepfile null eq
+	{
+	    Beepwindow 0 ne
+	    {
+		gsave
+		true setinstance
+		Beepwindow windowdeviceround 
+		Beepwindow currentwindowbounds
+		4 -2 roll pop pop 0 0 4 2 roll
+		1 setgray .333 setalpha
+		Sover compositerect
+		500 {yield} repeat
+		newinstance
+		grestore
+	    } if
+	}{
+	    Beepfile 0 playsound
+	} ifelse
+    } stopped
+    cleartomark
+} bind def
+
+/_waitToBeep {			%		_waitToBeep
+  % waits until another context notifies us to do a beep
+    _beepLock
+    {
+	{
+	    _mustBeep
+	    {
+		exit
+	    } if
+	    yield
+	    _beepLock _beepCondition wait
+	} loop
+    } monitor
+} bind def
+
+/_beepThreadProc {		%		_beepThreadProc
+  % code for thread that performs beeps
+    {
+	/_waitToBeep winexec
+	yield
+	/_doBeep winexec
+	yield
+	nextdict /_mustBeep false put
+    } loop
+} bind def
+
+/beep {				%		beep
+  % external entry point to do a beep.  Here we just notify the BeepContext to
+  % perform a beep for us
+    _mustBeep not
+    {
+	_beepLock {
+	    nextdict /_mustBeep true put
+	    _beepCondition notify
+	} monitor
+    } if 
+} _NXDefProc
+
+end			% close window dict
+
+% fork off thread to wait for notification and perform beeps
+nextdict /_beepContext get null eq 
+{
+    nextdict /_beepContext
+    mark /_beepThreadProc pkget fork
+    put
+    _beepContext detach
+} if
+
+setshared		% restore VM allocation mode
+

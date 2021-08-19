@@ -1,0 +1,162 @@
+   This file contains release notes for cc-4 and cc-5.  cc-4 is the major 
+release intended to be "shipped" with 0.8 to customer sites as the alpha
+release of NeXT-Step.  cc-4 is the release containing new features and was
+released to software control on September 28.  cc-5 will contain only bug
+fixes made before the actual shipment of 0.8.  The new features added in cc-4
+are as follows:
+
+---------------------------------------
+0.8 release of the Objective-C compiler
+
+The 0.8 Objective-C compiler is derived from the pre-beta version 
+from Stepstone, which has never been installed at NeXT. 
+
+From the users perspective, this release contains 3 additions:
+
+1)	ANSI code will be passed through to the GNU C compiler.
+	Previously, if ANSI C was input to Objective-C, the compiler
+	would transform it (if possible) into its "C" equivalent.
+
+	Reason for change:	GNU C supports ANSI C.
+
+
+2)	Added the "inline" keyword to the compiler. This language 
+	extension is currently implemented by GNU CC, it is not ANSI. 
+	It directs GNU CC to integrate that function's code into the 
+	code for its callers, eliminating the function call overhead.
+	Objective-C will merely pass this through to GNU.
+
+	Reason for change:	GNU C supports it.	
+
+3)	This release will do a significantly better job of notifying
+	the user of problems with the application. This includes 
+	consistency checking between the "interface/implementation",
+	type checking of selector return/argument types, etc.
+
+	Reason for change:	we want to detect as many problems
+				as possible at compiletime. This is one
+				way we can improve the turnaround time
+				of compiling/linking an app using 
+				Objective-C.
+
+
+---------------------------------------
+gdb
+
+- Now ONLY support mach-O file format.  You MUST relink your programs with the
+  new ld (that comes with cc-4) to use gdb-4.  The default file type with cc-4
+  is mach-O format.  They are incompatible with cc-3 linked mach-O files and 
+  files produced by mkshlib-3.  Be sure to relink with cc-4 and to rebuild any
+  shared libraries with mkshlib-4.
+- Better support for multiple threads and Mach ports.  
+- There are two new diag commands used for internal gdb debugging (these should 
+  not be documented in external documentation:
+	  diag ports
+		Produces diagnostics related to mach port usage.
+	  diag threads
+		Produces diagnostics related to mach thread usage.
+- The lazy evaluation of symbol table information for shared libraries is 
+  supported by memory mapping that information which exists at the tail end of
+  the shared library image instead of reading it out of the .o file from which
+  the shared library was created.  This means that the object files used to
+  produce the shared library can be removed, moved or modified after the 
+  library is created without losing any debugging information.
+- Lazy evaluation of individual .o files now checks date stamps to make sure 
+  that they haven't changed since the executable was built against that .o
+  file.
+
+---------------------------------------
+gprof
+- This is now under control of the compiler project (moved from the CMDS 
+  project).  It now supports both a.out and mach-O file executables.  The
+  support for a.out files will probably be dropped in the future.
+
+- Only gprof style profiling is supported (not prof).
+
+- Profiling is not currently supported for executables that are linked against
+  shared libraries.  This will be supported in a future release.
+
+---------------------------------------
+cc
+- New/changed flags for the cc driver for .m files:
+
+	- "-bsd" forces the compiler to define __STRICT_BSD__ in the 
+	   preprocessor.  This will force strict BSD semantics in the future 
+	   when we support full ANSI library and include file.
+	- "-warn" is the default now.  It can defeated by "-noWarn".  This 
+	  causes the compiler to ignore type inconsistancies (not recommended).
+	- "-shMap" is no longer supported.  This information exists in the 
+	  debugger.
+	- "-noInitCast" is no longer supported.
+	- "-Bootstrap" is no longer supported.
+	- "-noTags" is no longer supported.
+	- "-shLib" is a flag which causes special code to be generated for 
+	  shared libraries.  It should only be used when building a shared
+	  library.  Applications should never use this option.
+- Symbol table information for args that ended up in registers was incorrect.
+  This has been fixed.
+- There is a known problem in the optimizer which will cause the compiler to
+  abort with an internal area if this condition has occurred.  In no known cases
+  has the optimizer produced invalid code.  If the compiler aborts when 
+  optimization is enabled you should try plaining the following around the
+  function (or the entire file) which caused the compiler to abort:
+
+	#pragma CC_OPT_OFF
+	func_which_causes_the_compiler_to_abort()
+	{
+	  ...
+	}
+	#pragma CC_OPT_RESTORE
+
+  The CC_OPT_OFF pragma will turn off optimization around the top level 
+  declaration of a function.  The CC_OPT_RESTORE will restore the state of
+  optimization to that specified on the cc command line.
+---------------------------------------
+ld
+- ld now by default creates mach-O executable files instead of a.out ZMAGIC
+  files.
+- ld now unlinks (removes) the output file if there are any mulitpy defined
+  or undefined symbols and -r was not specified.
+- A new flag (-I) exists that printsout the shared library initialization 
+  table for things that use objective C classes (Object, OrdCltn) that are 
+  not defined in the shared lib.
+- More detailed, non-user visible changes are as follows:
+	Fix the GDB symbol root segments so that the debugger can get to all
+	the information in them when they appear in a mach-o file.  Since
+	all binaries that will be debuggable must be relinked this should
+	not be a problem.
+	- Add a field to the symbol root's so the debugger can find the end
+	  of bss (or data in a shared library).  Added to indirect root and
+	  to shlib root sizes of sections.
+	- Add a date field to the symbol root 2 (for lazy evaluation) which
+	  is the last modified time of object file (the .o).  The time returned
+	  by stat(2).  Added to mtime field to indrect root.
+	- Make the common symbol root's size a rounded multiple of sizeof(long)
+	  and not the maximum of it's current size (to the byte) and the size
+	  of a symbol root 1.
+	- For target shared libraries the symbol root 1 information will be
+	  copied into the output after the SHLIB_ROOT's are created.  Also
+	  the fileoffset in the SHLIB_ROOT will be changed to a relitive
+	  offset from the start of the symbol root 1's for that symbol root.
+	  This will keep the symbol table information with the shared library
+	  and not require the .o's to be around.  But will cause the shared
+	  library to be very large (libappkit_s > 4M).
+
+
+---------------------------------------
+otool:
+- The disassembler is now complete.
+---------------------------------------
+libobjc.a
+
+- Message tracing is no longer supported.  This can be done by using
+  the debugger and placing a silent breakpoint on _msg.
+- dynaload(filename) is now supported.  This allows you to dynamically
+  load an unrelocated object file (a .o file output from the assembler)
+  into an already running program.  An example of how to use this new
+  feature can be found in ~steve/dynaFruit (see the dynamic orange!).
+  More documentation will follow.
+- A nasty bug which didn't allow you to return structures greater than
+  8 bytes was discovered.  A fix is being worked on and should be 
+  incorporated soon (before the 0.8 release goes out).
+- It is now buildable as a shared library.

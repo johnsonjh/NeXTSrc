@@ -1,0 +1,35 @@
+	/release/sun_root/bin/make machine=next DOVERS=ALWAYS SRCROOT=/rele\
+	ase/NeXT_root LCLROOT=/os/osdev/NeXT_root DSTROOT=/release/NeXT_roo\
+	t local
+cc -O  -c libmai.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -c libmai.c -I/os/osdev/LIBS/libs1.0b/mach.include -\
+	I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_root/usr/mach/inc\
+	lude -I/os/osdev/NeXT_root/usr/include -I/release/NeXT_root/usr/mac\
+	h/include -I/release/NeXT_root/usr/include -L/os/osdev/NeXT_root/li\
+	b -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/lib -L/release\
+	/NeXT_root/usr/lib
+cc -O  -c libzer.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -c libzer.c -I/os/osdev/LIBS/libs1.0b/mach.include -\
+	I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_root/usr/mach/inc\
+	lude -I/os/osdev/NeXT_root/usr/include -I/release/NeXT_root/usr/mac\
+	h/include -I/release/NeXT_root/usr/include -L/os/osdev/NeXT_root/li\
+	b -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/lib -L/release\
+	/NeXT_root/usr/lib
+ar rv liby.a libmai.o libzer.o
+	/release/sun_root/bin/ar rv liby.a libmai.o libzer.o
+a - libmai.o
+a - libzer.o
+ar: creating liby.a
+ranlib liby.a
+	/release/sun_root/bin/ar rlb libmai.o liby.a __.SYMDEF
+install liby.a /os/osdev/NeXT_root/usr/lib/liby.a
+	/release/sun_root/usr/bin/install -u liby.a /os/osdev/NeXT_root/usr\
+	/lib/liby.a
+cp liby.a /os/osdev/NeXT_root/usr/lib/liby.a
+ranlib /os/osdev/NeXT_root/usr/lib/liby.a
+	/release/sun_root/bin/ar rl /os/osdev/NeXT_root/usr/lib/liby.a __.S\
+	YMDEF

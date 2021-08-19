@@ -1,0 +1,132 @@
+#
+# Copyright (c) 1983,1986 Regents of the University of California.
+# All rights reserved.  The Berkeley software License Agreement
+# specifies the terms and conditions for redistribution.
+#
+#	@(#)disktab	4.11 (Berkeley) 5/31/86
+#
+# Disk geometry and partition layout tables. 
+# Key:
+#	ty	type of disk
+#	ns	#sectors/track -- DEV_BSIZE sectors
+#	nt	#tracks/cylinder
+#	nc	#cylinders/disk
+#	rm	rpm, 3600 default
+#	ss	sector size -- MUST ALWAYS BE DEV_BSIZE (1024) FOR NOW
+#	fp	# DEV_BSIZE blocks in front porch
+#	bp	# DEV_BSIZE blocks in back porch
+#	ng	#alternate groups
+#	gs	#sectors per alt group
+#	ga	#alt sectors per group
+#	ao	sector offset to alternates in group
+#	os	name of boot file
+#	z[0-1]	location of "block 0" boot code in DEV_BSIZE blocks
+#	hn	hostname
+#	ro	read only root partition (e.g. 'a')
+#	rw	read/write partition (e.g. 'b')
+#	p[a-h]	partition base in DEV_BSIZE blocks
+#	s[a-h]	partition sizes in DEV_BSIZE blocks
+#	b[a-h]	partition block sizes in bytes
+#	f[a-h]	partition fragment sizes in bytes
+#	c[a-h]	partition cylinders-per-group
+#	d[a-h]	partition density (bytes-per-inode)
+#	r[a-h]	partition minfree
+#	o[a-h]	partition optimization ("space" or "time")
+#	i[a-h]	partition newfs during init
+#	m[a-h]	partition mount point name
+#	a[a-h]	partition auto-mount on insert
+#	t[a-h]	partition file system type ("4.3BSD", "sound" etc.)
+#
+# Entries may also be used for other compatible drives
+# with the same geometry.
+
+#
+# Internal drives
+#
+omd-1|OMD-1|Canon OMD-1:\
+	:ty=removable_rw_optical:nc#1029:nt#15:ns#16:ss#1024:rm#3000:\
+	:fp#256:bp#256:ng#154:gs#1600:ga#16:ao#784:\
+	:os=odmach:z0#80:z1#168:ro=a:\
+	:pa#0:sa#243936:ba#8192:fa#1024:ca#3:da#4096:ra#5:oa=time:\
+		:ia:ta=4.3BSD:aa:
+#
+# SCSI drives
+#
+# NOTE: The Builddisk application and /usr/etc/disk now are able to
+# automatically determine SCSI disk geometry and capacity for SCSI disks
+# that support the MODE SENSE command.
+#
+# Currently, these programs will only build a single partition, so disks
+# requiring multiple partitions must still be specified in /etc/disktab.
+#
+# If an entry is specified in /etc/disktab it will be used in
+# preference to the default parameters chosen by builddisk and disk.
+#
+# MAXTOR XT-8760S with 1 spare sector/track and 512 byte sectors
+#
+# 'b' partition on XT-8760S is intended for NetBoot client private trees
+# If not supporting NetBoot clients, it may be mounted as desired.
+XT-8760S-512|MAXTOR XT-8760S-512|Maxtor 760MB w/512 byte sectors:\
+	:ty=fixed_rw_scsi:nc#1626:nt#15:ns#26:ss#1024:rm#3600:\
+	:fp#160:bp#0:ng#0:gs#0:ga#0:ao#0:\
+	:os=sdmach:z0#32:z1#96:ro=a:\
+	:pa#0:sa#413980:ba#8192:fa#1024:ca#32:da#4096:ra#10:oa=time:\
+		:ia:ta=4.3BSD:\
+	:pb#413980:sb#220000:bb#8192:fb#1024:cb#32:db#8192:rb#10:ob=time:\
+		:ib:tb=4.3BSD:
+XT-8760S-512-ALL|Maxtor 760MB w/512 byte sectors as 1 partition:\
+	:ty=fixed_rw_scsi:nc#1626:nt#15:ns#26:ss#1024:rm#3600:\
+	:fp#160:bp#0:ng#0:gs#0:ga#0:ao#0:\
+	:os=sdmach:z0#32:z1#96:ro=a:\
+	:pa#0:sa#633980:ba#8192:fa#1024:ca#32:da#4096:ra#10:oa=time:\
+		:ia:ta=4.3BSD:
+# MAXTOR XT-8760S with 4 spare sectors/cyl and 1024 byte sectors
+#
+# 'b' partition on XT-8760S is intended for NetBoot client private trees
+# If not supporting NetBoot clients, it may be mounted as desired.
+XT-8760S-1024|MAXTOR XT-8760S-1024|Maxtor 760MB w/1024 byte sectors:\
+	:ty=fixed_rw_scsi:nc#1626:nt#15:ns#28:ss#1024:rm#3600:\
+	:fp#160:bp#0:ng#0:gs#0:ga#0:ao#0:\
+	:os=sdmach:z0#32:z1#96:ro=a:\
+	:pa#0:sa#456256:ba#8192:fa#1024:ca#32:da#4096:ra#10:oa=time:\
+		:ia:ta=4.3BSD:\
+	:pb#456256:sb#220000:bb#8192:fb#1024:cb#32:db#8192:rb#10:ob=time:\
+		:ib:tb=4.3BSD:
+XT-8760S-1024-ALL|Maxtor 760MB w/1024 byte sectors as 1 partition:\
+	:ty=fixed_rw_scsi:nc#1626:nt#15:ns#28:ss#1024:rm#3600:\
+	:fp#160:bp#0:ng#0:gs#0:ga#0:ao#0:\
+	:os=sdmach:z0#32:z1#96:ro=a:\
+	:pa#0:sa#676256:ba#8192:fa#1024:ca#32:da#4096:ra#10:oa=time:\
+		:ia:ta=4.3BSD:
+# HP 87548S - Two partitions
+97548S-512|HP 97548S|Hewlett Packard 648MB w/512 byte sectors:\
+	:ty=fixed_rw_scsi:nc#1512:nt#16:ns#28:ss#1024:rm#3600:\
+	:fp#160:bp#0:ng#0:gs#0:ga#0:ao#0:\
+	:os=sdmach:z0#32:z1#96:ro=a:\
+	:pa#0:sa#428096:ba#8192:fa#1024:ca#32:da#4096:ra#10:oa=time:\
+		:ia:ta=4.3BSD:\
+	:pb#428096:sb#220000:bb#8192:fb#1024:cb#32:db#8192:rb#10:ob=time:\
+		:ib:tb=4.3BSD:
+# HP 87548S - One partition
+97548S-512-ALL|Hewlett Packard 648MB w/512 byte sectors as 1 partition:\
+	:ty=fixed_rw_scsi:nc#1512:nt#16:ns#28:ss#1024:rm#3600:\
+	:fp#160:bp#0:ng#0:gs#0:ga#0:ao#0:\
+	:os=sdmach:z0#32:z1#96:ro=a:\
+	:pa#0:sa#648096:ba#8192:fa#1024:ca#32:da#4096:ra#10:oa=time:\
+		:ia:ta=4.3BSD:
+# MAXTOR P1-17S 1.4GB (formatted) - Two partitions
+P1-17S-512|MAXTOR P1-17S-512:\
+	:ty=fixed_rw_scsi:nc#1792:nt#19:ns#42:ss#1024:rm#3600:\
+	:fp#160:bp#0:ng#0:gs#0:ga#0:ao#0:\
+	:os=sdmach:z0#32:z1#96:ro=a:\
+	:pa#0:sa#456256:ba#8192:fa#1024:ca#32:da#4096:ra#10:oa=time:\
+		:ia:ta=4.3BSD:\
+	:pb#456256:sb#973985:bb#8192:fb#1024:cb#32:db#4096:rb#10:ob=time:\
+		:ib:tb=4.3BSD:
+# MAXTOR P1-17S 1.4GB (formatted) - One partition
+P1-17S-512-ALL|MAXTOR P1-17S-512-ALL:\
+	:ty=fixed_rw_scsi:nc#1792:nt#19:ns#42:ss#1024:rm#3600:\
+	:fp#160:bp#0:ng#0:gs#0:ga#0:ao#0:\
+	:os=sdmach:z0#32:z1#96:ro=a:\
+	:pa#0:sa#1430241:ba#8192:fa#1024:ca#32:da#4096:ra#10:oa=time:\
+		:ia:ta=4.3BSD:

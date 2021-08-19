@@ -1,0 +1,76 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    osdev:1.2; strict;
+comment  @@;
+
+
+1.2
+date     89.07.09.17.30.28;  author osdev;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.07.09.17.27.38;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+1.2
+log
+@added /NextAdmin
+@
+text
+@# NeXT File System build procedure
+# Build Optical disk from booted file system
+# Release 0.9
+#
+# Build the read-write partition (a)
+# First fill in the root directory
+symlink	a $BOOTFILE				/mach
+copy	a /.places				/.places
+chmod	a 666					/.places
+copy	a /.hidden				/.hidden
+copy	a /.login				/.login
+copy	a /.cshrc				/.cshrc
+copy	a /.profile				/.profile
+load	a /.NeXT				/.NeXT
+# Put kernels on the disk
+copy	a /odmach				/odmach
+chmod	a 555					/odmach
+link	a /odmach				/sdmach
+symlink	a mach					/vmunix
+# Build the "private" symlinks
+symlink	a private/etc				/etc
+symlink	a private/dev				/dev
+symlink	a private/tmp				/tmp
+symlink	a private/Net				/Net
+# Build the NeXT directories
+load	a /usr/template/user			/me
+rchown	a me					/me
+load	a /NextApps				/NextApps
+load	a /NextDeveloper			/NextDeveloper
+load	a /NextAdmin				/NextAdmin
+load	a /NextLibrary				/NextLibrary
+# Build the Unix file systems
+load	a /bin					/bin
+load	a /lib					/lib
+load	a /usr					/usr
+# Build the private partition
+exec	a /usr/etc				./newclient -p od /mnta/usr/template/client /mnta/private
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d30 1
+@

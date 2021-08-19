@@ -1,0 +1,267 @@
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root -k
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/env_mgr.h FROMFILE=servers/env_mgr.h )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/env_mgr.h FROMFILE=servers/env_mgr.h
+defsname=servers/env_mgr; basedefsname=`basename $defsname`; mig -q $defsname.defs -I.; if [ "$basedefsname" != "$defsname" ]; then  mv `echo $basedefsname`.h `echo $defsname`.h;  fi;  mv `echo $basedefsname`User.c `echo $defsname`_user.c;  mv `echo $basedefsname`Server.c `echo $defsname`_server.c;
+	/usr/bin/mig -q servers/env_mgr.defs -I.
+cp servers/env_mgr.h /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/env_mgr.h
+cp: /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/env_mgr.h: Permission denied
+*** Exit 1
+`interface' not remade because of errors
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/km.h FROMFILE=servers/km.h )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/km.h FROMFILE=servers/km.h
+defsname=servers/km; basedefsname=`basename $defsname`; mig -q $defsname.defs -I.; if [ "$basedefsname" != "$defsname" ]; then  mv `echo $basedefsname`.h `echo $defsname`.h;  fi;  mv `echo $basedefsname`User.c `echo $defsname`_user.c;  mv `echo $basedefsname`Server.c `echo $defsname`_server.c;
+	/usr/bin/mig -q servers/km.defs -I.
+cp servers/km.h /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/km.h
+cp: /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/km.h: Permission denied
+*** Exit 1
+`interface' not remade because of errors
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/logstat.h FROMFILE=servers/logstat.h )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/logstat.h FROMFILE=servers/logstat.h
+defsname=servers/logstat; basedefsname=`basename $defsname`; mig -q $defsname.defs -I.; if [ "$basedefsname" != "$defsname" ]; then  mv `echo $basedefsname`.h `echo $defsname`.h;  fi;  mv `echo $basedefsname`User.c `echo $defsname`_user.c;  mv `echo $basedefsname`Server.c `echo $defsname`_server.c;
+	/usr/bin/mig -q servers/logstat.defs -I.
+cp servers/logstat.h /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/logstat.h
+cp: /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/logstat.h: Permission denied
+*** Exit 1
+`interface' not remade because of errors
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/netname.h FROMFILE=servers/netname.h )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/netname.h FROMFILE=servers/netname.h
+defsname=servers/netname; basedefsname=`basename $defsname`; mig -q $defsname.defs -I.; if [ "$basedefsname" != "$defsname" ]; then  mv `echo $basedefsname`.h `echo $defsname`.h;  fi;  mv `echo $basedefsname`User.c `echo $defsname`_user.c;  mv `echo $basedefsname`Server.c `echo $defsname`_server.c;
+	/usr/bin/mig -q servers/netname.defs -I.
+cp servers/netname.h /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/netname.h
+cp: /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/netname.h: Permission denied
+*** Exit 1
+`interface' not remade because of errors
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/service.h FROMFILE=servers/service.h )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/service.h FROMFILE=servers/service.h
+defsname=servers/service; basedefsname=`basename $defsname`; mig -q $defsname.defs -I.; if [ "$basedefsname" != "$defsname" ]; then  mv `echo $basedefsname`.h `echo $defsname`.h;  fi;  mv `echo $basedefsname`User.c `echo $defsname`_user.c;  mv `echo $basedefsname`Server.c `echo $defsname`_server.c;
+	/usr/bin/mig -q servers/service.defs -I.
+cp servers/service.h /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/service.h
+cp: /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/service.h: Permission denied
+*** Exit 1
+`interface' not remade because of errors
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/exc_user.c FROMFILE=exc_user.c )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/exc_user.c FROMFILE=exc_user.c
+defsname=exc; basedefsname=`basename $defsname`; mig -q $defsname.defs -I.; if [ "$basedefsname" != "$defsname" ]; then  mv `echo $basedefsname`.h `echo $defsname`.h;  fi;  mv `echo $basedefsname`User.c `echo $defsname`_user.c;  mv `echo $basedefsname`Server.c `echo $defsname`_server.c;
+	/usr/bin/mig -q exc.defs -I.
+cp exc_user.c /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/exc_user.c
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/pager_user.c FROMFILE=pager_user.c )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/pager_user.c FROMFILE=pager_user.c
+defsname=pager; basedefsname=`basename $defsname`; mig -q $defsname.defs -I.; if [ "$basedefsname" != "$defsname" ]; then  mv `echo $basedefsname`.h `echo $defsname`.h;  fi;  mv `echo $basedefsname`User.c `echo $defsname`_user.c;  mv `echo $basedefsname`Server.c `echo $defsname`_server.c;
+	/usr/bin/mig -q pager.defs -I.
+cp pager_user.c /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/pager_user.c
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/mach_user.c FROMFILE=mach_user.c )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/mach_user.c FROMFILE=mach_user.c
+defsname=mach; basedefsname=`basename $defsname`; mig -q $defsname.defs -I.; if [ "$basedefsname" != "$defsname" ]; then  mv `echo $basedefsname`.h `echo $defsname`.h;  fi;  mv `echo $basedefsname`User.c `echo $defsname`_user.c;  mv `echo $basedefsname`Server.c `echo $defsname`_server.c;
+	/usr/bin/mig -q mach.defs -I.
+cp mach_user.c /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/mach_user.c
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/env_mgr_user.c FROMFILE=servers/env_mgr_user.c )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/env_mgr_user.c FROMFILE=servers/env_mgr_user.c
+cp servers/env_mgr_user.c /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/env_mgr_user.c
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/netname_user.c FROMFILE=servers/netname_user.c )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/netname_user.c FROMFILE=servers/netname_user.c
+cp servers/netname_user.c /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/netname_user.c
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/km_user.c FROMFILE=servers/km_user.c )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/km_user.c FROMFILE=servers/km_user.c
+cp servers/km_user.c /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/km_user.c
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/logstat_user.c FROMFILE=servers/logstat_user.c )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/logstat_user.c FROMFILE=servers/logstat_user.c
+cp servers/logstat_user.c /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/logstat_user.c
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/service_user.c FROMFILE=servers/service_user.c )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/service_user.c FROMFILE=servers/service_user.c
+cp servers/service_user.c /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/service_user.c
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/exc_server.c FROMFILE=exc_server.c )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/exc_server.c FROMFILE=exc_server.c
+cp exc_server.c /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/exc_server.c
+(CWD=`pwd`;cd ../../include;  make interface TOFILE=$CWD/pager_server.c FROMFILE=pager_server.c )
+	/bin/make machine=next DOVERS=ALWAYS LCLROOT=/os/osdev/NeXT_root DS\
+	TROOT=/release/NeXT_root interface TOFILE=/os/osdev/MACHLIBS/machli\
+	bs-3/usr/lib/libmach/pager_server.c FROMFILE=pager_server.c
+cp pager_server.c /os/osdev/MACHLIBS/machlibs-3/usr/lib/libmach/pager_server.c
+/lib/cpp -DPROF mach_traps.s > mach_traps.as
+as -o profiled/mach_traps.o mach_traps.as
+	/bin/as -o profiled/mach_traps.o mach_traps.as
+rm -f mach_traps.as
+/lib/cpp mach_traps.s > mach_traps.as
+as -o mach_traps.o mach_traps.as
+	/bin/as -o mach_traps.o mach_traps.as
+rm -f mach_traps.as
+md -u Makedep -d mach_traps.d
+	/usr/bin/md -u Makedep -d mach_traps.d
+md: file = "mach_traps.d" open: No such file or directory
+/lib/cpp -DPROF fork.next.s > fork.as
+as -o profiled/fork.o fork.as
+	/bin/as -o profiled/fork.o fork.as
+rm -f fork.as
+/lib/cpp fork.next.s > fork.as
+as -o fork.o fork.as
+	/bin/as -o fork.o fork.as
+rm -f fork.as
+md -u Makedep -d fork.next.d
+	/usr/bin/md -u Makedep -d fork.next.d
+md: file = "fork.next.d" open: No such file or directory
+cc -p -MD -O -c  mach_error.c -o profiled/mach_error.o
+	/bin/cc -p -MD -O -c mach_error.c -o profiled/mach_error.o
+cc -MD -O -c  mach_error.c -o mach_error.o
+	/bin/cc -MD -O -c mach_error.c -o mach_error.o
+md -u Makedep -d mach_error.d
+	/usr/bin/md -u Makedep -d mach_error.d
+cc -p -MD -O -c  mach_init.c -o profiled/mach_init.o
+	/bin/cc -p -MD -O -c mach_init.c -o profiled/mach_init.o
+cc -MD -O -c  mach_init.c -o mach_init.o
+	/bin/cc -MD -O -c mach_init.c -o mach_init.o
+md -u Makedep -d mach_init.d
+	/usr/bin/md -u Makedep -d mach_init.d
+cc -p -MD -O -c  mach_user.c -o profiled/mach_user.o
+	/bin/cc -p -MD -O -c mach_user.c -o profiled/mach_user.o
+cc -MD -O -c  mach_user.c -o mach_user.o
+	/bin/cc -MD -O -c mach_user.c -o mach_user.o
+md -u Makedep -d mach_user.d
+	/usr/bin/md -u Makedep -d mach_user.d
+cc -p -MD -O -c  mach_exception.c -o profiled/mach_exception.o
+	/bin/cc -p -MD -O -c mach_exception.c -o profiled/mach_exception.o
+cc -MD -O -c  mach_exception.c -o mach_exception.o
+	/bin/cc -MD -O -c mach_exception.c -o mach_exception.o
+md -u Makedep -d mach_exception.d
+	/usr/bin/md -u Makedep -d mach_exception.d
+cc -p -MD -O -c  mig_support.c -o profiled/mig_support.o
+	/bin/cc -p -MD -O -c mig_support.c -o profiled/mig_support.o
+cc -MD -O -c  mig_support.c -o mig_support.o
+	/bin/cc -MD -O -c mig_support.c -o mig_support.o
+md -u Makedep -d mig_support.d
+	/usr/bin/md -u Makedep -d mig_support.d
+cc -p -MD -O -c  msg_receive.c -o profiled/msg_receive.o
+	/bin/cc -p -MD -O -c msg_receive.c -o profiled/msg_receive.o
+cc -MD -O -c  msg_receive.c -o msg_receive.o
+	/bin/cc -MD -O -c msg_receive.c -o msg_receive.o
+md -u Makedep -d msg_receive.d
+	/usr/bin/md -u Makedep -d msg_receive.d
+cc -p -A -MD -c sbrk.c -o profiled/sbrk.o
+	/bin/cc -p -A -MD -c sbrk.c -o profiled/sbrk.o
+cc -A -MD -c sbrk.c -o sbrk.o
+	/bin/cc -A -MD -c sbrk.c -o sbrk.o
+md -u Makedep -d sbrk.d
+	/usr/bin/md -u Makedep -d sbrk.d
+cc -p -MD -O -c  slot_name.c -o profiled/slot_name.o
+	/bin/cc -p -MD -O -c slot_name.c -o profiled/slot_name.o
+cc -MD -O -c  slot_name.c -o slot_name.o
+	/bin/cc -MD -O -c slot_name.c -o slot_name.o
+md -u Makedep -d slot_name.d
+	/usr/bin/md -u Makedep -d slot_name.d
+cc -p -MD -O -c  ts_convert.c -o profiled/ts_convert.o
+	/bin/cc -p -MD -O -c ts_convert.c -o profiled/ts_convert.o
+cc -MD -O -c  ts_convert.c -o ts_convert.o
+	/bin/cc -MD -O -c ts_convert.c -o ts_convert.o
+md -u Makedep -d ts_convert.d
+	/usr/bin/md -u Makedep -d ts_convert.d
+cc -p -MD -O -c  Ovfork.c -o profiled/Ovfork.o
+	/bin/cc -p -MD -O -c Ovfork.c -o profiled/Ovfork.o
+cc -MD -O -c  Ovfork.c -o Ovfork.o
+	/bin/cc -MD -O -c Ovfork.c -o Ovfork.o
+md -u Makedep -d Ovfork.d
+	/usr/bin/md -u Makedep -d Ovfork.d
+cc -p -MD -O -c  exc_user.c -o profiled/exc_user.o
+	/bin/cc -p -MD -O -c exc_user.c -o profiled/exc_user.o
+cc -MD -O -c  exc_user.c -o exc_user.o
+	/bin/cc -MD -O -c exc_user.c -o exc_user.o
+md -u Makedep -d exc_user.d
+	/usr/bin/md -u Makedep -d exc_user.d
+cc -p -MD -O -c  pager_user.c -o profiled/pager_user.o
+	/bin/cc -p -MD -O -c pager_user.c -o profiled/pager_user.o
+cc -MD -O -c  pager_user.c -o pager_user.o
+	/bin/cc -MD -O -c pager_user.c -o pager_user.o
+md -u Makedep -d pager_user.d
+	/usr/bin/md -u Makedep -d pager_user.d
+cc -p -MD -O -c  exc_server.c -o profiled/exc_server.o
+	/bin/cc -p -MD -O -c exc_server.c -o profiled/exc_server.o
+cc -MD -O -c  exc_server.c -o exc_server.o
+	/bin/cc -MD -O -c exc_server.c -o exc_server.o
+md -u Makedep -d exc_server.d
+	/usr/bin/md -u Makedep -d exc_server.d
+cc -p -MD -O -c  pager_server.c -o profiled/pager_server.o
+	/bin/cc -p -MD -O -c pager_server.c -o profiled/pager_server.o
+cc -MD -O -c  pager_server.c -o pager_server.o
+	/bin/cc -MD -O -c pager_server.c -o pager_server.o
+md -u Makedep -d pager_server.d
+	/usr/bin/md -u Makedep -d pager_server.d
+cc -p -MD -O -c  env_mgr_user.c -o profiled/env_mgr_user.o
+	/bin/cc -p -MD -O -c env_mgr_user.c -o profiled/env_mgr_user.o
+cc -MD -O -c  env_mgr_user.c -o env_mgr_user.o
+	/bin/cc -MD -O -c env_mgr_user.c -o env_mgr_user.o
+md -u Makedep -d env_mgr_user.d
+	/usr/bin/md -u Makedep -d env_mgr_user.d
+cc -p -MD -O -c  netname_user.c -o profiled/netname_user.o
+	/bin/cc -p -MD -O -c netname_user.c -o profiled/netname_user.o
+cc -MD -O -c  netname_user.c -o netname_user.o
+	/bin/cc -MD -O -c netname_user.c -o netname_user.o
+md -u Makedep -d netname_user.d
+	/usr/bin/md -u Makedep -d netname_user.d
+cc -p -MD -O -c  km_user.c -o profiled/km_user.o
+	/bin/cc -p -MD -O -c km_user.c -o profiled/km_user.o
+cc -MD -O -c  km_user.c -o km_user.o
+	/bin/cc -MD -O -c km_user.c -o km_user.o
+md -u Makedep -d km_user.d
+	/usr/bin/md -u Makedep -d km_user.d
+cc -p -MD -O -c  logstat_user.c -o profiled/logstat_user.o
+	/bin/cc -p -MD -O -c logstat_user.c -o profiled/logstat_user.o
+cc -MD -O -c  logstat_user.c -o logstat_user.o
+	/bin/cc -MD -O -c logstat_user.c -o logstat_user.o
+md -u Makedep -d logstat_user.d
+	/usr/bin/md -u Makedep -d logstat_user.d
+cc -p -MD -O -c  service_user.c -o profiled/service_user.o
+	/bin/cc -p -MD -O -c service_user.c -o profiled/service_user.o
+cc -MD -O -c  service_user.c -o service_user.o
+	/bin/cc -MD -O -c service_user.c -o service_user.o
+md -u Makedep -d service_user.d
+	/usr/bin/md -u Makedep -d service_user.d
+if [ -f libmach.a.NEW ] ; then ar ru libmach.a.NEW mach_traps.o fork.o mach_error.o mach_init.o mach_user.o  mach_exception.o  mig_support.o msg_receive.o sbrk.o slot_name.o ts_convert.o  malloc.o  Ovfork.o exc_user.o pager_user.o mach_user.o exc_server.o pager_server.o env_mgr_user.o netname_user.o km_user.o logstat_user.o service_user.o; else ar q libmach.a.NEW mach_traps.o fork.o mach_error.o mach_init.o mach_user.o  mach_exception.o  mig_support.o msg_receive.o sbrk.o slot_name.o ts_convert.o  malloc.o  Ovfork.o exc_user.o pager_user.o mach_user.o exc_server.o pager_server.o env_mgr_user.o netname_user.o km_user.o logstat_user.o service_user.o; fi
+	/bin/ar q libmach.a.NEW mach_traps.o fork.o mach_error.o mach_init.\
+	o mach_user.o mach_exception.o mig_support.o msg_receive.o sbrk.o s\
+	lot_name.o ts_convert.o malloc.o Ovfork.o exc_user.o pager_user.o m\
+	ach_user.o exc_server.o pager_server.o env_mgr_user.o netname_user.\
+	o km_user.o logstat_user.o service_user.o
+ar: creating libmach.a.NEW
+ar: filename mach_exception.o truncated to mach_exception.
+ranlib libmach.a.NEW
+	/bin/ar rlb mach_traps.o libmach.a.NEW __.SYMDEF
+if [ -f profiled/libmach_p.a.NEW ] ; then  ar ru libmach_p.a.NEW  `for i in mach_traps.o fork.o mach_error.o mach_init.o mach_user.o  mach_exception.o  mig_support.o msg_receive.o sbrk.o slot_name.o ts_convert.o  malloc.o  Ovfork.o exc_user.o pager_user.o mach_user.o exc_server.o pager_server.o env_mgr_user.o netname_user.o km_user.o logstat_user.o service_user.o ; do echo profiled/$i; done`;  else ar q libmach_p.a.NEW  `for i in mach_traps.o fork.o mach_error.o mach_init.o mach_user.o  mach_exception.o  mig_support.o msg_receive.o sbrk.o slot_name.o ts_convert.o  malloc.o  Ovfork.o exc_user.o pager_user.o mach_user.o exc_server.o pager_server.o env_mgr_user.o netname_user.o km_user.o logstat_user.o service_user.o ; do echo profiled/$i; done`;  fi
+	/bin/ar q libmach_p.a.NEW profiled/mach_traps.o profiled/fork.o pro\
+	filed/mach_error.o profiled/mach_init.o profiled/mach_user.o profil\
+	ed/mach_exception.o profiled/mig_support.o profiled/msg_receive.o p\
+	rofiled/sbrk.o profiled/slot_name.o profiled/ts_convert.o profiled/\
+	malloc.o profiled/Ovfork.o profiled/exc_user.o profiled/pager_user.\
+	o profiled/mach_user.o profiled/exc_server.o profiled/pager_server.\
+	o profiled/env_mgr_user.o profiled/netname_user.o profiled/km_user.\
+	o profiled/logstat_user.o profiled/service_user.o
+ar: creating libmach_p.a.NEW
+ar: filename mach_exception.o truncated to mach_exception.
+ranlib libmach_p.a.NEW
+	/bin/ar rlb mach_traps.o libmach_p.a.NEW __.SYMDEF

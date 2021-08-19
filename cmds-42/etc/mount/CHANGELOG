@@ -1,0 +1,16 @@
+1-19-89 btaylor@NeXT.COM
+	Changed occurrences of MNTTAB to NULL to force setmntent() to look in 
+	"the standard place" instead of hard-coding a filename.
+
+2-23-89 btaylor@NeXT.COM
+	Added support for "net" mounts. These mounts have characteristics
+	similar to the automounter: directories are created as needed,
+	symlinks are created if the host is local.
+
+2-24-89 btaylor@NeXT.COM
+	Fixed bug in above. "net" option should be removed once the
+	path has been expanded (or you'll double expand it on 
+	backgrounded mounts).
+
+
+

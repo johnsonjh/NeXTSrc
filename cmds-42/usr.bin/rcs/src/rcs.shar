@@ -1,0 +1,399 @@
+#! /bin/sh
+# This is a shell archive, meaning:
+# 1. Remove everything above the #! /bin/sh line.
+# 2. Save the resulting text in a file.
+# 3. Execute the file with /bin/sh (not csh) to create the files:
+#	Makefile.NeXT
+#	rcsbase.h.patch
+#	rcslex.c.patch
+# This archive created: Mon Jun 25 23:28:13 1990
+export PATH; PATH=/bin:$PATH
+if test -f 'Makefile.NeXT'
+then
+	echo shar: will not over-write existing file "'Makefile.NeXT'"
+else
+cat << \SHAR_EOF > 'Makefile.NeXT'
+PRODUCTS= ci co ident merge rcs rcsdiff rcsmerge rlog sccstorcs rcssnoop
+BINDIR=	$(DSTROOT)/usr/bin
+LIBDIR=	$(DSTROOT)/usr/lib
+LOGDIR= $(DSTROOT)/usr/adm
+DSTDIRS= $(BINDIR) $(LIBDIR) $(LOGDIR)
+
+#
+# Where to find exec'ed odds and ends -- make sure this agrees
+# with where these are actually installed
+#
+MERGE= /usr/lib/merge
+CO= /usr/bin/co
+RCSSNOOP= /usr/lib/rcssnoop
+DIFF= /bin/diff
+DIFF3= /usr/lib/diff3
+
+#
+# RCS specific options
+#
+#SNOOPING= -DSNOOPING
+OPTIONS= -DCOMPAT2 -DV4_2BSD $(SNOOPING)
+SNOOPFILE= /usr/adm/rcs.log
+USER=daemon
+
+PATHS= -DDIFF='"$(DIFF)"' -DMERGE='"$(MERGE)"' -DCO='"$(CO)"' \
+	-DSNOOPFILE='"$(SNOOPFILE)"' -DSNOOP='"$(RCSSNOOP)"'
+CDEFS=	-bsd $(OPTIONS) $(PATHS)
+CFLAGS=	-O -g -fwritable-strings $(CDEFS)
+IFLAGS= -s
+IFLAGS_MERGE= -xs -m 755
+IFLAGS_RCSSNOOP= -s -m 4755 -o $(USER)
+LIBS= -lsys_s
+
+HFILES= rcsbase.h time.h
+CFILES= ci.c co.c ident.c maketime.c partime.c rcs.c rcsdiff.c \
+	rcsedit.c rcsfcmp.c rcsfnms.c rcsgen.c rcskeep.c rcslex.c \
+	rcsmerge.c rcsrev.c rcssyn.c rcsutil.c rlog.c sccstorcs.c \
+	rcssnoop.c
+SFILES=
+YFILES=
+
+DERIVED=
+GARBAGE= *_vers.c
+
+SRCS= $(HFILES) $(YFILES) $(CFILES) $(SFILES)
+OBJS= $(CFILES:.c=.o) $(YFILES:.y=.o) $(SFILES:.s=.o)
+
+all:	$(PRODUCTS)
+
+install: DSTROOT $(DSTDIRS) all
+	install ${IFLAGS} ci.NEW ${BINDIR}/ci
+	install ${IFLAGS} co.NEW ${BINDIR}/co
+	install ${IFLAGS} ident.NEW ${BINDIR}/ident
+	install ${IFLAGS_MERGE} merge.NEW ${LIBDIR}/merge
+	install ${IFLAGS} rcs.NEW ${BINDIR}/rcs
+	install ${IFLAGS} rcsdiff.NEW ${BINDIR}/rcsdiff
+	install ${IFLAGS} rcsmerge.NEW ${BINDIR}/rcsmerge
+	install ${IFLAGS} rcsclean.NEW ${BINDIR}/rcsclean
+	install ${IFLAGS} rlog.NEW ${BINDIR}/rlog
+	install ${IFLAGS} sccstorcs.NEW ${BINDIR}/sccstorcs
+	if [ -n "$(SNOOPING)" ]; \
+	then \
+		install ${IFLAGS_RCSSNOOP} rcssnoop.NEW ${LIBDIR}/rcssnoop; \
+		touch $(LOGDIR)/rcs.log; \
+		chmod 644 $(LOGDIR)/rcs.log; \
+		chown $(USER) $(LOGDIR)/rcs.log; \
+	fi
+
+#
+# Building ci
+#
+CI_OBJS= ci.o rcslex.o rcssyn.o rcsgen.o rcsedit.o rcsrev.o rcsutil.o	\
+	rcsfnms.o rcskeep.o rcsfcmp.o partime.o maketime.o rcskeys.c
+
+ci.NEW:	${CI_OBJS} ci_vers.o
+	$(CC) $(CFLAGS) -o $@ ${CI_OBJS} ci_vers.o ${LIBS}
+
+ci_vers.c: ${DOVERS} ${CI_OBJS}
+	@rm -f $@
+	vers_string -c ci > $@
+
+#
+# Building co
+#
+CO_OBJS= co.o rcslex.o rcssyn.o rcsgen.o rcsedit.o rcsrev.o \
+	rcsutil.o rcsfnms.o partime.o maketime.o rcskeys.o
+
+co.NEW:	${CO_OBJS} co_vers.o
+	$(CC) $(CFLAGS) -o $@ ${CO_OBJS} co_vers.o ${LIBS}
+
+co_vers.c: ${DOVERS} ${CO_OBJS}
+	@rm -f $@
+	vers_string -c co > $@
+
+#
+# Building ident
+#
+IDENT_OBJS= ident.o rcskeys.o
+
+ident.NEW:	${IDENT_OBJS} ident_vers.o
+	$(CC) $(CFLAGS) -o $@ ${IDENT_OBJS} ident_vers.o ${LIBS}
+
+ident_vers.c: ${DOVERS} ${IDENT_OBJS}
+	@rm -f $@
+	vers_string -c ident > $@
+
+#
+# Building merge
+#
+merge.NEW:	merge.sh ${DOVERS}
+	sed -e "s/#PROGRAM.*/#`vers_string merge`/" < merge.sh \
+	    | sed -e "s%DIFF3PATH%$(DIFF3)%" > merge.NEW
+
+#
+# Building rcs
+#
+RCS_OBJS= rcs.o rcslex.o rcssyn.o rcsrev.o rcsutil.o rcsgen.o \
+	rcsedit.o rcsfnms.o rcskeys.o
+
+rcs.NEW:	${RCS_OBJS} rcs_vers.o
+	$(CC) $(CFLAGS) -o $@ ${RCS_OBJS} rcs_vers.o ${LIBS}
+
+rcs_vers.c: ${DOVERS} ${RCS_OBJS}
+	@rm -f $@
+	vers_string -c rcs > $@
+
+#
+# Building rcsdiff
+#
+RCSDIFF_OBJS= rcsdiff.o rcsutil.o rcsfnms.o rcsrev.o rcssyn.o rcslex.o
+
+rcsdiff.NEW:	${RCSDIFF_OBJS} rcsdiff_vers.o
+	$(CC) $(CFLAGS) -o $@ ${RCSDIFF_OBJS} rcsdiff_vers.o ${LIBS}
+
+rcsdiff_vers.c: ${DOVERS} ${RCSDIFF_OBJS}
+	@rm -f $@
+	vers_string -c rcsdiff > $@
+
+#
+# Building rcsmerge
+#
+RCSMERGE_OBJS= rcsmerge.o rcsutil.o rcsfnms.o rcsrev.o rcssyn.o rcslex.o
+
+rcsmerge.NEW:	${RCSMERGE_OBJS} rcsmerge_vers.o
+	$(CC) $(CFLAGS) -o $@ ${RCSMERGE_OBJS} rcsmerge_vers.o ${LIBS}
+
+rcsmerge_vers.c: ${DOVERS} ${RCSMERGE_OBJS}
+	@rm -f $@
+	vers_string -c rcsmerge > $@
+
+#
+# Building rcsclean
+#
+RCSCLEAN_OBJS= rcsclean.o rcslex.o rcsfnms.o rcsrev.o rcssyn.o rcsutil.o
+
+rcsclean.NEW:	${RCSCLEAN_OBJS} rcsclean_vers.o
+	$(CC) $(CFLAGS) -o $@ ${RCSCLEAN_OBJS} rcsclean_vers.o ${LIBS}
+
+rcsclean_vers.c: ${DOVERS} ${RCSCLEAN_OBJS}
+	@rm -f $@
+	vers_string -c rcsmerge > $@
+
+#
+# Building rlog
+#
+RLOG_OBJS= rlog.o rcslex.o rcssyn.o rcsrev.o rcsutil.o partime.o \
+	maketime.o rcsfnms.o
+
+rlog.NEW:	${RLOG_OBJS} rlog_vers.o
+	$(CC) $(CFLAGS) -o $@ ${RLOG_OBJS} rlog_vers.o ${LIBS}
+
+rlog_vers.c: ${DOVERS} ${RLOG_OBJS}
+	@rm -f $@
+	vers_string -c rlog > $@
+
+#
+# Building sccstorcs
+#
+SCCSTORCS_OBJS= sccstorcs.o
+
+sccstorcs.NEW:	${SCCSTORCS_OBJS} sccstorcs_vers.o
+	$(CC) $(CFLAGS) -o $@ ${SCCSTORCS_OBJS} sccstorcs_vers.o ${LIBS}
+
+sccstorcs_vers.c: ${DOVERS} ${SCCSTORCS_OBJS}
+	@rm -f $@
+	vers_string -c sccstorcs > $@
+
+#
+# Building rcssnoop
+#
+RCSSNOOP_OBJS= rcssnoop.o
+
+rcssnoop.NEW:	${RCSSNOOP_OBJS} rcssnoop_vers.o
+	$(CC) $(CFLAGS) -o $@ ${RCSSNOOP_OBJS} rcssnoop_vers.o ${LIBS}
+
+rcssnoop_vers.c: ${DOVERS} ${RCSSNOOP_OBJS}
+	@rm -f $@
+	vers_string -c rcssnoop > $@
+
+#
+# Building pairtest
+#
+PAIRTEST_OBJS= rcsfnmsTST.o rcssyn.o rcslex.o
+
+pairtest:	${PAIRTEST_OBJS} pairtest_vers.o
+	$(CC) $(CFLAGS) -o $@ ${PAIRTEST_OBJS} pairtest_vers.o ${LIBS}
+
+pairtest_vers.c: ${DOVERS} ${PAIRTEST_OBJS}
+	@rm -f $@
+	vers_string -c pairtest > $@
+
+rcsfnmsTST.o:	rcsfnms.c
+	$(CC) -c -DPAIRTEST rcsfnms.c -o $@
+
+#
+# Building revtest
+#
+REVTEST_OBJS= rcsrevTST.o rcssyn.o rcslex.o
+
+revtest:	${REVTEST_OBJS} revtest_vers.o
+	$(CC) $(CFLAGS) ${REVTEST_OBJS} revtest_vers.o ${LIBS}
+	echo "a.out ../TEST/rev.test.v <../TEST/rev.test.in >&! tmp" | csh
+	diff tmp ../TEST/rev.test.out
+	rm tmp
+	mv a.out revtest
+
+revtest_vers.c: ${DOVERS} ${REVTEST_OBJS}
+	@rm -f $@
+	vers_string -c revtest > $@
+
+rcsrevTST.o:	rcsrev.c
+	$(CC) -c -DREVTEST rcsrev.c -o $@
+
+#
+# Building syntest
+#
+SYNTEST_OBJS= rcslex.o rcssynTST.o rcsrev.o
+
+syntest:	${SYNTEST_OBJS} syntest_vers.o
+	$(CC) $(CFLAGS) ${SYNTEST_OBJS} syntest_vers.o ${LIBS}
+	echo "a.out ../TEST/syn.test >&! tmp" | csh
+	diff tmp ../TEST/syn.result
+	rm tmp
+	mv a.out syntest
+
+syntest_vers.c: ${DOVERS} ${SYNTEST_OBJS}
+	@rm -f $@
+	vers_string -c syntest > $@
+
+rcssynTST.o:	rcssyn.c
+	$(CC) -c -DSYNDB -DCOMPAT2 -DSYNTEST rcssyn.c -o $@
+
+#
+# Building lextest
+#
+LEXTEST_OBJS= rcslexTST.o
+
+lextest:	${LEXTEST_OBJS} lextest_vers.o
+	$(CC) $(CFLAGS) -o $@ ${LEXTEST_OBJS} lextest_vers.o ${LIBS}
+	echo "a.out ../TEST/lex.test >&! tmp" | csh
+	diff tmp ../TEST/lex.result
+	rm tmp
+	mv a.out lextest
+
+lextest_vers.c: ${DOVERS} ${LEXTEST_OBJS}
+	@rm -f $@
+	vers_string -c lextest > $@
+
+rcslexTST.o:	rcslex.c
+	$(CC) -c -DLEXDB rcslex.c -o $@
+
+
+#
+# Standard targets
+#
+$(PRODUCTS):	Makedep $$@.NEW
+
+clean:	ALWAYS
+	-rm -f *.o *.NEW TAGS tags vers.c Makedep $(PRODUCTS) $(DERIVED) \
+		$(GARBAGE)
+
+DSTROOT:
+	@if [ -n "$($@)" ]; \
+	then \
+		exit 0; \
+	else \
+		echo Must define $@; \
+		exit 1; \
+	fi
+
+$(DSTDIRS):
+	mkdirs $@
+
+depend Makedep: $(DERIVED)
+	rm -f Makedep
+	$(CC) -M $(CDEFS) $(CFILES) $(SFILES) $(DERIVED) | \
+	    awk '{ if ($$1 != prev) { if (rec != "") print rec; \
+		rec = $$0; prev = $$1; } \
+		else { if (length(rec $$2) > 78) { print rec; rec = $$0; } \
+		else rec = rec " " $$2 } } \
+		END { print rec }' >Makedep
+
+tags:	ALWAYS
+	etags $(SRCS)
+	ctags $(SRCS)
+
+ALWAYS:
+
+-include Makedep
+
+SHAR_EOF
+fi # end of overwriting check
+if test -f 'rcsbase.h.patch'
+then
+	echo shar: will not over-write existing file "'rcsbase.h.patch'"
+else
+cat << \SHAR_EOF > 'rcsbase.h.patch'
+*** rcsbase.h	Mon Jun 25 23:09:25 1990
+--- rcsbase.h.orig	Thu Dec  7 10:31:41 1989
+***************
+*** 348,361 ****
+  #define VOID
+  #endif
+  
+- #ifdef	NeXT
+- #ifdef	__STRICT_BSD__
+- #define SIGNAL_TYPE int
+- #else
+- #define SIGNAL_TYPE void
+- #endif	__STRICT_BSD__
+- #endif	NeXT
+- 
+  /* common routines */
+  extern char *talloc();
+  extern int serror();
+--- 348,353 ----
+SHAR_EOF
+fi # end of overwriting check
+if test -f 'rcslex.c.patch'
+then
+	echo shar: will not over-write existing file "'rcslex.c.patch'"
+else
+cat << \SHAR_EOF > 'rcslex.c.patch'
+*** rcslex.c	Mon Jun 25 23:15:57 1990
+--- rcslex.c.orig	Thu Dec  7 10:31:38 1989
+***************
+*** 662,669 ****
+          return result;
+  }
+  
+! #if	NeXT
+! #else
+  fputs(s, iop)
+  register char *s;
+  register FILE *iop;
+--- 662,668 ----
+          return result;
+  }
+  
+! 
+  fputs(s, iop)
+  register char *s;
+  register FILE *iop;
+***************
+*** 705,711 ****
+  	va_end(ap);
+  	return value;
+  }
+! #endif	NeXT
+  
+  
+  #ifdef LEXDB
+--- 704,710 ----
+  	va_end(ap);
+  	return value;
+  }
+! 
+  
+  
+  #ifdef LEXDB
+SHAR_EOF
+fi # end of overwriting check
+#	End of shell archive
+exit 0

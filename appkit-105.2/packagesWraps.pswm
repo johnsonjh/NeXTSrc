@@ -1,0 +1,365 @@
+/*
+	packagesWraps.pswm
+	
+	Copyright 1988 NeXT, Inc.
+	Responsibility: Trey Matteson
+	
+	This file contains bindings for all the window package
+	entries in NeXT-supplied window packages.
+*/
+
+#import "nextstd.h"
+#import <dpsclient/dpsclient.h>
+#import <dpsclient/wraps.h>
+#import "privateWraps.h"
+#import "appkitPrivate.h"
+#import "Application.h"
+#import "Application_Private.h"
+#import	"NXJournaler.h"
+
+static void setLocalNum(int local);
+static int getLastEventTime(void);
+
+
+defineps _NXOrderPanelIfActive(int op; userobject otherWin, windowNum)
+	op otherWin windowNum /orderPanelIfActive winexec
+endps
+
+
+/* creates a window, leaves two copies of hte new window's number on stack */
+defineps static createWindow(int type; float x; float y; float w; float h )
+    x y w h type
+    /Window winexec
+    dup
+endps
+
+
+/* makes a PS window, assigning a user object to it */
+extern void _NXWindow(const char *package, int type, float x, float y, float w, float h, int *num, BOOL isBitmap)
+{
+    int windowNum;
+
+    if(_NXShowAllWindows || (!isBitmap && _NXAllWindowsRetained))
+	type = NX_RETAINED;
+    createWindow(type, x, y, w, h);
+    windowNum = DPSDefineUserObject(0);
+    *num = windowNum;
+    setLocalNum(windowNum);
+    if (_NXShowAllWindows || (!isBitmap && _NXAllWindowsRetained))
+	PSorderwindow(NX_ABOVE, 0, windowNum);
+}
+
+
+defineps _NXTermWindow(userobject windowNum)
+	windowNum termwindow
+endps
+
+
+defineps _NXCurrentWindowBounds(userobject windowNum | float *x; float *y; float *w; float *h)
+	windowNum /currentWindowBounds winexec
+	h w y x
+endps
+
+
+defineps _NXMoveWindow(float x; float y; userobject windowNum)
+	x y windowNum /moveWindow winexec
+endps
+
+
+defineps _NXPlaceWindow(float x,y,w,h; userobject windowNum; userobject gs | int *time)
+	gs x y w h windowNum /placeWindow winexec
+	/currenteventtime where {
+	    pop currenteventtime
+	}{
+	    0
+	} ifelse
+	time
+endps
+
+
+defineps _NXWindowActivate(userobject windowNum)
+	windowNum /windowActivate winexec
+endps
+
+
+defineps static doActivateNextApp(int time)
+	time currentcontext /activateNextApp winexec
+endps
+
+void _NXActivateNextApp(void)
+{
+    doActivateNextApp(getLastEventTime());
+}
+
+
+/* ??? NUKE THIS when workspace and IB quit using it */
+defineps _NXSetWindowLevel(userobject windowNum; int newlevel)
+    newlevel windowNum /setWindowLevel winexec
+endps
+
+
+defineps static _NXPrivateDoDragWindow(float x; float y; int eventNum; userobject windowNum)
+	x y eventNum windowNum /doDragWindow winexec
+endps
+
+
+extern void _NXDoDragWindow(float x, float y, int eventNum, int windowNum, 
+			    float *newX, float *newY)
+{
+    NXEvent         upEvent;
+    NXCoord         width, height;
+    int             status = NX_STOPPED;
+
+    [[NXApp slaveJournaler] getEventStatus:&status soundStatus:NULL 
+     eventStream:NULL soundfile:NULL];
+    if (status != NX_PLAYING)
+        _NXPrivateDoDragWindow(x, y, eventNum, windowNum);
+    (void)[NXApp peekNextEvent:NX_MOUSEUPMASK | NX_JOURNALEVENTMASK
+	   into:&upEvent
+	   waitFor:NX_FOREVER
+	   threshold:NX_MODALRESPTHRESHOLD];
+    PScurrentwindowbounds(windowNum, newX, newY, &width, &height);
+}
+
+
+defineps _NXCurrentActive(userobject windowNum | boolean *active)
+	windowNum /currentActive winexec
+	active
+endps
+
+
+defineps _NXSetHideOnDeactivate(userobject windowNum; boolean hodFlag, visFlag)
+	visFlag hodFlag windowNum /setHideOnDeact winexec
+endps
+
+
+defineps _NXEnsureEdgeWindows()
+    /ensureEdgeWindows winexec
+endps
+
+
+defineps _NXShowEdgeWindows()
+    /showEdgeWindows winexec
+endps
+
+
+defineps _NXHideEdgeWindows()
+    /hideEdgeWindows winexec
+endps
+
+
+defineps _NXPlaceEdgeWindows(float coords[16])
+    coords /placeEdgeWindows winexec
+endps
+
+
+defineps _NXCoverWindow(userobject windowNum)
+    windowNum /coverWindow winexec
+endps
+
+
+defineps _NXUncoverWindow(userobject windowNum)
+    windowNum /uncoverWindow winexec
+endps
+
+
+defineps _NXSetNullGState()
+    /setNullGState winexec
+endps
+
+
+defineps _NXCreateAndSetScratchWindow(float w; float h)
+    0 0 w h Retained window
+    dup windowdeviceround
+endps
+
+
+/* using DPSPrintf here because these names will only be used once; its more efficient just to send them as ascii than map names for them.  */
+void _NXGetSharedWindows(int *cursors, int *icons)
+{
+    DPSPrintf(DPSGetCurrentContext(), "sharedCursors sharedIcons\n");
+    *icons = DPSDefineUserObject(0);
+    *cursors = DPSDefineUserObject(0);
+}
+
+
+defineps static doSafeOrderFront(userobject windowNum; int eventTime)
+    eventTime windowNum /safeOrderFront winexec
+endps
+
+void _NXSafeOrderFront(int windowNum)
+{
+    if (windowNum > 0)
+	doSafeOrderFront(windowNum, getLastEventTime());
+}
+
+
+defineps static doSafeOrderFrontDuringOpenFile(userobject windowNum)
+    windowNum /safeOrderFrontDuringOpenFile winexec
+endps
+
+void _NXSafeOrderFrontDuringOpenFile(int windowNum)
+{
+    if (windowNum > 0)
+	doSafeOrderFrontDuringOpenFile(windowNum);
+}
+
+
+defineps static doSetLastOpenFileTime(int time)
+    time /setLastOpenFileTime winexec
+endps
+
+void _NXSetLastOpenFileTime(void)
+{
+    doSetLastOpenFileTime(getLastEventTime());
+}
+
+
+defineps _NXGetIconNumber( | int *number)
+    nextdict /iconNumber known {
+        iconNumber nextdict /iconNumber iconNumber 1 add put
+    }{
+	nextdict /iconNumber 1 put 0
+    } ifelse number
+endps
+
+
+defineps _NXSetCursor (int activation; float x, y, mx, my)
+    x y mx my activation /setCursor winexec
+endps
+
+
+/* ??? wrp - it would be nice to remove this from the api */
+defineps NXFrontWindow(|unsigned int *winNum)
+    frontwindow currentwindowdict /localNum get winNum
+endps
+
+
+/* activation related wraps */
+
+defineps _NXGetActiveApp( | int *app)
+    activeApp app
+endps
+
+
+defineps _NXIsActiveApp( | boolean *isActive)
+    currentcontext activeApp eq isActive
+endps
+
+
+defineps _NXActivateContext(int appContext)
+    appContext /activateContext winexec
+endps
+
+defineps _NXDeactivateSelf(| int *ping)
+    /deactivateSelf winexec
+    7 ping
+endps
+
+defineps _NXActivateSelf(int force| int *ping)
+    force /activateSelf winexec
+    7 ping
+endps
+
+defineps _NXDeactivateApp(|int *ping)
+    /deactivateCurrContext winexec
+    7 ping
+endps
+
+
+/* Getting and setting window attributes */
+
+defineps _NXLeftMargin(float lMargin; userobject windowNum)
+    windowNum currentwindowdict /leftMargin lMargin put
+endps
+
+defineps _NXRightMargin(float rMargin; userobject windowNum)
+    windowNum currentwindowdict /rightMargin rMargin put
+endps
+
+defineps _NXTopMargin(float tMargin; userobject windowNum)
+    windowNum currentwindowdict /topMargin tMargin put
+endps
+
+defineps static setLocalNum(int local)
+    currentwindowdict /localNum local put
+endps
+
+defineps _NXSetProcessID(int processID)
+    currentcontext processID /setPid winexec
+endps
+
+defineps _NXResetOtherWindows(userobject windowNum)
+    windowNum currentwindowdict /otherWindows null put
+endps
+
+defineps _NXSetIcon(userobject win)
+    win currentwindowdict /icon 1 put
+endps
+
+defineps _NXSetTitle(char *title; userobject windowNum)
+	(title) windowNum /setTitle winexec
+endps
+
+defineps _NXInitOtherOwner(userobject windowNum)
+    windowNum /setOtherOwner winexec
+endps
+
+defineps _NXSetOtherWindows(userobject win; int size; int oWins[size])
+    win currentwindowdict /otherWindows	% dict /oW
+    oWins {				% dict /oW oW
+	execuserobject
+    } forall				% dict /oW win1-N
+  % make a copy in shared VM
+    currentshared true setshared	% dict /oW win1-N sState
+    size array				% dict /oW win1-N sState oW2
+    exch setshared			% dict /oW win1-N oW2
+    astore put
+endps
+
+defineps _NXSetEventMask(int newMask; userobject windowNum)
+    newMask windowNum /setEventMask winexec
+endps
+
+defineps _NXCurrentEventMask(userobject windowNum | int *mask)
+    windowNum /currentEventMask winexec
+    mask
+endps
+
+static int getLastEventTime(void)
+{
+    const NXEvent *lastEvent;
+
+    if (![NXApp _isInvalidEvent] && (lastEvent = [NXApp currentEvent]))
+	return lastEvent->time;
+    else
+	return 0;
+}
+
+
+/*
+
+Modifications (starting at 0.8):
+
+77
+--
+ 1/05/89 trey	removed NXGlobalWindowGlobalContext
+ 2/18/89 wrp	removed NXConvertGlobalToWinNum and NXConvertWinNumToGlobal to
+		 publicWraps.psw
+ 2/06/90 trey	added setProcessID
+ 2/15/90 trey	added _NXSetHideOnDeactivate
+ 2/26/90 trey	implemented _NXAllWindowsRetained
+ 3/10/90 trey	added _NXOrderWindowIfActive
+ 
+82
+--
+ 5/4/90	 wot	Changed call to "journaler" to "slaveJournaler".
+
+85
+--
+ 5/22/90 trey	nuked _NXSetOutWindowLevel, _NXOrderWindow,
+ 5/31/90 trey	moved packages stuff from privateWraps.pswm to here
+		nuked _NXTitleFont, _NXCurrentTitle, _NXCurrentMouse
+ 6/02/90 trey	renamed from windowPackages.pswm to packageWraps.pswm
+
+*/

@@ -1,0 +1,265 @@
+usr.ucb/from/from.c				mmeyer 8/22/89
+
+Change from to do the from on geteuid(), instead of getlogin() which
+looks at who is in /etc/utmp.  
+
+usr.ucb/telnet/telnet.c				mmeyer 8/22/89
+
+Fix for bug #2889.
+
+bin/sed/sed1.c					mmeyer 8/21/89
+
+Fix for bug #2831.
+
+usr.bin/calendar/calendar.{c,sh}		mmeyer 8/21/89
+
+Fix for bug #2794
+
+usr.ucb/Mail					mmeyer 6/27/89
+
+Upgraded to Tahoe sources and fixed a few bugs.
+
+etc/mount/mount.c				mmeyer 6/26/89
+
+Change reversal of mounting of nfs partitions.
+
+etc/init/init.c					mmeyer 6/23/89
+
+Changes for onerror/onoption.
+
+etc/rlogind/rlogind.c				mmeyer 6/14/89
+
+Took out malloc from signal handler.
+
+etc/nu/*					mmeyer 6/13/89
+
+Lee's new nu.
+
+etc/ifconfig/ifconfig.c				mmeyer 6/13/89
+etc/bootpd/*
+
+Changes for sexy netinit
+
+bin/awk/awk.g.y					mmeyer 6/1/89
+
+Fixed core dump for Trey.  
+
+etc/quot/quot.c					mmeyer 5/31/89
+
+Changed acct() to print out the correct number of 1024 byte blocks.
+
+bin/sh/homedir.c				mmeyer 5/26/89
+
+Changed sh to use getpwnam() instead of searching through /etc/passwd
+
+usr.ucb/indent/lexi.c				wrp    5/22/89
+usr.ucb/indent/indent.c		
+usr.ucb/indent/indent_globs.h
+
+Bill Parkhurst's changes for Objective-C 4.0 support, along with
+a bugfix that Brian and Morris made.
+
+
+bin/diff/diffh_vers.c				mike   5/22/89
+usr.bin/diff3/Makefile				
+
+Bugfix from Mike DeMoney.  Fixes problem that occurs during integration.
+
+usr.bin/tip/acu.c				mmeyer 5/20/89
+usr.bin/tip/cu.c
+usr.bin/tip/tip.c
+usr.bin/tip/cmds.c
+
+Changed references to connect(), abort() and send() to compile
+with shlibs.
+
+bin/csh/sh.c					mmeyer 5/19/89
+
+Integrated the atexit() mod.
+
+usr.ucb/rlogin/rlogin.c				mmeyer 5/19/89
+
+Verified that Mike DeMoney's change to make chars with 0x7f was in.
+
+bin/make/rules.c				mmeyer 5/19/89
+bin/make/doname.c	
+
+Integrated Mike's fixes.
+
+usr.etc/mach_swapon/swaptab			mmeyer 5/19/89
+
+Changed to /private/vm/swaptab instead of /etc/vm/swaptab
+
+usr.bin/calendar/Makefile			mmeyer 5/18/89
+
+Changed Makefile so /usr/lib/calendar would install correctly.
+
+etc/route/route.c				mmeyer 5/16/89
+etc/rwhod/rwhod.c
+usr.etc/nfsstat/nfsstat.c
+usr.etc/rpc.rstatd/rpc.rstatd.c
+usr.ucb/sysline/sysline.c (not that this will ever run on our system)
+usr.ucb/sendmail/src/conf.c
+usr.bin/uucp/acucntrl.c
+
+Changed all to nlist "/mach" instead of "/vmunix"
+
+etc/syslog/syslog.c				mmeyer 5/15/89
+
+Changed syslog to print out "mach:" instead of "vmunix:"
+
+bin/date/date.c					mmeyer 5/14/89
+
+Initialized tz.{tz_minuteswest,tz_dsttime} to zero.  This bug
+cropped up when linking with shared libraries.  Kevin Enderby
+has a bug report.
+
+mk/cmds/usr/ucb/w/Makefile			mmeyer 5/14/89
+
+Linked uptime to w in the INSTALL phase
+
+usr.bin/uucp/fio.c				mmeyer 5/9/89
+usr.bin/uucp/gio.c
+usr.bin/uucp/logent.c
+usr.bin/uucp/tio.c
+
+Ifdef'd syslog() so uucp would link with the libsys_s shlib.
+	
+
+usr.bin/uucp/Makefile
+
+Took out duplicate index.c from uucp.
+
+usr.bin/troff/Makefile				mmeyer 5/9/89
+
+Took out malloc.c and calloc.c from CFILES.  troff had its own 
+version of calloc,realloc,malloc and free.
+
+usr.bin/nroff/Makefile				mmeyer 5/9/89
+
+Took out malloc.c and calloc.c from CFILES.  nroff had its own 
+version of calloc,realloc,malloc and free.
+
+usr.ucb/rusers/Makefile				mmeyer 5/9/89
+
+Took out malloc.c and calloc.c from CFILES.  rusers had its own 
+version of calloc,realloc,malloc and free.
+
+usr.ucb/msgs/msgs.c	  			mmeyer 5/9/89
+
+Ifdef'd send() so /usr/ucb/msgs would link with the libsys_s shlib.
+
+usr.ucb/more/more.c	  			mmeyer 5/9/89
+
+Ifdef'd strlen() so /usr/ucb/more would link with the libsys_s shlib.
+
+usr.ucb/ex/exrecover.c  			mmeyer 5/9/89
+
+Ifdef'd fprintf() so /usr/ucb/exrecover would link with the libsys_s shlib.
+
+usr.ucb/Mail/aux.c  				mmeyer 5/9/89
+
+Ifdef'd index() so /usr/ucb/Mail would link with the libsys_s shlib.
+
+usr.ucb/Mail/send.c				mmeyer 5/9/89
+usr.ucb/Mail/cmd1.c
+usr.ucb/Mail/cmd2.c
+usr.ucb/Mail/collect.c
+usr.ucb/Mail/edit.c
+usr.ucb/Mail/fio.c
+usr.ucb/Mail/quit.c
+
+Ifdef'd send() so /usr/ucb/Mail would link with the libsys_s shlib.
+
+usr.ucb/Mail/head.c
+usr.ucb/Mail/list.c
+usr.ucb/Mail/aux.c
+
+Ifdef'd raise() so /usr/ucb/Mail would link with the libsys_s shlib.
+
+etc/sa/sa.c					mmeyer 5/9/89
+
+Ifdef'd bcmp() so /etc/sa would link with the libsys_s shlib.
+
+etc/routed/defs.h				mmeyer 5/9/89
+etc/routed/startup.c
+etc/routed/inet.c 
+
+Ifdef'd inet_makeaddr() so /etc/routed would link with the libsys_s shlib.
+
+bin/su/su.c					mmeyer 5/9/89
+
+Unifdef'd getenv() so su would link with the libsys_s shlib.
+
+bin/awk/Makefile				mmeyer 5/9/89
+
+Took out malloc.c and calloc.c from CFILES.  awk had its own 
+version of calloc,realloc,malloc and free.
+
+All CMDS Makefiles				mmeyer 5/8/89
+
+Changed all Makefiles to have -O -g for CFLAGS and -lsys_s for
+LIBS.  Changes above are for commands that didn't link.
+
+cmds/bin/cp/cp.c				mmeyer 5/8/89
+cmds/bin/cat/cat.c
+
+Integrated Avie's mapped file changes.  He claims a 10% performace
+win with mapped files.
+
+cmds/bin/make/main.c				mmeyer 5/1/89
+
+Changed main() to have make to a setrlimit(RLIMIT_STACK) to trap
+infinitely recursive macros instead of core dumping.
+
+cmds/bin/sh/homedir.c				mmeyer  4/30/89
+
+Changed sh to use getpwent() rather than grep'ing through /etc/passwd.
+
+cmds/bin/tar/tar.c				mmeyer  4/30/89
+
+Changed the "v" flag printf()'s to fprintf(stderr)'s
+
+cmds/etc/icheck/icheck.c			mmeyer  4/30/89
+
+Modified icheck to know about fast symlinks.
+
+cmds/usr.ucb/rlogin/rlogin.c			mmeyer
+
+Added the oob() signal handler for the SIGURG signal.  Data
+was getting lost between the socket and the rlogin program.
+
+cmds/bin/csh/sh.c				mmeyer
+
+Added lines 1022 to 1029 in dosource() which check for no operand 
+for source flag.
+
+Changed lines 1036 to 1042 in dosource() to just print out an error
+using perror() when an open of a source'd file fails instead of not
+letting the login session continue.
+
+cmds/bin/passwd/passwd.c			mmeyer
+
+Took out a check against /bin/sh so a user can switch back
+and forth from csh to sh and back again.
+
+cmds/bin/make/doname.c				mmeyer
+
+Added code to docom() to check for both $(MAKE) and ${MAKE}
+for a bug that Trey Matteson found.  This might break /bin/make.
+
+cmds/etc/dump/dumptraverse.c			mmeyer
+
+Changed the routine that calls fastsymlinkout() to check
+ip->ic_disize (on disk representation of the files size)
+to see if it is greater than MAX_FASTLINK_SIZE.
+
+cmds/usr.etc/nfsstat/Makefile			mmeyer
+
+Changed Makefile IFLAGS	to install nfsstat as setuid kmem.
+
+
+cmds/usr.ucb/ctags/ctags			mmeyer for mjh
+
+Integrated ctags.c with the changes Mike Hawley made for .m files.
+Previous version would hang. 

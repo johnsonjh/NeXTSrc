@@ -1,0 +1,6 @@
+./usr/lib/database/dbCatenate
+./usr/lib/database/dbCompare
+./usr/lib/database/dbCompress
+./usr/lib/database/dbCopy
+./usr/lib/database/dbDescribe
+./usr/lib/database/dbExpand

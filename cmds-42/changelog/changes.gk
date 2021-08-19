@@ -1,0 +1,48 @@
+cmds-28 changes:
+
+usr.etc/mach_init/*	Moved bootstrap.conf to FILES project.
+			Tone down debugging output.
+			Fix setting interractive scheduling policy.
+			Fixed bug causing mach_init to be re-launched.
+			Cause servers to be launched as init_process()s.
+
+cmds-30 changes:
+
+usr.etc/mach_init/bootstrap.c
+			Changed message sizes to be the minimum size
+			required for input and output.
+
+usr.ucb/w/w.c		Changed both the use proper semantics for
+bin/ps/ps.c		host_processor_sets so that they use
+			host_processor_set_priv to get the usable processor
+			set ports.  If host_processor_set_priv failes,
+			the port returned from host_processor_sets is used
+			for compatibility purposes.  This should be removed
+			before release.
+
+cmds-33 changes:
+
+etc/Makefile		Don't build snd_register.
+etc/snd_register	Removed directory
+usr.etc/mach_init/bootstrap.c
+			Remove "self Service=2" from default configuration.
+			Remove inherit of mach_ports.
+			Don't call mach_ports_register unless there's any
+			to register.
+usr.etc/mach_init/bootstrap_initernal.h
+			Remove old mach_port stuff.
+usr.etc/mach_init/lists.c
+			Remove old mach_port stuff.
+usr.etc/mach_init/lists.h
+			Remove old mach_port stuff.
+usr.etc/mach_init/parser.c
+			Don't parse mach_port stuff.
+			Fix switch from file to builtin configuration.
+usr.etc/mach_init/rpc_services.c
+			Remove old mach_port stuff.
+			Fix subset registration problem.
+
+cmds-34 changes:
+usr.etc/mach_init/rpc_services.c:
+			Fixed bug in bootstrap_info that was causing services
+			to be deleted.

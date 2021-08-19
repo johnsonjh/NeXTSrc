@@ -1,0 +1,110 @@
+# Dependencies for File: etherxdr.o:
+etherxdr.o: ../etherxdr.c /usr/include/netinet/in.h /usr/include/rpc/auth.h
+etherxdr.o: /usr/include/rpc/auth_unix.h /usr/include/rpc/clnt.h
+etherxdr.o: /usr/include/rpc/rpc.h /usr/include/rpc/rpc_msg.h
+etherxdr.o: /usr/include/rpc/svc.h /usr/include/rpc/svc_auth.h
+etherxdr.o: /usr/include/rpc/types.h /usr/include/rpc/xdr.h
+etherxdr.o: /usr/include/rpcsvc/ether.h /usr/include/stdio.h
+etherxdr.o: /usr/include/sys/time.h /usr/include/sys/types.h
+etherxdr.o: /usr/include/time.h
+# Dependencies for File: klm_prot.o:
+klm_prot.o: ../klm_prot.c /usr/include/netinet/in.h /usr/include/rpc/auth.h
+klm_prot.o: /usr/include/rpc/auth_unix.h /usr/include/rpc/clnt.h
+klm_prot.o: /usr/include/rpc/rpc.h /usr/include/rpc/rpc_msg.h
+klm_prot.o: /usr/include/rpc/svc.h /usr/include/rpc/svc_auth.h
+klm_prot.o: /usr/include/rpc/types.h /usr/include/rpc/xdr.h
+klm_prot.o: /usr/include/rpcsvc/klm_prot.h /usr/include/sys/types.h
+# Dependencies for File: mountxdr.o:
+mountxdr.o: ../mountxdr.c /usr/include/netinet/in.h /usr/include/nfs/nfs.h
+mountxdr.o: /usr/include/rpc/auth.h /usr/include/rpc/auth_unix.h
+mountxdr.o: /usr/include/rpc/clnt.h /usr/include/rpc/rpc.h
+mountxdr.o: /usr/include/rpc/rpc_msg.h /usr/include/rpc/svc.h
+mountxdr.o: /usr/include/rpc/svc_auth.h /usr/include/rpc/types.h
+mountxdr.o: /usr/include/rpc/xdr.h /usr/include/rpcsvc/mount.h
+mountxdr.o: /usr/include/stdio.h /usr/include/sys/errno.h
+mountxdr.o: /usr/include/sys/time.h /usr/include/sys/types.h
+mountxdr.o: /usr/include/sys/vfs.h /usr/include/time.h
+# Dependencies for File: nlm_prot.o:
+nlm_prot.o: ../nlm_prot.c /usr/include/netinet/in.h /usr/include/rpc/auth.h
+nlm_prot.o: /usr/include/rpc/auth_unix.h /usr/include/rpc/clnt.h
+nlm_prot.o: /usr/include/rpc/rpc.h /usr/include/rpc/rpc_msg.h
+nlm_prot.o: /usr/include/rpc/svc.h /usr/include/rpc/svc_auth.h
+nlm_prot.o: /usr/include/rpc/types.h /usr/include/rpc/xdr.h
+nlm_prot.o: /usr/include/rpcsvc/klm_prot.h /usr/include/rpcsvc/nlm_prot.h
+nlm_prot.o: /usr/include/sys/types.h
+# Dependencies for File: rex_xdr.o:
+rex_xdr.o: ../rex_xdr.c /usr/include/netinet/in.h /usr/include/rpc/auth.h
+rex_xdr.o: /usr/include/rpc/auth_unix.h /usr/include/rpc/clnt.h
+rex_xdr.o: /usr/include/rpc/rpc.h /usr/include/rpc/rpc_msg.h
+rex_xdr.o: /usr/include/rpc/svc.h /usr/include/rpc/svc_auth.h
+rex_xdr.o: /usr/include/rpc/types.h /usr/include/rpc/xdr.h
+rex_xdr.o: /usr/include/rpcsvc/rex.h /usr/include/stdio.h
+rex_xdr.o: /usr/include/sys/errno.h /usr/include/sys/ioctl.h
+rex_xdr.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
+rex_xdr.o: /usr/include/sys/types.h
+# Dependencies for File: rpcsvc_vers.o:
+rpcsvc_vers.o: rpcsvc_vers.c
+# Dependencies for File: rquotaxdr.o:
+rquotaxdr.o: ../rquotaxdr.c /usr/include/netinet/in.h /usr/include/rpc/auth.h
+rquotaxdr.o: /usr/include/rpc/auth_unix.h /usr/include/rpc/clnt.h
+rquotaxdr.o: /usr/include/rpc/rpc.h /usr/include/rpc/rpc_msg.h
+rquotaxdr.o: /usr/include/rpc/svc.h /usr/include/rpc/svc_auth.h
+rquotaxdr.o: /usr/include/rpc/types.h /usr/include/rpc/xdr.h
+rquotaxdr.o: /usr/include/rpcsvc/rquota.h /usr/include/stdio.h
+rquotaxdr.o: /usr/include/sys/types.h /usr/include/ufs/quotas.h
+# Dependencies for File: rstatxdr.o:
+rstatxdr.o: ../rstatxdr.c /usr/include/netinet/in.h /usr/include/rpc/auth.h
+rstatxdr.o: /usr/include/rpc/auth_unix.h /usr/include/rpc/clnt.h
+rstatxdr.o: /usr/include/rpc/rpc.h /usr/include/rpc/rpc_msg.h
+rstatxdr.o: /usr/include/rpc/svc.h /usr/include/rpc/svc_auth.h
+rstatxdr.o: /usr/include/rpc/types.h /usr/include/rpc/xdr.h
+rstatxdr.o: /usr/include/rpcsvc/rstat.h /usr/include/sys/dk.h
+rstatxdr.o: /usr/include/sys/time.h /usr/include/sys/types.h
+rstatxdr.o: /usr/include/time.h
+# Dependencies for File: rusersxdr.o:
+rusersxdr.o: ../rusersxdr.c /usr/include/netinet/in.h /usr/include/rpc/auth.h
+rusersxdr.o: /usr/include/rpc/auth_unix.h /usr/include/rpc/clnt.h
+rusersxdr.o: /usr/include/rpc/rpc.h /usr/include/rpc/rpc_msg.h
+rusersxdr.o: /usr/include/rpc/svc.h /usr/include/rpc/svc_auth.h
+rusersxdr.o: /usr/include/rpc/types.h /usr/include/rpc/xdr.h
+rusersxdr.o: /usr/include/rpcsvc/rusers.h /usr/include/sys/types.h
+rusersxdr.o: /usr/include/utmp.h
+# Dependencies for File: rwallxdr.o:
+rwallxdr.o: ../rwallxdr.c /usr/include/netinet/in.h /usr/include/rpc/auth.h
+rwallxdr.o: /usr/include/rpc/auth_unix.h /usr/include/rpc/clnt.h
+rwallxdr.o: /usr/include/rpc/rpc.h /usr/include/rpc/rpc_msg.h
+rwallxdr.o: /usr/include/rpc/svc.h /usr/include/rpc/svc_auth.h
+rwallxdr.o: /usr/include/rpc/types.h /usr/include/rpc/xdr.h
+rwallxdr.o: /usr/include/rpcsvc/rwall.h /usr/include/stdio.h
+rwallxdr.o: /usr/include/sys/types.h
+# Dependencies for File: sm_inter.o:
+sm_inter.o: ../sm_inter.c /usr/include/netinet/in.h /usr/include/rpc/auth.h
+sm_inter.o: /usr/include/rpc/auth_unix.h /usr/include/rpc/clnt.h
+sm_inter.o: /usr/include/rpc/rpc.h /usr/include/rpc/rpc_msg.h
+sm_inter.o: /usr/include/rpc/svc.h /usr/include/rpc/svc_auth.h
+sm_inter.o: /usr/include/rpc/types.h /usr/include/rpc/xdr.h
+sm_inter.o: /usr/include/rpcsvc/sm_inter.h /usr/include/sys/types.h
+# Dependencies for File: sprayxdr.o:
+sprayxdr.o: ../sprayxdr.c /usr/include/netinet/in.h /usr/include/rpc/auth.h
+sprayxdr.o: /usr/include/rpc/auth_unix.h /usr/include/rpc/clnt.h
+sprayxdr.o: /usr/include/rpc/rpc.h /usr/include/rpc/rpc_msg.h
+sprayxdr.o: /usr/include/rpc/svc.h /usr/include/rpc/svc_auth.h
+sprayxdr.o: /usr/include/rpc/types.h /usr/include/rpc/xdr.h
+sprayxdr.o: /usr/include/rpcsvc/spray.h /usr/include/sys/time.h
+sprayxdr.o: /usr/include/sys/types.h /usr/include/time.h
+# Dependencies for File: util.o:
+util.o: ../util.c /usr/include/netdb.h /usr/include/netinet/in.h
+util.o: /usr/include/rpc/auth.h /usr/include/rpc/auth_unix.h
+util.o: /usr/include/rpc/clnt.h /usr/include/rpc/rpc.h
+util.o: /usr/include/rpc/rpc_msg.h /usr/include/rpc/svc.h
+util.o: /usr/include/rpc/svc_auth.h /usr/include/rpc/types.h
+util.o: /usr/include/rpc/xdr.h /usr/include/stdio.h /usr/include/sys/socket.h
+util.o: /usr/include/sys/types.h
+# Dependencies for File: yppasswdxdr.o:
+yppasswdxdr.o: ../yppasswdxdr.c /usr/include/netinet/in.h /usr/include/pwd.h
+yppasswdxdr.o: /usr/include/rpc/auth.h /usr/include/rpc/auth_unix.h
+yppasswdxdr.o: /usr/include/rpc/clnt.h /usr/include/rpc/rpc.h
+yppasswdxdr.o: /usr/include/rpc/rpc_msg.h /usr/include/rpc/svc.h
+yppasswdxdr.o: /usr/include/rpc/svc_auth.h /usr/include/rpc/types.h
+yppasswdxdr.o: /usr/include/rpc/xdr.h /usr/include/rpcsvc/yppasswd.h
+yppasswdxdr.o: /usr/include/stdio.h /usr/include/sys/types.h

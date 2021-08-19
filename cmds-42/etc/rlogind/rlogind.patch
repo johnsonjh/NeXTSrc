@@ -1,0 +1,181 @@
+*** rlogind.c.orig	Sun May 22 16:41:03 1988
+--- rlogind.c.new	Sun May 22 16:48:06 1988
+***************
+*** 44,59 ****
+  # define TIOCPKT_WINDOW 0x80
+  # endif TIOCPKT_WINDOW
+  
+! extern	errno;
+  int	reapchild();
+  struct	passwd *getpwnam();
+  char	*malloc();
+  
+  main(argc, argv)
+  	int argc;
+  	char **argv;
+  {
+! 	int on = 1, options = 0, fromlen;
+  	struct sockaddr_in from;
+  
+  	openlog("rlogind", LOG_PID | LOG_AUTH, LOG_AUTH);
+--- 44,60 ----
+  # define TIOCPKT_WINDOW 0x80
+  # endif TIOCPKT_WINDOW
+  
+! extern	int errno;
+  int	reapchild();
+  struct	passwd *getpwnam();
+  char	*malloc();
+  
++ /*ARGSUSED*/
+  main(argc, argv)
+  	int argc;
+  	char **argv;
+  {
+! 	int on = 1, fromlen;
+  	struct sockaddr_in from;
+  
+  	openlog("rlogind", LOG_PID | LOG_AUTH, LOG_AUTH);
+***************
+*** 72,78 ****
+  int	child;
+  int	cleanup();
+  int	netf;
+- extern	errno;
+  char	*line;
+  extern	char	*inet_ntoa();
+  
+--- 73,78 ----
+***************
+*** 115,122 ****
+  		if (stat(line, &stb) < 0)
+  			break;
+  		for (i = 0; i < 16; i++) {
+! 			line[strlen("/dev/ptyp")] = "0123456789abcdef"[i];
+! 			p = open(line, 2);
+  			if (p > 0)
+  				goto gotpty;
+  		}
+--- 115,122 ----
+  		if (stat(line, &stb) < 0)
+  			break;
+  		for (i = 0; i < 16; i++) {
+! 			line[sizeof("/dev/ptyp") - 1] = "0123456789abcdef"[i];
+! 			p = open(line, O_RDWR);
+  			if (p > 0)
+  				goto gotpty;
+  		}
+***************
+*** 127,155 ****
+  	(void) ioctl(p, TIOCSWINSZ, &win);
+  	netf = f;
+  	line[strlen("/dev/")] = 't';
+  #ifdef DEBUG
+! 	{ int tt = open("/dev/tty", 2);
+! 	  if (tt > 0) {
+! 		ioctl(tt, TIOCNOTTY, 0);
+! 		close(tt);
+! 	  }
+  	}
+  #endif
+- 	t = open(line, 2);
+- 	if (t < 0)
+- 		fatalperror(f, line, errno);
+- 	{ struct sgttyb b;
+- 	  gtty(t, &b); b.sg_flags = RAW|ANYP; stty(t, &b);
+- 	}
+  	pid = fork();
+  	if (pid < 0)
+! 		fatalperror(f, "", errno);
+  	if (pid == 0) {
+  		close(f), close(p);
+  		dup2(t, 0), dup2(t, 1), dup2(t, 2);
+  		close(t);
+  		execl("/bin/login", "login", "-r", hp->h_name, 0);
+! 		fatalperror(2, "/bin/login", errno);
+  		/*NOTREACHED*/
+  	}
+  	close(t);
+--- 127,168 ----
+  	(void) ioctl(p, TIOCSWINSZ, &win);
+  	netf = f;
+  	line[strlen("/dev/")] = 't';
++ 	t = open(line, O_RDWR);
++ 	if (t < 0)
++ 		fatalperror(f, line);
++ 	if (fchmod(t, 0))
++ 		fatalperror(f, line);
++ 	(void)signal(SIGHUP, SIG_IGN);
++ 	vhangup();
++ 	(void)signal(SIGHUP, SIG_DFL);
++ 	t = open(line, O_RDWR);
++ 	if (t < 0)
++ 		fatalperror(f, line);
++ 	{
++ 		struct sgttyb b;
++ 
++ 		(void)ioctl(t, TIOCGETP, &b);
++ 		b.sg_flags = RAW|ANYP;
++ 		(void)ioctl(t, TIOCSETP, &b);
++ 	}
+  #ifdef DEBUG
+! 	{
+! 		int tt = open("/dev/tty", O_RDWR);
+! 		if (tt > 0) {
+! 			(void)ioctl(tt, TIOCNOTTY, 0);
+! 			(void)close(tt);
+! 		}
+  	}
+  #endif
+  	pid = fork();
+  	if (pid < 0)
+! 		fatalperror(f, "");
+  	if (pid == 0) {
+  		close(f), close(p);
+  		dup2(t, 0), dup2(t, 1), dup2(t, 2);
+  		close(t);
+  		execl("/bin/login", "login", "-r", hp->h_name, 0);
+! 		fatalperror(2, "/bin/login");
+  		/*NOTREACHED*/
+  	}
+  	close(t);
+***************
+*** 226,232 ****
+  		if (select(16, &ibits, &obits, &ebits, 0) < 0) {
+  			if (errno == EINTR)
+  				continue;
+! 			fatalperror(f, "select", errno);
+  		}
+  		if (ibits == 0 && obits == 0 && ebits == 0) {
+  			/* shouldn't happen... */
+--- 239,245 ----
+  		if (select(16, &ibits, &obits, &ebits, 0) < 0) {
+  			if (errno == EINTR)
+  				continue;
+! 			fatalperror(f, "select");
+  		}
+  		if (ibits == 0 && obits == 0 && ebits == 0) {
+  			/* shouldn't happen... */
+***************
+*** 335,344 ****
+  	exit(1);
+  }
+  
+! fatalperror(f, msg, errno)
+  	int f;
+  	char *msg;
+- 	int errno;
+  {
+  	char buf[BUFSIZ];
+  	extern int sys_nerr;
+--- 348,356 ----
+  	exit(1);
+  }
+  
+! fatalperror(f, msg)
+  	int f;
+  	char *msg;
+  {
+  	char buf[BUFSIZ];
+  	extern int sys_nerr;
+

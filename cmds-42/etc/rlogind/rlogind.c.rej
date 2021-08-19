@@ -1,0 +1,52 @@
+***************
+*** 44,59 ****
+  # define TIOCPKT_WINDOW 0x80
+  # endif TIOCPKT_WINDOW
+  
+! extern	errno;
+  int	reapchild();
+  struct	passwd *getpwnam();
+  char	*malloc();
+  
+  main(argc, argv)
+  	int argc;
+  	char **argv;
+  {
+! 	int on = 1, options = 0, fromlen;
+  	struct sockaddr_in from;
+  
+  	openlog("rlogind", LOG_PID | LOG_AUTH, LOG_AUTH);
+--- 44,60 -----
+  # define TIOCPKT_WINDOW 0x80
+  # endif TIOCPKT_WINDOW
+  
+! extern	int errno;
+  int	reapchild();
+  struct	passwd *getpwnam();
+  char	*malloc();
+  
++ /*ARGSUSED*/
+  main(argc, argv)
+  	int argc;
+  	char **argv;
+  {
+! 	int on = 1, fromlen;
+  	struct sockaddr_in from;
+  
+  	openlog("rlogind", LOG_PID | LOG_AUTH, LOG_AUTH);
+***************
+*** 72,78 ****
+  int	child;
+  int	cleanup();
+  int	netf;
+- extern	errno;
+  char	*line;
+  extern	char	*inet_ntoa();
+  
+--- 73,78 -----
+  int	child;
+  int	cleanup();
+  int	netf;
+  char	*line;
+  extern	char	*inet_ntoa();
+  

@@ -1,0 +1,21 @@
+# Dependencies for File: crt0.s.o :
+crt0.s.o : crt0.s
+# Dependencies for File: init_shlibs.o :
+init_shlibs.o : init_shlibs.c
+# Dependencies for File: mon.o :
+mon.o : /usr/include/kern/mach_interface.h /usr/include/kern/mach_types.h
+mon.o : /usr/include/kern/std_types.h /usr/include/machine/boolean.h
+mon.o : /usr/include/machine/kern_return.h /usr/include/machine/thread_status.h
+mon.o : /usr/include/machine/vm_types.h /usr/include/next/reg.h
+mon.o : /usr/include/sys/boolean.h /usr/include/sys/features.h
+mon.o : /usr/include/sys/host_info.h /usr/include/sys/kern_return.h
+mon.o : /usr/include/sys/mach_extra.h /usr/include/sys/machine.h
+mon.o : /usr/include/sys/message.h /usr/include/sys/netport.h
+mon.o : /usr/include/sys/policy.h /usr/include/sys/port.h
+mon.o : /usr/include/sys/processor_info.h /usr/include/sys/task_info.h
+mon.o : /usr/include/sys/task_special_ports.h /usr/include/sys/thread_info.h
+mon.o : /usr/include/sys/thread_special_ports.h
+mon.o : /usr/include/sys/thread_status.h /usr/include/sys/time_value.h
+mon.o : /usr/include/sys/types.h /usr/include/vm/memory_object.h
+mon.o : /usr/include/vm/vm_inherit.h /usr/include/vm/vm_prot.h
+mon.o : /usr/include/vm/vm_statistics.h mon.c

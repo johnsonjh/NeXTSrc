@@ -1,0 +1,55 @@
+.TH NMXLOG 1 2/22/88
+.CM 4
+.SH NAME
+nmxlog \- translate a Mach network server debugging log
+.SH SYNOPSIS
+.B nmxlog
+[ -d dictionary ] [ infile ]
+.SH DESCRIPTION
+.I nmxlog
+translates the debugging log from a Mach network server from the internal
+binary format into a human-readable format.
+
+The dictionary file consists of a series of lines, beginning with the
+event code in the log, followed by a 
+format string suitable for use with
+.I sprintf
+.li
+.
+Each format specification is replaced with a value from the log record 
+for the event.
+The dictionary file is searched first in the location specified
+with the 
+.B -d
+switch if present, then in the location specified by the 
+.B NMLOGDICT
+environment variable, and finally in the standard location
+.I /usr/mach/lib/net_dict.data
+.li
+.
+
+If no input file is specified,
+.I stdin
+is used.
+The output always goes to
+.I stdout.
+.SH FILES
+.TP 
+/usr/mach/lib/net_dict.data       standard dictionary file.
+.i0
+.DT
+.PP
+.SH ENVIRONMENT
+.TP 
+NMLOGDICT                         location of dictionary file.
+.i0
+.DT
+.PP
+.SH "SEE ALSO"
+nmcontrol(1), nmserver(8)
+.br
+"Network Server Design", internal document from the Mach group.
+.SH HISTORY
+.TP 
+22-Feb-88  Daniel Julin (dpj) at Carnegie-Mellon University
+Created.

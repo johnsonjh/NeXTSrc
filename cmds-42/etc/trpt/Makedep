@@ -1,0 +1,18 @@
+trpt.o: trpt.c /usr/include/sys/param.h /usr/include/sys/features.h
+trpt.o: /usr/include/machine/machparam.h /usr/include/sys/assert.h
+trpt.o: /usr/include/next/vm_param.h /usr/include/sys/types.h
+trpt.o: /usr/include/next/eventc.h /usr/include/sys/signal.h
+trpt.o: /usr/include/machine/signal.h /usr/include/stddef.h
+trpt.o: /usr/include/sys/types.h /usr/include/sys/socket.h
+trpt.o: /usr/include/sys/socketvar.h /usr/include/sys/protosw.h
+trpt.o: /usr/include/net/route.h /usr/include/net/if.h
+trpt.o: /usr/include/net/if_arp.h /usr/include/netinet/in.h
+trpt.o: /usr/include/netinet/in_pcb.h /usr/include/netinet/in_systm.h
+trpt.o: /usr/include/netinet/ip.h /usr/include/netinet/ip_var.h
+trpt.o: /usr/include/netinet/tcp.h /usr/include/netinet/tcp_fsm.h
+trpt.o: /usr/include/netinet/tcp_seq.h /usr/include/netinet/tcp_timer.h
+trpt.o: /usr/include/netinet/tcp_var.h /usr/include/netinet/tcpip.h
+trpt.o: /usr/include/netinet/tcp_debug.h /usr/include/arpa/inet.h
+trpt.o: /usr/include/stdio.h /usr/include/stddef.h /usr/include/stdarg.h
+trpt.o: /usr/include/errno.h /usr/include/sys/errno.h /usr/include/stddef.h
+trpt.o: /usr/include/stddef.h /usr/include/nlist.h

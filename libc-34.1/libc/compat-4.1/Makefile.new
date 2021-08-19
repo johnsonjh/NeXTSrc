@@ -1,0 +1,83 @@
+#
+# Copyright (c) 1980 Regents of the University of California.
+# All rights reserved.  The Berkeley software License Agreement
+# specifies the terms and conditions for redistribution.
+#
+#	@(#)Makefile	5.4 (Berkeley) 9/5/85
+#
+STDSRCS=ftime.c gtty.c nice.c pause.c rand.c stty.c tell.c \
+	times.c utime.c vlimit.c vtimes.c
+
+STD=	ftime.o gtty.o nice.o pause.o rand.o stty.o tell.o \
+	times.o utime.o vlimit.o vtimes.o
+
+# these should just be pitched, but in the interest of compatibility...
+TRASHSRC=getpw.c
+TRASH=	getpw.o 
+
+LIB=	compat-4.1lib
+
+SRCS=	${STDSRCS} ${TRASHSRCS}
+
+OBJS=	${STD} ${TRASH}
+
+CFLAGS=	-O ${DEFS}
+
+TAGSFILE=tags
+
+.c.o:
+	@rm -f $*.o a.out
+	${CC} -p -c ${CFLAGS} $*.c
+	-ld -X -r $*.o
+	mv a.out profiled/$*.o
+	${CC} -MD -c ${CFLAGS} $*.c
+	-ld -x -r $*.o
+	mv a.out $*.o
+	md -m Makedep -d $*.d
+
+.s.o:
+	@rm -f $*.o a.out x.s
+	${CC} -ES -DPROF -DASSEMBLER -DLOCORE ${DEFS} $*.c > x.s
+	${AS} x.s -o $*.o
+	-ld -X -r $*.o
+	mv a.out profiled/$*.o
+	${CC} -ES -DASSEMBLER -DLOCORE ${DEFS} $*.c > x.s
+	${AS} x.s -o $*.o
+	-ld -x -r $*.o
+	mv a.out $*.o
+	rm -f x.s
+
+all:	${LIB}.a ${LIB}_p.a
+
+${LIB}_p.a: ${OBJS}
+	@echo "building profiled ${LIB}
+	@if [ -f ${LIB}_p -a ! -w ${LIB}_p ]; \
+	then \
+		rm -f tmp; \
+		mv ${LIB}_p tmp; \
+		cp tmp ${LIB}_p; \
+		rm -f tmp; \
+	fi
+	@cd profiled; ar cru ../${LIB}_p ${OBJS}
+
+${LIB}.a: ${OBJS}
+	@echo "buiding normal ${LIB}
+	@if [ -f ${LIB} -a ! -w ${LIB} ]; \
+	then \
+		rm -f tmp; \
+		mv ${LIB} tmp; \
+		cp tmp ${LIB}; \
+		rm -f tmp; \
+	fi
+	@ar cru ${LIB} ${OBJS}
+
+tags:
+	cwd=`pwd`; \
+	for i in ${SRCS}; do \
+		ctags -a -f ${TAGSFILE} $$cwd/$$i; \
+	done
+
+clean:
+	rm -f ${LIB} ${LIB}_p *.o profiled/*.o tags
+
+include	Makedep

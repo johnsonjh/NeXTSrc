@@ -1,0 +1,39 @@
+.\"  * BLIT
+.\"  * Copyright 1989: NeXT, Inc.
+.\"  * Author: Morris Meyer
+.\"
+.\"
+.TH BLIT 1 "May 15, 1989"
+.UC 4
+.SH NAME
+blit \- Blit EPS images to the frame buffer
+.SH SYNOPSIS
+.B blit
+.RB "[ -b ] [ -x xstart] [ -y ystart ]  epsfiles..."
+.SH DESCRIPTION
+.I Blit
+reads the named files (or standard input if none are given)
+and parses each file for the size of the \fBEPS\fP image and
+the image itself.
+.PP	
+The \fB-b\fP option is used to check for the existence of an
+opened console window during boot time.
+.PP
+The \fB-x\fP option is used to specify the starting position
+of the left-hand side of the image relative to the left-hand
+side of the screen.  The \fBxstart\fP argument is measured
+in screen pixels.
+.PP
+The \fB-y\fP option is used to specify the starting position
+of the top side of the image relative to the top of the screen.
+The \fBystart\fP argument is measured in screen pixels.
+.SH AUTHOR
+.nf
+Morris Meyer
+OS Software Grunt
+NeXT, Inc.
+.fi
+.SH "SEE ALSO"
+Adobe Encapsulated PostScript (EPS) Reference Manual
+.SH BUGS
+None so far.

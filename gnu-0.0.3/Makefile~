@@ -1,0 +1,36 @@
+#
+#	Make file for gnu tools project
+#
+#
+
+default : 
+	@echo You can make install, installsrc, or clean.
+
+
+install : 
+	mkdirs $(DSTROOT)/usr/local/bin
+	mkdirs $(DSTROOT)/usr/local/lib
+	mkdirs $(DSTROOT)/usr/local/man/man1
+	cd flex*; \
+		make first_flex ; echo foo ;\
+		install -c flex $(DSTROOT)/usr/local/bin ;\
+		install -c -m 444 flex.1 $(DSTROOT)/usr/local/man/man1 ;\
+		install -c -m 444 flex.skel $(DSTROOT)/usr/local/lib
+	cd tar*; \
+		make ; \
+		install -c -s tar $(DSTROOT)/usr/local/bin/gnutar ;\
+		install -c -m 444 tar.texinfo $(DSTROOT)/usr/local/man
+	cd make*; \
+		make ; \
+		install -c -s make $(DSTROOT)/usr/local/bin/gnumake ;\
+		install -c -m 444 make.texinfo $(DSTROOT)/usr/local/man
+
+installsrc : 
+	mkdirs $(SRCROOT)
+	tar -cvf - * | (cd $(SRCROOT); tar -xvf -)
+clean : 
+	cd flex*; make clean
+	cd tar* ; make clean
+	cd make*; make clean
+
+

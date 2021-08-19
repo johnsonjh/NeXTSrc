@@ -1,0 +1,9 @@
+	/release/sun_root/bin/make machine=next DOVERS=ALWAYS SRCROOT=/rele\
+	ase/NeXT_root LCLROOT=/os/osdev/NeXT_root DSTROOT=/release/NeXT_roo\
+	t local
+mkdirs /os/osdev/NeXT_root/usr/bin
+sed -e "s/#PROGRAM.*/#`vers_string makewhatis`/"  <makewhatis.sh >makewhatis.NEW
+install -xs -m 555 makewhatis.NEW /os/osdev/NeXT_root/usr/bin/makewhatis
+	/release/sun_root/usr/bin/install -u -xs -m 555 makewhatis.NEW /os/\
+	osdev/NeXT_root/usr/bin/makewhatis
+sed -e <strip comments> makewhatis.NEW >/os/osdev/NeXT_root/usr/bin/makewhatis

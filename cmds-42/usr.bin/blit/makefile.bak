@@ -1,0 +1,6 @@
+# CC = gcc
+CFLAGS = -g
+
+blit:	readeps.o main.o utils.o
+	cc $(CFLAGS) -o blit readeps.o main.o utils.o
+

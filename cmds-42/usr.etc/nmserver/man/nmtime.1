@@ -1,0 +1,35 @@
+.TH NMTIME 1 2/22/88
+.CM 4
+.SH NAME
+nmtime \- Timing program for the Mach network server.
+.SH SYNOPSIS
+.B nmtime
+[ -e ]
+.SH DESCRIPTION
+.I nmtime
+can be used to test and obtain timings for a
+.I network server.
+To operate, one instance of
+.I nmtime
+should be put in passive echo mode by using the
+.B -c
+command line switch or the 
+.B E
+command from the
+.I nmtime
+prompt, and the other instance should be used interactively 
+to send messages.
+
+.I nmtime
+is interactive; all commands can be listed by entering 
+.I ?
+or
+.I h
+at the prompt.
+Commands can be in upper or lower case; several commands
+can be typed on the same line, provided that spaces are used to 
+disambiguate the end of string arguments.
+.SH HISTORY
+.TP 
+22-Feb-88  Daniel Julin (dpj) at Carnegie-Mellon University
+Created.

@@ -1,0 +1,9 @@
+chkey.o: chkey.c /usr/include/stdio.h /usr/include/rpc/rpc.h
+chkey.o: /usr/include/rpc/types.h /usr/include/sys/types.h
+chkey.o: /usr/include/netinet/in.h /usr/include/rpc/xdr.h
+chkey.o: /usr/include/rpc/auth.h /usr/include/rpc/clnt.h
+chkey.o: /usr/include/rpc/rpc_msg.h /usr/include/rpc/auth_unix.h
+chkey.o: /usr/include/rpc/svc.h /usr/include/rpc/svc_auth.h
+chkey.o: /usr/include/rpc/key_prot.h /usr/include/rpcsvc/ypclnt.h
+chkey.o: /usr/include/sys/time.h /usr/include/time.h /usr/include/sys/file.h
+chkey.o: /usr/include/sys/fcntl.h /usr/include/pwd.h /usr/include/mp.h

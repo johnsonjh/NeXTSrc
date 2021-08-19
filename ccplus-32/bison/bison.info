@@ -1,0 +1,121 @@
+Info file bison.info, produced by Makeinfo, -*- Text -*- from input
+file bison.texinfo.
+
+This file documents the Bison parser generator.
+
+Copyright (C) 1988 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the sections entitled ``Bison General Public License'' and
+``Conditions for Using Bison'' are included exactly as in the
+original, and provided that the entire resulting derived work is
+distributed under the terms of a permission notice identical to this
+one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that the text of the translations of the sections
+entitled ``Bison General Public License'' and ``Conditions for Using
+Bison'' must be approved for accuracy by the Foundation.
+
+Indirect:
+bison.info-1: 1082
+bison.info-2: 49456
+bison.info-3: 99038
+bison.info-4: 145527
+
+Tag Table:
+(Indirect)
+Node: Top1084
+Node: Introduction2183
+Node: Conditions3257
+Node: Copying5110
+Node: Concepts12480
+Node: Language and Grammar13514
+Node: Grammar in Bison17980
+Node: Semantic Values19702
+Node: Semantic Actions21773
+Node: Bison Parser22950
+Node: Stages25185
+Node: Grammar Layout26402
+Node: Examples27644
+Node: RPN Calc28723
+Node: Rpcalc Decls29899
+Node: Rpcalc Rules31401
+Node: Rpcalc Input33131
+Node: Rpcalc Line34587
+Node: Rpcalc Expr35692
+Node: Rpcalc Lexer37643
+Node: Rpcalc Main40157
+Node: Rpcalc Error40533
+Node: Rpcalc Gen41506
+Node: Rpcalc Compile42614
+Node: Infix Calc43486
+Node: Simple Error Recovery46045
+Node: Multi-function Calc47920
+Node: Mfcalc Decl49458
+Node: Mfcalc Rules51410
+Node: Mfcalc Symtab52788
+Node: Exercises58935
+Node: Grammar File59443
+Node: Grammar Outline60211
+Node: C Declarations60968
+Node: Bison Declarations61569
+Node: Grammar Rules61961
+Node: C Code62393
+Node: Symbols63286
+Node: Rules66896
+Node: Recursion68518
+Node: Semantics70195
+Node: Value Type71284
+Node: Multiple Types71918
+Node: Actions72872
+Node: Action Types75235
+Node: Mid-Rule Actions76530
+Node: Declarations81807
+Node: Token Decl83050
+Node: Precedence Decl84354
+Node: Union Decl85901
+Node: Type Decl86738
+Node: Expect Decl87467
+Node: Start Decl88989
+Node: Pure Decl89386
+Node: Decl Summary90641
+Node: Multiple Parsers91842
+Node: Interface93527
+Node: Parser Function94362
+Node: Lexical95205
+Node: Calling Convention96589
+Node: Token Values97904
+Node: Token Positions99040
+Node: Pure Calling99914
+Node: Error Reporting100690
+Node: Action Features102394
+Node: Algorithm104879
+Node: Look-Ahead106999
+Node: Shift/Reduce109101
+Node: Precedence111489
+Node: Why Precedence112143
+Node: Using Precedence113995
+Node: Precedence Examples114956
+Node: How Precedence115655
+Node: Contextual Precedence116756
+Node: Parser States118544
+Node: Reduce/Reduce119778
+Node: Error Recovery122928
+Node: Context Dependency127776
+Node: Semantic Tokens128609
+Node: Lexical Tie-ins131632
+Node: Tie-in Recovery133125
+Node: Debugging135277
+Node: Invocation137694
+Node: Table of Symbols140378
+Node: Glossary145529
+Node: Index150850
+
+End Tag Table

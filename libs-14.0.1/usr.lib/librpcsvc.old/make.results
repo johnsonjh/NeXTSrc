@@ -1,0 +1,144 @@
+	/release/sun_root/bin/make machine=next DOVERS=ALWAYS SRCROOT=/rele\
+	ase/NeXT_root LCLROOT=/os/osdev/NeXT_root DSTROOT=/release/NeXT_roo\
+	t local
+if [ -n "librpcsvc.a" ]; then make librpcsvc.a.local ; fi;
+	/release/sun_root/bin/make machine=next DOVERS=ALWAYS SRCROOT=/rele\
+	ase/NeXT_root LCLROOT=/os/osdev/NeXT_root DSTROOT=/release/NeXT_roo\
+	t librpcsvc.a.local
+cc -O -MD -gg -pg -c mountxdr.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -MD -gg -pg -c mountxdr.c -I/os/osdev/LIBS/libs1.0b/\
+	mach.include -I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_roo\
+	t/usr/mach/include -I/os/osdev/NeXT_root/usr/include -I/release/NeX\
+	T_root/usr/mach/include -I/release/NeXT_root/usr/include -L/os/osde\
+	v/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/\
+	lib -L/release/NeXT_root/usr/lib
+md -u Makedep -d mountxdr.d
+	/release/sun_root/usr/bin/md -u Makedep -d mountxdr.d
+cc -O -MD -gg -pg -c nlm_prot.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -MD -gg -pg -c nlm_prot.c -I/os/osdev/LIBS/libs1.0b/\
+	mach.include -I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_roo\
+	t/usr/mach/include -I/os/osdev/NeXT_root/usr/include -I/release/NeX\
+	T_root/usr/mach/include -I/release/NeXT_root/usr/include -L/os/osde\
+	v/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/\
+	lib -L/release/NeXT_root/usr/lib
+md -u Makedep -d nlm_prot.d
+	/release/sun_root/usr/bin/md -u Makedep -d nlm_prot.d
+cc -O -MD -gg -pg -c rex_xdr.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -MD -gg -pg -c rex_xdr.c -I/os/osdev/LIBS/libs1.0b/m\
+	ach.include -I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_root\
+	/usr/mach/include -I/os/osdev/NeXT_root/usr/include -I/release/NeXT\
+	_root/usr/mach/include -I/release/NeXT_root/usr/include -L/os/osdev\
+	/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/l\
+	ib -L/release/NeXT_root/usr/lib
+md -u Makedep -d rex_xdr.d
+	/release/sun_root/usr/bin/md -u Makedep -d rex_xdr.d
+cc -O -MD -gg -pg -c rquotaxdr.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -MD -gg -pg -c rquotaxdr.c -I/os/osdev/LIBS/libs1.0b\
+	/mach.include -I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_ro\
+	ot/usr/mach/include -I/os/osdev/NeXT_root/usr/include -I/release/Ne\
+	XT_root/usr/mach/include -I/release/NeXT_root/usr/include -L/os/osd\
+	ev/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root\
+	/lib -L/release/NeXT_root/usr/lib
+md -u Makedep -d rquotaxdr.d
+	/release/sun_root/usr/bin/md -u Makedep -d rquotaxdr.d
+cc -O -MD -gg -pg -c rstatxdr.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -MD -gg -pg -c rstatxdr.c -I/os/osdev/LIBS/libs1.0b/\
+	mach.include -I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_roo\
+	t/usr/mach/include -I/os/osdev/NeXT_root/usr/include -I/release/NeX\
+	T_root/usr/mach/include -I/release/NeXT_root/usr/include -L/os/osde\
+	v/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/\
+	lib -L/release/NeXT_root/usr/lib
+md -u Makedep -d rstatxdr.d
+	/release/sun_root/usr/bin/md -u Makedep -d rstatxdr.d
+cc -O -MD -gg -pg -c rusersxdr.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -MD -gg -pg -c rusersxdr.c -I/os/osdev/LIBS/libs1.0b\
+	/mach.include -I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_ro\
+	ot/usr/mach/include -I/os/osdev/NeXT_root/usr/include -I/release/Ne\
+	XT_root/usr/mach/include -I/release/NeXT_root/usr/include -L/os/osd\
+	ev/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root\
+	/lib -L/release/NeXT_root/usr/lib
+md -u Makedep -d rusersxdr.d
+	/release/sun_root/usr/bin/md -u Makedep -d rusersxdr.d
+cc -O -MD -gg -pg -c rwallxdr.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -MD -gg -pg -c rwallxdr.c -I/os/osdev/LIBS/libs1.0b/\
+	mach.include -I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_roo\
+	t/usr/mach/include -I/os/osdev/NeXT_root/usr/include -I/release/NeX\
+	T_root/usr/mach/include -I/release/NeXT_root/usr/include -L/os/osde\
+	v/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/\
+	lib -L/release/NeXT_root/usr/lib
+md -u Makedep -d rwallxdr.d
+	/release/sun_root/usr/bin/md -u Makedep -d rwallxdr.d
+cc -O -MD -gg -pg -c sm_inter.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -MD -gg -pg -c sm_inter.c -I/os/osdev/LIBS/libs1.0b/\
+	mach.include -I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_roo\
+	t/usr/mach/include -I/os/osdev/NeXT_root/usr/include -I/release/NeX\
+	T_root/usr/mach/include -I/release/NeXT_root/usr/include -L/os/osde\
+	v/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/\
+	lib -L/release/NeXT_root/usr/lib
+md -u Makedep -d sm_inter.d
+	/release/sun_root/usr/bin/md -u Makedep -d sm_inter.d
+cc -O -MD -gg -pg -c sprayxdr.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -MD -gg -pg -c sprayxdr.c -I/os/osdev/LIBS/libs1.0b/\
+	mach.include -I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_roo\
+	t/usr/mach/include -I/os/osdev/NeXT_root/usr/include -I/release/NeX\
+	T_root/usr/mach/include -I/release/NeXT_root/usr/include -L/os/osde\
+	v/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/\
+	lib -L/release/NeXT_root/usr/lib
+md -u Makedep -d sprayxdr.d
+	/release/sun_root/usr/bin/md -u Makedep -d sprayxdr.d
+cc -O -MD -gg -pg -c util.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -MD -gg -pg -c util.c -I/os/osdev/LIBS/libs1.0b/mach\
+	.include -I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_root/us\
+	r/mach/include -I/os/osdev/NeXT_root/usr/include -I/release/NeXT_ro\
+	ot/usr/mach/include -I/release/NeXT_root/usr/include -L/os/osdev/Ne\
+	XT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/lib \
+	-L/release/NeXT_root/usr/lib
+md -u Makedep -d util.d
+	/release/sun_root/usr/bin/md -u Makedep -d util.d
+cc -O -MD -gg -pg -c yppasswdxdr.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -MD -gg -pg -c yppasswdxdr.c -I/os/osdev/LIBS/libs1.\
+	0b/mach.include -I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_\
+	root/usr/mach/include -I/os/osdev/NeXT_root/usr/include -I/release/\
+	NeXT_root/usr/mach/include -I/release/NeXT_root/usr/include -L/os/o\
+	sdev/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_ro\
+	ot/lib -L/release/NeXT_root/usr/lib
+md -u Makedep -d yppasswdxdr.d
+	/release/sun_root/usr/bin/md -u Makedep -d yppasswdxdr.d
+if [ `expr librpcsvc.a : '.*\.a' + 1 ` -ne 1 ] ; then if [ -f librpcsvc.a.NEW ] ; then ar ru librpcsvc.a.NEW  etherxdr.o klm_prot.o mountxdr.o nlm_prot.o rex_xdr.o rquotaxdr.o  rstatxdr.o rusersxdr.o rwallxdr.o sm_inter.o sprayxdr.o util.o  yppasswdxdr.o         ; else ar q librpcsvc.a.NEW  etherxdr.o klm_prot.o mountxdr.o nlm_prot.o rex_xdr.o rquotaxdr.o  rstatxdr.o rusersxdr.o rwallxdr.o sm_inter.o sprayxdr.o util.o  yppasswdxdr.o         ; fi elif [ -n "" ] ; then cp  librpcsvc.a.NEW; elif [ -n "" ] ; then cp  librpcsvc.a.NEW; else cc -O -MD -gg -pg  -o librpcsvc.a.NEW  etherxdr.o klm_prot.o mountxdr.o nlm_prot.o rex_xdr.o rquotaxdr.o  rstatxdr.o rusersxdr.o rwallxdr.o sm_inter.o sprayxdr.o util.o  yppasswdxdr.o          ; fi
+	/release/sun_root/bin/ar q librpcsvc.a.NEW etherxdr.o klm_prot.o mo\
+	untxdr.o nlm_prot.o rex_xdr.o rquotaxdr.o rstatxdr.o rusersxdr.o rw\
+	allxdr.o sm_inter.o sprayxdr.o util.o yppasswdxdr.o
+ar: creating librpcsvc.a.NEW
+if [ -n "" ]; then  mkdirs -m 755 /os/osdev/NeXT_root//;  install -c -m 444  /os/osdev/NeXT_root//;  fi
+mkdirs -m 755 /os/osdev/NeXT_root//;  install -c -m 555 librpcsvc.a.local /os/osdev/NeXT_root///librpcsvc.a.local
+	/release/sun_root/usr/bin/install -u -c -m 555 librpcsvc.a.local /o\
+	s/osdev/NeXT_root///librpcsvc.a.local
+install: can't open librpcsvc.a.local
+*** Exit 1
+
+Stop.
+*** Exit 1 (ignored)
+for i in `echo `; do echo ======= make $i.local =======; make -f $i.mk PRODUCT=$i MAKEFILE=$i.mk $i.local; done;
+CWD=`pwd`; cd /release/NeXT_root; DSTROOT=`pwd`; cd $CWD;  for i in `echo `;  do  echo ================= make local for $i =================;  (cd $i; make DSTROOT=$DSTROOT local);  done

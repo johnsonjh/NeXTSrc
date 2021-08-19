@@ -1,0 +1,111 @@
+Changes for the Warp ?? release (the -26 compiler release):
+- Fixed bugs where the a file was to be created and the create failed because
+  the file was read-only.  The fix was to unlink all files before creating
+  them.
+
+Changes for the Warp ?? release (the -25 compiler release):
+- Added the -s spec_file option to cmpshlib so it can check the #nobranch_text
+  (global const) symbols that are not #private_externs. Also data symbols that
+  are #private_externs are not reported.
+- Changed mkshlib to leave around the the branch object and source when it works
+  successfully.
+
+Changes for the Warp ?? release (the -24 compiler release):
+- Added two prints to cmpshlib to say what it is checking.
+- Added all approprate ld flags to mkshlib.
+- Changed to always use branch.o and branch.s so scattered loading will have
+  a constant object file name to use.
+- Changed to use one array for all ld flags.
+- Removed the prototype for map_fd from cmpshlib.c .
+
+Changes for the 2.0 impulse X.X release (the -23 compiler release):
+- Added an fsync() call right before the host file is written ifdef'ed OS_BUG
+  to work around the kernel not flushing the modification time correctly.
+
+Changes for the 2.0 impulse X.X release (the -22 compiler release):
+- Added the -segaddr option to mkshlib(l).
+
+Changes for the 2.0 impulse X.X release (the -21 compiler release):
+- Changed the name of the shared library full reference symbol from
+  .shared_library_reference<target base name> to the target base name
+  up to (but not including) the first '.' .  This is so the name for
+  "/usr/shlib/libsys_s.A.shlib" will be "libsys_s" etc.
+
+Changes for the 2.0 impulse X.X release (the -20 compiler release):
+- Fixed a bug where the rounded area of a host shared library object was not
+  zeroed and then ld(1) would complain that the string table did not end in a
+  '\0'.
+- Changed the file definition symbol names to include the base name of the
+  target shared library.  This caused a bug where libNeXT and libsys both had
+  a file named pointers.o in them and the -20 version of the link editor would
+  treat this as a multiply defined symbol.
+
+Changes for the 2.0 impulse X.X release (the -19 compiler release):
+- Added the -segprot option to mkshlib to pass through to ld(1).
+- Changed -segcreate to -sectcreate but still recognized -segcreate.
+- Added code in target.c to check for the existence of all objects before
+  running ld(1).
+- Updated for the changes to CPU_TYPE and CPU_SUBTYPE with the changes to
+  <sys/machine.h>
+- Added an object to the host shared library that a defined symbol in it will
+  reference all objects in the library.
+
+Changes for the 2.0 impulse 0.01 release (the -17 compiler release):
+- Changed #alias from using the -a option of the 1.0 link editor to using the
+  -i option of the new link editor.  This involved causing the original name
+  to become a private extern automaticly and to be seen in the target file.
+- Changed to using a section for initialization to match the removal of loader
+  defined symbols in the new link editor.  To do this without a .section
+  directive in the assembler required writing the entire object file so while
+  I was at it I made it write the entire host shared library archive which makes
+  it much faster.  Also added a library identification object in the target
+  shared library to propagate the LC_IDFVMLIB load command for use with the new
+  link editor.  Also bought the code up to ANSI C (both the mkshlib and cmpshlib
+  code) with respect to prototypes, header files and the library functions they
+  use.  Removed all a.out style shlib related code from both programs.
+- Added the -minor_version argument to mkshlib.
+
+Changes for the 0.96 release (the -16 compiler release)
+- Added the -f option to not write out the host library.
+
+Changes for the 0.91 release (the -10 compiler release)
+- Added allowing the '-' character in object file base names.
+- Fixed the data_size in the shared library struct to reflect the size of
+  all other segments besides the text (a kluge but will get the correct
+  overlap checking).  Also added a S_FVMLIB marked segment to the __.FVMLIB
+  object for all segments of the shared library.
+
+Changes for the 0.83 release (only a binary of cmpshlib was released)
+- Fixed cmpshlib to handle Mach-O symbols.
+
+Changes for the 0.83 release (the -9 compiler release):
+- Added the #undefined directive which passes -U <symbol name> to ld for each
+  symbol listed.  And removed the -u option (it now prints a warning).
+
+Changes for the 0.82 release (the -8 compiler release):
+- Fixed a bug that didn't get the cross references for undefined private
+  externs between library members.
+- Added -segcreate options to be passed through to ld.
+- Fixed a bug in two error() messages that were missing an argument and caused
+  a core dump.  This happened when a private_extern was also in the branch
+  table or nobranch_text (parse_spec.c line 231 and 237)
+- Changed the Makefile to install in /usr/local/bin.  This directory gets
+  cleaned before release.
+
+Changes for the 0.82 release (the -7 compiler release):
+- Removed bsearch.c and linking with it.  (This must link with the ANSI C libc
+  release 0.81 or better or bsearch will be undefined).
+- Change from using strtol() to strtoul() when parsing #address.  (This must
+  link with the ANSI C libc release 0.81 or better or this will be undefined).
+- Changed the default object file format produced by mkshlib to mach
+  relocatable (setting of the -M flag).
+- Added header_addr to fvmlib id command and filled it in.
+
+Changes for the 0.81 release (the -6 compiler release):
+- Updated the mkshlib to take in and produce mach-O relocatable objects (with
+  the -M flag for now).
+
+Changes for the 0.8 release:
+- Fixed the problem of a symbol that is both a private_externs and the alias
+  of an aliased symbol (-aoriginal:alias) which did not get removed from
+  objects that referenced them.

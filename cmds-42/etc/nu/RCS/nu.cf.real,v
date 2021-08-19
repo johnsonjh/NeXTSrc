@@ -1,0 +1,87 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    osdev:1.2; strict;
+comment  @@;
+
+
+1.2
+date     89.07.15.21.20.15;  author osdev;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.07.15.21.19.45;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+1.2
+log
+@Bug fixes from Lee.
+@
+text
+@; /etc/nu.cf
+;
+; This configuration file is used to control the behavior of the nu (new
+; user) program. Case is significant in variable names. Please read nu(8)
+; before changing anything.
+;
+; Modified for NeXT:	 9 Jun 89	Lee Tucker
+; Modified for NeXT:	 2 Nov 88	Peter King
+; Created:		25 Aug 84	Brian Reid
+;
+Debug=0				; 0 -> No debugging.
+NetInfoDomain = "."		; "." -> Local domain
+WantMHsetup =0			; 0 -> don't ask about setting up MH mailbox
+WantSymbolicLinks = 0		; 0 -> don't make everybody be /user/name ?
+SymbolicLinkDir="/user"		; see above.
+NoviceUser = 1			; 1 -> don't show shell script details
+PWFillHoles = 1			; 1 -> Fill the holes in the password file
+PWUserBase = 20			; Fill passwd file starting at uid 20
+
+DefaultGroup=20 		; default user-group number
+DefaultShell="/bin/csh"		; login shell
+MaxNameLength=8			; limit on chars in a login id
+Logfile="/usr/adm/nu.log"	; null name ==> no logging
+CreateDir="/etc/nulib/nu1.sh"	; shell script to make new directory
+CreateFiles="/etc/nulib/nu2.sh" ; script to load it with some contents
+DestroyAccts="/etc/nulib/nu3.sh" ; script to get rid of old accounts
+DeleteAccts="/etc/nulib/nu4.sh" ; script to get rid of an account
+
+DefaultHome = 	   ""
+GroupHome=	20 ""
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d7 2
+a8 1
+; Modified for NeXT:	2 Nov 88	Peter King
+d12 1
+a12 3
+HashedPW = 0			; 0 -> Don't hash the passwd file when finished
+YellowPages = 0			; 0 -> Don't compile the YP "hosts" database
+YPDir = "/etc/yp"		; Yellow Pages build directory
+a22 2
+PasswdFile="/etc/passwd"	; 
+BackupFile="/usr/adm/nu.passwd"	;
+a23 3
+Tempfile="/usr/adm/nu.temp"	;
+Dummyfile="/usr/adm/ptmp.lock"	; Think twice before changing this
+Linkfile="/etc/ptmp"		; Think 3 times before changing this
+d29 2
+a30 2
+DefaultHome = 	   "/"
+GroupHome=	20 "/"
+@

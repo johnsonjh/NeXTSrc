@@ -1,0 +1,79 @@
+/* 
+ * Mach Operating System
+ * Copyright (c) 1987 Carnegie-Mellon University
+ * All rights reserved.  The CMU software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ */
+/*
+ * logstat.defs
+ *
+ * $Source: /os/osdev/LIBS/libs-7/etc/nmserver/server/RCS/logstat.defs,v $
+ *
+ * $Header: logstat.defs,v 1.1 88/09/30 16:58:14 osdev Exp $
+ *
+ */
+
+/*
+ * Mig specifications for the log/statistics mechanism.
+ */
+
+/*
+ * HISTORY:
+ *  1-Jul-88  Mary Thompson (mrt) at Carnegie Mellon
+ *	Changed subsystem base from 4000 to 1200 to be in
+ *	the netnameserver range.
+ *
+ * 18-Aug-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Added call to get port statistics.
+ *
+ * 30-May-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Changes for the new mig.
+ *
+ * 21-May-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	ls_sendlog now returns two logs - an old and a current one.
+ *
+ * 13-Mar-87  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Created.
+ *
+ */
+
+subsystem logstat 1200;
+
+type port_t		= MSG_TYPE_PORT;
+type int		= MSG_TYPE_INTEGER_32;
+type stat_ptr_t		= ^array[] of MSG_TYPE_INTEGER_32;
+type debug_ptr_t	= ^array[] of MSG_TYPE_INTEGER_32;
+type param_ptr_t	= ^array[] of MSG_TYPE_INTEGER_32;
+type log_ptr_t		= ^array[] of (MSG_TYPE_UNSTRUCTURED, 32);
+
+type mem_class_ptr_t	= ^array[] of MSG_TYPE_INTEGER_32;
+type mem_nam_ptr_t	= ^array[] of MSG_TYPE_CHAR;
+type mem_bucket_ptr_t	= ^array[] of MSG_TYPE_INTEGER_32;
+
+import "ls_defs.h";
+
+
+routine ls_sendlog(server_port : port_t; out old_log_ptr: log_ptr_t; out cur_log_ptr: log_ptr_t);
+
+routine ls_resetlog(server_port : port_t);
+
+routine ls_writelog(server_port : port_t);
+
+routine ls_sendstat(server_port : port_t; out stat_ptr: stat_ptr_t);
+
+routine ls_resetstat(server_port : port_t);
+
+routine ls_senddebug(server_port : port_t; out debug_ptr: debug_ptr_t);
+
+routine ls_setdebug(server_port : port_t; in debug_ptr: debug_ptr_t);
+
+routine ls_sendparam(server_port : port_t; out param_ptr: param_ptr_t);
+
+routine ls_setparam(server_port : port_t; in param_ptr: param_ptr_t);
+
+routine ls_sendportstat(server_port : port_t; out port_stat_ptr : log_ptr_t);
+
+routine ls_mem_list(server_port : port_t;
+			out class_ptr : mem_class_ptr_t;
+			out nam_ptr : mem_nam_ptr_t;
+			out bucket_ptr : mem_bucket_ptr_t);

@@ -1,0 +1,132 @@
+#
+# Generic top-level makefile for simple commands
+# (c) NeXT, Inc.  1987
+#
+# Note: otool.c will not build with -O as of 0.8 release
+CFLAGS = -g -I../include
+PAGESIZE = 8192
+IFLAGS = -s
+BINDIR = /bin
+LOCBINDIR = /usr/local/bin
+CFILES = atom.c file.c nm.c otool.c size.c strip.c ar.c strings.c ranlib.c \
+	 indr.c mlist.c getobjcseg.c segedit.c ebadexec.c
+HFILES = mlist.h
+OTHER_SRCS = notes
+
+all:	.depend_done atom.NEW file.NEW nm.NEW otool.NEW size.NEW strip.NEW \
+	ar.NEW strings.NEW ranlib.NEW indr.NEW segedit.NEW ebadexec.NEW
+
+atom.NEW: atom.o vers.o
+	$(CC) $(CFLAGS) -object -o atom.NEW atom.o vers.o
+
+atom.o: atom.c
+	$(CC) $(CFLAGS) -DPAGESIZE=$(PAGESIZE) -c atom.c
+
+file.NEW: file.o vers.o
+	$(CC) $(CFLAGS) -object -o file.NEW file.o vers.o
+
+nm.NEW: nm.o mlist.o getobjcseg.o vers.o
+	$(CC) $(CFLAGS) -object -o nm.NEW nm.o mlist.o getobjcseg.o vers.o
+
+otool.NEW: otool.o vers.o
+	$(CC) $(CFLAGS) -o otool.NEW otool.o vers.o -lc_static
+
+size.NEW: size.o vers.o
+	$(CC) $(CFLAGS) -object -o size.NEW size.o vers.o
+
+strip.NEW: strip.o vers.o
+	$(CC) $(CFLAGS) -object -o strip.NEW strip.o vers.o 
+
+ar.NEW: ar.o vers.o
+	$(CC) $(CFLAGS) -object -o ar.NEW ar.o vers.o
+
+strings.NEW: strings.o vers.o
+	$(CC) $(CFLAGS) -object -o strings.NEW strings.o vers.o
+
+ranlib.NEW: ranlib.o vers.o
+	$(CC) $(CFLAGS) -object -o ranlib.NEW ranlib.o vers.o
+
+indr.NEW: indr.o vers.o
+	$(CC) $(CFLAGS) -o indr.NEW indr.o vers.o
+
+segedit.o: segedit.c
+	$(CC) $(CFLAGS) -DPAGESIZE=$(PAGESIZE) -c segedit.c
+
+segedit.NEW: segedit.o vers.o
+	$(CC) $(CFLAGS) -object -o segedit.NEW segedit.o vers.o
+
+ebadexec.NEW: ebadexec.o vers.o
+	$(CC) $(CFLAGS) -o ebadexec.NEW ebadexec.o vers.o -lc_static
+
+vers.c: ${DOVERS} ${OBJS}
+	@rm -f $@
+	vers_string -c ccmisc > $@
+
+
+#
+# Standard targets
+#
+${PRODUCT}:	.depend_done $$@.NEW
+
+clean:	ALWAYS
+	-rm -f *.o *.NEW vers.c
+	-rm -f ${PRODUCT} ${DERIVED} ${INTERMEDIATES} ${GARBAGE}
+	-rm -f Makedep .depend_done
+	touch Makedep
+
+install: ${DSTROOT}${BINDIR} ${DSTROOT}${LOCBINDIR} all
+	install ${IFLAGS} -m 555 atom.NEW ${DSTROOT}${BINDIR}/atom
+	install ${IFLAGS} -m 555 file.NEW ${DSTROOT}${BINDIR}/file
+	install ${IFLAGS} -m 555 nm.NEW ${DSTROOT}${BINDIR}/nm
+	install ${IFLAGS} -m 555 otool.NEW ${DSTROOT}${BINDIR}/otool
+	install ${IFLAGS} -m 555 size.NEW ${DSTROOT}${BINDIR}/size
+	install ${IFLAGS} -m 555 strip.NEW ${DSTROOT}${BINDIR}/strip
+	install ${IFLAGS} -m 555 ar.NEW ${DSTROOT}${BINDIR}/ar
+	install ${IFLAGS} -m 555 strings.NEW ${DSTROOT}${BINDIR}/strings
+	install ${IFLAGS} -m 555 ranlib.NEW ${DSTROOT}${BINDIR}/ranlib
+	install ${IFLAGS} -m 555 indr.NEW ${DSTROOT}${LOCBINDIR}/indr
+	install ${IFLAGS} -m 555 segedit.NEW ${DSTROOT}${BINDIR}/segedit
+	install ${IFLAGS} -m 555 ebadexec.NEW ${DSTROOT}${BINDIR}/ebadexec
+
+local: ${LCLROOT}${BINDIR} ${LCLROOT}${LOCBINDIR} all
+	install ${IFLAGS} -m 555 atom.NEW ${LCLROOT}${BINDIR}/atom
+	install ${IFLAGS} -m 555 file.NEW ${LCLROOT}${BINDIR}/file
+	install ${IFLAGS} -m 555 nm.NEW ${LCLROOT}${BINDIR}/nm
+	install ${IFLAGS} -m 555 otool.NEW ${LCLROOT}${BINDIR}/otool
+	install ${IFLAGS} -m 555 size.NEW ${LCLROOT}${BINDIR}/size
+	install ${IFLAGS} -m 555 strip.NEW ${LCLROOT}${BINDIR}/strip
+	install ${IFLAGS} -m 555 ar.NEW ${LCLROOT}${BINDIR}/ar
+	install ${IFLAGS} -m 555 strings.NEW ${LCLROOT}${BINDIR}/strings
+	install ${IFLAGS} -m 555 ranlib.NEW ${LCLROOT}${BINDIR}/ranlib
+	install ${IFLAGS} -m 555 indr.NEW ${LCLROOT}${LOCBINDIR}/indr
+	install ${IFLAGS} -m 555 ebadexec.NEW ${LCLROOT}${BINDIR}/ebadexec
+
+DSTROOT LCLROOT SRCROOT:
+	@if [ -n "${$@}" ]; \
+	then \
+		exit 0; \
+	else \
+		echo Must define $@; \
+		exit 1; \
+	fi
+
+${DSTROOT}${BINDIR} ${DSTROOT}${LOCBINDIR} ${LCLROOT}${BINDIR} ${LCLROOT}${LOCBINDIR}:
+	mkdirs $@
+
+depend .depend_done: ${DERIVED}
+	rm -f Makedep
+	${CC} ${CFLAGS} -M ${CFILES} ${SFILES} ${DERIVED} | \
+	    awk '{ if ($$1 != prev) { if (rec != "") print rec; \
+		rec = $$0; prev = $$1; } \
+		else { if (length(rec $$2) > 78) { print rec; rec = $$0; } \
+		else rec = rec " " $$2 } } \
+		END { print rec }' >Makedep
+	-touch .depend_done
+
+tags:	ALWAYS
+	etags ${SRCS}
+	ctags ${SRCS}
+
+ALWAYS:
+
+include Makedep

@@ -1,0 +1,97 @@
+
+#
+#  NeXT Internal Library Makefile
+#  Copyright 1987, NeXT, Inc.
+#
+#  This Makefile is used for maintaining and installing NeXT software
+#  libraries.
+#
+#  Fill in values for the various variables at the places marked by
+#  **number**.  Any rules or dependencies of your own can be added
+#  at the end of the file.
+#
+
+#directory where make gets its includes.  Do not edit.
+MAKE_DIR = /usr/lib/Makefiles
+
+#  **1**  -LIBRARY NAME-
+#  The base name of the library goes here. This should also be the same
+#  name as the SGS project the library is built under.  For example, if
+#  you enter "appkit" as the name, then the name of the SGS project
+#  should be "appkit", and the library created will be "libappkit.a".
+NAME = 
+
+#  **2**  -SOURCE FILES-
+#  Here list the .m, .c, .psw, .pswm, .s, .l, .lm, .y, .ym, .ps and
+#  .spec files.  You may delete any lines that you don't use.
+#  OTHER_SRCS is used for files with other suffixes that you wish
+#  to be treated like source (i.e., printed with the source, copied
+#  with the source, etc.).  For files in OTHER_SRCS, you need to
+#  specify the corresponding .o file in OTHER_SRCS_OFILES.
+MFILES = 
+CFILES = 
+PSWFILES = 
+PSWMFILES = 
+SFILES = 
+LFILES = 
+LMFILES = 
+YFILES = 
+YMFILES = 
+PSFILES = 
+OTHER_SRCS = 
+OTHER_SRCS_OFILES =
+SPECFILES = 
+
+#  **3**  -COMMAND OPTIONS-
+#  These are passed as arguments to the Objective-C preprocessor, the C
+#  compiler, pswrap, the assembler, lex, yacc and speculate.  You may
+#  delete lines that you don't use.  All CFLAGS also get passed to
+#  Objective-C.
+#  DEBUGCFLAGS is substituted for CFLAGS when "debug" is made.
+#  PROFCFLAGS is substituted for CFLAGS when "profile" is made.
+#  Under OBJCFLAGS, for each library that you use that supplies class
+#  and message group files, you must use a -I$(OBJDIR)/XXX, where
+#  XXX is the base name of the library.
+OBJCFLAGS = 
+CFLAGS = -O
+DEBUGCFLAGS = -g
+PROFCFLAGS = -pg -g
+PSWFLAGS = 
+ASFLAGS = 
+LFLAGS = 
+YFLAGS = 
+SPECFLAGS = 
+
+#  **4**  -INCLUDE FILES-
+#  Private include files are used by the library's code, but not needed
+#  by the library's users.  Public include files are needed by others who
+#  will use the library, and must be installed along with the library.
+PRIVATE_INCFILES = 
+PUBLIC_INCFILES = 
+
+#  **5**  -BY_PRODUCTS GENERATED FROM BUILDS-
+#  If your build procedure creates any files other than .o files and the
+#  .c and .m files left over from pswrap, you should list them here so
+#  they are removed when a make clean is done.
+BY_PRODUCTS = 
+
+#this file included for standard functionality
+include $(MAKE_DIR)/Makefile.lib
+
+#  **6**  -ALL AND INSTALL TARGETS-
+#  You must define your ownb all and install targets here.  "all" should
+#  build all products of your project.  "install" should install these
+#  products in the filesystem whose root is $(DSTROOT).  There are certain
+#  targets defined in Makefile.lib which you can use to fulfill the all
+#  and install targets.  These are optimized, debug, profile,
+#  optimized_install, debug_install, profile_install and common_install.
+all: profile
+
+install: common_install profile_install 
+
+
+# You may comment in this line to get dependencies for the include files
+# you use.  To generate the dependencies, do a "make depend".
+#include Makefile.depends
+
+#  any extra rules or dependencies can be added after this line

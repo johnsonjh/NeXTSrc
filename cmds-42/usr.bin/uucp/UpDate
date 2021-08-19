@@ -1,0 +1,32 @@
+#! /bin/sh
+# mv -f /usr/lib/uucp/uucico /usr/lib/uucp/uucico.old
+# mv -f /usr/lib/uucp/uuclean /usr/lib/uucp/uuclean.old
+# mv -f /usr/lib/uucp/uuxqt /usr/lib/uucp/uuxqt.old
+# mv -f /usr/bin/uucp /usr/bin/uucp.old
+# mv -f /usr/bin/uux /usr/bin/uux.old
+# mv -f /usr/bin/uulog /usr/bin/uulog.old
+# mv -f /usr/bin/uuname /usr/bin/uuname.old
+# mv -f /usr/bin/uusnap /usr/bin/uusnap.old
+# mv -f /usr/bin/uupoll /usr/bin/uupoll.old
+# mv -f /usr/bin/uuq /usr/bin/uuq.old
+# mv -f /usr/bin/uusend /usr/bin/uusend.old
+# mv -f /usr/bin/uuencode /usr/bin/uuencode.old
+# mv -f /usr/bin/uudecode /usr/bin/uudecode.old
+# mv -f /usr/etc/uucpd /usr/etc/uucpd.old
+install -m 6111 -o uucp -g daemon uucico.NEW /usr/lib/uucp/uucico
+install -m 6111 -o uucp -g daemon uuclean.NEW /usr/lib/uucp/uuclean
+install -m 6111 -o uucp -g daemon uucp.NEW /usr/bin/uucp
+install -m 6111 -o uucp -g daemon uux.NEW /usr/bin/uux
+install -m 6111 -o uucp -g daemon uulog.NEW /usr/bin/uulog
+install -m 6111 -o uucp -g daemon uuname.NEW /usr/bin/uuname
+install -m 6111 -o uucp -g daemon uusnap.NEW /usr/bin/uusnap
+install -m 6111 -o uucp -g daemon uupoll.NEW /usr/bin/uupoll
+install -m 6111 -o uucp -g daemon uuq.NEW /usr/bin/uuq
+install -m 6111 -o uucp -g daemon uusend.NEW /usr/bin/uusend
+rm -f /usr/bin/ruusend
+ln /usr/bin/uusend /usr/bin/ruusend
+install -m 6110 -o uucp -g daemon uuxqt.NEW /usr/lib/uucp/uuxqt
+install -m 500  -o uucp -g daemon uucpd.NEW /usr/etc/uucpd
+install -m 755  -o uucp -g daemon uuencode.NEW /usr/bin/uuencode
+install -m 755  -o uucp -g daemon uudecode.NEW /usr/bin/uudecode
+exit 0

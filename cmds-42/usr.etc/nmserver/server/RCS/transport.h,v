@@ -1,0 +1,160 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    gk:1.1; strict;
+comment  @ * @;
+
+
+1.1
+date     88.09.30.15.45.53;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@NeXT, Inc.
+@
+
+
+
+1.1
+log
+@Initial NeXT version
+@
+text
+@/* 
+ * Mach Operating System
+ * Copyright (c) 1987 Carnegie-Mellon University
+ * All rights reserved.  The CMU software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ */
+/*
+ * transport.h
+ *
+ * $Source: /afs/cs.cmu.edu/project/mach/member/dpj/netmsg/server/RCS/transport.h,v $
+ *
+ * $Header: transport.h,v 1.12 88/04/03 19:35:11 dpj Exp $
+ *
+ */
+
+/*
+ * Generic interface to the transport modules. 
+ */
+
+/*
+ * HISTORY:
+ * 26-Mar-88  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Converted to use the new memory management module.
+ *
+ *  3-Dec-87  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Added TR_TCP_ENTRY. Fixed TR return codes.
+ *
+ *  1-Dec-87  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Added TR_OVERLOAD.
+ *
+ *  2-Oct-87  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Added a no-op entry for operation with no network.
+ *	Defined tr_default_entry.
+ *
+ * 25-Sep-87  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Defined TR_MAX_ENTRY.
+ *
+ *  3-Sep-87  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Added TR_VMTP2_ENTRY. Modified for RPCMOD. Fixed the TR
+ *	return codes.
+ *
+ *  9-Jun-87  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Added TR_VMTP1_ENTRY.
+ *
+ * 14-Dec-86  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Defined TRSERV_RPC, removed abort entry point for transport
+ *	modules.
+ *
+ *  2-Nov-86  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Started.
+ *
+ */
+
+#ifndef	_TRANSPORT_
+#define	_TRANSPORT_
+
+#include "mem.h"
+
+/*
+ * Type of transport service required by a client.
+ */
+#define	TRSERV_NORMAL		1
+#define	TRSERV_URGENT		2
+#define TRSERV_IPC		3
+#define	TRSERV_RPC		4
+
+/*
+ * Defined entry points to transport protocols.
+ */
+#define	TR_NOOP_ENTRY		0
+#define TR_DELTAT_ENTRY		1
+#define TR_VMTP_ENTRY		2
+#define TR_DATAGRAM_ENTRY	3
+#define TR_SRR_ENTRY		4
+#define	TR_VMTP1_ENTRY		5
+#define	TR_VMTP2_ENTRY		6
+#define	TR_TCP_ENTRY		7
+#define	TR_MAX_ENTRY		(TR_TCP_ENTRY + 1)
+
+/*
+ * Generic codes returned by a transport module. These codes are in the same
+ * space as the DISP_* and IPC_* codes.
+ */
+#define	TR_SUCCESS		-10
+#define	TR_FAILURE		-11
+#define TR_REMOTE_ACCEPT	-12
+#define	TR_REMOTE_REJECT	-13
+#define TR_CRYPT_FAILURE	-14
+#define TR_SEND_FAILURE		-15
+#define	TR_OVERLOAD		-16
+
+
+/*
+ * Entry points to transport level protocols.
+ */
+typedef struct {
+    int		(*send)();
+#if	RPCMOD
+    int		(*sendrequest)();
+    int		(*sendreply)();
+#endif	RPCMOD
+} transport_sw_entry_t;
+
+extern transport_sw_entry_t transport_switch[TR_MAX_ENTRY];
+
+extern int	transport_no_function();
+
+#define	tr_default_entry 	param.transport_default
+
+/*
+ * UDP Ports used by the transport level protocols.
+ */
+#define DELTAT_UDP_PORT		7654
+#define VMTP_UDP_PORT		7655
+#define DATAGRAM_UDP_PORT	7656
+#define SRR_UDP_PORT		7657
+
+#if	RPCMOD
+/*
+ * Macros to call transport modules.
+ */
+#define	transport_sendrequest(trmod,clid,data,to,crypt,reply)			\
+	(transport_switch[(trmod)].sendrequest((clid),(data),(to),(crypt),(reply)))
+
+#define	transport_sendreply(trmod,trid,code,data,crypt)				\
+	(transport_switch[(trmod)].sendreply((trid),(code),(data),(crypt)))
+#endif	RPCMOD
+
+/*
+ * Memory management for MEM_TRBUFF.
+ */
+extern mem_objrec_t		MEM_TRBUFF;
+
+
+#endif	_TRANSPORT_
+@

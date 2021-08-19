@@ -1,0 +1,297 @@
+2,17c2,9
+<  * Copyright (c) 1983 Eric P. Allman
+<  * Copyright (c) 1988 Regents of the University of California.
+<  * All rights reserved.
+<  *
+<  * Redistribution and use in source and binary forms are permitted
+<  * provided that the above copyright notice and this paragraph are
+<  * duplicated in all such forms and that any documentation,
+<  * advertising materials, and other materials related to such
+<  * distribution and use acknowledge that the software was developed
+<  * by the University of California, Berkeley.  The name of the
+<  * University may not be used to endorse or promote products derived
+<  * from this software without specific prior written permission.
+<  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+<  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+<  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+<  */
+---
+> **  Sendmail
+> **  Copyright (c) 1983  Eric P. Allman
+> **  Berkeley, California
+> **
+> **  Copyright (c) 1983 Regents of the University of California.
+> **  All rights reserved.  The Berkeley software License Agreement
+> **  specifies the terms and conditions for redistribution.
+> */
+20,21c12,13
+< static char sccsid[] = "@(#)deliver.c	5.26 (Berkeley) 1/1/89";
+< #endif /* not lint */
+---
+> static char	SccsId[] = "@(#)deliver.c	5.10 (Berkeley) 3/2/86";
+> #endif not lint
+23,32c15,19
+< #include <sendmail.h>
+< #include <sys/signal.h>
+< #include <sys/stat.h>
+< #include <netdb.h>
+< #include <fcntl.h>
+< #include <errno.h>
+< #ifdef NAMED_BIND
+< #include <arpa/nameser.h>
+< #include <resolv.h>
+< #endif
+---
+> # include <signal.h>
+> # include <errno.h>
+> # include "sendmail.h"
+> # include <sys/stat.h>
+> # include <netdb.h>
+70c57
+< 	int rcode;		/* response code */
+---
+> 	register int rcode;		/* response code */
+83,90d69
+< #ifdef NAMED_BIND
+< 	/* unless interactive, try twice, over a minute */
+< 	if (OpMode == MD_DAEMON || OpMode == MD_SMTP) {
+< 		_res.retrans = 30;
+< 		_res.retry = 2;
+< 	}
+< #endif NAMED_BIND
+< 
+93a73
+> # ifdef DEBUG
+96a77
+> # endif DEBUG
+226a208
+> # ifdef DEBUG
+231a214
+> # endif DEBUG
+248d230
+< 			NoReturn = TRUE;
+249a232
+> 			NoReturn = TRUE;
+373a357,358
+> 	message(Arpa_Info, "Connecting to %s.%s...", host, m->m_name);
+> 
+376,379c361
+< #ifdef NAMED_BIND
+< 	_res.options &= ~(RES_DEFNAMES | RES_DNSRCH);		/* XXX */
+< #endif
+< #ifdef SMTP
+---
+> # ifdef SMTP
+382,385c364,367
+< 		expand("\001w", buf, &buf[sizeof(buf) - 1], e);
+< 		rcode = EX_OK;
+< #ifdef NAMED_BIND
+< 		if (host[0] != '[')
+---
+> 		/* send the initial SMTP protocol */
+> 		rcode = smtpinit(m, pv);
+> 
+> 		if (rcode == EX_OK)
+387,401c369,373
+< 			Nmx = getmxrr(host, MxHosts, buf, &rcode);
+< 		}
+< 		else
+< #endif
+< 		{
+< 			Nmx = 1;
+< 			MxHosts[0] = host;
+< 		}
+< 		if (Nmx >= 0)
+< 		{
+< 			message(Arpa_Info, "Connecting to %s (%s)...",
+< 			    MxHosts[0], m->m_name);
+< 			if ((rcode = smtpinit(m, pv)) == EX_OK) {
+< 				register char *t = tobuf;
+< 				register int i;
+---
+> 			/* send the recipient list */
+> 			tobuf[0] = '\0';
+> 			for (to = tochain; to != NULL; to = to->q_tchain)
+> 			{
+> 				int i;
+403,414c375,380
+< 				/* send the recipient list */
+< 				tobuf[0] = '\0';
+< 				for (to = tochain; to; to = to->q_tchain) {
+< 					e->e_to = to->q_paddr;
+< 					if ((i = smtprcpt(to, m)) != EX_OK) {
+< 						markfailure(e, to, i);
+< 						giveresponse(i, m, e);
+< 					}
+< 					else {
+< 						*t++ = ',';
+< 						for (p = to->q_paddr; *p; *t++ = *p++);
+< 					}
+---
+> 				e->e_to = to->q_paddr;
+> 				i = smtprcpt(to, m);
+> 				if (i != EX_OK)
+> 				{
+> 					markfailure(e, to, i);
+> 					giveresponse(i, m, e);
+416,422c382,385
+< 
+< 				/* now send the data */
+< 				if (tobuf[0] == '\0')
+< 					e->e_to = NULL;
+< 				else {
+< 					e->e_to = tobuf + 1;
+< 					rcode = smtpdata(m, e);
+---
+> 				else
+> 				{
+> 					(void) strcat(tobuf, ",");
+> 					(void) strcat(tobuf, to->q_paddr);
+423a387
+> 			}
+425,426c389,395
+< 				/* now close the connection */
+< 				smtpquit(m);
+---
+> 			/* now send the data */
+> 			if (tobuf[0] == '\0')
+> 				e->e_to = NULL;
+> 			else
+> 			{
+> 				e->e_to = tobuf + 1;
+> 				rcode = smtpdata(m, e);
+427a397,399
+> 
+> 			/* now close the connection */
+> 			smtpquit(m);
+431,433c403
+< #endif /* SMTP */
+< 	{
+< 		message(Arpa_Info, "Connecting to %s (%s)...", host, m->m_name);
+---
+> # endif SMTP
+435,438d404
+< 	}
+< #ifdef NAMED_BIND
+< 	_res.options |= RES_DEFNAMES | RES_DNSRCH;	/* XXX */
+< #endif
+449a416
+> 	{
+451a419
+> 	}
+583c551
+< static
+---
+> 
+707a676
+> # ifdef DEBUG
+712a682
+> # endif DEBUG
+725a696
+> #ifdef DEBUG
+732a704
+> #endif DEBUG
+741c713
+< 		register int i, j;
+---
+> 		register int i;
+751,753d722
+< 		for (j = 0; j < Nmx; j++)
+< 		{
+< 			CurHostName = MxHosts[j];
+756,768c725,732
+< 			st = stab(MxHosts[j], ST_HOST, ST_FIND);
+< 			if (st == NULL || st->s_host.ho_exitstat == EX_OK) {
+< 				if (j > 1)
+< 					message(Arpa_Info,
+< 					    "Connecting to %s (%s)...",
+< 					    MxHosts[j], m->m_name);
+< 				i = makeconnection(MxHosts[j], port, pmfile, prfile);
+< 			}
+< 			else
+< 			{
+< 				i = st->s_host.ho_exitstat;
+< 				errno = st->s_host.ho_errno;
+< 			}
+---
+> 		st = stab(pvp[1], ST_HOST, ST_FIND);
+> 		if (st == NULL || st->s_host.ho_exitstat == EX_OK)
+> 			i = makeconnection(pvp[1], port, pmfile, prfile);
+> 		else
+> 		{
+> 			i = st->s_host.ho_exitstat;
+> 			errno = st->s_host.ho_errno;
+> 		}
+770c734
+< 			i = makeconnection(MxHosts[j], port, pmfile, prfile);
+---
+> 		i = makeconnection(pvp[1], port, pmfile, prfile);
+772,773c736,737
+< 			if (i != EX_OK)
+< 			{
+---
+> 		if (i != EX_OK)
+> 		{
+775,779c739,743
+< 				/* enter status of this host */
+< 				if (st == NULL)
+< 					st = stab(MxHosts[j], ST_HOST, ST_ENTER);
+< 				st->s_host.ho_exitstat = i;
+< 				st->s_host.ho_errno = errno;
+---
+> 			/* enter status of this host */
+> 			if (st == NULL)
+> 				st = stab(pvp[1], ST_HOST, ST_ENTER);
+> 			st->s_host.ho_exitstat = i;
+> 			st->s_host.ho_errno = errno;
+781,785c745,746
+< 				ExitStat = i;
+< 				continue;
+< 			}
+< 			else
+< 				return (0);
+---
+> 			ExitStat = i;
+> 			return (-1);
+787c748,749
+< 		return (-1);
+---
+> 		else
+> 			return (0);
+895,899c857,862
+< 		for (i = 3; i < DtableSize; i++) {
+< 			register int j;
+< 			if ((j = fcntl(i, F_GETFD, 0)) != -1)
+< 				(void)fcntl(i, F_SETFD, j|1);
+< 		}
+---
+> 		for (i = 3; i < DtableSize; i++)
+> #ifdef FIOCLEX
+> 			(void) ioctl(i, FIOCLEX, 0);
+> #else FIOCLEX
+> 			(void) close(i);
+> #endif FIOCLEX
+902a866,867
+> 
+> #ifdef FIOCLEX
+903a869,872
+> #else FIOCLEX
+> 		printf("Cannot exec '%s' errno=%d\n", m->m_mailer, errno);
+> 		(void) fflush(stdout);
+> #endif FIOCLEX
+953c922
+< 	extern int N_SysEx, h_errno;
+---
+> 	extern int N_SysEx;
+1325a1295
+> #ifdef DEBUG
+1330a1301
+> #endif DEBUG
+1425a1397
+> # ifdef DEBUG
+1430a1403
+> # endif DEBUG
+1454a1428
+> # ifdef DEBUG
+1456a1431
+> # endif DEBUG

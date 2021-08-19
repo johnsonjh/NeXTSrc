@@ -1,0 +1,70 @@
+
+currentshared true setshared
+  % allocate all of these procs in shared VM and leave previous state on 
+  % stack for restore
+
+% global constants & vars
+    windowPackage1.0 /_contextData 5 dict _NXCheckAndDef
+      % dict for per context data
+
+windowPackage1.0 begin
+
+/_intialContextData {	%			_intialContextData <data>
+  % returns an initialized instance of per context data
+    //contextArraySize array
+    dup //CDPid 0 put
+    % CDToken is initted null
+} _NXDefProc
+
+/_getOrInitContextData {%		 <ctxt> _getOrInitContextData <data>
+  % returns the context data for the context, creating and initing it if
+  % necessary.  Possibly grows the package dict to make room for the
+  % context data.
+    /_contextData pkget				% ctxt dDict
+    exch 2 copy					% dDict ctxt dDict ctxt
+    known not {					% dDict ctxt
+	currentshared true setshared		% dDict ctxt shflag
+	2 index dup maxlength
+	exch length eq {			% dDict ctxt shflag
+	    3 -1 roll				% ctxt shflag dDict
+	    dup maxlength 5 add			% ctxt shflag dDict newLen
+	    dict copy				% ctxt shflag newDict
+	    dup /_contextData exch //pkput exec
+	    3 1 roll				% dDict ctxt shflag
+	} if
+        2 index 2 index				% dDict ctxt shflag dDict ctxt
+	//_intialContextData exec put
+	setshared				% dDict ctxt
+    } if
+    get
+} _NXDefProc
+
+/currentContextData {	%	 <ctxt> <index> currentContextData <data>
+  % returns the data referenced by index for the given context.  If the
+  % context doesnt have any data yet, its created.
+    exch //_getOrInitContextData exec		% index dataArray
+    exch get
+} _NXDefProc
+
+/setContextData {	% <ctxt> <index> <data> setContextData
+  % sets the data referenced by index for the given context.  If the
+  % context doesnt have any data yet, its created.
+    3 -1 roll //_getOrInitContextData exec	% index data dataArray
+    3 1 roll put
+} _NXDefProc
+
+/freeContextData {	%		  <ctxt> freeContextData
+  % frees the data for the given context.
+    /_contextData pkget				% ctxt dDict
+    exch 2 copy					% dDict ctxt dDict ctxt
+    known {					% dDict ctxt
+	undef
+    }{
+	pop pop
+    } ifelse
+} _NXDefProc
+
+
+end			% close window dict
+setshared		% restore VM allocation mode
+

@@ -1,0 +1,696 @@
+Tue Jan 30 02:55:20 1990  Michael Tiemann  (tiemann at arkesden)
+
+	* version.c: version 1.36.4 released.
+
+	* cplus-decl.c (build_enumerator): Make it impossible to lose if
+	ENUM_NEXT_VALUE is something like INTEGER_ONE_NODE.
+
+	* tree.c (build_int_2): Don't need to set TREE_LITERAL here, it is
+	set in `make_node'.
+	* tree.c (make_node): Increment `TREE_NODE_KINDS[C_KIND]' for
+	INTEGER_CST nodes.
+
+	* cplus-init.c (expand_aggr_init_1): NEW_EXPR now encapsulates new
+	information (due to compiler merging); lossage fixed.
+
+	* case.c (various places): Replace calls to `build_int_2 (x, 0)'
+	(where x == 0 or x == 1) with INTEGER_{ZERO,ONE}_NODE as
+	appropriate.
+
+	* cplus-typeck.c (build_component_addr): Break out code to build
+	the ADDR_EXPR of a COMPONENT_REF from `build_unary_op'.
+	* cplus-cvt.c (build_up_reference): Call `build_component_addr' in
+	case of COMPONENT_REF.
+
+to do:	fix protected squeaking through with -fsave-memoized
+to do:  unify code in expand_vec_init, expand_vec_delete
+to do:  for-local objects with destructors do not land in the right
+	cleanup contour.
+to do:  fix complicated multiple inheritance bugs that strike when
+	baseclasses are not virtual, and appear at multiple sites within
+	the lattice.
+to do:  integrate.c vs GCC.
+to do:  virtual functions for Convex and Choices
+
+Sun Jan 28 04:39:54 1990  Michael Tiemann  (tiemann at arkesden)
+
+	* cplus-init.c (build_vec_delete): Set TREE_VOLATILE on BLOCK,
+	LOOP, and IF_STMT, to avoid spurious warning messages about
+	statements not being useful.
+	* stmt.c (warn_if_unused_value): Don's warn for LOOP_STMT,
+	IF_STMT, or LET_STMT.
+
+	* cplus-decl.c (build_enumerator): Prepare for fact that `fold'
+	might put NOP_EXPRs around everything that is not an lvalue.
+
+	* cplus-method.c (build_opfncall): New parameter FLAGS.
+	Don't lose unless FLAGS include LOOKUP_COMPLAIN; there's always a
+	chance that a type conversion will work, after all.
+	* All callers changed.
+
+	* cplus-cvt.c (build_type_conversion): Permit `operator int' to
+	convert when `unsigned' is wanted (provided no `operator unsigned'
+	exists).  Same for `long' and `unsigned long'.
+
+	* cplus-expr.c: New file.  Contains definition of new function
+	`cplus_expand_expr'.
+
+	* cplus-lex.c (init_lex): Initialize LANG_EXPAND_EXPR.
+
+	* toplev.c (LANG_EXPAND_EXPR): New variable is pointer-to-function
+	which expands language-specific tree codes.  Its default is
+	`fancy_abort'.
+	* cplus-tree.def (CPLUS_NEW_EXPR): New tree code.
+
+Sat Jan 27 09:30:13 1990  Michael Tiemann  (tiemann at arkesden)
+
+	* tree.c (decl_type_context): Handle LET_STMT.
+
+	* stmt.c (expand_catch): Renaming of function
+	`expand_start_catch'.  This function no longer takes EXITFLAG or
+	ESCAPEFLAG as parameters (which is just as well, since it never
+	used them anyway).
+	* cplus-except.c (expand_cplus_start_catch): Caller changed.
+	* cplus-parse.y: Removed vestigial call to `expand_end_catch'.
+
+	* cplus-decl.c (duplicate_decls): Use FUNCTION_SIZE as measure of
+	size of FUNCTION_DECL.
+
+	* cplus-class.c (finish_base_struct): Get a fresh assoc list for
+	BASETYPE before calling `propagate_basetype_offsets'.  Also, copy
+	the language-specific parts of BASETYPE.
+	* cplus-class.c (propagate_basetype_offsets): FOR_TYPE now owns
+	its assoc list for sure.
+
+	* cplus-class.c (build_vbase_path): Convert EXPR at each stage of
+	the lowering so that we don't get multiple calls to
+	`build_vbase_path' when we try to build the vbase pointer.
+	@@ This could probably be solved more cleanly.
+
+	@@ Note that COMPONENT_REFs used as instance variables in method
+	calls lose the fact that they were of fixed type.
+
+	* cplus-decl.c (LANG_F_OPTIONS): Add FLAG_NO_INLINE for
+	-fno-inline.
+	* cplus-decl.c (grokdeclarator): Implement FLAG_NO_INLINE.
+
+	* cplus-decl.c (pushdecl): Only record an incomplete variable if
+	it is RECORD_TYPE or UNION_TYPE.  ARRAY_TYPE does not count.
+
+	* cplus-init.c ({value,purpose}_member): Moved to tree.c.
+	* cplus-decl2.c (FIRST_GLOBAL_OBJECT_NAME): Moved to varasm.c.
+
+	* cplus-init.c (build_delete): Fixed code to avoid going through
+	virtual function tables when some baseclasses are virtual.
+	Accomplished by changing parameter PROTECT to FLAGS.
+	* All callers changed.
+
+Fri Jan 26 03:44:15 1990  Michael Tiemann  (tiemann at teacake)
+
+	* cplus-decl.c (xref_tag): For jjg: make typedefs and struct defs
+	more equivalent.
+
+	* cplus-decl.c (xref_tag): Derived unions are invalid.
+
+	* cplus-decl.c (finish_function): For destructors, remember to run
+	base destructors for virtual baseclasses.
+
+	* cplus-search.c (get_base_distance): Track leftmost path in chain
+	whether or not PATH_PTR is non-NULL.
+
+	* cplus-init.c (expand_vec_delete): Deleted.  Callers now expand
+	result from `build_vec_delete'.
+	* Reinstall Jan 23 changes marked `@'.
+
+Thu Jan 25 21:35:27 1990  Michael Tiemann  (tiemann at teacake)
+
+	* expr.c (expand_expr): Handle expansion of LOOP_STMT and IF_STMT.
+
+	* tree.c (build_loop): Bring this function out of its #ifdef.
+
+	* stmt.c (expand_decl): Remove CLEANUP argument.
+	* stmt.c (expand_decl_cleanup): New function, called when cleanup
+	is needed.
+	* cplus-decl.c (finish_decl): Use `expand_decl_cleanup'.
+
+Wed Jan 24 07:34:40 1990  Michael Tiemann  (tiemann at arkesden)
+
+	* cplus-decl.c (maybe_build_cleanup): Never build cleanups on the
+	MOMENTARY_OBSTACK.
+
+	* stmt.c: Merged to 1.36.93.
+	* expr.c: Merged to 1.36.93.
+
+Tue Jan 23 02:40:42 1990  Michael Tiemann  (tiemann at teacake)
+
+	* cplus-typeck.c (build_binary_op_nodefault): Use
+	`conver_pointer_to' to convert arguments before comparing
+	aggregate pointers.
+
+	* cplus-class.c (build_vbase_path): Optimize path to virtual bases
+	through objects with fixed type.
+
+	* cplus-typeck.c (build_component_ref_2): Deleted.
+	* cplus-typeck.c (build_component_ref): When FIELD comes from a
+	non-"normal" baseclass, go through `convert_to_pointer' to convert
+	DATUM to the right address.
+
+	* cplus-typeck.c (build_unary_op): Handle case where FIELD is
+	really a TYPE_DECL (which is used just for its DECL_OFFSET).
+
+	The following changes are for merged GCC/G++.  Changes marked
+	with `@' had to be backed out.
+	@ cplus-init.c (expand_delete): Deleted.
+	@ cplus-decl.c (maybe_build_cleanup): Return tree nodes built by
+	`build_delete' rather than building up structure with DELETE_EXPR.
+	* cplus-decl2.c (finish_function): Expand expression returned from
+	`build_delete' rather than calling `expand_delete'.
+	* cplus-init.c (expand_vec_delete): Ditto.
+	@ expr.c (expand_expr): No longer any need to handle
+	`DELETE_EXPR'.
+	@ tree.def (DELETE_EXPR): Move this to cplus-tree.def.
+
+Mon Jan 22 00:21:41 1990  Michael Tiemann  (tiemann at teacake)
+
+	* expr.c (expand_call): Don't reused pending stack space more than
+	once in a given nest of calls.
+
+	* cplus-init.c (build_delete): Don't build COND_EXPRs when we know
+	we don't have to.
+
+	* cplus-decl.c (finish_function): At end of destructor, no need to
+	cast down the virtual function table if there is no virtual
+	function table below (i.e., EXPRSTMT is a NOP_EXPR of
+	INTEGER_ZERO_NODE).
+
+	* cplus-init.c (finish_base_init): Move code which sets
+	CLASSTYPE_MARKED6 of each vbase type to 1 into
+	`expand_aggr_vbase_init'.
+	* cplus-init.c (expand_aggr_vbase_init): Now static in this file.
+	Always set CLASSTYPE_MARKED6 of each vbase type before running the
+	initialization, since all virtual baseclasses exposed to this
+	function must be initialized.
+
+	* cplus-search.c (build_type_pathname): Fix broken use of
+	obstacks.
+
+	* cplus-typeck.c (c_expand_return): Don't try to call
+	`expand_return' when DECL_RESULT is of void type.
+
+	* cplus-lex.c (build_opid): Rename C++-specific
+	`build_op_identifier' to `build_opid'.
+	@@ Suggest changing `build_op_identifier' in tree.o to interface
+	of `build_opid'.
+	* All callers changed.
+
+Sun Jan 21 06:00:03 1990  Michael Tiemann  (tiemann at teacake)
+
+	* dbxout.c (dbxout_function): Put out debug info for a named
+	return value.
+	* dbxout.c (dbxout_symbol): Treat a named RESULT_DECL like a
+	VAR_DECL.
+
+	* cplus-decl.c (store_return_init): If named return value comes in
+	a register, put it in a pseudo.
+	* cplus-typeck.c (mark_addressable): Simplify handling of
+	RESULT_DECL--no need for anything fancy.
+	* cplus-cvt.c (convert_to_reference): Ditto.
+
+	* cplus-method.c (build_opfncall): Test FLAGS&LOOKUP_COMPLAIN to
+	decide whether call to `build_overload_call' should complain.
+
+	* cplus-decl.c (FLAG_INT_ENUM_EQUIVALENCE): New variable, controls
+	how ints and enums should interconvert.
+	* cplus-class.c (convert_harshness): Implement behavior based on
+	that flag.
+
+	* cplus-class.c (build_method_call): alloca `harshness' field of
+	CP before calling `build_overload_call'.
+	* cplus-class.c (build_overload_call): Don't alloca `harshness' of
+	FINAL_CP, since caller does this.  Also, use `oballoc' for
+	`harshness' arrays of CP array when running the list of functions
+	to try.
+
+	* cplus-method.c (hack_identifier): Use `error', not
+	`error_with_decl' to report visibility violation for static
+	members.  Also, compute visibility with `compute_visibility'.
+
+Sat Jan 20 04:18:40 1990  Michael Tiemann  (tiemann at teacake)
+
+	* cplus-decl.c (finish_decl [#if MERGED]): Don't build DECL's
+	cleanups until after it has been laid out.
+
+	* cplus-decl.c (maybe_build_cleanup [#if MERGED]): Return an
+	RTL_EXPR instead of a DELETE_EXPR.
+
+	* cplus-class.c (prepare_fresh_vtable): Copy the list of virtual
+	functions fom ASSOC, not from BASE_ASSOC (whose list is too
+	short).
+	@@ Is DECL_VPARENT right at all?
+
+	* cplus-class.c (modify_vtable_entries): Handle case where virtual
+	function comes from baseclass of virtual baseclass.
+
+	* cplus-search.c (get_base_distance): Always follow the leftmost
+	non-virtual path.
+
+	* cplus-class.c (finish_struct): When inheriting a base class's
+	VFIELD, set its DECL_OFFSET to the correct value, for the cases
+	when we use CLASSTYPE_VFIELD instead of `lookup_field' to get to
+	the vfield pointer.
+
+	* expr.c (expand_expr): Use language-idependent techniques for
+	handling NEW_EXPR.
+
+	* cplus-init.c (expand_aggr_init): When initializing from a
+	CONSTRUCTOR, it does not matter whether TYPE has a constructor
+	defined or not: just strip out the elements as though they were
+	args to a constructor and proceed.
+
+	* cplus-class.c (build_method_call): If we need the address of a
+	CONSTRUCTOR, initialize a fresh temporary, as in the NOP_EXPR
+	case.
+
+	* cplus-decl2.c (grok_method_quals): When building type variants,
+	build the pointer types to the varaints.
+	* cplus-decl.c (grokdeclarator): Ditto.
+
+	* cplus-class.c (build_method_call): Error message was backwards
+	when DECL_CONTEXT (FUNCTION) was not a basetype for
+	CURRENT_CLASS_TYPE.
+
+	* cplus-decl.c (grokdeclarator): If QUALS is non-NULL, don't abort
+	if TYPE is not METHOD_TYPE.  The correct error message will be
+	generated later.
+
+	* cplus-method.c (hack_identifier): Check visibility of VAR_DECL
+	and CONST_DECL nodes.
+
+	* cplus-class.c (instantiate_type): Don't smash the operand of an
+	ADDR_EXPR if the type instantiation fails.  Also, only give an
+	error message in that case if COMPLAIN is nonzero.
+
+Fri Jan 19 15:12:27 1990  Michael Tiemann  (tiemann at teacake)
+
+	* cplus-decl2.c (grok_method_quals): Don't drop list of exceptions
+	raised.
+
+Thu Jan 18 00:20:29 1990  Michael Tiemann  (tiemann at apple-gunkies.ai.mit.edu)
+
+	* cplus-lex.c (init_lex): Allocate OPNAME_TAB and ASSIGNOP_TAB.
+
+Wed Jan 17 07:26:05 1990  Michael Tiemann  (tiemann at apple-gunkies.ai.mit.edu)
+
+	* cplus-lex.c (get_time_identifier): Added cast for `alloca'.
+	* cplus-tree.c (layout_basetypes): Ditto.
+
+	* stmt.c (expand_raise): Return nonzero if in exception nesting.
+
+	* cplus-lex.c (init_lex): If C compiler doesn't understand the
+	construct `sizeof ("string")', then fill in initializer for
+	OPNAME_END by hand.
+
+	* cplus-init.c: Move declarations of extern struct rtx_def things
+	to top of file to keep /bin/cc happy.
+
+	* cplus-lex.c (init_lex): Set DECL_PRINTABLE_NAME.
+
+	* varasm.c (record_constant_rtx): Save DESC on `current_obstack'
+	instead of `saveable_obstack'.
+
+	* tree.c (set_identifier_size): SIZE is size in bytes.
+	* cplus-lex.c (init_lex): Call `set_identifier_size' with number
+	of bytes, not number of slots.
+
+	* toplev.c (compile_file): If `bison.simple' is out of date,
+	consider that an error.
+
+	* cplus-cvt.c (convert): Better error message if type conversion
+	via constructor fails.
+
+	* cplus-typeck.c (build_modify_expr): Spurious `else' appeared
+	when LHSTYPE was aggr type.  Deleted.
+
+	* cplus-decl2.c (finish_file): Make the dummy variable at the end
+	of the virtual function table chain look defined and used (soas
+	not to generate spurious warnings).
+
+Tue Jan 16 15:42:30 1990  Michael Tiemann  (tiemann at apple-gunkies.ai.mit.edu)
+
+	* varasm.c (output_constant): Merged latest GCC changes.
+	* toplev.c: Merged latest GCC changes.
+
+	* cplus-decl.c (init_lex): Must call
+	`set_identifier_size' before allocating any identifiers.
+
+	* All files: Changed MEMBER_REF to OFFSET_REF.
+	* cplus-init.c (build_offset_ref): Rename function
+	`build_member_ref' to this.
+	* cplus-init.c (resolve_offset_ref): Rename function
+	`resolve_member_ref' to this.
+
+	* cplus-lex.c (init_lex): Handle language-specific tree codes.
+
+	* tree.def (IDENTIFIER_NODE): Default length is 2.
+	* tree.def ({SCOPE,MEMBER}_REF): Moved definition to
+	cplus-tree.def.
+	* tree.def (TYPE_EXPR): Ditto.
+
+	* tree.c: Merge language-specific tree code support from GCC
+	version 1.90.
+	* tree.c (tree_cons,build_tree_list): Simplify these back to using
+	`make_node' instead of inline-expansion.
+	* tree.c (build_parse_node): renamed function `build_nt0' to this.
+	All callers changed.
+
+	* Makefile glitch for collect2 fixed.
+
+Tue Jan 16 00:38:39 1990  Michael Tiemann  (tiemann at apple-gunkies.ai.mit.edu)
+
+	* version.c: Version 1.36.3 released.
+
+	* Makefile: Fixed makefile for collect2 (for Convexen) as per
+	suggesions of <ngo%tammy@harvard.harvard.edu>.
+	Also fixed a typo.
+
+Mon Jan 15 10:57:43 1990  Michael Tiemann  (tiemann at apple-gunkies.ai.mit.edu)
+
+	* cplus-class.c (build_vbase_path): If path is erroneous (i.e., up
+	from a virtual baseclass), then set *BASEP = NULL_TREE.
+	* cplus-cvt.c (convert_to_pointer_force): Test BASETYPE before
+	testing the DECL_OFFSET of its TYPE_NAME.
+
+	* expr.c (store_one_arg): Handle non-PARM_BOUNDARY BLKmode
+	parameters in a way that is symmetric with `assign_parms'.
+
+	* cplus-init.c (expand_vec_init): Allow assignment semantics if
+	FROM_ARRAY is 2.
+	* cplus-typeck.c (build_modify_expr): Call `expand_vec_init' with
+	in this fashion if an array assignment must be performed.
+
+	* expr.c (fixed_type_p): New function says whether the compiler
+	guarantees that it knows the true type of an object.
+	* expr.c (expand_expr): Call that function for INIT_EXPR and
+	MODIFY_EXPR.  Also, for MODIFY_EXPR, check both RHS and LHS.
+
+	* cplus-typeck.c (build_unary_op): When building an ADDR_EXPR of a
+	COMPONENT_REF, must convert the base to the pointer type of the
+	DECL_CONTEXT of FIELD, not simply ARGTYPE.  Bug triggered when
+	FIELD has same type as a virtual or non-leftmost baseclass of
+	TYPE.
+
+Sun Jan 14 07:50:28 1990  Michael Tiemann  (tiemann at apple-gunkies.ai.mit.edu)
+
+	* cplus-typeck.c (actualparameterlist): Convert FUNCTION_DECLs for
+	virtual functions to their proper representation if they were
+	instantiated.
+
+	* cplus-typeck.c (instantiate_type_1): New function, factors out
+	common code in calling `instantiate_type'.
+	* cplus-class.c (instantiate_type): Now permitted to call this
+	function with OP_IDENTIFIER.  (Previously would abort).
+ 
+	* Makefile: Use $(INCLUDES) instead of various random -I options
+	scattered throughout front-end.
+
+	* varasm.c (assemble_variable): Fix bug where NAME has a '*'
+	prefix.
+
+Sat Jan 13 00:17:25 1990  Michael Tiemann  (tiemann at apple-gunkies.ai.mit.edu)
+
+	* cplus-class.c (compute_conversion_costs): Fixed comments and
+	rearranged code that handled type instantiation.  Also handled
+	case where type instantiation leaves a parameter ERROR_MARK_NODE
+	(consequently making ACTUAL_TYPE ERROR_MARK_NODE).
+	* cplus-method.c (report_type_mismatch): Give better error message
+	when type instatiation fails and clobbers the argument type.
+
+	* cplus-type2.c (basetype_or_else): Code factorization.
+	* All places with code of the form
+
+	      if (t1 == t2 || get_base_type (t1, t2, 0))
+	        do something;
+	      else
+	      	do something else;
+
+          now calls this function.
+
+	* cplus-search.c (get_base_type): For jjg@sun.com: let friend
+	classes TYPE have access to immediate baseclasses of TYPE.
+	* cplus-search.c (get_base_distance): Same change.
+
+	* cplus-method.c (build_opfncall): Give error messages on all
+	overloaded functions which non-trivially fail except ADDR_EXPR and
+	MODIFY_EXPR.
+	* cplus-class.c (build_method_call): Improved error message for
+	non-const member function called with const object.
+
+	* cplus-class.c (build_vbase_path): New function.  Multi-level
+	version of `build_vbase_pointer'.  Code was moved from
+	`convert_to_pointer'.
+	* cplus-cvt.c (convert_to_pointer): Call `build_vbase_path'.
+	* cplus-cvt.c (convert_pointer_to): Ditto.
+	* cplus-cvt.c (convert_to_pointer_force): Remove duplicated code
+	and call `build_vbase_path'.
+
+	* cplus-decl.c (original_result_rtx): New variable.  If named
+	return value starts in register, but needs to be addressable, then
+	we put the original RESULT_DECL's rtl in here.
+	* cplus-typeck.c (c_expand_return): Implement this.
+	* cplus-decl.c (finish_function): At end of function, if
+	ORIGINAL_RESULT_RTX is non-zero, move DECL_RESULT (FNDECL) there.
+	* cplus-typeck.c (mark_addressable): Allow this new feature.
+	* cplus-cvt.c (convert_to_reference): Ditto.
+
+Fri Jan 12 00:20:06 1990  Michael Tiemann  (tiemann at apple-gunkies.ai.mit.edu)
+
+	* cplus-tree.h (TREE_CALLS_NEW): New meaning for TREE_LANG_FLAG_2:
+	for any kind of _EXPR or _REF node, it means that underneath is a
+	call to the storage allocator.  If we later find out what was
+	wanting initialization, we can pitch the call to `new', and the
+	subsequent copy, winning big on things like "return String (foo);".
+	* cplus-init.c (build_new): Set this bit.
+	* cplus-class.c (build_method_call): Ditto.
+	* cplus-method.c (build_opfncall): Ditto.
+	* cplus-init.c (expand_aggr_init_1): Optimize calls to
+	constructors.
+
+	* cplus-cvt.c (convert_to_reference): If DECL is ERROR_MARK_NODE,
+	then consider this an implicit conversion; if DECL is NULL_TREE,
+	it is explicit.
+	* cplus-typeck.c (convert_for_initialization): Be explicit that
+	this is an implicit conversion.
+
+	* cplus-cvt.c (convert_from_reference): Don't special-case
+	converting REFERENCE_EXPRs from references.
+
+	* cplus-cvt.c (convert_to_*): Factor out checks that EXPR is a
+	REFERENCE_TYPE object.
+	* cplus-cvt.c (convert{_force}): Factor it to here.
+
+	* cplus-cvt.c (convert_pointer_to): New function.  Previously
+	`convert_to_nonzero_pointer', but now takes converts to pointer-to
+	TYPE, rather than to TYPE.
+	* cplus-cvt.c (convert_to_nonzero_pointer): Deleted.
+	* All callers changed.
+
+	* cplus-cvt.c (build_up_reference): If LOOKUP_PROTECTED_OK is set,
+	let `get_base_type' return an immediate private baseclass without
+	complaining.
+	* cplus-cvt.c (convert_to_reference): Don't need to check whether
+	conversion violates visibilities, since FLAGS is passed to
+	`convert_to_reference'.
+	* cplus-search.c (get_base_type): Implement that (if PROTECT == 3).
+
+	* stmt.c (*except*): Use ESCAPE_LABEL instead of EXIT_LABEL as
+	primary means of control over exception handling nestings.
+	Where EXITFLAG was passed, also pass ESCAPEFLAG.
+	* All callers changed.  ESCAPEFLAG now controls behavior, not
+	EXITFLAG.
+
+	* stmt.c (expand_exit_nonexcept): Delete this function.
+	* cplus-parse.y (stmt): Back out change which called
+	`expand_exit_nonexcept' instead of `expand_exit_something'.
+
+	* cplus-init.c (expand_recursive_init): Don't forget to initialize
+	the vbase pointers if FOR_TYPE uses virtual baseclasses.
+
+	* cplus-class.c (rank_for_overload): const/non-const disagreement
+	is between checking EVIL and checking USER.
+	* cplus-class.c (build_method_call): Don't hastily choose a method
+	which has const/non-const disagreement.
+
+	* cplus-decl.c (build_function_decl): Unify `builtin_function' and
+	`auto_function'; also make it optional to push the function into
+	the binding contour.
+	* cplus-decl.c (init_decl_processing): Build ABORT_FNDECL.
+	* cplus-decl2.c (grok_function_init): Use ABORT_FNDECL.
+	* cplus-except.c (init_exception_processing): Ditto.
+
+Thu Jan 11 10:39:31 1990  Michael Tiemann  (tiemann at apple-gunkies.ai.mit.edu)
+
+	* cplus-decl2.c (finish_file): Merge changes from Raeburn
+	(raeburn@athena.mit.edu) which name file-level initializers
+	using global names declared instead of the filename containing
+	the objects needing file-level initialization.
+	* varasm.c (assemble_{variable,function}): Rest of changes merged.
+
+	* cplus-cvt.c (convert_from_reference): When converting a
+	REFERENCE_EXPR, wrap TREE_OPERAND (VAL, 0) in the NOP_EXPR
+	instead of VAL--to save work later in `expand_expr'.
+
+	* cplus-tree.h (LOOKUP_NO_CONVERSION): New flag which inhibits
+	looking for user-defined type conversions.
+	* cplus-type2.c (build_functional_cast): Use LOOKUP_NO_CONVERSION
+	when calling constructor since if a type conversion applied, we
+	don't want "two-level" conversions to take place.
+	* cplus-class.c (build_method_call): Test this flag when PASS == 2
+	and cp->user is non-zero.
+
+	* cplus-decl.c (grokdeclarator): Don't set TYPE_HAS_DESTRUCTOR
+	here.
+	* cplus-decl2.c (grokclassfn): Set it here instead.
+
+Wed Jan 10 07:42:39 1990  Michael Tiemann  (tiemann at apple-gunkies.ai.mit.edu)
+
+	* cplus-class.c (build_method_call): -fall-virtual implies that
+	2nd argument to operator->() is an int, not a T (C::*X)(...).
+
+	* cplus-decl.c (finish_function): Keep named return values from
+	catching warnings from jump.c about functions which appear to not
+	return a value.
+
+	* cplus-type2.c (process_init_constructor): Test INIT before
+	copying TREE_HAS_CONSTRUCTOR flag to RESULT.
+
+	* cplus-decl.c (pushdecl): If we had ANON_AGGRNAME_P in "C"
+	language scope, and if we get a better name, fix that up as well.
+	(Was only doing fixup for "C++" language scope).
+
+	* cplus-method.c (dump_init): Handle CONSTRUCTOR as
+	initialization.
+	* cplus-typeck.c (actualparameterlist): Here, too.
+
+	* cplus-decl.c (grokdeclarator): Move test of friend functions
+	with method qualifiers to `grokfndecl'.
+	* cplus-decl.c (grokfndecl): If QUALS is non-zero, then the
+	TREE_CODE of TYPE must be METHOD_TYPE.
+
+	* integrate.c (expand_inline_function): Code using
+	THIS_STRUCT_VALUE_RTX was (blatantly) incorrect in case where
+	STRUCT_VALUE_INCOMING_RTX was MEM.  Code that looked right was
+	#if 0'd out, but don't know why.  Changed back to original code.
+
+Tue Jan  9 22:56:22 1990  Michael Tiemann  (tiemann at apple-gunkies.ai.mit.edu)
+
+	* cplus-parse.y (stmt): Exception contour is transparent to BREAK
+	statement.  Call `expand_exit_nonexcept' instead of
+	`expand_exit_something'.
+	* stmt.c (expand_exit_nonexcept): New function.
+
+	* cplus-decl.c (build_enumerator): Accidently shared INTEGER_CST
+	nodes which should not have been shared.
+
+Sun Jan  7 00:13:39 1990  Michael Tiemann  (tiemann at g.oswego.edu)
+
+	* cplus-init.c (expand_aggr_init_1): Use CONST0_RTX as TARGET for
+	call to `expand_expr' in case of COND_EXPR.
+	Similar changes made elsewhere in compiler where `expand_expr' was
+	called.
+
+	* cplus-typeck.c (build_modify_expr_1): When CODE is INIT_EXPR,
+	and we call a constructor, remember to dereference the result we
+	return.
+
+	* cplus-init.c (expand_vec_init): Goto of init_by_default was
+	accidently circumventing initialization of variable BASE2.
+	Also fixed to handle initialization by default in more cases.
+
+	* cplus-typeck.c (build_modify_expr_1): Typo.  Use "<" instead of
+	"<=" for CLASSTYPE_N_BASECLASS loop.
+	* cplus-search.c (get_base_type_1): Same typo (but this function
+	is never called).
+
+Sat Jan  6 21:55:31 1990  Michael Tiemann  (tiemann at g.oswego.edu)
+
+	* cplus-tree.h (TREE_HAS_CONSTRUCTOR): For CONSTRUCTOR, means that
+	it was a GNU C constructor expression.
+	* cplus-parse.y (cast_expr): Set that bit.
+	* cplus-type2.c (process_init_constructor): Propagate this bit.
+	* cplus-init.c (expand_aggr_init_1): Test that bit and call
+	`store_init_value' if set.
+
+	* cplus-lex.c: Handle strrchr/rindex problem in one place instead
+	of two.
+
+	* cplus-init.c (expand_aggr_init_1): Convert INIT to type for EXP
+	treating INIT as compound expr.
+
+	* cplus-decl.c (grokparms): Can't use `error_with_decl' on a
+	PARM_DECL here because DECL_CONTEXT is not set up yet.  Fixed in 2
+	places.
+
+	* cplus-init.c (resolve_member_ref): Check that member is
+	FIELD_DECL before bothering about use of non-static member in
+	static function context.
+
+	* cplus-init.c (embrace_waiting_friends): If TYPE_NAME (TYPE) is
+	not a TYPE_DECL, it has no friends waiting.
+
+	* cplus-dem.c (optable): Filled in ommissions found by Ron
+	Guilmette.
+
+	* cplus-decl2.c (grokopexpr): If IS_DECL tells us we have a static
+	member function, but TYPE is a METHOD_TYPE, we must send the right
+	argument list to build_operator_fnname.
+
+        * Makefile: Explicitly link all the gen*.o and insn-*.? files.
+	Otherwise, we get symbolic links to "gen*.o", etc.
+
+	* make-links.g++: Added symout.c to BORROWED_FILES.
+
+Tue Jan  2 00:39:40 1990    (tiemann at calvin)
+
+	* cplus-except.c (cplus_expand_end_except): New parameter EXITFLAG
+	says whether to exit current exception contour and try the next
+	one.
+	* cplus-parse.y: Callers changed.
+
+	* cplus-decl.c (pushdecl): Clear TREE_PUBLIC only if VAR_DECL is
+	TREE_READONLY and not DECL_EXTERNAL.  DECL_EXTERNAL is meaningless
+	for other than VAR_DECLs.
+	* cplus-decl.c (duplicate_decls): Same change.
+	@@ Maybe we can eliminate some duplicated code here!
+
+	* cplus-tree.c (copy_to_permanent): If T is NULL_TREE, return it.
+
+	* cplus-cvt.c (convert_to_aggr): Deal with "in charge" parameter
+	if BASETYPE uses virtual baseclasses.
+
+	* cplus-class.c (build_overload_call): Change name of DECL to
+	OVERLOAD_NAME.  Also, append VOID_LIST_NODE to end of PARMTYPES,
+	to build more accurate overload name.
+
+Mon Jan  1 13:36:07 1990    (tiemann at calvin)
+
+	* cplus-decl.c (store_parm_decls): No need for PRESERVE flag, so
+	deleted.  All callers changed.
+
+	* cplus-parse.y (member_init): De-implement keeping virtual
+	baseclass initializers on the permanent obstack.  Now handled by
+	"in charge" parameter to constructor.
+
+	* cplus-cvt.c (convert_to_reference): Convert EXPR from reference
+	if it came in as a reference and its conversion to TYPE& may
+	change its value (i.e., if it uses MI or VB).
+
+	* cplus-class.c (build_method_call): Use DECL_CONTEXT, not
+	DECL_VCONTEXT of FUNCTION when LOOKUP_NONVIRTUAL is in effect.
+	Factored out duplicated code in the process.
+
+	* cplus-class.c (build_method_call): Constructors called when
+	`this' is logically zero must perform any virtual baseclass
+	initialization.  Other constructors (which are used for
+	initialization of sub-ojbects), never perform virtual baseclass
+	initialization.
+

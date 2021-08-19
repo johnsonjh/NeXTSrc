@@ -1,0 +1,134 @@
+Makefile	1.2 08/25/87 15:16:11
+New dependencies
+
+Makefile	1.1 07/17/87 13:24:18
+date and time created 87/07/17 13:24:18 by sxn
+
+nfsstat.c	1.3 08/13/87 14:20:22
+Added Copyright Messages
+
+nfsstat.c	1.2 07/22/87 11:10:58
+Added NFSSRC keywords
+
+nfsstat.c	1.1 07/22/87 11:10:11
+date and time created 87/07/22 11:10:11 by warrens
+
+rpc.mountd.c	1.3 08/13/87 14:20:53
+Added Copyright Messages
+
+rpc.mountd.c	1.2 07/17/87 17:45:09
+Modified various fprintf's to use syslog facility.
+
+rpc.mountd.c	1.1 07/17/87 16:22:44
+date and time created 87/07/17 16:22:44 by sxn
+
+rpc.rquotad.c	1.3 08/13/87 14:21:30
+Added Copyright Messages
+
+rpc.rquotad.c	1.2 07/21/87 12:05:16
+Added NFSSRC keywords and adapted to use syslog.
+
+rpc.rquotad.c	1.1 07/21/87 11:33:24
+date and time created 87/07/21 11:33:24 by warrens
+
+rpc.rstatd.c	1.2 07/21/87 13:06:24
+Added NFSSRC keywords and modified various fprintf's to use
+syslog facility
+
+rpc.rstatd.c	1.1 07/21/87 12:06:05
+date and time created 87/07/21 12:06:05 by warrens
+
+rpc.rusersd.c	1.3 08/13/87 14:21:57
+Added Copyright Messages
+
+rpc.rusersd.c	1.2 07/21/87 13:26:50
+Added NFSSRC keywords and changed various fprintf's to use
+syslog facility
+
+rpc.rusersd.c	1.1 07/21/87 13:06:51
+date and time created 87/07/21 13:06:51 by warrens
+
+rpc.rwalld.c	1.3 08/13/87 14:22:21
+Added Copyright Messages
+
+rpc.rwalld.c	1.2 07/21/87 13:34:10
+Added NFSSRC keywords and changed some fprintf's to utilize the
+syslog facility
+
+rpc.rwalld.c	1.1 07/21/87 13:27:31
+date and time created 87/07/21 13:27:31 by warrens
+
+rpc.sprayd.c	1.4 09/22/87 13:59:16
+added sccs keywords
+
+rpc.sprayd.c	1.3 08/13/87 14:22:34
+Added Copyright Messages
+
+rpc.sprayd.c	1.2 07/21/87 13:41:34
+Added NFSSRC keywords and changed some fprintf's to utilize the
+syslog facility
+
+rpc.sprayd.c	1.1 07/21/87 13:34:48
+date and time created 87/07/21 13:34:48 by warrens
+
+rpc.yppasswdd.c	1.5 08/13/87 14:22:47
+Added Copyright Messages
+
+rpc.yppasswdd.c	1.4 08/07/87 15:21:51
+added include of syslog.h
+
+rpc.yppasswdd.c	1.3 07/22/87 08:10:18
+REALLY added NFSSRC keywords this time
+
+rpc.yppasswdd.c	1.2 07/22/87 08:07:57
+Added NFSSRC keywords and changed some fprintf's to use the syslog
+facility
+
+rpc.yppasswdd.c	1.1 07/21/87 13:41:58
+date and time created 87/07/21 13:41:58 by warrens
+
+rpcinfo.c	1.5 08/31/87 11:30:57
+changed to force exit status on all exits so you don't get 
+stack garbage.
+
+rpcinfo.c	1.4 08/13/87 14:32:37
+
+
+rpcinfo.c	1.3 08/13/87 14:23:06
+Added Copyright Messages
+
+rpcinfo.c	1.2 07/22/87 10:58:23
+Added NFSSRC keywords
+
+rpcinfo.c	1.1 07/22/87 10:57:12
+date and time created 87/07/22 10:57:12 by warrens
+
+rwall.c	1.3 08/13/87 14:23:24
+Added Copyright Messages
+
+rwall.c	1.2 07/22/87 11:12:57
+Added NFSSRC keywords
+
+rwall.c	1.1 07/22/87 11:11:46
+date and time created 87/07/22 11:11:46 by warrens
+
+showmount.c	1.3 08/13/87 14:23:37
+Added Copyright Messages
+
+showmount.c	1.2 07/22/87 11:21:02
+Added NFSSRC keywords
+
+showmount.c	1.1 07/22/87 11:20:17
+date and time created 87/07/22 11:20:17 by warrens
+
+spray.c	1.3 08/13/87 14:23:51
+Added Copyright Messages
+
+spray.c	1.2 07/22/87 11:23:56
+Added NFSSRC keywords
+*** CHANGED *** 87/07/22 11:57:15 warrens
+l
+
+spray.c	1.1 07/22/87 11:21:21
+date and time created 87/07/22 11:21:21 by warrens
+

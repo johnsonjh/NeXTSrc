@@ -1,0 +1,168 @@
+%!
+%Title: Window Package
+%Version: 2.0
+%Copyright 1989, NeXT, Inc.
+%
+%  The PostScript in the file does no drawing.  Do not include it in other
+%  PostScript documents. 
+%
+
+
+currentshared true setshared
+  % allocate all of these procs in shared VM and leave previous state on 
+  % stack for restore
+
+%
+% global nextdict defs
+%	
+nextdict begin		% global constants and procs
+
+% Constants
+    /_NXDebug		false def
+      % shows whether we're in debug mode.  Undef'ed at end of loading, so use
+      % this only at package load time.
+    /packageSize	140 def
+    /WindowDictSize	13 def
+    /windowPackage1.0	//packageSize dict def
+    /windowPackage	windowPackage1.0 def
+    /Winredraw 		0 def
+    /AppAct 		1 def
+    /AppDeact 		2 def
+    /Winresized 	3 def
+    /Winmoved 		4 def
+    /AppUnhide 		7 def
+    /Windragged		0 def
+    /Cursorrect 	17 def
+    /Cursorrectmask 	1 Cursorrect bitshift def
+    /Journalevent	18 def
+    /Journaleventmask	1 Journalevent bitshift def
+    /Journalflag	31 def
+    /Journalflagmask	1 Journalflag bitshift def
+    /keyMask		//Keydownmask //Keyupmask or def
+    /MouseEvent		//Lmousedownmask //Lmouseupmask or
+			//Lmousedraggedmask or
+			//Rmousedownmask or
+			//Rmouseupmask or
+			//Rmousedraggedmask or
+			//Mousemovedmask or def
+    /MenuEvent		//Rmousedownmask //Rmouseupmask or
+			//Rmousedraggedmask or def
+    /defaultClientMask	//Lmousedownmask //Lmouseupmask or
+	   		//Keydownmask or
+			//Keyupmask or
+			//Kitdefinedmask or
+			//Sysdefinedmask or
+			//Appdefinedmask or def
+    /contextArraySize	2 def
+      % size of array which is the per context data
+    /CDPid		0 def
+    /CDToken		1 def
+    /mainMenuLevel	20 def		% window levels
+    /subMenuLevel	10 def
+    /dockLevel		5 def
+    /normalLevel	0 def
+
+
+/_NXCheckAndDef	{		% <dict> <name> <value> _NXCheckAndDef
+    % defines a name with a value in dict if not already defined
+    2 index 2 index known
+    {
+	pop pop pop
+    } {
+	put
+    } ifelse
+} bind def
+
+/winexec {			%		<name> winexec
+    windowPackage1.0 exch get exec					       
+} bind def
+
+/pkget {			%		 <name> pkget
+    windowPackage1.0 exch get
+} bind def
+
+/pkput {			%	 <name> <value> pkput
+    windowPackage1.0 3 1 roll put
+} bind def
+
+_NXDebug {
+
+/_NXStartProc {			%		 <name> _NXStartProc
+  % put the given name on the stack.  Not bound because we want refs to
+  % userdict and the stack to apply to the currently running context.
+    userdict /_NXCallStack known not {
+	userdict /_NXCallStack 100 array put
+	userdict /_NXCallStackTop 0 put
+    } if
+    _NXCallStack exch _NXCallStackTop exch put
+    /_NXCallStackTop _NXCallStackTop 1 add store
+} def
+
+/_NXEndProc {			%			_NXEndProc
+  % put the give name on the stack.  Not bound because we want refs to
+  % userdict and the stack to apply to the currently running context.
+    _NXCallStackTop 0 gt {
+	/_NXCallStackTop _NXCallStackTop 1 sub store
+    } if
+} def
+
+/_NXDefProc {			%	  <name> <proc> _NXDefProc
+  % defines the proc, adding calls at the start and end which keep track of
+  % the stack.
+    dup length 3 add array cvx			% nm oproc nproc
+    dup 2					% nm oproc nproc nproc 2
+    4 -1 roll					% nm nproc nproc 2 oproc
+    putinterval					% nm nproc
+    dup 0 3 index put				% nm nproc
+    dup 1 /_NXStartProc cvx put			% nm nproc
+    dup dup length 1 sub /_NXEndProc cvx put	% nm nproc
+    bind def
+} bind def
+}{
+/_NXDefProc {			%	  <name> <proc> _NXDefProc
+  % simple case just binds and defs the proc
+    bind def
+} bind def
+} ifelse
+
+end	%of nextdict constants and procs
+
+
+% Variables
+    nextdict /activeApp 0 _NXCheckAndDef
+    nextdict /appLock lock _NXCheckAndDef
+      % protects writing to activeApp.  Also ensures any activation operation
+      % is atomic w/respect to another such operation.
+    nextdict /curActivation 0 _NXCheckAndDef
+    nextdict /debugging false _NXCheckAndDef
+    nextdict /_journalRecording false _NXCheckAndDef
+    nextdict /_jrnMDownEvtNum 0 _NXCheckAndDef
+    windowPackage1.0 /contextDataLock lock _NXCheckAndDef
+      % lock protecting per context data
+
+
+%
+% global windowPackage defs
+%	
+windowPackage1.0 begin
+
+/version 1 def		%version number so others can check against us
+
+/stackSwap {			%	 <newobj> <pos> stackSwap <oldobj>
+  % swaps <newobj> with <oldobj> on the op stack.  <oldobj> starts at position
+  % <pos> on the stack (0 is top of stack).
+    1 add exch 1 index 2 add		% ... oldobj ... pos+1 newobj pos+3
+    1 roll				% ... newobj oldobj ... pos+1
+    -1 roll				% ... newobj ... oldobj
+} bind def
+
+/revForall {			%	 <array> <proc> revForall
+    exch aload length				% proc a[0-n] len
+    dup 2 add -1 roll				% a[0-n] len proc
+    repeat
+} bind def
+
+end % windowPackage1.0
+
+setshared			% restore VM allocation mode
+

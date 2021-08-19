@@ -1,0 +1,13 @@
+mknetid.o: mknetid.c /usr/include/stdio.h /usr/include/pwd.h /usr/include/grp.h
+mknetid.o: /usr/include/sys/param.h /usr/include/sys/features.h
+mknetid.o: /usr/include/machine/machparam.h /usr/include/sys/assert.h
+mknetid.o: /usr/include/next/vm_param.h /usr/include/sys/types.h
+mknetid.o: /usr/include/next/eventc.h /usr/include/sys/signal.h
+mknetid.o: /usr/include/machine/signal.h /usr/include/sys/types.h
+mknetid.o: /usr/include/rpc/rpc.h /usr/include/rpc/types.h
+mknetid.o: /usr/include/netinet/in.h /usr/include/rpc/xdr.h
+mknetid.o: /usr/include/rpc/auth.h /usr/include/rpc/clnt.h
+mknetid.o: /usr/include/rpc/rpc_msg.h /usr/include/rpc/auth_unix.h
+mknetid.o: /usr/include/rpc/svc.h /usr/include/rpc/svc_auth.h
+mknetid.o: /usr/include/rpc/key_prot.h
+getname.o: getname.c /usr/include/stdio.h

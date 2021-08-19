@@ -1,0 +1,51 @@
+Makefile	1.2 08/25/87 16:15:22
+generalized CFLAGS
+
+Makefile	1.1 08/07/87 13:30:21
+date and time created 87/08/07 13:30:21 by clara
+
+mount_nfs.c	1.2 08/13/87 13:43:33
+Added Copyright Messages
+
+mount_nfs.c	1.1 08/07/87 13:30:05
+date and time created 87/08/07 13:30:05 by clara
+
+on.c	1.2 08/13/87 13:43:50
+Added Copyright Messages
+
+on.c	1.1 08/07/87 13:30:08
+date and time created 87/08/07 13:30:08 by clara
+
+rexd.c	1.3 08/13/87 13:44:10
+Added Copyright Messages
+
+rexd.c	1.2 08/07/87 15:31:24
+added syslog.h
+
+rexd.c	1.1 08/07/87 13:30:10
+date and time created 87/08/07 13:30:10 by clara
+
+under.c	1.2 08/13/87 13:44:33
+Added Copyright Messages
+
+under.c	1.1 08/07/87 13:30:13
+date and time created 87/08/07 13:30:13 by clara
+
+unix_login.c	1.2 08/13/87 13:44:46
+Added Copyright Messages
+
+unix_login.c	1.1 08/07/87 13:30:15
+date and time created 87/08/07 13:30:15 by clara
+
+where.c	1.2 08/13/87 13:45:00
+Added Copyright Messages
+
+where.c	1.1 08/07/87 13:30:17
+date and time created 87/08/07 13:30:17 by clara
+
+where_main.c	1.2 08/13/87 13:45:10
+Added Copyright Messages
+
+where_main.c	1.1 08/07/87 13:30:20
+date and time created 87/08/07 13:30:20 by clara
+

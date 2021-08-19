@@ -1,0 +1,54 @@
+Makefile	1.6 08/01/88 17:48:34
+Added depend target.
+
+Makefile	1.5 05/20/88 13:01:47
+Removed -DCRYPT  from the Makefile because it is not required for domesic  but defined it in des_soft.c because we can not configure encryption out of user-level code.  The net effect is 0,  but it matches the SunOS.
+
+Makefile	1.4 05/20/88 12:43:29
+Makes deslib and deslib_p instead of deslibc and deslibc_p so that higher level makes will work.
+
+Makefile	1.3 05/11/88 22:33:09
+Added des_soft.c.
+
+Makefile	1.2 04/05/88 09:12:04
+Removed extraneous Sys5 compiles
+
+Makefile	1.1 04/01/88 10:30:04
+date and time created 88/04/01 10:30:04 by sxn
+
+_fixcrypt.awk	1.1 04/04/88 08:17:14
+date and time created 88/04/04 08:17:14 by beepy
+
+des_crypt.c	1.4 07/26/88 19:09:05
+ To cut down the number of copies of des_crypt.h that are lying around,  I removed the des subdirectory of usr/include and modified all routines that refered to it.
+
+des_crypt.c	1.3 05/05/88 14:08:02
+Removed SUN specific code, modified include statements to reflect Berkeley semantics.
+
+des_crypt.c	1.2 04/12/88 15:02:57
+Added #ifdef for vax to include <sys/des.h>
+
+des_crypt.c	1.1 04/04/88 08:17:16
+date and time created 88/04/04 08:17:16 by beepy
+
+des_crypt.h	1.1 04/01/88 10:29:51
+date and time created 88/04/01 10:29:51 by sxn
+
+des_soft.c	1.4 05/20/88 13:01:49
+Removed -DCRYPT  from the Makefile because it is not required for domesic  but defined it in des_soft.c because we can not configure encryption out of user-level code.  The net effect is 0,  but it matches the SunOS.
+
+des_soft.c	1.3 05/05/88 19:55:29
+Added des.h include.
+
+des_soft.c	1.2 05/05/88 14:11:02
+Removed Sun specifics, changed include files to reflect Berkeley semantics.
+
+des_soft.c	1.1 04/04/88 08:17:23
+date and time created 88/04/04 08:17:23 by beepy
+
+softdes.h	1.1 04/04/88 08:17:26
+date and time created 88/04/04 08:17:26 by beepy
+
+softdesdata.c	1.1 04/04/88 08:17:28
+date and time created 88/04/04 08:17:28 by beepy
+

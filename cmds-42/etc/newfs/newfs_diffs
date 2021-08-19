@@ -1,0 +1,109 @@
+=========================================
+####  /BSD/CMDS/cmds/etc/newfs/newfs.c  ####  ./newfs.c  ####
+=========================================
+
+
+*** /BSD/CMDS/cmds/etc/newfs/newfs.c	Fri Jun 17 15:00:28 1988
+--- ./newfs.c	Fri Oct 28 18:26:36 1988
+***************
+*** 37,47 ****
+  int	Nflag;			/* run mkfs without writing file system */
+  int	verbose;		/* show mkfs line before exec */
+  int	noboot;			/* do not fill boot blocks */
+! int	fssize;			/* file system size */
+  int	fsize;			/* fragment size */
+  int	bsize;			/* block size */
+  int	ntracks;		/* # tracks/cylinder */
+  int	nsectors;		/* # sectors/track */
+  int	sectorsize;		/* bytes/sector */
+  int	cpg;			/* cylinders/cylinder group */
+  int	minfree = -1;		/* free space threshold */
+--- 37,50 ----
+  int	Nflag;			/* run mkfs without writing file system */
+  int	verbose;		/* show mkfs line before exec */
+  int	noboot;			/* do not fill boot blocks */
+! int	fssize;			/* file system size in DEV_BSIZE blocks */
+  int	fsize;			/* fragment size */
+  int	bsize;			/* block size */
+  int	ntracks;		/* # tracks/cylinder */
+  int	nsectors;		/* # sectors/track */
++ #ifdef NeXT_MOD
++ int	nblocks;		/* # DEV_BSIZE blocks/track */
++ #endif NeXT_MOD
+  int	sectorsize;		/* bytes/sector */
+  int	cpg;			/* cylinders/cylinder group */
+  int	minfree = -1;		/* free space threshold */
+***************
+*** 307,318 ****
+--- 310,346 ----
+  	}
+  	if (cpg == 0)
+  		cpg = pp->p_cpg;
++ #ifdef NeXT_MOD
++ 	if (sectorsize != DEV_BSIZE) {
++ 		int ratio;
++ 
++ 		if (DEV_BSIZE < sectorsize)
++ 			fprintf(stderr, "WARNING: DEV_BSIZE %d < device sector"
++ 			    " size %d\n", DEV_BSIZE, sectorsize);
++ 		else if (DEV_BSIZE % sectorsize)
++ 			fprintf(stderr, "NOTE: DEV_BSIZE %d not multiple "
++ 			    "of device sector size %d\n", DEV_BSIZE,
++ 			    sectorsize);
++ 		ratio = DEV_BSIZE / sectorsize;
++ 		if (ratio <= 0 || ratio > 4)
++ 			ratio = 1;
++ 		if (nsectors % ratio)
++ 			fprintf(stderr, "NOTE: bytes per track not integral"
++ 			     " multiple of DEV_BSIZE\n");
++ 		nblocks = nsectors / ratio;
++ 	} else
++ 		nblocks = nsectors;
++ #endif NeXT_MOD
+  	i = 0;
+  	if (Nflag)
+  		av[i++] = "-N";
+  	av[i++] = special;
+  	av[i++] = sprintf(a2, "%d", fssize);
++ #ifdef NeXT_MOD
++ 	av[i++] = sprintf(a3, "%d", nblocks);
++ #else
+  	av[i++] = sprintf(a3, "%d", nsectors);
++ #endif NeXT_MOD
+  	av[i++] = sprintf(a4, "%d", ntracks);
+  	av[i++] = sprintf(a5, "%d", bsize);
+  	av[i++] = sprintf(a6, "%d", fsize);
+***************
+*** 331,336 ****
+--- 359,365 ----
+  		printf("%s\n", cmd);
+  	if (status = system(cmd))
+  		exit(status >> 8);
++ #ifndef NeXT_MOD
+  	if (*cp == 'a' && !noboot) {
+  		char type[3];
+  		struct stat sb;
+***************
+*** 346,354 ****
+--- 375,385 ----
+  		type[2] = '\0';
+  		installboot(special, type);
+  	}
++ #endif NeXT_MOD
+  	exit(0);
+  }
+  
++ #ifndef NeXT_MOD
+  installboot(dev, type)
+  	char *dev, *type;
+  {
+***************
+*** 394,399 ****
+--- 425,431 ----
+  	}
+  	close(fd);
+  }
++ #endif NeXT_MOD
+  
+  /*VARARGS*/
+  fatal(fmt, arg1, arg2)

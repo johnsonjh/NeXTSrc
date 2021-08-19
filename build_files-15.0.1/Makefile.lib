@@ -1,0 +1,220 @@
+
+#
+#  NeXT include file for Internal Library Makefile
+#  Copyright 1987, NeXT, Inc.
+#
+#  This Makefile is included to gain the rules for making and installing
+#  a library, including header files, class files, and a message
+#  group file.
+#
+
+# a little doc for when the "help" target is made
+.DEFAULT help:
+	@if (test "$<");		\
+	then echo 'ERROR: Unrecognized Makefile target "$<"';	\
+	fi
+	@echo '  install-  to install the library and all associated files';\
+	echo '  installsrc-  to install the source of the library';\
+	echo '  debug_install-  to install the debugging library';\
+	echo '  shlib_install-  to install the shared library';\
+	echo '  $(NAME)-  to make the local copy of the library';\
+	echo '  debug-    to make the debugging copy of the library';\
+	echo '  profile-  to make the profiling copy of the library';\
+	echo '  ofiles-   to make the librarys .o files';\
+	echo '  debug-    to make the debugging librarys .o files';\
+	echo '  profile-  to make the profiling librarys .o files';\
+	echo '  clean-    to remove all files but the source';\
+	echo '  print-    to print out all the source files';\
+	echo '  wc-       to get the line, word, and byte count of the source';\
+	echo '  size-     to get the size of all object files';\
+	echo '  diff-     diffs current source against installed source';\
+	echo '  tags-     to run ctags on the source';\
+	echo '  depend-   to update Makefile dependencies on include files';\
+	echo '  spec-     to update spec files for all classes';\
+	echo '  lint-     to lint all the source'
+
+
+HFILES = $(PRIVATE_INCFILES) $(PUBLIC_INCFILES)
+
+# this is the fruit of this project
+PRODUCT = lib$(NAME).a
+
+# these are other versions of the library we want to nuke
+SPECIFIC_GARBAGE = lib$(NAME)*.a $(SPECFILES) $(SPECFILES:.spec=.aux) \
+		lib$(NAME)_s*.shlib
+# this stuff gets nuked with a rm -r
+DIRECTORY_GARBAGE = obj debug_obj profile_obj shlib_obj
+
+# flags passed to ar
+ARFLAGS = ruv
+
+# flags passed to vers_string
+VERSFLAGS = -l
+
+# place where .o files are kept
+OFILE_DIR=obj
+
+# place to look for dependents
+VPATH = $(OFILE_DIR)
+
+#put these in the make rules?
+.s.o:
+	$(AS) -o $(OFILE_DIR)/$*.o $*.s
+.c.o:
+	$(CC) $(CFLAGS) -c $*.c -o $(OFILE_DIR)/$*.o
+.m.o:
+	$(CC) $(CFLAGS) $(OBJCFLAGS) -c $*.m -o $(OFILE_DIR)/$*.o
+.psw.o:
+	$(PSWRAP) $(PSWFLAGS) -o $*.c $*.psw
+	$(CC) $(CFLAGS) -c $*.c -o $(OFILE_DIR)/$*.o
+.pswm.o:
+	$(PSWRAP) $(PSWFLAGS) -o $*.m $*.pswm
+	$(CC) $(CFLAGS) $(OBJCFLAGS) -c $*.m -o $(OFILE_DIR)/$*.o
+.y.o:
+	$(YACC) $(YFLAGS) $*.y
+	$(MV) $(MVFLAGS) y.tab.c $*.c
+	$(CC) $(CFLAGS) -c $*.c -o $(OFILE_DIR)/$*.o
+	$(RM) $(RMFLAGS) $*.c
+.ym.o:
+	$(YACC) $(YFLAGS) $*.ym
+	$(MV) $(MVFLAGS) y.tab.c $*.m
+	$(CC) $(CFLAGS) $(OBJCFLAGS) -c $*.m -o $(OFILE_DIR)/$*.o
+	$(RM) $(RMFLAGS) $*.m
+.l.o:
+	$(LEX) $(LFLAGS) $*.l
+	$(MV) $(MVFLAGS) lex.yy.c $*.c
+	$(CC) $(CFLAGS) -c $*.c -o $(OFILE_DIR)/$*.o
+	$(RM) $(RMFLAGS) $*.c
+.lm.o :
+	$(LEX) $(YFLAGS) $*.lm
+	$(MV) $(MVFLAGS) lex.yy.c $*.m
+	$(CC) $(CFLAGS) $(OBJCFLAGS) -c $*.m -o $(OFILE_DIR)/$*.o
+	$(RM) $(RMFLAGS) $*.m
+
+include $(MAKE_DIR)/Makefile.common
+
+# making "name" causes the library to be built
+$(NAME): all
+
+# a library is made by first making all its components, and then
+# ranlib'ing the whole thing together
+$(PRODUCT): ofiles
+	$(AR) $(ARFLAGS) $(PRODUCT) $(OFILES)
+	ranlib $(PRODUCT)
+
+# makes all the ofiles
+ofiles:: $(OFILE_DIR) $(OFILES)
+
+# installations common to all installs
+common_install: inst_incfiles inst_psfiles inst_specs
+
+# installs the library itself
+inst_product: $(LIBDIR) $(PRODUCT)
+	install $(IFLAGS) -r -m 644 $(PRODUCT) $(LIBDIR)
+	
+# installs the include files
+inst_incfiles: 
+	-/bin/rm -rf $(INCDIR)
+	if (test "$(PUBLIC_INCFILES)")					\
+	    then mkdirs -m 755 $(INCDIR);				\
+	    install $(IFLAGS) -m 444 $(PUBLIC_INCFILES) $(INCDIR); 	\
+	fi
+
+# installs the PostScript package files
+inst_psfiles: 
+	if (test "$(PSFILES)")						\
+	    then mkdirs -m 755 $(PSLIBDIR);				\
+	    install $(IFLAGS) -m 444 $(PSFILES) $(PSLIBDIR);		\
+	fi
+
+# install specsheets
+inst_specs: $(SPECFILES)
+	if (test "$(SPECFILES)")					\
+	    then mkdirs -m 755 $(SPECDIR);				\
+	    mkdirs -m 755 $(AUXDIR);					\
+	    install $(IFLAGS) -m 444 $(SPECFILES) $(SPECDIR);		\
+	    install $(IFLAGS) -m 444 $(SPECFILES:.spec=.aux) $(AUXDIR); \
+	fi
+
+# install the source
+installsrc::
+	mkdirs $(SRCROOT)
+	chmod 755 $(SRCROOT)
+	tar cf - $(INSTALL_FILES) | (cd $(SRCROOT); tar xf -)
+	chmod 444 $(SRCROOT)/*
+	cd $(SRCROOT); ln -s . $(NAME)
+#	TEMP_VAR1=`pwd`;				\
+#	TEMP_VAR2=`basename $$TEMP_VAR1`;		\
+#	mkdirs -m 755 $(SRCDIR)/$$TEMP_VAR2;		\
+#	for f in $(INSTALL_FILES);			\
+#		do (cp $$f $(SRCDIR)/$$TEMP_VAR2;	\
+#		chmod 444 $(SRCDIR)/$$TEMP_VAR2/$$f)	\
+#	done
+
+#
+# build and install optimized library.
+#
+optimized_install:: inst_product
+
+optimized_ofiles:: ofiles
+
+optimized:: lib$(NAME).a
+
+#
+# build andinstall debugging library.
+#
+debug_install::
+	$(MAKE) inst_product "PRODUCT = lib$(NAME)_g.a"	\
+		"OFILE_DIR = debug_obj" "CFLAGS = $(DEBUGCFLAGS) -DDEBUG"
+
+debug_ofiles::
+	$(MAKE) ofiles "PRODUCT = lib$(NAME)_g.a" \
+		"OFILE_DIR = debug_obj" "CFLAGS = $(DEBUGCFLAGS) -DDEBUG"
+
+debug::
+	$(MAKE) lib$(NAME)_g.a "PRODUCT = lib$(NAME)_g.a" \
+		"OFILE_DIR = debug_obj" "CFLAGS = $(DEBUGCFLAGS) -DDEBUG"
+
+#
+# build and install profiling library.
+#
+profile_install::
+	$(MAKE) inst_product "PRODUCT = lib$(NAME)_p.a"	\
+		"OFILE_DIR = profile_obj" "CFLAGS = $(PROFCFLAGS)"
+
+profile_ofiles::
+	$(MAKE) ofiles "PRODUCT = lib$(NAME)_p.a" \
+		"OFILE_DIR = profile_obj" "CFLAGS = $(PROFCFLAGS)"
+
+profile::
+	$(MAKE) lib$(NAME)_p.a "PRODUCT = lib$(NAME)_p.a" \
+		"OFILE_DIR = profile_obj" "CFLAGS = $(PROFCFLAGS)"
+
+#
+# build and install shared library
+#
+shlib_install:: shlib $(SHLIBDIR) $(LIBDIR)
+	install $(IFLAGS) -r -m 644 lib$(NAME)_s.a $(LIBDIR)
+	install -m 755 lib$(NAME)_s.$(SHLIBVERS).shlib $(SHLIBDIR)
+
+shlib_ofiles::
+	$(MAKE) ofiles "PRODUCT = lib$(NAME)_s.a" "OFILE_DIR = shlib_obj" \
+		"CFLAGS = $(SHLIBCFLAGS) -DSHLIB"
+
+shlib:: shlib_ofiles
+	cd shlib_obj; $(MKSHLIB) -Mach $(MKSHLIBFLAGS) -s ../spec_$(NAME) \
+		    -t ../lib$(NAME)_s.$(SHLIBVERS).shlib -h ../lib$(NAME)_s.a
+
+# makes sure these directories exists
+$(SHLIBDIR) $(LIBDIR) $(PSLIBDIR):
+	mkdirs -m 755 $@
+
+$(OFILE_DIR) $(PSLIBDIR):
+	mkdirs $@
+
+# shows object code size
+size: $(PRODUCT)
+	sizelib $(PRODUCT)
+
+spec:: $(SPECFILES)
+

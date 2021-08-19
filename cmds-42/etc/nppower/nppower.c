@@ -1,0 +1,72 @@
+/*	@(#)nppower.c	1.0	3/9/88		(c) 1988 NeXT	*/
+
+/*
+ * Mach Operating System
+ * Copyright (c) 1988 by NeXT, Inc.
+ * All rights reserved.  The CMU Software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ *
+ ********************************************************************
+ * HISTORY
+ *  8-Mar-88  Peter King (king) at NeXT, Inc.
+ *	Created.
+ *
+ ********************************************************************
+ */
+
+/*
+ * Quick program to allow one to turn on/off the NeXT Laser Printer.
+ */
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/boolean.h>
+#include <sys/ioctl.h>
+#include <nextdev/npio.h>
+#include <sys/fcntl.h>
+
+#define PRINTER_PATH	"/dev/np0"
+
+main(argc, argv)
+	char **argv;
+{
+	struct npop npop;
+	int	fd;
+	extern int errno;
+
+	/*
+	 * Check out whether to turn it on or off
+	 */
+	if (argc != 2)		/* Correct number of args? */
+		goto usage;
+
+	if (!strcmp(argv[1], "on"))
+		npop.np_power = 1;
+	else if (!strcmp(argv[1], "off"))
+		npop.np_power = 0;
+	else
+		goto usage;
+
+	/*
+	 * Now open the device and do the IOCTL
+	 */
+	if ((fd = open(PRINTER_PATH, O_RDONLY)) == -1) {
+		fprintf(stderr, "?Could not open %s!\n", PRINTER_PATH);
+		exit(1);
+	}
+
+	npop.np_op = NPSETPOWER;
+	if (ioctl(fd, NPIOCPOP, &npop) == -1) {
+		fprintf(stderr, "?Ioctl failed, errno = %d\n", errno);
+		exit(1);
+	}
+	exit(0);
+
+	/*
+	 * We end up here if the person did not type the command right.
+	 */
+      usage:
+	fprintf(stderr, "usage: %s on|off\n", argv[0]);
+	exit(1);
+}
+

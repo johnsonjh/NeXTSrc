@@ -1,0 +1,420 @@
+# NeXT File System build procedure
+# Build Base Floppy disk from booted file system
+# Release 2.0
+#
+# Build the "bootable" floppy disk
+#
+newdisk BootFloppy
+#
+# Build the "private" symlinks
+#
+symlink	a private/dev					/dev
+symlink	a private/etc					/etc
+symlink	a private/tmp					/tmp
+#
+# Put kernels on the disk
+#
+copy	a odmach						/odmach
+strip	a /odmach
+chmod	a 555							/odmach
+link	a /odmach						/sdmach
+symlink	a $BOOTFILE						/mach
+#
+# load minimal client template
+#
+load	a /usr/template/client/dev
+load	a /usr/template/client/tmp
+chmod	a a+rwxt							/usr/template/client/tmp
+load	a /usr/template/client/vm
+mkdirs	a /usr/template/client/etc
+copy	a /usr/template/client/etc/disktab
+copy	a /usr/template/client/etc/fstab.od
+copy	a /usr/template/client/etc/fstab.sd330
+copy	a /usr/template/client/etc/fstab.sd660
+copy	a /usr/template/client/etc/group
+copy	a /usr/template/client/etc/passwd
+copy	a /usr/template/client/etc/utmp
+copy	a /usr/template/client/etc/mtab
+symlink	a ../../usr/etc/chown				/usr/template/client/etc/chown
+symlink	a ../../usr/etc/fsck				/usr/template/client/etc/fsck
+symlink	a ../../usr/etc/halt				/usr/template/client/etc/halt
+symlink	a ../../usr/etc/init				/usr/template/client/etc/init
+symlink	a ../../usr/etc/mach_init			/usr/template/client/etc/mach_init
+symlink	a ../../usr/etc/mkfile				/usr/template/client/etc/mkfile
+symlink	a ../../usr/etc/mkfs				/usr/template/client/etc/mkfs
+symlink	a ../../usr/etc/mknod				/usr/template/client/etc/mknod
+symlink	a ../../usr/etc/mount				/usr/template/client/etc/mount
+symlink	a ../../usr/etc/MAKEDEV				/usr/template/client/etc/MAKEDEV
+symlink	a ../../usr/etc/newfs				/usr/template/client/etc/newfs
+symlink	a ../../usr/etc/scsimodes			/usr/template/client/etc/scsimodes
+symlink	a ../../usr/etc/umount				/usr/template/client/etc/umount
+#
+# Put down enough commands so floppy
+# is "bootable" and can load hard disk
+#
+# /bin commands
+#
+mkdirs	a /bin
+copy	a /bin/awk
+copy	a /bin/chgrp
+copy	a /bin/chmod
+copy	a /bin/cp
+copy	a /bin/csh
+copy	a /bin/dd
+copy	a /bin/df
+copy	a /bin/echo
+copy	a /bin/expr
+copy	a /bin/hostname
+copy	a /bin/ln
+copy	a /bin/ls
+copy	a /bin/mkdir
+copy	a /bin/mkdirs
+copy	a /bin/mv
+copy	a /bin/rm
+copy	a /bin/sed
+copy	a /bin/sh
+copy	a /bin/sync
+copy	a /bin/tar
+#
+# /usr/bin commands
+#
+mkdirs	a /usr/bin
+copy	a /usr/bin/touch
+#
+# /usr/etc commands
+#
+mkdirs	a /usr/etc
+copy	a /usr/etc/chown
+copy	a /usr/etc/fsck
+copy	a /usr/etc/halt
+copy	a /usr/etc/init
+copy	a /usr/etc/mach_init
+copy	a /usr/etc/mkfile
+copy	a /usr/etc/mkfs
+copy	a /usr/etc/mknod
+copy	a /usr/etc/mount
+copy	a /usr/etc/newfs
+copy	a /usr/etc/scsimodes
+copy	a /usr/etc/umount
+#
+# /usr/ucb commands
+#
+mkdirs	a /usr/ucb
+copy	a /usr/ucb/grep
+copy	a /usr/ucb/whoami
+#
+# /usr/standalone files
+#
+load	a /usr/standalone
+#
+# /usr/shlib libraries
+#
+mkdirs	a /usr/shlib
+copy	a /usr/shlib/libsys_s.B.shlib
+#
+# FIXME FIXME FIXME!
+# Hacks in current directory that MUST
+# be given to Morris to be put
+# in the right places!  Make sure they still
+# get loaded, though!
+#
+# /usr/template/client additions
+#
+copy	a BLD.fd_to_sd					/usr/template/client/etc/BLD.fd_to_sd
+copy	a fstab.fd						/usr/template/client/etc/fstab.fd
+copy	a rc.bldsd100					/usr/template/client/etc/rc.bldsd100
+copy	a rc.boot.ldsd100				/usr/template/client/etc/rc.boot.ldsd100
+copy	a ttys.installer				/usr/template/client/etc/ttys.installer
+copy	a rc.standard					/usr/template/client/etc/rc.standard
+copy	a rc.boot.standard				/usr/template/client/etc/rc.boot.standard
+copy	a rc.swap						/usr/template/client/etc/rc.swap
+copy	a /etc/ttys						/usr/template/client/etc/ttys.standard
+#
+# FIXME: /usr/etc additions
+#
+copy	a builddisk						/usr/etc/builddisk
+strip	a /usr/etc/builddisk
+copy	a disk							/usr/etc/disk
+strip	a /usr/etc/disk
+copy	a getdisk						/usr/etc/getdisk
+strip	a /usr/etc/getdisk
+copy	a MAKEDEV						/usr/etc/MAKEDEV
+copy	a newclient						/usr/etc/newclient
+copy	a reboot						/usr/etc/reboot
+strip	a /usr/etc/reboot
+#
+# FIXME: /usr/bin additions
+#
+copy	a fbshow						/usr/bin/fbshow
+strip	a /usr/bin/fbshow
+#
+# FIXME: /usr/lib/bootimages additions
+#
+mkdirs	a /usr/lib/bootimages
+copy	a Helvetica.18					/usr/lib/bootimages/Helvetica.18
+copy	a Helvetica-BoldOblique.18	/usr/lib/bootimages/Helvetica-BoldOblique.18
+#
+# Build minimal /private -- -P says use small swapfile
+#
+newclient a /usr/etc -P
+#
+# Patch /etc to cause floppy to boot into hard disk build procedure
+#
+# FIXME: This stuff should also go into /usr/template/client
+#
+copy	a rc.boot.ldsd100				/etc/rc.boot
+copy	a rc.ldsd100					/etc/rc
+#
+# FIXME: Quick hack until floppy driver is really available
+#
+symlink	a /dev/od0a						/dev/fd0a
+symlink	a /dev/rod0a					/dev/rfd0a
+#
+# Produce a "bill-of-materials"
+#
+bom		a
+#
+# Floppy1 -- completes the load of /usr/template and /private
+#
+newdisk	Floppy1
+load	a /usr/template
+mkdirs	a /usr/etc
+copy	a newclient							/usr/etc/newclient
+#
+# build complete /private
+#
+newclient a /usr/etc -P
+#
+# Since this floppy is loaded onto a running system, remove things
+# that have already been loaded, reloading some of these files would
+# be fatal, anyway. (E.g. don't overwrite swapfile or object files
+# that might be currently executing.)
+#
+rrm		a /usr/etc
+rrm		a /private/dev
+rrm		a /private/tmp
+rrm		a /private/vm
+remove	a /private/etc/disktab
+remove	a /private/etc/fstab.od
+remove	a /private/etc/fstab.sd330
+remove	a /private/etc/fstab.sd660
+remove	a /private/etc/group
+remove	a /private/etc/mtab
+remove	a /private/etc/passwd
+remove	a /private/etc/utmp
+remove	a /private/etc/rc
+remove	a /private/etc/rc.boot
+remove	a /private/etc/fstab
+remove	a /private/etc/chown
+remove	a /private/etc/fsck
+remove	a /private/etc/halt
+remove	a /private/etc/init
+remove	a /private/etc/mach_init
+remove	a /private/etc/mkfile
+remove	a /private/etc/mkfs
+remove	a /private/etc/mknod
+remove	a /private/etc/mount
+remove	a /private/etc/MAKEDEV
+remove	a /private/etc/newfs
+remove	a /private/etc/scsimodes
+remove	a /private/etc/umount
+#
+# load /usr/adm and selected commands from /usr/bin
+#
+load	a /usr/adm
+mkdirs	a /usr/bin
+copy	a /usr/bin/blit
+copy	a /usr/bin/nidump
+copy	a /usr/bin/egrep
+copy	a /usr/bin/basename
+copy	a /usr/bin/find
+copy	a /usr/bin/newaliases
+copy	a /usr/bin/niload
+copy	a /usr/bin/niutil
+copy	a /usr/bin/sleep
+copy	a /usr/bin/sort
+copy	a /usr/bin/uniq
+symlink	a ../private/preserve				/usr/preserve
+symlink	a ../private/spool					/usr/spool
+symlink	a ../private/tmp					/usr/tmp
+mkdirs	a /usr/lib
+symlink	a ../../private/etc/crontab			/usr/lib/crontab
+symlink	a ../../private/etc/Mail.rc			/usr/lib/Mail.rc
+bom		a
+#
+# Load non-optional /usr/etc commands
+#
+newdisk	Floppy2
+mkdirs	a /usr/etc
+copy	a /usr/etc/arp
+copy	a /usr/etc/autodiskmount
+copy	a /usr/etc/autonfsmount
+copy	a /usr/etc/biod
+copy	a /usr/etc/bootpd
+copy	a /usr/etc/checkswap
+copy	a /usr/etc/cron
+copy	a /usr/etc/dmesg
+copy	a /usr/etc/dump
+copy	a /usr/etc/exportfs
+copy	a /usr/etc/fingerd
+copy	a /usr/etc/fsirand
+copy	a /usr/etc/ftpd
+copy	a /usr/etc/getty
+copy	a /usr/etc/ifconfig
+copy	a /usr/etc/inetd
+copy	a /usr/etc/kern_loader
+copy	a /usr/etc/kl_util
+copy	a /usr/etc/lookupd
+copy	a /usr/etc/lpc
+copy	a /usr/etc/mach_swapon
+copy	a /usr/etc/mconnect
+copy	a /usr/etc/mklost+found
+copy	a /usr/etc/mkplaces
+copy	a /usr/etc/named
+copy	a /usr/etc/netinfod
+copy	a /usr/etc/nfsd
+copy	a /usr/etc/nibindd
+copy	a /usr/etc/nidomain
+copy	a /usr/etc/nmserver
+copy	a /usr/etc/nppower
+copy	a /usr/etc/ntalkd
+copy	a /usr/etc/nu
+copy	a /usr/etc/pbs
+copy	a /usr/etc/ping
+copy	a /usr/etc/portmap
+copy	a /usr/etc/quot
+copy	a /usr/etc/rdump
+copy	a /usr/etc/renice
+copy	a /usr/etc/restore
+copy	a /usr/etc/restore0.9
+copy	a /usr/etc/rexd
+copy	a /usr/etc/rexecd
+copy	a /usr/etc/rlogind
+copy	a /usr/etc/rmt
+copy	a /usr/etc/route
+copy	a /usr/etc/routed
+copy	a /usr/etc/rpc.bootparamd
+copy	a /usr/etc/rpc.mountd
+copy	a /usr/etc/rpc.rquotad
+copy	a /usr/etc/rpc.rstatd
+copy	a /usr/etc/rpc.rusersd
+copy	a /usr/etc/rpc.rwalld
+copy	a /usr/etc/rpc.sprayd
+copy	a /usr/etc/rpc.statd
+copy	a /usr/etc/rpc.yppasswdd
+copy	a /usr/etc/rpcinfo
+copy	a /usr/etc/rrestore
+copy	a /usr/etc/rshd
+copy	a /usr/etc/rwall
+copy	a /usr/etc/rwhod
+copy	a /usr/etc/shutdown
+copy	a /usr/etc/snd_register
+copy	a /usr/etc/syslogd
+copy	a /usr/etc/talkd
+copy	a /usr/etc/telnetd
+copy	a /usr/etc/tftpd
+copy	a /usr/etc/timed
+copy	a /usr/etc/timedc
+copy	a /usr/etc/update
+copy	a /usr/etc/uucpd
+load	a /usr/etc/yp
+copy	a /usr/etc/ypbind
+copy	a /usr/etc/ypserv
+bom		a
+#
+# Load necessary /bin commands
+#
+newdisk	Floppy3
+load	a /bin
+remove	a /bin/awk
+remove	a /bin/chgrp
+remove	a /bin/chmod
+remove	a /bin/cp
+remove	a /bin/csh
+remove	a /bin/dd
+remove	a /bin/df
+remove	a /bin/echo
+remove	a /bin/expr
+remove	a /bin/hostname
+remove	a /bin/ln
+remove	a /bin/ls
+remove	a /bin/mkdir
+remove	a /bin/mkdirs
+remove	a /bin/mv
+remove	a /bin/rm
+remove	a /bin/sed
+remove	a /bin/sh
+remove	a /bin/sync
+remove	a /bin/tar
+bom		a
+#
+# Load NextStep support
+#
+newdisk Floppy4
+load	a /usr/lib/NextPrinter
+load	a /usr/lib/NextStep
+bom		a
+#
+# Load /usr/shlib and minimal /usr/lib components
+#
+newdisk	Floppy5
+mkdirs	a /usr/shlib
+copy	a /usr/shlib/libNeXT_s.C.shlib
+copy	a /usr/shlib/libdsp_s.A.shlib
+mkdirs	a /usr/lib
+copy	a /usr/lib/diff3
+copy	a /usr/lib/diffh
+load	a /usr/lib/kern_loader
+copy	a /usr/lib/lpd
+copy	a /usr/lib/lpf
+copy	a /usr/lib/sendmail
+copy	a /usr/lib/sendmail.hf
+bom		a
+#
+# Load Fonts and Sounds
+#
+newdisk	Floppy6
+load	a /NextLibrary/Fonts
+load	a /NextLibrary/Sounds
+bom		a
+#
+# Load base applications
+#
+newdisk	Floppy7
+load	a /NextAdmin
+load	a /NextApps/Mail.app
+load	a /NextApps/WriteNow.app
+copy	a /NextApps/Edit
+copy	a /NextApps/Preferences
+copy	a /NextApps/Shell
+copy	a /NextApps/Terminal
+bom		a
+#
+# Load minimal commands from /usr/ucb
+#
+newdisk	Floppy8
+mkdirs	a /usr/ucb
+copy	a /usr/ucb/ex
+link	a /usr/ucb/ex						/usr/ucb/vi
+copy	a /usr/ucb/lpq
+copy	a /usr/ucb/lpr
+copy	a /usr/ucb/lprm
+copy	a /usr/ucb/man
+copy	a /usr/ucb/printenv
+copy	a /usr/ucb/rcp
+copy	a /usr/ucb/rlogin
+copy	a /usr/ucb/tail
+copy	a /usr/ucb/telnet
+copy	a /usr/ucb/tftp
+copy	a /usr/ucb/tset
+copy	a /usr/ucb/compress
+copy	a /usr/ucb/uncompress
+copy	a /usr/ucb/clear
+bom		a
+
+
+
+
+
+
+

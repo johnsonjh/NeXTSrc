@@ -1,0 +1,7 @@
+MASTER_USER=osdev
+PROJECT_NAME=cmds
+DONT_DIFF:/TAGS$|/tags$|\.o$|/errs$|\.out$|\.a$|/Makedep$|\.NEW$|/\.depend_done$|/vers\.c$|_vers\.c$|y\.tab\.[ch]$|~$|\.BAK$|\.bak$|/\.list$|/\.places$
+make=/bin/make
+cc=/bin/cc
+	$ -I/BSD/LIBS/libs-9i0.82/root/usr/include -I/os/osdev/MK/mk
+	$ -L/BSD/LIBS/libs-9i0.82/root/lib -L/BSD/LIBS/libs-9i0.82/root/usr/lib

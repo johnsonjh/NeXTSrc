@@ -1,0 +1,37 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    gk:1.1; strict;
+comment  @# @;
+
+
+1.1
+date     88.09.30.15.48.26;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@NeXT, Inc.
+@
+
+
+
+1.1
+log
+@Initial NeXT version
+@
+text
+@all: FRC
+	cd build; make default
+	cd build; make utilprog
+	
+install: all
+	-@@CWD=`pwd`; cd ${DSTROOT}; DSTROOT=`pwd`; cd $$CWD; \
+	cd build; make install DSTROOT=$$DSTROOT
+
+clean:
+	cd build; make clean
+
+FRC:
+@

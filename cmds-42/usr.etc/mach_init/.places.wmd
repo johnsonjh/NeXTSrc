@@ -1,0 +1,6 @@
+Workspace Defaults Version 2.0
+DirectorySort Alpha
+NXCaseSensitiveBrowser No
+UnixExpert Yes
+DirPlaces DP
+6 4 21 0 1 11 bootstrap.c5 1 10 testServer2 1 11 error_log.h5 0 10 testConfig3 3 8 Makefile2 2 5 foo.c4 0 5 Notes0 3 11 bootstrap.h2 0 11 error_log.c4 1 8 parser.c1 2 20 bootstrap_internal.h1 1 15 bootstrapUser.c3 1 7 lists.c4 2 8 parser.h0 0 7 .places2 3 8 initConf0 2 14 bootstrap.conf3 2 7 lists.h1 0 17 bootstrapServer.c1 3 8 DBG_OBJS4 3 14 rpc_services.c

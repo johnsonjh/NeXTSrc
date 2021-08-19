@@ -1,0 +1,304 @@
+/*
+ * C runtime startup for NeXT
+ *
+ * Kernel sets up stack frame to look like:
+ *
+ *	| STRING AREA |
+ *	+-------------+
+ *	|      0      |
+ *	+-------------+
+ *	|    env[n]   |
+ *	+-------------+
+ *	       :
+ *	       :
+ *	+-------------+
+ *	|    env[0]   |
+ *	+-------------+
+ *	|      0      |
+ *	+-------------+
+ *	| arg[argc-1] |
+ *	+-------------+
+ *	       :
+ *	       :
+ *	+-------------+
+ *	|    arg[0]   |
+ *	+-------------+
+ * sp->	|     argc    |
+ *	+-------------+
+ *
+ *	Where arg[i] and env[i] point into the STRING AREA
+ */
+#if defined(GCRT0)
+#include "gmon.h"
+#endif GCRT0
+
+	.data
+	.even
+	.globl	_environ
+	.globl	_NXArgc
+	.globl	_NXArgv
+_environ:
+	.long	0
+_NXArgc:
+	.long	0
+_NXArgv:
+	.long	0
+
+	.comm	_errno,4
+	.comm	_mach_init_routine,4
+	.comm	__cthread_init_routine,4
+
+	.text
+	.globl	start
+start:
+	movl	sp,a0		| pointer to base of kernel frame
+	subw	#12,sp		| room for new argc, argv, & environ
+	movl	a0@+,d0		| pickup argc and bump a0 to pt to arg[0]
+	movl	d0,sp@		| argc to reserved stack word
+	movl	d0,_NXArgc	| argc to NXArgc global
+	movl	a0,sp@(4)	| argv to reserved stack word
+	movl	a0,_NXArgv	| argv to NXArgv global
+	addql	#1,d0		| argc + 1 for zero word
+	asll	#2,d0		| * sizeof(char *)
+	addl	d0,a0		| addr of env[0]
+	movl	a0,sp@(8)	| environ to reserved stack word
+	movl	a0,_environ	| set char **environ
+	tstl	_mach_init_routine
+	beq	1f		| no mach initialization routine
+	movl	_mach_init_routine,a0
+	jsr	a0@		| (*mach_init_routine)()
+	tstl	__cthread_init_routine
+	beq	1f		| no cthread initialization routine
+	movl	__cthread_init_routine,a0
+	jsr	a0@		| (*_cthread_init_routine)()
+1:
+#if defined(MCRT0) || defined(GCRT0)
+	pea	_etext
+	pea	eprol
+	jbsr	_monstartup
+	addqw	#8,sp
+#endif	MCRT0 || GCRT0
+	clrl	_errno
+	jbsr	_main		| main(argc, argv, environ)
+	movl	d0,sp@		| put retval in old argc slot
+	jbsr	_exit		| exit(retval)
+	|
+	| better not return!
+
+#if defined(MCRT0) || defined(GCRT0)
+|
+| if profiling, redefine exit to do profiling cleanup
+|
+	.text
+	.globl	_exit
+_exit:
+	link	a6,#0
+	clrl	sp@-
+	jbsr	_monitor
+	addqw	#4,sp
+	jbsr	__cleanup
+	movl	a6@(8),sp@-
+	jbsr	__exit
+	/*
+	 * better not return!
+	 */
+
+#endif	MCRT0 || GCRT0
+
+#ifdef	notdef
+#ifdef GCRT0
+|
+| gmon implementation of mcount
+|
+	.data1
+overmsg:
+	.ascii	"mcount\72 tos overflow\12"
+endmsg:
+
+	.text
+	.globl	mcount
+mcount:
+	tas	__profiling
+	beq	1f
+	rts
+1:
+	movl	sp@,d1		| selfpc
+	movl	a6@(4),d0	| frompcindex
+	subl	__s_lowpc,d0	| disp in text
+	cmpl	__s_textsize,d0
+	bls	1f		| inside text
+	movb	#0,__profiling
+	rts
+1:
+	movl	d2,sp@-		| need a d reg
+#if HASHFRACTION != 1
+	divul	#(HASHFRACTION*2),d0
+	addl	d0,d0
+#else HASHFRACTION == 1
+	bclr	#0,d0
+#endif HASHFRACTION != 1
+	addl	__froms,d0
+	movl	d0,a1		| frompcindex
+	movl	__tos,a0	| tos
+	moveq	#0,d0
+	movw	a1@,d0		| toindex
+	bne	1f		| not first time
+	|
+	| First time traversing this arc
+	|
+	movw	a0@(8),d0	| tos[0].link
+	addql	#1,d0
+	movw	d0,a0@(8)	| toindex = ++tos[0].link
+	cmpl	__tolimit,d0
+	bge	overflow	| overflowed tos table
+	movw	d0,a1@		| *frompcindex = toindex
+	addl	d0,d0
+	movl	d0,d2
+	asll	#2,d2
+	addl	d2,d0
+	addl	d0,a0		| top = &tos[toindex]
+	movl	d1,a0@		| top->selfpc = selfpc
+	movl	#1,a0@(4)	| top->count = 1
+	clrw	a0@(8)		| top->link = 0
+	movl	sp@+,d2
+	movb	#0,__profiling
+	rts
+1:
+	addl	d0,d0
+	movl	d0,d2
+	asll	#2,d2
+	addl	d2,d0
+	addl	d0,a0		| top = &tos[toindex]
+	cmpl	a0@,d1		| top->selfpc == selfpc
+	bne	1f		| no: not at front of chain
+	addql	#1,a0@(4)
+	movl	sp@+,d2
+	movb	#0,__profiling
+	rts
+1:
+	movl	a2,sp@-		| need 1 more reg
+loop:
+	moveq	#0,d0
+	movw	a0@(8),d0	| top->link
+	bne	1f		| top->link != 0
+	movl	__tos,a0	| tos
+	moveq	#0,d0
+	movw	a0@(8),d0	| tos[0].link
+	addql	#1,d0
+	movw	d0,a0@(8)	| toindex = ++tos[0].link
+	cmpl	__tolimit,d0
+	bge	overflow	| overflowed tos table
+	movl	d0,a2		| save toindex
+	addl	d0,d0
+	movl	d0,d2
+	asll	#2,d2
+	addl	d2,d0
+	addl	d0,a0		| top = &tos[toindex]
+	movl	d1,a0@		| top->selfpc = selfpc
+	movl	#1,a0@(4)	| top->count = 1
+	movw	a1@,a0@(8)	| top->link = *frompcindex
+	movw	a2,a1@		| *frompcindex = toindex
+	movl	sp@+,a2		| restore a2
+	movl	sp@+,d2
+	movb	#0,__profiling
+	rts
+1:
+	|
+	| check next arc
+	|
+	movl	a0,a2		| prevtop = top
+	movl	__tos,a0	| tos
+	addl	d0,d0
+	movl	d0,d2
+	asll	#2,d2
+	addl	d2,d0
+	addl	d0,a0		| top = &tos[top->link]
+	cmpl	a0@,d1		| top->selfpc == selfpc
+	bne	loop
+	addql	#1,a0@(4)	| top->count++
+	movw	a2@(8),d0	| toindex = prevtop->link
+	movw	a0@(8),a2@(8)	| prevtop->link = top->link
+	movw	a1@,a0@(8)	| top->link = *frompcindex
+	movw	d0,a1@		| *frompcindex = toindex
+	movl	sp@+,a2		| restore a2
+	movl	sp@+,d2
+	movb	#0,__profiling
+	rts
+
+overflow:
+	pea	endmsg-overmsg
+	pea	overmsg
+	movl	#2,sp@-
+	jbsr	_write
+	rts
+	
+#endif GCRT0
+#endif	notdef
+
+#ifdef MCRT0
+|
+| mon implementation of mcount
+|
+	.data1
+overmsg:
+	.ascii	"mcount\72 counter overflow\12"
+endmsg:
+
+	|
+	| this assumes that a0 contains the address of the
+	| address of the counter (**count)
+	|
+	.text
+	.globl	mcount
+mcount:
+	tas	__profiling
+	beq	1f
+	rts
+1:
+	movl	a0@,d0		| *cntp
+	movl	d0,a0		| *cntp
+	bne	1f		| *cntp != 0
+	movl	__cntrs,d0
+	addql	#1,__cntrs
+	cmpl	__numctrs,d0
+	bge	overflow
+	movl	__countbase,a1
+	movl	sp@,a1@		| countbase->pc = selfpc
+	lea	a1@(4),a1
+	movl	a1,a0@		| *cntp = &countbase->ncall
+	addql	#8,__countbase	| countbase++
+	movl	a1,a0
+1:
+	addql	#1,a0@		| (**cntp)++
+	movb	#0,__profiling
+	rts
+
+overflow:
+	pea	endmsg-overmsg
+	pea	overmsg
+	movl	#2,sp@-
+	jbsr	_write
+	rts
+#endif MCRT0
+
+#ifdef CRT0
+/*
+ * a fake mcount in case someone links in a profiling routine or two
+ */
+	.text
+	.globl  mcount
+mcount:
+	rts
+
+/*
+ * if not profiling, defining a fake moncontrol()
+ * just in case we're loaded with a few profiling routines
+ */
+	.text
+	.globl  _moncontrol
+_moncontrol:
+	rts
+#endif
+	.text
+eprol:
+

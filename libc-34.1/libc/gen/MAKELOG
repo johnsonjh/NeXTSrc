@@ -1,0 +1,160 @@
+cd STD_OBJS; make -f ../Makefile TYPE="STD" genlib
+cc -MD  -I../../../usr.include -O -g -c -o abort.o ../abort.c
+md -d -u Makedep abort.d
+cc -MD  -I../../../usr.include -O -g -c -o alarm.o ../alarm.c
+md -d -u Makedep alarm.d
+cc -MD  -I../../../usr.include -O -g -c -o aliasdb.o ../aliasdb.c
+md -d -u Makedep aliasdb.d
+cc -MD  -I../../../usr.include -O -g -c -o atoi.o ../atoi.c
+md -d -u Makedep atoi.d
+cc -MD  -I../../../usr.include -O -g -c -o atol.o ../atol.c
+md -d -u Makedep atol.d
+cc -MD  -I../../../usr.include -O -g -c -o cfree.o ../cfree.c
+md -d -u Makedep cfree.d
+cc -MD  -I../../../usr.include -O -g -c -o closedir.o ../closedir.c
+md -d -u Makedep closedir.d
+cc -MD  -I../../../usr.include -O -g -c -o crypt.o ../crypt.c
+md -d -u Makedep crypt.d
+cc -MD  -I../../../usr.include -O -g -c -o ctime.o ../ctime.c
+md -d -u Makedep ctime.d
+cc -MD  -I../../../usr.include -O -g -c -o ctime_data.o ../ctime_data.c
+md -d -u Makedep ctime_data.d
+cc -MD  -I../../../usr.include -O -g -c -o ctype_.o ../ctype_.c
+md -d -u Makedep ctype_.d
+cc -MD  -I../../../usr.include -O -g -c -o debug_malloc.o ../debug_malloc.c
+md -d -u Makedep debug_malloc.d
+cc -MD  -I../../../usr.include -O -g -c -o errlst.o ../errlst.c
+md -d -u Makedep errlst.d
+cc -MD  -I../../../usr.include -O -g -c -o errstrings.o ../errstrings.c
+md -d -u Makedep errstrings.d
+cc -MD  -I../../../usr.include -O -g -c -o execvp.o ../execvp.c
+md -d -u Makedep execvp.d
+cc -MD  -I../../../usr.include -O -g -c -o exportent.o ../exportent.c
+md -d -u Makedep exportent.d
+cc -MD  -I../../../usr.include -O -g -c -o fgetpwent.o ../fgetpwent.c
+md -d -u Makedep fgetpwent.d
+cc -MD  -I../../../usr.include -O -g -c -o frexp.o ../frexp.c
+md -d -u Makedep frexp.d
+cc -MD  -I../../../usr.include -O -g -c -o fstab.o ../fstab.c
+md -d -u Makedep fstab.d
+cc -MD  -I../../../usr.include -O -g -c -o getenv.o ../getenv.c
+md -d -u Makedep getenv.d
+cc -MD  -I../../../usr.include -O -g -c -o getgrent.o ../getgrent.c
+md -d -u Makedep getgrent.d
+cc -MD  -I../../../usr.include -O -g -c -o getlogin.o ../getlogin.c
+md -d -u Makedep getlogin.d
+cc -MD  -I../../../usr.include -O -g -c -o getpass.o ../getpass.c
+../getpass.c: In function getpass:
+../getpass.c:29: warning: assignment between incompatible pointer types
+../getpass.c:43: warning: argument passing between incompatible pointer types
+md -d -u Makedep getpass.d
+cc -MD  -I../../../usr.include -O -g -c -o getpwent.o ../getpwent.c
+md -d -u Makedep getpwent.d
+cc -MD  -I../../../usr.include -O -g -c -o getttyent.o ../getttyent.c
+md -d -u Makedep getttyent.d
+cc -MD  -I../../../usr.include -O -g -c -o getttynam.o ../getttynam.c
+md -d -u Makedep getttynam.d
+cc -MD  -I../../../usr.include -O -g -c -o getusershell.o ../getusershell.c
+md -d -u Makedep getusershell.d
+cc -MD  -I../../../usr.include -O -g -c -o getwd.o ../getwd.c
+md -d -u Makedep getwd.d
+cc -MD  -I../../../usr.include -O -g -c -o initgroups.o ../initgroups.c
+md -d -u Makedep initgroups.d
+cc -MD  -I../../../usr.include -O -g -c -o isatty.o ../isatty.c
+md -d -u Makedep isatty.d
+cc -MD  -I../../../usr.include -O -g -c -o malloc.o ../malloc.c
+md -d -u Makedep malloc.d
+cc -MD  -I../../../usr.include -O -g -c -o malloc_server.o ../malloc_server.c
+md -d -u Makedep malloc_server.d
+cc -MD  -I../../../usr.include -O -g -c -o mkstemp.o ../mkstemp.c
+md -d -u Makedep mkstemp.d
+cc -MD  -I../../../usr.include -O -g -c -o mktemp.o ../mktemp.c
+md -d -u Makedep mktemp.d
+cc -MD  -I../../../usr.include -O -g -c -o mntent.o ../mntent.c
+md -d -u Makedep mntent.d
+cc -MD  -I../../../usr.include -O -g -c -o ndbm.o ../ndbm.c
+md -d -u Makedep ndbm.d
+cc -MD  -I../../../usr.include -O -g -c -o nlist.o ../nlist.c
+md -d -u Makedep nlist.d
+cc -MD  -I../../../usr.include -O -g -c -o opendir.o ../opendir.c
+md -d -u Makedep opendir.d
+cc -MD  -I../../../usr.include -O -g -c -o perror.o ../perror.c
+md -d -u Makedep perror.d
+cc -MD  -I../../../usr.include -O -g -c -o popen.o ../popen.c
+md -d -u Makedep popen.d
+cc -MD  -I../../../usr.include -O -g -c -o port_listen.o ../port_listen.c
+../port_listen.c: In function NXPortListen:
+../port_listen.c:67: warning: argument passing between incompatible pointer types
+md -d -u Makedep port_listen.d
+cc -MD  -I../../../usr.include -O -g -c -o psignal.o ../psignal.c
+md -d -u Makedep psignal.d
+cc -MD  -I../../../usr.include -O -g -c -o qsort.o ../qsort.c
+md -d -u Makedep qsort.d
+cc -MD  -I../../../usr.include -O -g -c -o random.o ../random.c
+md -d -u Makedep random.d
+cc -MD  -I../../../usr.include -O -g -c -o readdir.o ../readdir.c
+md -d -u Makedep readdir.d
+cc -MD  -I../../../usr.include -O -g -c -o realpath.o ../realpath.c
+md -d -u Makedep realpath.d
+cc -MD  -I../../../usr.include -O -g -c -o regex.o ../regex.c
+md -d -u Makedep regex.d
+cc -MD  -I../../../usr.include -O -g -c -o scandir.o ../scandir.c
+md -d -u Makedep scandir.d
+cc -MD  -I../../../usr.include -O -g -c -o seekdir.o ../seekdir.c
+md -d -u Makedep seekdir.d
+cc -MD  -I../../../usr.include -O -g -c -o setgid.o ../setgid.c
+md -d -u Makedep setgid.d
+cc -MD  -I../../../usr.include -O -g -c -o setegid.o ../setegid.c
+md -d -u Makedep setegid.d
+cc -MD  -I../../../usr.include -O -g -c -o setrgid.o ../setrgid.c
+md -d -u Makedep setrgid.d
+cc -MD  -I../../../usr.include -O -g -c -o setuid.o ../setuid.c
+md -d -u Makedep setuid.d
+cc -MD  -I../../../usr.include -O -g -c -o seteuid.o ../seteuid.c
+md -d -u Makedep seteuid.d
+cc -MD  -I../../../usr.include -O -g -c -o setruid.o ../setruid.c
+md -d -u Makedep setruid.d
+cc -MD  -I../../../usr.include -O -g -c -o siginterrupt.o ../siginterrupt.c
+md -d -u Makedep siginterrupt.d
+cc -MD  -I../../../usr.include -O -g -c -o siglist.o ../siglist.c
+md -d -u Makedep siglist.d
+cc -MD  -I../../../usr.include -O -g -c -o signal.o ../signal.c
+md -d -u Makedep signal.d
+cc -MD  -I../../../usr.include -O -g -c -o sigstrings.o ../sigstrings.c
+md -d -u Makedep sigstrings.d
+cc -MD  -I../../../usr.include -O -g -c -o sleep.o ../sleep.c
+md -d -u Makedep sleep.d
+cc -MD  -I../../../usr.include -O -g -c -o strcasecmp.o ../strcasecmp.c
+md -d -u Makedep strcasecmp.d
+cc -MD  -I../../../usr.include -O -g -c -o swab.o ../swab.c
+md -d -u Makedep swab.d
+cc -MD  -I../../../usr.include -O -g -c -o syslog.o ../syslog.c
+md -d -u Makedep syslog.d
+cc -MD  -I../../../usr.include -O -g -c -o system.o ../system.c
+md -d -u Makedep system.d
+cc -MD  -I../../../usr.include -O -g -c -o telldir.o ../telldir.c
+md -d -u Makedep telldir.d
+cc -MD  -I../../../usr.include -O -g -c -o time.o ../time.c
+md -d -u Makedep time.d
+cc -MD  -I../../../usr.include -O -g -c -o timezone.o ../timezone.c
+../timezone.c: In function tztab:
+../timezone.c:95: warning: assignment of non-const * pointer from const *
+md -d -u Makedep timezone.d
+cc -MD  -I../../../usr.include -O -g -c -o ttyname.o ../ttyname.c
+md -d -u Makedep ttyname.d
+cc -MD  -I../../../usr.include -O -g -c -o ttyslot.o ../ttyslot.c
+md -d -u Makedep ttyslot.d
+cc -MD  -I../../../usr.include -O -g -c -o ualarm.o ../ualarm.c
+md -d -u Makedep ualarm.d
+cc -MD  -I../../../usr.include -O -g -c -o usleep.o ../usleep.c
+../usleep.c: In function usleep:
+../usleep.c:59: warning: assignment between incompatible pointer types
+md -d -u Makedep usleep.d
+cc -MD  -I../../../usr.include -O -g -c -o vfree.o ../vfree.c
+md -d -u Makedep vfree.d
+vers_string -l genlib > genlib_vers.c
+cc -MD  -I../../../usr.include -O -g -c -o genlib_vers.o genlib_vers.c
+md -d -u Makedep genlib_vers.d
+rm -f debug_malloc.o
+ar cr genlib `lorder abort.o alarm.o aliasdb.o atoi.o atol.o cfree.o 	 closedir.o crypt.o ctime.o ctime_data.o ctype_.o 	 debug_malloc.o errlst.o errstrings.o execvp.o 		 exportent.o fgetpwent.o frexp.o fstab.o getenv.o 	 getgrent.o getlogin.o getpass.o getpwent.o getttyent.o 	 getttynam.o getusershell.o getwd.o initgroups.o 	 isatty.o malloc.o malloc_server.o mkstemp.o mktemp.o 	 mntent.o ndbm.o nlist.o opendir.o perror.o popen.o 	 port_listen.o psignal.o qsort.o random.o readdir.o	 realpath.o regex.o scandir.o seekdir.o setgid.o 	 setegid.o setrgid.o setuid.o seteuid.o setruid.o	 siginterrupt.o siglist.o signal.o sigstrings.o sleep.o	 strcasecmp.o swab.o syslog.o system.o telldir.o time.o	 timezone.o ttyname.o ttyslot.o ualarm.o usleep.o 	 vfree.o    genlib_vers.o | tsort`
+nm: debug_malloc.o: cannot open

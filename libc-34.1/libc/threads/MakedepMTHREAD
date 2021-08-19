@@ -1,0 +1,232 @@
+# Dependencies for File: cprocs.o :
+$(LIB)(cprocs.o) : ../../usr.include/cthreads.h ../../usr.include/mach.h
+$(LIB)(cprocs.o) : ../../usr.include/mach_extra.h ../../usr.include/mach_init.h
+$(LIB)(cprocs.o) : ../../usr.include/machine/cthreads.h ../../usr.include/setjmp.h
+$(LIB)(cprocs.o) : ../../usr.include/stddef.h ../../usr.include/stdlib.h
+$(LIB)(cprocs.o) : /usr/include/kern/ipc_netport.h /usr/include/kern/ipc_statistics.h
+$(LIB)(cprocs.o) : /usr/include/kern/mach_types.h /usr/include/machine/boolean.h
+$(LIB)(cprocs.o) : /usr/include/machine/kern_return.h
+$(LIB)(cprocs.o) : /usr/include/machine/thread_status.h /usr/include/machine/vm_param.h
+$(LIB)(cprocs.o) : /usr/include/machine/vm_types.h /usr/include/next/reg.h
+$(LIB)(cprocs.o) : /usr/include/sys/boolean.h /usr/include/sys/features.h
+$(LIB)(cprocs.o) : /usr/include/sys/kern_return.h /usr/include/sys/mach_extra.h
+$(LIB)(cprocs.o) : /usr/include/sys/machine.h /usr/include/sys/message.h
+$(LIB)(cprocs.o) : /usr/include/sys/port.h /usr/include/sys/task_info.h
+$(LIB)(cprocs.o) : /usr/include/sys/task_special_ports.h /usr/include/sys/thread_info.h
+$(LIB)(cprocs.o) : /usr/include/sys/thread_special_ports.h
+$(LIB)(cprocs.o) : /usr/include/sys/thread_status.h /usr/include/sys/time_value.h
+$(LIB)(cprocs.o) : /usr/include/sys/types.h /usr/include/vm/memory_object.h
+$(LIB)(cprocs.o) : /usr/include/vm/vm_inherit.h /usr/include/vm/vm_param.h
+$(LIB)(cprocs.o) : /usr/include/vm/vm_prot.h /usr/include/vm/vm_statistics.h cprocs.c
+$(LIB)(cprocs.o) : cthread_internals.h options.h
+# Dependencies for File: cthreads.o :
+$(LIB)(cthreads.o) : ../../usr.include/cthreads.h ../../usr.include/mach.h
+$(LIB)(cthreads.o) : ../../usr.include/mach_extra.h ../../usr.include/mach_init.h
+$(LIB)(cthreads.o) : ../../usr.include/machine/cthreads.h ../../usr.include/setjmp.h
+$(LIB)(cthreads.o) : ../../usr.include/stddef.h ../../usr.include/stdlib.h
+$(LIB)(cthreads.o) : /usr/include/kern/ipc_netport.h /usr/include/kern/ipc_statistics.h
+$(LIB)(cthreads.o) : /usr/include/kern/mach_types.h /usr/include/machine/boolean.h
+$(LIB)(cthreads.o) : /usr/include/machine/kern_return.h
+$(LIB)(cthreads.o) : /usr/include/machine/thread_status.h
+$(LIB)(cthreads.o) : /usr/include/machine/vm_param.h /usr/include/machine/vm_types.h
+$(LIB)(cthreads.o) : /usr/include/next/reg.h /usr/include/sys/boolean.h
+$(LIB)(cthreads.o) : /usr/include/sys/features.h /usr/include/sys/kern_return.h
+$(LIB)(cthreads.o) : /usr/include/sys/mach_extra.h /usr/include/sys/machine.h
+$(LIB)(cthreads.o) : /usr/include/sys/message.h /usr/include/sys/port.h
+$(LIB)(cthreads.o) : /usr/include/sys/task_info.h /usr/include/sys/task_special_ports.h
+$(LIB)(cthreads.o) : /usr/include/sys/thread_info.h
+$(LIB)(cthreads.o) : /usr/include/sys/thread_special_ports.h
+$(LIB)(cthreads.o) : /usr/include/sys/thread_status.h /usr/include/sys/time_value.h
+$(LIB)(cthreads.o) : /usr/include/sys/types.h /usr/include/vm/memory_object.h
+$(LIB)(cthreads.o) : /usr/include/vm/vm_inherit.h /usr/include/vm/vm_param.h
+$(LIB)(cthreads.o) : /usr/include/vm/vm_prot.h /usr/include/vm/vm_statistics.h
+$(LIB)(cthreads.o) : cthread_internals.h cthreads.c options.h
+# Dependencies for File: cthreads_sync.o :
+$(LIB)(cthreads_sync.o) : ../../usr.include/cthreads.h ../../usr.include/mach.h
+$(LIB)(cthreads_sync.o) : ../../usr.include/mach_extra.h ../../usr.include/mach_init.h
+$(LIB)(cthreads_sync.o) : ../../usr.include/machine/cthreads.h
+$(LIB)(cthreads_sync.o) : ../../usr.include/setjmp.h ../../usr.include/stddef.h
+$(LIB)(cthreads_sync.o) : ../../usr.include/stdlib.h /usr/include/kern/ipc_netport.h
+$(LIB)(cthreads_sync.o) : /usr/include/kern/ipc_statistics.h
+$(LIB)(cthreads_sync.o) : /usr/include/kern/mach_types.h /usr/include/machine/boolean.h
+$(LIB)(cthreads_sync.o) : /usr/include/machine/kern_return.h
+$(LIB)(cthreads_sync.o) : /usr/include/machine/thread_status.h
+$(LIB)(cthreads_sync.o) : /usr/include/machine/vm_param.h
+$(LIB)(cthreads_sync.o) : /usr/include/machine/vm_types.h /usr/include/next/reg.h
+$(LIB)(cthreads_sync.o) : /usr/include/sys/boolean.h /usr/include/sys/features.h
+$(LIB)(cthreads_sync.o) : /usr/include/sys/kern_return.h /usr/include/sys/mach_extra.h
+$(LIB)(cthreads_sync.o) : /usr/include/sys/machine.h /usr/include/sys/message.h
+$(LIB)(cthreads_sync.o) : /usr/include/sys/port.h /usr/include/sys/task_info.h
+$(LIB)(cthreads_sync.o) : /usr/include/sys/task_special_ports.h
+$(LIB)(cthreads_sync.o) : /usr/include/sys/thread_info.h
+$(LIB)(cthreads_sync.o) : /usr/include/sys/thread_special_ports.h
+$(LIB)(cthreads_sync.o) : /usr/include/sys/thread_status.h
+$(LIB)(cthreads_sync.o) : /usr/include/sys/time_value.h /usr/include/sys/types.h
+$(LIB)(cthreads_sync.o) : /usr/include/vm/memory_object.h /usr/include/vm/vm_inherit.h
+$(LIB)(cthreads_sync.o) : /usr/include/vm/vm_param.h /usr/include/vm/vm_prot.h
+$(LIB)(cthreads_sync.o) : /usr/include/vm/vm_statistics.h cthread_internals.h
+$(LIB)(cthreads_sync.o) : cthreads_sync.c options.h
+# Dependencies for File: cthreads_time.o :
+$(LIB)(cthreads_time.o) : ../../usr.include/cthreads.h ../../usr.include/mach.h
+$(LIB)(cthreads_time.o) : ../../usr.include/mach_extra.h ../../usr.include/mach_init.h
+$(LIB)(cthreads_time.o) : ../../usr.include/machine/cthreads.h
+$(LIB)(cthreads_time.o) : ../../usr.include/setjmp.h ../../usr.include/stddef.h
+$(LIB)(cthreads_time.o) : ../../usr.include/stdlib.h ../../usr.include/time.h
+$(LIB)(cthreads_time.o) : /usr/include/kern/ipc_netport.h
+$(LIB)(cthreads_time.o) : /usr/include/kern/ipc_statistics.h
+$(LIB)(cthreads_time.o) : /usr/include/kern/mach_types.h /usr/include/machine/boolean.h
+$(LIB)(cthreads_time.o) : /usr/include/machine/kern_return.h
+$(LIB)(cthreads_time.o) : /usr/include/machine/thread_status.h
+$(LIB)(cthreads_time.o) : /usr/include/machine/vm_param.h
+$(LIB)(cthreads_time.o) : /usr/include/machine/vm_types.h /usr/include/next/reg.h
+$(LIB)(cthreads_time.o) : /usr/include/sys/boolean.h /usr/include/sys/features.h
+$(LIB)(cthreads_time.o) : /usr/include/sys/kern_return.h /usr/include/sys/mach_extra.h
+$(LIB)(cthreads_time.o) : /usr/include/sys/machine.h /usr/include/sys/message.h
+$(LIB)(cthreads_time.o) : /usr/include/sys/port.h /usr/include/sys/task_info.h
+$(LIB)(cthreads_time.o) : /usr/include/sys/task_special_ports.h
+$(LIB)(cthreads_time.o) : /usr/include/sys/thread_info.h
+$(LIB)(cthreads_time.o) : /usr/include/sys/thread_special_ports.h
+$(LIB)(cthreads_time.o) : /usr/include/sys/thread_status.h /usr/include/sys/time.h
+$(LIB)(cthreads_time.o) : /usr/include/sys/time_value.h /usr/include/sys/types.h
+$(LIB)(cthreads_time.o) : /usr/include/vm/memory_object.h /usr/include/vm/vm_inherit.h
+$(LIB)(cthreads_time.o) : /usr/include/vm/vm_param.h /usr/include/vm/vm_prot.h
+$(LIB)(cthreads_time.o) : /usr/include/vm/vm_statistics.h cthread_internals.h
+$(LIB)(cthreads_time.o) : cthreads_time.c options.h
+# Dependencies for File: ipc.o :
+$(LIB)(ipc.o) : ../../usr.include/cthreads.h ../../usr.include/mach.h
+$(LIB)(ipc.o) : ../../usr.include/mach_extra.h ../../usr.include/mach_init.h
+$(LIB)(ipc.o) : ../../usr.include/machine/cthreads.h ../../usr.include/setjmp.h
+$(LIB)(ipc.o) : ../../usr.include/stddef.h ../../usr.include/stdlib.h
+$(LIB)(ipc.o) : /usr/include/kern/ipc_netport.h /usr/include/kern/ipc_statistics.h
+$(LIB)(ipc.o) : /usr/include/kern/mach_types.h /usr/include/machine/boolean.h
+$(LIB)(ipc.o) : /usr/include/machine/kern_return.h /usr/include/machine/thread_status.h
+$(LIB)(ipc.o) : /usr/include/machine/vm_param.h /usr/include/machine/vm_types.h
+$(LIB)(ipc.o) : /usr/include/next/reg.h /usr/include/sys/boolean.h
+$(LIB)(ipc.o) : /usr/include/sys/features.h /usr/include/sys/kern_return.h
+$(LIB)(ipc.o) : /usr/include/sys/mach_extra.h /usr/include/sys/machine.h
+$(LIB)(ipc.o) : /usr/include/sys/message.h /usr/include/sys/port.h
+$(LIB)(ipc.o) : /usr/include/sys/task_info.h /usr/include/sys/task_special_ports.h
+$(LIB)(ipc.o) : /usr/include/sys/thread_info.h /usr/include/sys/thread_special_ports.h
+$(LIB)(ipc.o) : /usr/include/sys/thread_status.h /usr/include/sys/time_value.h
+$(LIB)(ipc.o) : /usr/include/sys/types.h /usr/include/vm/memory_object.h
+$(LIB)(ipc.o) : /usr/include/vm/vm_inherit.h /usr/include/vm/vm_param.h
+$(LIB)(ipc.o) : /usr/include/vm/vm_prot.h /usr/include/vm/vm_statistics.h
+$(LIB)(ipc.o) : cthread_internals.h ipc.c options.h
+# Dependencies for File: malloc_utils.o :
+$(LIB)(malloc_utils.o) : ../../usr.include/cthreads.h ../../usr.include/mach.h
+$(LIB)(malloc_utils.o) : ../../usr.include/mach_extra.h ../../usr.include/mach_init.h
+$(LIB)(malloc_utils.o) : ../../usr.include/machine/cthreads.h
+$(LIB)(malloc_utils.o) : ../../usr.include/setjmp.h ../../usr.include/stdarg.h
+$(LIB)(malloc_utils.o) : ../../usr.include/stddef.h ../../usr.include/stdio.h
+$(LIB)(malloc_utils.o) : ../../usr.include/stdlib.h /usr/include/kern/ipc_netport.h
+$(LIB)(malloc_utils.o) : /usr/include/kern/ipc_statistics.h
+$(LIB)(malloc_utils.o) : /usr/include/kern/mach_types.h /usr/include/machine/boolean.h
+$(LIB)(malloc_utils.o) : /usr/include/machine/kern_return.h
+$(LIB)(malloc_utils.o) : /usr/include/machine/thread_status.h
+$(LIB)(malloc_utils.o) : /usr/include/machine/vm_param.h
+$(LIB)(malloc_utils.o) : /usr/include/machine/vm_types.h /usr/include/next/reg.h
+$(LIB)(malloc_utils.o) : /usr/include/sys/boolean.h /usr/include/sys/features.h
+$(LIB)(malloc_utils.o) : /usr/include/sys/kern_return.h /usr/include/sys/mach_extra.h
+$(LIB)(malloc_utils.o) : /usr/include/sys/machine.h /usr/include/sys/message.h
+$(LIB)(malloc_utils.o) : /usr/include/sys/port.h /usr/include/sys/task_info.h
+$(LIB)(malloc_utils.o) : /usr/include/sys/task_special_ports.h
+$(LIB)(malloc_utils.o) : /usr/include/sys/thread_info.h
+$(LIB)(malloc_utils.o) : /usr/include/sys/thread_special_ports.h
+$(LIB)(malloc_utils.o) : /usr/include/sys/thread_status.h /usr/include/sys/time_value.h
+$(LIB)(malloc_utils.o) : /usr/include/sys/types.h /usr/include/vm/memory_object.h
+$(LIB)(malloc_utils.o) : /usr/include/vm/vm_inherit.h /usr/include/vm/vm_param.h
+$(LIB)(malloc_utils.o) : /usr/include/vm/vm_prot.h /usr/include/vm/vm_statistics.h
+$(LIB)(malloc_utils.o) : malloc_utils.c
+# Dependencies for File: mig_support.o :
+$(LIB)(mig_support.o) : ../../usr.include/cthreads.h ../../usr.include/mach.h
+$(LIB)(mig_support.o) : ../../usr.include/mach_extra.h ../../usr.include/mach_init.h
+$(LIB)(mig_support.o) : ../../usr.include/machine/cthreads.h ../../usr.include/setjmp.h
+$(LIB)(mig_support.o) : ../../usr.include/stddef.h ../../usr.include/stdlib.h
+$(LIB)(mig_support.o) : /usr/include/kern/ipc_netport.h
+$(LIB)(mig_support.o) : /usr/include/kern/ipc_statistics.h
+$(LIB)(mig_support.o) : /usr/include/kern/mach_types.h /usr/include/machine/boolean.h
+$(LIB)(mig_support.o) : /usr/include/machine/kern_return.h
+$(LIB)(mig_support.o) : /usr/include/machine/thread_status.h
+$(LIB)(mig_support.o) : /usr/include/machine/vm_param.h /usr/include/machine/vm_types.h
+$(LIB)(mig_support.o) : /usr/include/next/reg.h /usr/include/sys/boolean.h
+$(LIB)(mig_support.o) : /usr/include/sys/features.h /usr/include/sys/kern_return.h
+$(LIB)(mig_support.o) : /usr/include/sys/mach_extra.h /usr/include/sys/machine.h
+$(LIB)(mig_support.o) : /usr/include/sys/message.h /usr/include/sys/port.h
+$(LIB)(mig_support.o) : /usr/include/sys/task_info.h
+$(LIB)(mig_support.o) : /usr/include/sys/task_special_ports.h
+$(LIB)(mig_support.o) : /usr/include/sys/thread_info.h
+$(LIB)(mig_support.o) : /usr/include/sys/thread_special_ports.h
+$(LIB)(mig_support.o) : /usr/include/sys/thread_status.h /usr/include/sys/time_value.h
+$(LIB)(mig_support.o) : /usr/include/sys/types.h /usr/include/vm/memory_object.h
+$(LIB)(mig_support.o) : /usr/include/vm/vm_inherit.h /usr/include/vm/vm_param.h
+$(LIB)(mig_support.o) : /usr/include/vm/vm_prot.h /usr/include/vm/vm_statistics.h
+$(LIB)(mig_support.o) : cthread_internals.h mig_support.c options.h
+# Dependencies for File: spin.o :
+$(LIB)(spin.o) : machine/spin.c
+# Dependencies for File: stack.o :
+$(LIB)(stack.o) : ../../usr.include/cthreads.h ../../usr.include/mach.h
+$(LIB)(stack.o) : ../../usr.include/mach_extra.h ../../usr.include/mach_init.h
+$(LIB)(stack.o) : ../../usr.include/machine/cthreads.h ../../usr.include/setjmp.h
+$(LIB)(stack.o) : ../../usr.include/stddef.h ../../usr.include/stdlib.h
+$(LIB)(stack.o) : ../../usr.include/time.h /usr/include/kern/ipc_netport.h
+$(LIB)(stack.o) : /usr/include/kern/ipc_statistics.h /usr/include/kern/mach_types.h
+$(LIB)(stack.o) : /usr/include/machine/boolean.h /usr/include/machine/kern_return.h
+$(LIB)(stack.o) : /usr/include/machine/thread_status.h /usr/include/machine/vm_param.h
+$(LIB)(stack.o) : /usr/include/machine/vm_types.h /usr/include/next/reg.h
+$(LIB)(stack.o) : /usr/include/sys/boolean.h /usr/include/sys/features.h
+$(LIB)(stack.o) : /usr/include/sys/kern_return.h /usr/include/sys/mach_extra.h
+$(LIB)(stack.o) : /usr/include/sys/machine.h /usr/include/sys/message.h
+$(LIB)(stack.o) : /usr/include/sys/port.h /usr/include/sys/resource.h
+$(LIB)(stack.o) : /usr/include/sys/task_info.h /usr/include/sys/task_special_ports.h
+$(LIB)(stack.o) : /usr/include/sys/thread_info.h
+$(LIB)(stack.o) : /usr/include/sys/thread_special_ports.h
+$(LIB)(stack.o) : /usr/include/sys/thread_status.h /usr/include/sys/time.h
+$(LIB)(stack.o) : /usr/include/sys/time_value.h /usr/include/sys/types.h
+$(LIB)(stack.o) : /usr/include/vm/memory_object.h /usr/include/vm/vm_inherit.h
+$(LIB)(stack.o) : /usr/include/vm/vm_param.h /usr/include/vm/vm_prot.h
+$(LIB)(stack.o) : /usr/include/vm/vm_statistics.h cthread_internals.h options.h stack.c
+# Dependencies for File: thread.o :
+$(LIB)(thread.o) : ../../usr.include/cthreads.h ../../usr.include/mach.h
+$(LIB)(thread.o) : ../../usr.include/mach_extra.h ../../usr.include/mach_init.h
+$(LIB)(thread.o) : ../../usr.include/machine/cthreads.h ../../usr.include/setjmp.h
+$(LIB)(thread.o) : ../../usr.include/stddef.h ../../usr.include/stdlib.h
+$(LIB)(thread.o) : /usr/include/kern/ipc_netport.h /usr/include/kern/ipc_statistics.h
+$(LIB)(thread.o) : /usr/include/kern/mach_types.h /usr/include/machine/boolean.h
+$(LIB)(thread.o) : /usr/include/machine/kern_return.h
+$(LIB)(thread.o) : /usr/include/machine/thread_status.h /usr/include/machine/vm_param.h
+$(LIB)(thread.o) : /usr/include/machine/vm_types.h /usr/include/next/reg.h
+$(LIB)(thread.o) : /usr/include/next/thread_status.h /usr/include/sys/boolean.h
+$(LIB)(thread.o) : /usr/include/sys/features.h /usr/include/sys/kern_return.h
+$(LIB)(thread.o) : /usr/include/sys/mach_extra.h /usr/include/sys/machine.h
+$(LIB)(thread.o) : /usr/include/sys/message.h /usr/include/sys/port.h
+$(LIB)(thread.o) : /usr/include/sys/task_info.h /usr/include/sys/task_special_ports.h
+$(LIB)(thread.o) : /usr/include/sys/thread_info.h
+$(LIB)(thread.o) : /usr/include/sys/thread_special_ports.h
+$(LIB)(thread.o) : /usr/include/sys/thread_status.h /usr/include/sys/time_value.h
+$(LIB)(thread.o) : /usr/include/sys/types.h /usr/include/vm/memory_object.h
+$(LIB)(thread.o) : /usr/include/vm/vm_inherit.h /usr/include/vm/vm_param.h
+$(LIB)(thread.o) : /usr/include/vm/vm_prot.h /usr/include/vm/vm_statistics.h
+$(LIB)(thread.o) : cthread_internals.h machine/thread.c options.h
+# Dependencies for File: threads_data.o :
+$(LIB)(threads_data.o) : threads_data.c
+# Dependencies for File: unix.o :
+$(LIB)(unix.o) : ../../usr.include/cthreads.h ../../usr.include/mach.h
+$(LIB)(unix.o) : ../../usr.include/mach_extra.h ../../usr.include/mach_init.h
+$(LIB)(unix.o) : ../../usr.include/machine/cthreads.h ../../usr.include/setjmp.h
+$(LIB)(unix.o) : ../../usr.include/stddef.h ../../usr.include/stdlib.h
+$(LIB)(unix.o) : ../../usr.include/time.h /usr/include/kern/ipc_netport.h
+$(LIB)(unix.o) : /usr/include/kern/ipc_statistics.h /usr/include/kern/mach_types.h
+$(LIB)(unix.o) : /usr/include/machine/boolean.h /usr/include/machine/kern_return.h
+$(LIB)(unix.o) : /usr/include/machine/thread_status.h /usr/include/machine/vm_param.h
+$(LIB)(unix.o) : /usr/include/machine/vm_types.h /usr/include/next/reg.h
+$(LIB)(unix.o) : /usr/include/sys/boolean.h /usr/include/sys/features.h
+$(LIB)(unix.o) : /usr/include/sys/kern_return.h /usr/include/sys/mach_extra.h
+$(LIB)(unix.o) : /usr/include/sys/machine.h /usr/include/sys/message.h
+$(LIB)(unix.o) : /usr/include/sys/port.h /usr/include/sys/task_info.h
+$(LIB)(unix.o) : /usr/include/sys/task_special_ports.h /usr/include/sys/thread_info.h
+$(LIB)(unix.o) : /usr/include/sys/thread_special_ports.h
+$(LIB)(unix.o) : /usr/include/sys/thread_status.h /usr/include/sys/time.h
+$(LIB)(unix.o) : /usr/include/sys/time_value.h /usr/include/sys/types.h
+$(LIB)(unix.o) : /usr/include/vm/memory_object.h /usr/include/vm/vm_inherit.h
+$(LIB)(unix.o) : /usr/include/vm/vm_param.h /usr/include/vm/vm_prot.h
+$(LIB)(unix.o) : /usr/include/vm/vm_statistics.h cthread_internals.h options.h unix.c

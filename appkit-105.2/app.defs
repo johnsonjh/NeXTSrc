@@ -1,0 +1,46 @@
+/*
+	app.defs
+  	Copyright 1988, NeXT, Inc.
+	Responsibility: Trey Matteson
+	
+	This file holds the mig definitions for messages sent from the
+	pasteboard server to an app.
+*/
+
+#include <std_types.defs>
+subsystem app 0;
+
+import "pbtypes.h";
+
+/*
+ *  These types are unfortunately duplicated in pbs.defs and pbtypes.h.
+ */
+/* type string (NOTE size is in bits) */
+type pbtype_t = (MSG_TYPE_STRING, 256*8);
+/* data buffer, or all type strings laid end to end */
+type data_t = ^ array [] of char;
+
+/* all functions in this file are simple routines so that the server
+   does not block waiting for an RPC.
+ */
+
+/* tells app to provide previously promised data */
+simpleroutine _NXRequestData (
+    WaitTime wTime: int;
+    server: port_t;
+    session: int;
+    ownerData: int;
+    pbType: pbtype_t);
+
+/*
+
+Modifications (starting at 0.8):
+
+01/05/89 trey	file to kit
+
+appkit-80
+---------
+  4/6/90 pah	added _NXGetRequestMenuServers, _NXGetFileExtensions
+		 (both sent only to the WSM)
+
+*/

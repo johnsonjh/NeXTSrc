@@ -1,0 +1,14 @@
+./
+../
+Makefile
+_close.s
+_ioctl.s
+_lseek.s
+_open.s
+_read.s
+_write.s
+_writev.s
+labs.s
+remove.s
+strtod.c
+strtod.o

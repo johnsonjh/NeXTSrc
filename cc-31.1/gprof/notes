@@ -1,0 +1,28 @@
+Changes for the Warp ?? release (the -24 compiler release):
+- Fixed a bug when the text symbol for the highest value was looked up it would
+  print the message "binary lookup failed" then it returned NULL and later gprof
+  would core dump.  Their were two problems the first was in the function
+  getsymtab() in gprof.c in the Mach-O case the last entry in the nl[] array
+  did not have it's value set to -1.  The other problem was that in the function
+  nllookup() in lookup.c was searching to index "nname - 1" and not to nname
+  which would have picked up the last nl[] entry with the -1 in it.
+- Changed DFN_DEPTH from 100 to 1000 as per bug report #4851.
+
+Changes for the 2.0 impulse X.X release (the -23 compiler release):
+- Changed the installed mode to not be writeable (755 to 555 and 644 to 444).
+- Now is linked with libsys.
+
+Changes for the 2.0 impulse X.X release (the -19 compiler release):
+- Fixed the modified mlist function that includes printing categories which
+  did not allocate enough space.
+
+Changes for the 2.0 impulse X.X release (the -19 compiler release):
+- Put in the modified mlist function that includes printing categories.
+
+Changes for the 0.91 release (the -12 compiler release):
+- Added MH_PRELOAD to the types of files gprof will take.
+- Updated the printing of method names for for the new objective-C runtime.
+- Ifdef'ed off code in mach_o.c that delt with shared libraries.  It was
+  calling itself, read_mach_o(), totally wrong.  This code could have never
+  worked and since all the symbols are in the executable and since the kernel
+  can't handle shared libs it is meaningless.

@@ -1,0 +1,370 @@
+#
+#  NeXT Internal Library Makefile
+#  Copyright 1987, NeXT, Inc.
+#
+#  This Makefile is used for maintaining and installing NeXT software
+#  libraries.
+#
+#  Fill in values for the various variables at the places marked by
+#  **number**.  Any rules or dependencies of your own can be added
+#  at the end of the file.
+#
+PROJECT = libs
+SRCPATH = usr.lib/librpcsvc
+
+#directory where make gets its includes.  Do not edit.
+#MAKE_DIR = /usr/next/lib/Makefiles
+
+#  **1**  -LIBRARY NAME-
+#  The base name of the library goes here. This should also be the same
+#  name as the SGS project the library is built under.  For example, if
+#  you enter "appkit" as the name, then the name of the SGS project
+#  should be "appkit", and the library created will be "libappkit.a".
+NAME = rpcsvc
+
+#  **2**  -SOURCE FILES-
+#  Here list the .m, .c, .psw, .pswm, .s, .l, .lm, .y, .ym, and .ps files.
+#  You may delete any lines that you don't use.  OTHER_SRCS is used for
+#  files with other suffixes that you wish to be treated like source
+#  (i.e., printed with the source, copied with the source, etc.).
+#  For files in OTHER_SRCS, you need to specify the corresponding .o file
+#  in OTHER_SRCS_OFILES.
+MFILES = 
+CFILES = etherxdr.c klm_prot.c mountxdr.c nlm_prot.c rex_xdr.c rquotaxdr.c \
+	rstatxdr.c rusersxdr.c rwallxdr.c sm_inter.c sprayxdr.c util.c \
+	yppasswdxdr.c
+PSWFILES = 
+PSWMFILES = 
+SFILES = 
+LFILES = 
+LMFILES = 
+YFILES = 
+YMFILES = 
+PSFILES = 
+OTHER_SRCS = 
+OTHER_SRCS_OFILES =
+
+#  **3**  -COMMAND OPTIONS-
+#  These are passed as arguments to the Objective-C preprocessor, the C
+#  compiler, pswrap, the assembler, lex and yacc.  You may delete any
+#  lines that you don't use.  All CFLAGS also get passed to Objective-C. 
+#  DEBUGCFLAGS is used along with CFLAGS when "debug" is made.
+#  Under CFLAGS, for each library that you use that supplies class
+#  and message group files, you must list a -I$(OBJDIR)/XXX, where
+#  XXX is the base name of the library.
+OBJCFLAGS = 
+CFLAGS =  -O
+DEBUGFLAGS = -gg
+PROFFLAGS = -pg
+PSWFLAGS = 
+ASFLAGS = 
+LFLAGS = 
+YFLAGS = 
+
+#  **4**  -INCLUDE FILES-
+#  Private include files are used by the library's code, but not needed
+#  by the library's users.  Public include files are needed by others who
+#  will use the library, and must be installed along with the library.
+PRIVATE_INCFILES = 
+PUBLIC_INCFILES = 
+
+#  **5**  -CLASS AND MESSAGE GROUP FILES-
+#  If you are generating (not just using) any Objective-C classes
+#  list their class files here so their C_ files will be installed for
+#  others.  Also list the message group file, which should be called
+#  P_$(NAME) (if you have a message group file from generating classes).
+CLFILES = 
+MGROUP_FILES = 
+
+#  **6**  -BY_PRODUCTS GENERATED FROM BUILDS-
+#  If your build procedure creates any files other than .o files and the
+#  .c and .m files left over from pswrap, you should list them here so
+#  they are removed when a make clean is done.
+BY_PRODUCTS = 
+
+all:	$(NAME) # debug prof
+
+#this file included for standard functionality
+#include $(MAKE_DIR)/Makefile.library
+########################## Makefile.library ##################################
+#
+#  NeXT include file for Internal Library Makefile
+#  Copyright 1987, NeXT, Inc.
+#
+#  This Makefile is included to gain the rules for making and installing
+#  a library, including header files, class files, and a message
+#  group file.
+#
+
+# a little doc for when the "help" target is made
+help:
+	@if (test "$<");		\
+	then echo 'ERROR: Unrecognized Makefile target "$<"';	\
+	fi
+	@echo '  install-  to install the library and all associated files';\
+	@echo '  installsrc-  to install the source of the library';\
+	@echo '  full_install-  to install the library and source';\
+	echo '  $(NAME)-  to make the local copy of the library';\
+	echo '  clean-    to remove all files but the source';\
+	echo '  print-    to print out all the source files';\
+	echo '  wc-       to get the line, word, and byte count of the source';\
+	echo '  size-     to get the size of all object files';\
+	echo '  diff-     diffs current source against installed source';\
+	echo '  tags-     to run ctags on the source';\
+	echo '  depend-   to update Makefile dependencies on include files';\
+	echo '  lint-     to lint all the source'
+
+
+HFILES = $(PRIVATE_INCFILES) $(PUBLIC_INCFILES)
+
+# this is the fruit of this project
+PRODUCT = lib$(NAME).a
+
+# these are other versions of the library we want to nuke
+SPECIFIC_GARBAGE = lib$(NAME)*.a
+
+# flags passed to vers_string
+VERSFLAGS = -l
+
+#include $(MAKE_DIR)/Makefile.common
+########################### Makefile.common ##################################
+
+#
+#  NeXT common include file for Internal Makefiles
+#  Copyright 1987, NeXT, Inc.
+#
+#  This Makefile is included to gain the rules and definitions shared by
+#  the library and application makefiles.
+#
+
+# flags for install
+IFLAGS = -q -c
+
+# command to use for printing source
+PRINT = list
+
+# all the object files, including a file with a version stamp
+OFILES = $(MFILES:.m=.o) $(CFILES:.c=.o) $(PSWFILES:.psw=.o)	\
+	$(PSWMFILES:.pswm=.o) $(SFILES:.s=.o) $(LFILES:.l=.o)	\
+	$(LMFILES:.lm=.o) $(YFILES:.y=.o) $(YMFILES:.ym=.o)	\
+	$(OTHER_SRCS_OFILES) vers.o
+
+# source files derived in the build process
+DERIVED_SRC = $(PSWFILES:.psw=.c) $(PSWMFILES:.pswm=.m)
+
+# files that will be removed on make clean, along with .o's
+COMMON_GARBAGE = $(BY_PRODUCTS) TAGS tags vers.c $(DERIVED_SRC) \
+		Makedep .depend_done core
+
+# all source code
+SRCS = $(MFILES) $(CFILES) $(PSWFILES) $(PSWMFILES) $(SFILES) \
+	$(LMFILES) $(LFILES) $(YFILES) $(YMFILES) $(OTHER_SRCS)
+
+# all non-derived, non-garbage files.  This is the source, plus Makefiles,
+# plus anything else that needs to be around for the products to be made.
+INSTALL_FILES = $(SRCS) Makefile Makedep
+
+# these really want to share a common root
+INSTALL_ROOT = /usr
+# places where various products get installed to
+BINDIR = $(INSTALL_ROOT)/bin
+LIBDIR = $(INSTALL_ROOT)/lib
+INCDIR = $(INSTALL_ROOT)/include/$(NAME)
+OBJDIR = $(INSTALL_ROOT)/objects/$(NAME)
+PSLIBDIR = $(INSTALL_ROOT)/lib/ps/packages
+SRCDIR = $(INSTALL_ROOT)/src/$(PROJECT)/$(SRCPATH)
+
+# make sure these are defined
+DSTROOT LCLROOT SRCROOT:
+	@if [ -n "${$@}" ];				\
+	then						\
+	    exit 0;					\
+	else						\
+	    echo The variable $@ must be defined;	\
+	    exit 1;					\
+	fi
+
+# make sure this directory exists
+$(DSTROOT)$(PSLIBDIR) $(LCLROOT)$(PSLIBDIR):
+	mkdirs $@
+
+# removes all derived files
+clean:
+	-rm -f $(OFILES) C_* P_* $(COMMON_GARBAGE) $(SPECIFIC_GARBAGE) \
+		$(PRODUCT)
+	touch Makedep
+
+#  The tags target creates an index on the source files' functions.
+tags: $(MFILES) $(CFILES) $(PSWFILES) $(PSWMFILES) $(LFILES) \
+		$(LMFILES) $(YFILES) $(YMFILES)
+	ctags $(MFILES) $(CFILES) $(PSWFILES) $(PSWMFILES) $(LFILES) \
+		$(LMFILES) $(YFILES) $(YMFILES)
+
+#  prints out all source files
+print: $(SRCS)
+	$(PRINT) $(SRCS)
+
+# shows line count of source
+wc: $(SRCS)
+	wc $(SRCS)
+
+# diffs the current sources with the installed sources
+diff:
+	for f in $(SRCS);				\
+	    do (echo $$f;				\
+	    csh -f -c "diff -c $(SRCROOT)$(SRCDIR)/$$f $$f; exit 0")	\
+	done
+
+# rules to make version files
+vers.c:
+	vers_string $(VERSFLAGS) $(PRODUCT) > $@
+
+force_version:
+	-rm -f vers.c
+
+#  The depend target scans the source files for includes and generates
+#  the right dependencies to reflect those inter-file dependencies.
+$(PRODUCT): .depend_done
+
+depend .depend_done: $(DERIVED_SRC)
+	rm -f Makedep
+	$(CC) -M $(CFLAGS) $(MFILES) $(CFILES) $(SFILES) $(DERIVED_SRC) | \
+	    awk '{ if ($$1 != prev) { if (rec != "") print rec; \
+		rec = $$0; prev = $$1; } \
+		else { if (length(rec $$2) > 78) { print rec; rec = $$0; } \
+		else rec = rec " " $$2 } } \
+		END { print rec }' >Makedep
+	-touch .depend_done
+########################## End of Makefile.common ############################
+
+# making "name" causes the library to be built
+$(NAME): $(PRODUCT)
+
+# a library is made by first making all its components, and then
+# ranlib'ing the whole thing together
+$(PRODUCT): $(PRODUCT)($(OFILES))
+	ranlib $(PRODUCT)
+
+# creates products and installs them, and installs the source.
+full_install: install installsrc install_debug
+
+# creates products and installs them.  Does NOT install source.
+install: force_version $(PRODUCT) DSTROOT inst_product \
+	inst_incfiles inst_objcfiles inst_psfiles additional_installs
+
+# installs the library itself
+inst_product: DSTROOT $(DSTROOT)$(LIBDIR) $(PRODUCT)
+	install $(IFLAGS) -r -m 444 $(PRODUCT) $(DSTROOT)$(LIBDIR)
+	
+# installs the include files
+inst_incfiles: DSTROOT
+	if (test "$(PUBLIC_INCFILES)")					\
+	    then mkdirs $(DSTROOT)$(INCDIR);				\
+	    install $(IFLAGS) -m 444 $(PUBLIC_INCFILES) $(DSTROOT)$(INCDIR);\
+	fi
+
+# installs the class and message group files
+inst_objcfiles: DSTROOT
+	if (test "$(CLFILES)")						\
+	    then mkdirs $(DSTROOT)$(OBJDIR);				\
+	    install $(IFLAGS) -m 444 $(CLASS_FILES) $(DSTROOT)$(OBJDIR);\
+	fi
+	if (test "$(MGROUP_FILES)")					\
+	    then mkdirs $(DSTROOT)$(OBJDIR);				\
+	    install $(IFLAGS) -m 444 $(MGROUP_FILES) $(DSTROOT)$(OBJDIR);\
+	fi
+	
+# installs the PostScript package files
+inst_psfiles: DSTROOT
+	if (test "$(PSFILES)")						\
+	    then install $(IFLAGS) -m 444 $(PSFILES) $(DSTROOT)$(PSLIBDIR);\
+	fi
+
+#
+#  skip all the local crap for now
+#
+local: force_version $(PRODUCT) LCLROOT local_product \
+	local_incfiles local_objcfiles local_psfiles additional_local
+
+# installs the library itself
+local_product: LCLROOT $(LCLROOT)$(LIBDIR) $(PRODUCT)
+	install $(IFLAGS) -r -m 444 $(PRODUCT) $(LCLROOT)$(LIBDIR)
+	
+# installs the include files
+local_incfiles: LCLROOT
+	if (test "$(PUBLIC_INCFILES)")					\
+	    then mkdirs $(LCLROOT)$(INCDIR);				\
+	    install $(IFLAGS) -m 444 $(PUBLIC_INCFILES) $(LCLROOT)$(INCDIR);\
+	fi
+
+# installs the class and message group files
+local_objcfiles: LCLROOT
+	if (test "$(CLFILES)")						\
+	    then mkdirs $(LCLROOT)$(OBJDIR);				\
+	    install $(IFLAGS) -m 444 $(CLASS_FILES) $(LCLROOT)$(OBJDIR);\
+	fi
+	if (test "$(MGROUP_FILES)")					\
+	    then mkdirs $(LCLROOT)$(OBJDIR);				\
+	    install $(IFLAGS) -m 444 $(MGROUP_FILES) $(LCLROOT)$(OBJDIR);\
+	fi
+	
+# installs the PostScript package files
+local_psfiles: LCLROOT
+	if (test "$(PSFILES)")						\
+	    then install $(IFLAGS) -m 444 $(PSFILES) $(LCLROOT)$(PSLIBDIR);\
+	fi
+
+# install the source
+installsrc:	SRCROOT
+	-/bin/rm -rf $(SRCROOT)$(SRCDIR)
+	mkdirs $(SRCROOT)$(SRCDIR)
+	install $(IFLAGS) -m 444 $(INSTALL_FILES) $(SRCROOT)$(SRCDIR);	\
+
+# install debugging library.  This should never be directly made, but
+# only as a result of a full install.
+debuginstall:
+	$(MAKE) install "PRODUCT = lib$(NAME)_g.a" \
+		"CFLAGS = $(CFLAGS) $(DEBUGFLAGS) -DDEBUG"
+
+debug:
+	$(MAKE) lib$(NAME)_g.a "PRODUCT = lib$(NAME)_g.a" \
+		"CFLAGS = $(CFLAGS) $(DEBUGFLAGS) -DDEBUG"
+
+# install profiling library.  This should never be directly made, but
+# only as a result of a full install.
+profinstall:
+	$(MAKE) install "PRODUCT = lib$(NAME)_p.a" \
+		"CFLAGS = $(CFLAGS) $(PROFFLAGS) -DPROF"
+
+prof:
+	$(MAKE) lib$(NAME)_p.a "PRODUCT = lib$(NAME)_p.a" \
+		"CFLAGS = $(CFLAGS) $(PROFFLAGS) -DPROF"
+
+# makes sure this directory exists
+$(DSTROOT)$(LIBDIR) $(LCLROOT)$(LIBDIR):
+	mkdirs $@
+
+# shows object code size
+size: $(OFILES)
+	ar -x $(PRODUCT) $(OFILES)
+	@/bin/size $(OFILES) | awk '{ print; for( i = 0; ++i <= 4;) x[i] += $$i } \
+	 END { print x[1] "\t" x[2] "\t" x[3] "\t" x[4] }'
+	/bin/rm -f $(OFILES)
+################### End of Makefile.library #################################
+
+
+#  **7**  -ADDITIONAL INSTALLS-
+#  If there are other actions that you need to do during an installation,
+#  add them as actions under the below target, "additional_installs".
+#  These actions will be carried out right after the library, include
+#  files, class, and message group files have been installed.
+additional_installs:
+#	put extra actions here with a tab in front of them
+
+additional_locals:
+#	put extra actions here with a tab in front of them
+
+
+include Makedep
+
+#  any extra rules or dependencies can be added after this line

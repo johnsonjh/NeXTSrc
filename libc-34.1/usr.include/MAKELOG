@@ -1,0 +1,156 @@
+================= make all for netinfo =================
+install -d -c -m 444 *.h //usr/include;
+CMP acc.h //usr/include/acc.h;
+CMP access.h //usr/include/access.h;
+CMP aliasdb.h //usr/include/aliasdb.h;
+CMP ansi.h //usr/include/ansi.h;
+CMP ar.h //usr/include/ar.h;
+CMP assert.h //usr/include/assert.h;
+CMP c.h //usr/include/c.h;
+CMP ci.h //usr/include/ci.h;
+CMP cthread_internals.h //usr/include/cthread_internals.h;
+CMP cthreads.h //usr/include/cthreads.h;
+CMP ctype.h //usr/include/ctype.h;
+CMP dbm.h //usr/include/dbm.h THEN cp -p
+CMP del.h //usr/include/del.h;
+CMP disktab.h //usr/include/disktab.h;
+CMP errno.h //usr/include/errno.h;
+CMP exc.h //usr/include/exc.h;
+CMP exportent.h //usr/include/exportent.h THEN cp -p
+CMP fcntl.h //usr/include/fcntl.h THEN cp -p
+CMP float.h //usr/include/float.h;
+CMP fstab.h //usr/include/fstab.h THEN cp -p
+CMP grp.h //usr/include/grp.h THEN cp -p
+CMP key_defs.h //usr/include/key_defs.h;
+CMP lastlog.h //usr/include/lastlog.h;
+CMP libc.h //usr/include/libc.h THEN cp -p
+CMP limits.h //usr/include/limits.h;
+CMP locale.h //usr/include/locale.h;
+CMP ls_defs.h //usr/include/ls_defs.h;
+CMP mach.h //usr/include/mach.h THEN cp -p
+CMP mach_error.h //usr/include/mach_error.h;
+CMP mach_exception.h //usr/include/mach_exception.h;
+CMP mach_extra.h //usr/include/mach_extra.h;
+CMP mach_init.h //usr/include/mach_init.h;
+CMP mach_types.h //usr/include/mach_types.h;
+CMP math.h //usr/include/math.h;
+CMP memory.h //usr/include/memory.h;
+CMP mig_errors.h //usr/include/mig_errors.h;
+CMP mntent.h //usr/include/mntent.h THEN cp -p
+CMP mp.h //usr/include/mp.h THEN cp -p
+CMP msg_type.h //usr/include/msg_type.h;
+CMP mtab.h //usr/include/mtab.h;
+CMP ndbm.h //usr/include/ndbm.h THEN cp -p
+CMP netdb.h //usr/include/netdb.h THEN cp -p
+CMP netname_defs.h //usr/include/netname_defs.h;
+CMP nlist.h //usr/include/nlist.h THEN cp -p
+CMP nm_defs.h //usr/include/nm_defs.h;
+CMP pager.h //usr/include/pager.h;
+CMP pcc.h //usr/include/pcc.h;
+CMP printerdb.h //usr/include/printerdb.h;
+CMP pwd.h //usr/include/pwd.h THEN cp -p
+CMP ranlib.h //usr/include/ranlib.h;
+CMP regex.h //usr/include/regex.h;
+CMP resolv.h //usr/include/resolv.h THEN cp -p
+CMP setjmp.h //usr/include/setjmp.h;
+CMP sgtty.h //usr/include/sgtty.h;
+CMP signal.h //usr/include/signal.h;
+CMP stab.h //usr/include/stab.h;
+CMP stdarg.h //usr/include/stdarg.h;
+CMP stddef.h //usr/include/stddef.h;
+CMP stdio.h //usr/include/stdio.h;
+CMP stdlib.h //usr/include/stdlib.h;
+CMP string.h //usr/include/string.h;
+CMP strings.h //usr/include/strings.h;
+CMP struct.h //usr/include/struct.h;
+CMP syscall.h //usr/include/syscall.h THEN cp -p
+CMP sysexits.h //usr/include/sysexits.h;
+CMP syslog.h //usr/include/syslog.h;
+CMP time.h //usr/include/time.h;
+CMP ttyent.h //usr/include/ttyent.h THEN cp -p
+CMP ttyloc.h //usr/include/ttyloc.h;
+CMP tzfile.h //usr/include/tzfile.h;
+CMP utmp.h //usr/include/utmp.h THEN cp -p
+CMP varargs.h //usr/include/varargs.h;
+CMP vfont.h //usr/include/vfont.h;
+install -d -c -m 444 std_types.defs //usr/include
+CMP std_types.defs //usr/include/std_types.defs;
+install -c -m 444 mach.defs pager.defs exc.defs  //usr/include
+mkdirs //usr/include/servers
+install -c -m 444 servers/km.defs servers/logstat.defs  servers/env_mgr.defs servers/ipcx.defs  servers/service.defs servers/netname.defs //usr/include
+for i in arpa netinfo next protocols rpc rpcsvc servers udp; do  if [ ! -d //usr/include/$i ];  then  rm -f //usr/include/$i;  mkdirs //usr/include/$i;  fi;  (cd $i;  install -d -c -m 444 *.[ihx] //usr/include/$i;  ) || exit 1;  done
+CMP ftp.h //usr/include/arpa/ftp.h;
+CMP inet.h //usr/include/arpa/inet.h;
+CMP nameser.h //usr/include/arpa/nameser.h;
+CMP telnet.h //usr/include/arpa/telnet.h;
+CMP tftp.h //usr/include/arpa/tftp.h;
+CMP _lu_types.x //usr/include/netinfo/_lu_types.x;
+CMP lookup_types.h //usr/include/netinfo/lookup_types.h;
+CMP ni.h //usr/include/netinfo/ni.h;
+CMP ni_prot.h //usr/include/netinfo/ni_prot.h;
+CMP ni_prot.x //usr/include/netinfo/ni_prot.x;
+CMP ni_util.h //usr/include/netinfo/ni_util.h;
+CMP nibind_prot.h //usr/include/netinfo/nibind_prot.h;
+CMP nibind_prot.x //usr/include/netinfo/nibind_prot.x;
+CMP cthreads.h //usr/include/next/cthreads.h;
+CMP dumprestore.h //usr/include/protocols/dumprestore.h;
+CMP routed.h //usr/include/protocols/routed.h;
+CMP rwhod.h //usr/include/protocols/rwhod.h;
+CMP talkd.h //usr/include/protocols/talkd.h;
+CMP timed.h //usr/include/protocols/timed.h;
+CMP auth.h //usr/include/rpc/auth.h THEN cp -p
+CMP auth_unix.h //usr/include/rpc/auth_unix.h THEN cp -p
+CMP clnt.h //usr/include/rpc/clnt.h THEN cp -p
+CMP pmap_clnt.h //usr/include/rpc/pmap_clnt.h THEN cp -p
+CMP pmap_prot.h //usr/include/rpc/pmap_prot.h THEN cp -p
+CMP pmap_rmt.h //usr/include/rpc/pmap_rmt.h THEN cp -p
+CMP rpc.h //usr/include/rpc/rpc.h THEN cp -p
+CMP rpc_msg.h //usr/include/rpc/rpc_msg.h THEN cp -p
+CMP svc.h //usr/include/rpc/svc.h THEN cp -p
+CMP svc_auth.h //usr/include/rpc/svc_auth.h THEN cp -p
+CMP types.h //usr/include/rpc/types.h THEN cp -p
+CMP xdr.h //usr/include/rpc/xdr.h THEN cp -p
+CMP bootparam.h //usr/include/rpcsvc/bootparam.h THEN cp -p
+CMP bootparam_prot.x //usr/include/rpcsvc/bootparam_prot.x THEN cp -p
+CMP ether.h //usr/include/rpcsvc/ether.h THEN cp -p
+CMP ether.x //usr/include/rpcsvc/ether.x THEN cp -p
+CMP klm_prot.h //usr/include/rpcsvc/klm_prot.h THEN cp -p
+CMP klm_prot.x //usr/include/rpcsvc/klm_prot.x THEN cp -p
+CMP mount.h //usr/include/rpcsvc/mount.h THEN cp -p
+CMP mount.x //usr/include/rpcsvc/mount.x THEN cp -p
+CMP nfs_prot.x //usr/include/rpcsvc/nfs_prot.x THEN cp -p
+CMP nlm_prot.h //usr/include/rpcsvc/nlm_prot.h THEN cp -p
+CMP nlm_prot.x //usr/include/rpcsvc/nlm_prot.x THEN cp -p
+CMP pwdnm.h //usr/include/rpcsvc/pwdnm.h THEN cp -p
+CMP rex.h //usr/include/rpcsvc/rex.h THEN cp -p
+CMP rex.x //usr/include/rpcsvc/rex.x THEN cp -p
+CMP rnusers.x //usr/include/rpcsvc/rnusers.x THEN cp -p
+CMP rquota.h //usr/include/rpcsvc/rquota.h THEN cp -p
+CMP rquota.x //usr/include/rpcsvc/rquota.x THEN cp -p
+CMP rstat.h //usr/include/rpcsvc/rstat.h THEN cp -p
+CMP rstat.x //usr/include/rpcsvc/rstat.x THEN cp -p
+CMP rusers.h //usr/include/rpcsvc/rusers.h THEN cp -p
+CMP rwall.h //usr/include/rpcsvc/rwall.h THEN cp -p
+CMP sm_inter.h //usr/include/rpcsvc/sm_inter.h THEN cp -p
+CMP sm_inter.x //usr/include/rpcsvc/sm_inter.x THEN cp -p
+CMP spray.h //usr/include/rpcsvc/spray.h THEN cp -p
+CMP spray.x //usr/include/rpcsvc/spray.x THEN cp -p
+CMP yp.x //usr/include/rpcsvc/yp.x THEN cp -p
+CMP yp_prot.h //usr/include/rpcsvc/yp_prot.h;
+CMP ypclnt.h //usr/include/rpcsvc/ypclnt.h;
+CMP yppasswd.h //usr/include/rpcsvc/yppasswd.h THEN cp -p
+CMP yppasswd.x //usr/include/rpcsvc/yppasswd.x THEN cp -p
+CMP ypv1_prot.h //usr/include/rpcsvc/ypv1_prot.h;
+CMP emdefs.h //usr/include/servers/emdefs.h;
+CMP env_mgr.h //usr/include/servers/env_mgr.h;
+CMP ipcx.h //usr/include/servers/ipcx.h;
+CMP ipcx_types.h //usr/include/servers/ipcx_types.h;
+CMP km.h //usr/include/servers/km.h;
+CMP logstat.h //usr/include/servers/logstat.h;
+CMP netname.h //usr/include/servers/netname.h;
+CMP service.h //usr/include/servers/service.h;
+CMP udp.h //usr/include/udp/udp.h;
+install -d -c -m 444 netinfo/lookup.defs //usr/include
+CMP netinfo/lookup.defs //usr/include/netinfo/lookup.defs;
+rm -f //usr/include/machine
+ln -s next //usr/include/machine

@@ -1,0 +1,52 @@
+/*
+	publicWraps.psw
+  	Copyright 1989, NeXT, Inc.
+	Responsibility: Trey Matteson
+*/
+
+defineps NXConvertWinNumToGlobal(userobject winNum | unsigned int *globalNum)
+   winNum 
+   globalNum
+endps
+
+
+defineps NXConvertGlobalToWinNum(int globalNum | unsigned int *winNum)
+    globalNum currentwindowdict /localNum get winNum
+endps
+
+
+defineps NXCountWindows( | int *count)
+	currentcontext countscreenlist count
+endps
+
+
+defineps NXCopyCurrentGState(userobject gs)
+    gs currentgstate pop
+endps
+
+
+defineps NXSetGState(userobject gs)
+    gs setgstate
+endps
+
+
+defineps NXBeep()
+    /beep winexec
+endps
+
+
+defineps NXWindowList(int size | int list[size])
+	size array /localScreenList winexec
+	{list} forall
+endps
+
+
+/*
+
+Modifications:
+
+85
+--
+ 5/31/90 trey	moved wraps with ties to packages to windowPackages.pswm
+
+*/

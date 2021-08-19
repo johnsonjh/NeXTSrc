@@ -1,0 +1,489 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    mmeyer:1.2; strict;
+comment  @ * @;
+
+
+1.2
+date     89.05.16.21.15.20;  author mmeyer;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.05.14.17.13.44;  author mmeyer;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@original revision
+@
+
+
+1.2
+log
+@nlist "/mach" instead of "/vmunix"
+@
+text
+@/* @@(#)rpc.rstatd.c	1.2 87/07/21 3.2/4.3NFSSRC */
+/* @@(#)rpc.rstatd.c	1.3 86/11/21 NFSSRC */
+#ifndef lint
+static  char sccsid[] = "@@(#)rpc.rstatd.c 1.1 86/09/25 Copyr 1984 Sun Micro";
+#endif
+
+/*
+ * Copyright (c) 1984 by Sun Microsystems, Inc.
+ */
+
+/* 
+ * rstat demon:  called from inet
+ *
+ */
+
+#include <signal.h>
+#include <stdio.h>
+#include <rpc/rpc.h>
+#include <sys/socket.h>
+#include <nlist.h>
+#include <sys/dk.h>
+#include <sys/errno.h>
+#include <sys/vmmeter.h>
+#include <net/if.h>
+#include <sys/time.h>
+#include <rpcsvc/rstat.h>
+#include <syslog.h>
+
+struct nlist nl[] = {
+#define	X_CPTIME	0
+	{{ "_cp_time" }},
+#define	X_SUM		1
+	{{ "_sum" }},
+#define	X_IFNET		2
+	{{ "_ifnet" }},
+#define	X_DKXFER	3
+	{{ "_dk_xfer" }},
+#define	X_BOOTTIME	4
+	{{ "_boottime" }},
+#define	X_AVENRUN	5
+	{{ "_avenrun" }},
+#define X_HZ		6
+	{{ "_hz" }},
+
+#ifdef NeXT_MOD
+#define X_MACH_FACTOR	7
+	{{ "_mach_factor"}},
+#endif NeXT_MOD
+
+	{{""}},
+};
+int kmem;
+int firstifnet, numintfs;	/* chain of ethernet interfaces */
+int stats_service();
+
+int sincelastreq = 0;		/* number of alarms since last request */
+#define CLOSEDOWN 20		/* how long to wait before exiting */
+
+union {
+    struct stats s1;
+    struct statsswtch s2;
+    struct statstime s3;
+} stats;
+
+int updatestat();
+extern int errno;
+
+#ifdef notdef
+#ifdef NeXT_MOD
+#define LSCALE		1000	/* From <sys/kernel.h> */
+#define FSCALE 		LSCALE
+#endif NeXT_MOD
+#endif notdef
+
+#ifndef FSCALE
+#define FSCALE (1 << 8)
+#endif
+
+static setup();
+static int stats_service();
+static havedisk();
+
+main(argc, argv)
+	char **argv;
+{
+	SVCXPRT *transp;
+	struct sockaddr_in addr;
+	int len = sizeof(struct sockaddr_in);
+	int readfds, port, readfdstmp;
+
+
+#ifdef DEBUG
+	{
+	int s;
+	struct sockaddr_in addr;
+	int len = sizeof(struct sockaddr_in);
+	
+	if ((s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+		syslog(LOG_ERR,"inet: socket: %m");
+		return -1;
+	}
+	if (bind(s, &addr, sizeof(addr)) < 0) {
+		syslog(LOG_ERR,"bind: %m");
+		return -1;
+	}
+	if (getsockname(s, &addr, &len) != 0) {
+		syslog(LOG_ERR,"inet: getsockname: %m");
+		(void)close(s);
+		return -1;
+	}
+	pmap_unset(RSTATPROG, RSTATVERS_ORIG);
+	pmap_set(RSTATPROG, RSTATVERS_ORIG, IPPROTO_UDP,ntohs(addr.sin_port));
+	pmap_unset(RSTATPROG, RSTATVERS_SWTCH);
+	pmap_set(RSTATPROG, RSTATVERS_SWTCH,IPPROTO_UDP,ntohs(addr.sin_port));
+	pmap_unset(RSTATPROG, RSTATVERS_TIME);
+	pmap_set(RSTATPROG, RSTATVERS_TIME,IPPROTO_UDP,ntohs(addr.sin_port));
+	if (dup2(s, 0) < 0) {
+		syslog(LOG_ERR,"dup2: %m");
+		exit(1);
+	}
+	}
+#endif	
+	if (getsockname(0, (struct sockaddr *)&addr, &len) != 0) {
+		syslog(LOG_ERR,"rstat: getsockname: %m");
+		exit(1);
+	}
+	if ((transp = svcudp_bufcreate(0, RPCSMALLMSGSIZE, RPCSMALLMSGSIZE))
+	    == NULL) {
+		syslog(LOG_ERR,"svc_rpc_udp_create: error\n");
+		exit(1);
+	}
+	if (!svc_register(transp,RSTATPROG,RSTATVERS_ORIG,stats_service, 0)) {
+		syslog(LOG_ERR, "svc_rpc_register: error\n");
+		exit(1);
+	}
+	if (!svc_register(transp,RSTATPROG,RSTATVERS_SWTCH,stats_service,0)) {
+		syslog(LOG_ERR, "svc_rpc_register: error\n");
+		exit(1);
+	}
+	if (!svc_register(transp,RSTATPROG,RSTATVERS_TIME,stats_service,0)) {
+		syslog(LOG_ERR, "svc_rpc_register: error\n");
+		exit(1);
+	}
+	setup();
+	updatestat();
+#ifdef NeXT_MOD
+	alarm(1);
+#else
+	alarm(5);
+#endif NeXT_MOD
+	signal(SIGALRM, updatestat);
+	svc_run();
+	syslog(LOG_ALERT, "svc_run should never return\n");
+}
+
+static int
+stats_service(reqp, transp)
+	 struct svc_req  *reqp;
+	 SVCXPRT  *transp;
+{
+	int have;
+	
+#ifdef DEBUG
+	fprintf(stderr, "entering stats_service\n");
+#endif
+	switch (reqp->rq_proc) {
+		case RSTATPROC_STATS:
+			sincelastreq = 0;
+			if (reqp->rq_vers == RSTATVERS_ORIG) {
+				if (svc_sendreply(transp, xdr_stats,
+				    &stats.s1, TRUE) == FALSE) {
+					syslog(LOG_ERR,
+					    "err: svc_rpc_send_results");
+					exit(1);
+				}
+				return;
+			}
+			if (reqp->rq_vers == RSTATVERS_SWTCH) {
+				if (svc_sendreply(transp, xdr_statsswtch,
+				    &stats.s2, TRUE) == FALSE) {
+					syslog(LOG_ERR,
+					    "err: svc_rpc_send_results");
+					exit(1);
+				    }
+				return;
+			}
+			if (reqp->rq_vers == RSTATVERS_TIME) {
+				if (svc_sendreply(transp, xdr_statstime,
+				    &stats.s3, TRUE) == FALSE) {
+					syslog(LOG_ERR,
+					    "err: svc_rpc_send_results");
+					exit(1);
+				    }
+				return;
+			}
+		case RSTATPROC_HAVEDISK:
+			have = havedisk();
+			if (svc_sendreply(transp,xdr_long, &have, TRUE) == 0){
+			    syslog(LOG_ERR, "err: svc_sendreply");
+			    exit(1);
+			}
+			return;
+		case 0:
+			if (svc_sendreply(transp, xdr_void, 0, TRUE)
+			    == FALSE) {
+				syslog(LOG_ERR, "err: svc_rpc_send_results");
+				exit(1);
+			    }
+			return;
+		default: 
+			svcerr_noproc(transp);
+			return;
+		}
+}
+
+updatestat()
+{
+	int off, i, hz;
+	struct vmmeter sum;
+	struct ifnet ifnet;
+#ifdef MACH
+	long avrun[3];
+#else
+	double avrun[3];
+#endif MACH
+	struct timeval tm, btm;
+	struct timezone tz;
+	
+#ifdef DEBUG
+	fprintf(stderr, "entering updatestat\n");
+#endif
+	if (sincelastreq >= CLOSEDOWN) {
+#ifdef DEBUG
+	fprintf(stderr, "about to closedown\n");
+#endif
+		exit(0);
+	}
+	sincelastreq++;
+	if (lseek(kmem, (long)nl[X_HZ].n_value, 0) == -1) {
+		syslog(LOG_ERR, "can't seek in kmem\n");
+		exit(1);
+	}
+	if (read(kmem, &hz, sizeof hz) != sizeof hz) {
+		syslog(LOG_ERR, "can't read hz from kmem\n");
+		exit(1);
+	}
+	if (lseek(kmem, (long)nl[X_CPTIME].n_value, 0) == -1) {
+		syslog(LOG_ERR, "can't seek in kmem\n");
+		exit(1);
+	}
+ 	if (read(kmem, stats.s1.cp_time, sizeof (stats.s1.cp_time))
+	    != sizeof (stats.s1.cp_time)) {
+		syslog(LOG_ERR, "can't read cp_time from kmem\n");
+		exit(1);
+	}
+	if (lseek(kmem, (long)nl[X_AVENRUN].n_value, 0) ==-1) {
+		syslog(LOG_ERR, "can't seek in kmem\n");
+		exit(1);
+	}
+#ifdef NeXT_MOD
+ 	if (read(kmem, avrun, sizeof (avrun)) != sizeof (avrun)) {
+		syslog(LOG_ERR, "can't read avenrun from kmem\n");
+		exit(1);
+	}
+	syslog(LOG_ERR, "LOADAV %d %d %d", avrun[0], avrun[1], avrun[2]);
+	stats.s2.avenrun[0] = avrun[0] * FSCALE;
+	stats.s2.avenrun[1] = avrun[1] * FSCALE;
+	stats.s2.avenrun[2] = avrun[2] * FSCALE;
+
+#endif NeXT_MOD
+#ifdef vax
+ 	if (read(kmem, avrun, sizeof (avrun)) != sizeof (avrun)) {
+		syslog(LOG_ERR, "can't read avenrun from kmem\n");
+		exit(1);
+	}
+	stats.s2.avenrun[0] = avrun[0] * FSCALE;
+	stats.s2.avenrun[1] = avrun[1] * FSCALE;
+	stats.s2.avenrun[2] = avrun[2] * FSCALE;
+#endif vax
+	if (lseek(kmem, (long)nl[X_BOOTTIME].n_value, 0) == -1) {
+		syslog(LOG_ERR, "can't seek in kmem\n");
+		exit(1);
+	}
+ 	if (read(kmem, &btm, sizeof (stats.s2.boottime))
+	    != sizeof (stats.s2.boottime)) {
+		syslog(LOG_ERR, "can't read boottime from kmem\n");
+		exit(1);
+	}
+	stats.s2.boottime = btm;
+
+
+#ifdef DEBUG
+	fprintf(stderr, "%d %d %d %d\n", stats.s1.cp_time[0],
+	    stats.s1.cp_time[1], stats.s1.cp_time[2], stats.s1.cp_time[3]);
+#endif
+
+	if (lseek(kmem, (long)nl[X_SUM].n_value, 0) ==-1) {
+		syslog(LOG_ERR, "can't seek in kmem\n");
+		exit(1);
+	}
+ 	if (read(kmem, &sum, sizeof sum) != sizeof sum) {
+		syslog(LOG_ERR, "can't read sum from kmem\n");
+		exit(1);
+	}
+	stats.s1.v_pgpgin = sum.v_pgpgin;
+	stats.s1.v_pgpgout = sum.v_pgpgout;
+	stats.s1.v_pswpin = sum.v_pswpin;
+	stats.s1.v_pswpout = sum.v_pswpout;
+	stats.s1.v_intr = sum.v_intr;
+	gettimeofday(&tm, &tz);
+	stats.s1.v_intr -= hz*(tm.tv_sec - btm.tv_sec) +
+	    hz*(tm.tv_usec - btm.tv_usec)/1000000;
+	stats.s2.v_swtch = sum.v_swtch;
+
+	if (lseek(kmem, (long)nl[X_DKXFER].n_value, 0) == -1) {
+		syslog(LOG_ERR, "can't seek in kmem\n");
+		exit(1);
+	}
+ 	if (read(kmem, stats.s1.dk_xfer, sizeof (stats.s1.dk_xfer))
+	    != sizeof (stats.s1.dk_xfer)) {
+		syslog(LOG_ERR, "can't read dk_xfer from kmem\n");
+		exit(1);
+	}
+
+	stats.s1.if_ipackets = 0;
+	stats.s1.if_opackets = 0;
+	stats.s1.if_ierrors = 0;
+	stats.s1.if_oerrors = 0;
+	stats.s1.if_collisions = 0;
+	for (off = firstifnet, i = 0; off && i < numintfs; i++) {
+		if (lseek(kmem, off, 0) == -1) {
+			syslog(LOG_ERR, "can't seek in kmem\n");
+			exit(1);
+		}
+		if (read(kmem, &ifnet, sizeof ifnet) != sizeof ifnet) {
+			syslog(LOG_ERR, "can't read ifnet from kmem\n");
+			exit(1);
+		}
+		stats.s1.if_ipackets += ifnet.if_ipackets;
+		stats.s1.if_opackets += ifnet.if_opackets;
+		stats.s1.if_ierrors += ifnet.if_ierrors;
+		stats.s1.if_oerrors += ifnet.if_oerrors;
+		stats.s1.if_collisions += ifnet.if_collisions;
+		off = (int) ifnet.if_next;
+	}
+	gettimeofday(&stats.s3.curtime, 0);
+/*
+ * We have better things to do with our CPU than run Sun's programs
+ */
+#ifdef NeXT_MOD
+	alarm(5);
+#else
+	alarm(1);
+#endif NeXT_MOD
+}
+
+static 
+setup()
+{
+	struct ifnet ifnet;
+	int off, *ip;
+	
+#ifdef NeXT_MOD
+	nlist("/mach", nl);
+#else
+	nlist("/vmunix", nl);
+#endif NeXT_MOD
+
+	if (nl[0].n_value == 0) {
+		syslog(LOG_ERR, "Variables missing from namelist\n");
+		exit (1);
+	}
+	if ((kmem = open("/dev/kmem", 0)) < 0) {
+		syslog(LOG_ERR, "can't open kmem\n");
+		exit(1);
+	}
+
+	off = nl[X_IFNET].n_value;
+	if (lseek(kmem, off, 0) == -1) {
+		syslog(LOG_ERR, "can't seek in kmem\n");
+		exit(1);
+	}
+	if (read(kmem, &firstifnet, sizeof(int)) != sizeof (int)) {
+		syslog(LOG_ERR, "can't read firstifnet from kmem\n");
+		exit(1);
+	}
+	numintfs = 0;
+	for (off = firstifnet; off;) {
+		if (lseek(kmem, off, 0) == -1) {
+			syslog(LOG_ERR, "can't seek in kmem\n");
+			exit(1);
+		}
+		if (read(kmem, &ifnet, sizeof ifnet) != sizeof ifnet) {
+			syslog(LOG_ERR, "can't read ifnet from kmem\n");
+			exit(1);
+		}
+		numintfs++;
+		off = (int) ifnet.if_next;
+	}
+}
+
+/* 
+ * returns true if have a disk
+ */
+static
+havedisk()
+{
+	int i, cnt;
+	long  xfer[DK_NDRIVE];
+
+#ifdef NeXT_MOD
+	nlist("/mach", nl);
+#else
+	nlist("/vmunix", nl);
+#endif NeXT_MOD
+	if (nl[X_DKXFER].n_value == 0) {
+		syslog(LOG_ERR, "Variables missing from namelist\n");
+		exit (1);
+	}
+	if ((kmem = open("/dev/kmem", 0)) < 0) {
+		syslog(LOG_ERR, "can't open kmem\n");
+		exit(1);
+	}
+	if (lseek(kmem, (long)nl[X_DKXFER].n_value, 0) == -1) {
+		syslog(LOG_ERR, "can't seek in kmem\n");
+		exit(1);
+	}
+	if (read(kmem, xfer, sizeof xfer)!= sizeof xfer) {
+		syslog(LOG_ERR, "can't read kmem\n");
+		exit(1);
+	}
+	cnt = 0;
+	for (i=0; i < DK_NDRIVE; i++)
+		cnt += xfer[i];
+	return (cnt != 0);
+}
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d44 6
+d68 7
+d146 1
+d148 3
+d221 3
+d225 1
+d260 11
+d279 1
+a279 1
+#endif
+d347 6
+d354 1
+d363 3
+d367 2
+d411 3
+d415 1
+@

@@ -1,0 +1,18 @@
+Makefile	1.2 08/07/87 09:45:11
+deleted dependencies
+
+Makefile	1.1 08/05/87 13:00:51
+date and time created 87/08/05 13:00:51 by clara
+
+sm_proc.c	1.1 08/05/87 13:00:57
+date and time created 87/08/05 13:00:57 by clara
+
+sm_statd.c	1.1 08/05/87 13:01:03
+date and time created 87/08/05 13:01:03 by clara
+
+sm_statd.h	1.1 08/05/87 13:01:09
+date and time created 87/08/05 13:01:09 by clara
+
+sm_svc.c	1.1 08/05/87 13:01:14
+date and time created 87/08/05 13:01:14 by clara
+

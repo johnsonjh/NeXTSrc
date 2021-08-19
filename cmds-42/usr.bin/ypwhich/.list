@@ -1,0 +1,5 @@
+./
+../
+Makedep
+Makefile
+ypwhich.c

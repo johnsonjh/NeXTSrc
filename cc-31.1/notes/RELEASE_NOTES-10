@@ -1,0 +1,72 @@
+
+The 1.0 system release (-10 compiler release) contains the following changes:
+
+   Changes to the Objective-C compiler:
+
+   * The maximum size of an object was extended from 32 kbytes to 
+     4,000,000 kbytes.
+
+   * `self' is now statically typed by the Objective-C compiler...this 
+     will provide better error diagnostics for sending messages to `self'.
+
+   * the `-objc' switch was renamed to `-ObjC'. This switch tells
+     the compiler that it is about to compile a file that contains 
+     Objective-C code.
+
+   New features:
+
+   * You can now have multiple classes per source file.
+
+   * `@encode(<typespec>)' will return a type string that identifies 
+     <typespec>. This is useful when using methods that take Archiver 
+     encoded strings. For example,
+
+     [Storage newCount:0 elementSize:sizeof(Foo) description:@encode(Foo)];
+     
+     This abstracts users from understanding the format of this string,
+     which may change.
+
+   Changes to the Objective-C runtime:
+
+   * the Objective-C error handler now calls `abort()' instead of `exit()'.
+     this causes a core file to be produced.
+
+   Changes to `objc.h' (not complete):
+
+   * `id' is now defined here, it was previously atomagically declared by
+     the compiler. This makes it easier to include this file standard `.c'
+     files.
+
+   * SEL is now defined to be an `unsigned int'.
+
+   * SHR is now `Class'.
+
+   Performance Improvements:
+
+   * the `+initialize' is sent to classes lazily. This implies that no
+     messages will be sent before executing main().
+
+   * You can now compile Objective-C code with the `-fomit-frame-pointer'
+     option. It is know longer dependent on locating the previous stack frame
+     to accomplish sending messages to `super'. 
+
+   Low level changes (will not concern most app writers):
+
+   * The object type string used for archiving has been extended to support
+     the following types:
+
+     - bitfields...`b<width>', where <width> is a decimal.
+     - pointers...`^<type>, where <type> is a basic or aggregate type.
+
+   * Name Changes:
+
+     	_msg() and _msgSuper()
+
+	have been changed to:
+
+	objc_msgSendSelf() and objc_msgSendSuper()
+
+	If you call _msgSuper() directly (you shouldn't be), your code 
+	will have to conform to the new calling conventions. See me if 
+	this is an issue.
+

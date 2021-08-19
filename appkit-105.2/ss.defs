@@ -1,0 +1,121 @@
+/*
+	ss.defs
+  	Copyright 1990, NeXT, Inc.
+	Responsibility: Bryan Yamamoto
+	
+	This file holds the mig definitions for messages sent from an
+	app to the spell check server.
+*/
+
+#include <std_types.defs>
+subsystem ss 0;
+
+/* timeout of 15 sec */
+WaitTime 15000;
+
+import "spellserver.h";
+
+/*
+ *  These types are unfortunately duplicated in pbtypes.defs and app.defs.
+ */
+/* type string (NOTE size is in bits) */
+type word_t = (MSG_TYPE_STRING, 256*8);
+/* data buffer, or all type strings laid end to end */
+type data_t = ^ array [] of char;
+/* path to find afm files */
+type path_t = (MSG_TYPE_STRING, 256*8);
+
+/* function to call when errors occur */
+error _NXSSError;
+
+
+function _NXOpenSpelling (
+    server: port_t; 
+    client: port_t;
+    user: word_t;
+    localDict: path_t;
+    out handle: int): int;
+
+ /*
+  * creates a connection to the server. the client port is used by the server
+  * to detect when the client has crashed.  user is the user's name, and
+  * localDict is a path name to the user's local dictionary. The returned
+  * handle is used to subsequent calls. 
+  */
+
+function _NXSpellCheck (
+    server: port_t;
+    handle: int;
+    text: data_t;
+    start: int;
+    end: int;
+    out startPos: int;
+    out endPos: int
+    ) : int;
+
+ /*
+  * Spell checks text in an out of line buffer.  start and end are the
+  * positions of the valid text in the buffer. If there is a misspelling,
+  * startWord and endWord contain the location of the misspelled word. If all
+  * the words are correct, startWord and endWord have -1 as their values. 
+  */
+
+function _NXGuess (
+    server: port_t;
+    handle: int;
+    word: word_t;
+    out guesses: data_t;
+    out numGuesses: int) : int;
+
+ /*
+  * Guesses are returned in guesses as concatenated strings delimited by
+  * nulls. numGuesses return the number of words in the buffer. 
+  */
+ 
+function _NXSpellCheckAndGuess (
+    server: port_t;
+    handle: int;
+    text: data_t;
+    start: int;
+    end: int;
+    out startWord: int;
+    out endWord: int;
+    out guesses: data_t;
+    out numGuesses: int) : int;
+
+ /*
+  * provides the functionality of spell checking and guessing in one server
+  * call. 
+  */
+
+simpleroutine _NXLearnWord (
+    server: port_t;
+    handle: int;
+    word: word_t);
+
+ /*
+  * adds word to the user's private dictionary. 
+  */
+
+simpleroutine _NXForgetWord (
+    server: port_t;
+    handle: int;
+    word: word_t);
+
+ /*
+  * removes word to the user's private dictionary. 
+  */
+
+
+/* 
+
+Modifications (starting at 1.0):
+
+ 3/23/90 bryan	created
+*/
+
+
+
+
+
+

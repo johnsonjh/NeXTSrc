@@ -1,0 +1,166 @@
+NeXT, Inc. - 1/18/88 Craig Hansen
+
+In general, there are three compilation environments provided:
+
+cc -bsd: libraries and include files work compatibly with 4.3 BSD
+    -D__STRICT_BSD__ used to make include files compatible.
+    Regrettably, it was not possible to define prototypes
+    for functions in this environment because of much non-conforming
+    usage in the CMDS project.
+cc -ansi: libraries and include files strictly conform to the ANSI C
+    draft specification X3.159-198x, including no additional reserved words.
+    -D__STRICT_ANSI__ used to make include files compatible.
+    Function definitions are prototyped in the ANSI header files.
+cc <default>: libraries and include files conform to the ANSI C
+    spec, however, additional functions and macro definitions may
+    be added to header files to extend utility or maintain BSD
+    compatibility where possible.
+    Function definitions are prototyped in the ANSI header files.
+
+ANSI C permits the use of several "locale-specific" configurations.
+The only locale supported is the "C" locale, defined as follows:
+
+    collate: native ASCII ordering
+    ctype: 7-bit ASCII
+    monetary: none
+    numeric: decimal point is ASCII period
+    time: strftime returns English weekday and month names %[aAbB],
+          %c same as asctime(), %x is of form: "Sun Jan  1 1989",
+          and %X is of the form: "16:42:47 PST".
+
+The following are known conformance problems in the current revision
+of the libraries:
+
+stdarg.h's va_arg doesn't work for arguments of type float, because
+the compiler promotes them to double.
+
+The following changes were made to conform with ANSI C:
+
+1. All symbols used by the library to implement the functions specified
+   by the standard, but not listed in the standard, are hidden with
+   an underscore. The list of these symbols is automatically
+   built in /BSD/LIBS/libs/lib/libc/IND_LIST by the Makefile
+
+2. assert() now calls abort() when an assertion fails, rather than
+   exit(1). when assertions are ignored, assert(x) is defined as
+   ((void)0).
+
+3. all the functions defined in ctype.h can now be used as either
+   macros or functions.
+
+4. tolower() and toupper() are now functions that leave the value
+   unchanged if the argument is not an uppercase or lowercase letter
+   respectively. The old semantics of these functions can be
+   reached by the macros _tolower() and _toupper(). In the default
+   compilation environment, tolower() and toupper() are macros,
+   using a GNU C extension to make them work right - when using
+   -ansi, these macros are suppressed.
+
+5. toascii() and isascii() are removed from ctype.h when using -ansi
+
+6. locale.h and the functions setlocale() and localeconv() were added.
+   A minimal implementation is used, defining only the "C" locale (see above).
+
+7. when using -ansi, math.h suppresses all declarations not
+   permitted by the standard. math.h suppresses the inline definitions
+   when using -ansi, or unless INLINE_MATH is defined to the preprocessor.
+   The math library now sets errno as required by ANSI.
+
+8. when using -ansi, setjmp.h defines only what the standard permits.
+
+9. signal.h defines the signal functions to return void, rather than int,
+   unless using -bsd. The macro SIG_ERR, the type sig_atomic_t, and
+   the function raise() are added. When using -ansi, signal.h defines
+   only what the standard permits, removing all signal type macros
+   except SIGABRT, SIGFPE, SIGILL, SIGINT, SIGSEGV, and SIGTERM.
+   SIGABRT is signal number 6
+
+10.stdarg.h is added and varargs.h is modified so that it may
+   coexist with stdarg.h. The definitions of va_start and va_arg,
+   which differ for the two header files, will be that of varargs.h
+   if that file is included, whether before or after stdarg.h.
+   In other words, in order to maintain BSD compatibility,
+   including varargs.h will get non-ANSI definition.
+   va_arg in stdarg.h now works for types char and short, but not float.
+
+11.stdio.h adds the type fpos_t, macros _IOFBF, _IOLBF, _IONBF,
+   L_tmpnam, FOPEN_MAX, FILENAME_MAX, SEEK_CUR, SEEK_END, SEEK_SET, and TMP_MAX
+   and the functions remove(), tmpfile(), tmpnam(). fgetpos(), fsetpos().
+   ANSI compatible prototypes are put into the function
+   declarations, unless the -bsd flag is used. The FILE type now uses
+   a char item in the struct to hold characters for unbuffered files, rather
+   than a separate external variable.
+ 
+12.fopen() accepts a "b" as the second or third character of the mode.
+
+13.all the ...printf() functions now accept formats %p, and %n
+
+14.fscanf adds the %p, %i and %n formats.
+
+14a.ungetc() now works even if no characters have been read from the stream.
+
+15.stddef.h was added, wchar_t was added to stddef.h, and errno is no longer
+   a macro.
+
+16.strtod(), strtol(), strtoul were added. These functions carefully
+   check for overflow. A rogue version of strtol that was less robust
+   was removed from the library.
+
+17.stdlib.h was added, and macro MB_CUR_MAX, and functions valloc, alloca,
+   (unless -ansi), mblen, mbtowc, wctomb, mbstowcs, wcstombs were added.
+
+18.atexit() was added, and exit() now calls the functions sent to atexit()
+
+19.bsearch() was added
+
+20.div(), labs(), ldiv() ware added
+
+21.string.h now defines all the ANSI string functions, with macros
+   to make all the BSD functions continue to work. BSD functions that
+   have simple equivalences to the ANSI functions are defined as
+   macros in the header file.
+
+22.memcpy(), memmove(), memcmp(), memset(), strstr(), strcoll(), and
+   strerror()  were added
+
+23.time.h was updated to conform to ANSI C, defining macro CLK_TCK,
+   type clock_t, and functions clock(), difftime(), mktime(), and strftime()
+
+24.float.h and limits.h were added
+
+25.All sources for libc and libm were modified to compile properly
+   in the default compilation environment.
+
+26.Malloc was modified to run with page sizes from 2k to 16k, which has
+   been tested for 4k and 8k page sizes. Malloc_nomem (a global variable)
+   was removed, in favor of a procedure called malloc_error
+   that takes an alternate error handler as an argument and returns
+   the old value. The default handler now prints a message to stderr
+   and sets errno to ENOMEM. Error handler are now passed an integer
+   code that can be used to identify the precise cause of the error.
+
+   "size_t malloc_debug(size_t)" was added to dynamically set the level
+   of checking and/or compatibility: The value can be set to values from
+   0 to 31, setting five bits individually, and returning the old value.
+   Level 0 does no checking and has minimum semantics
+   (don't use or modify data that has been freed!).
+   Level 1 (the default), adds a one deep stack to calls to free,
+   the equivalent of FREEKLUDGE in the previous version.
+   Level 2 zeros out or unmapps all data as it is freed, making it easier
+   to catch usage of freed data spaces. Level 4 checks that data
+   being freed hasn't already been freed. Level 8 checks internal
+   data structures for damage for all memory allocated as the
+   same size of the data being allocated or freed. Level 16 checks
+   the internal data structures for all sizes of data for consistency.
+   These levels can be set independently: Level 5 adds a one deep stack
+   and checks that data hasn't already been freed.
+
+The following are notes for further library improvements:
+
+1. memset() is as efficient as bzero() for clearing memory,
+   but sets memory to other values one byte at a time.
+
+2. malloc() internal data structure checking (level 8/16 debug checking)
+   could be more extensive. It is possible that the checking code can
+   fail from SEGV or infinite loops for certain kinds of structure 
+   inconsistencies.

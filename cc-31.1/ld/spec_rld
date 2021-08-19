@@ -1,0 +1,247 @@
+##
+## The shared library specification file for librld
+##
+#target /usr/shlib/librld_s.Z.shlib
+#address __TEXT 0x08100000
+#address __DATA 0x08200000
+##Now specified on the command line via -minor_version `vers_string -n`
+
+## This is the branch table.  Symbols in it MUST remain in the same numbered
+## slot from version to version so that the versions are compatible.  Symbols
+## with ranges get assigned the HIGHEST slot.  So if new symbol is added and
+## a slot is taken from a symbol with a range of slots the orignial symbol must
+## remain using the HIGHEST slot.
+##
+## If you add a new routine, insert it at the end of the list in one of the
+## slots taken by a .empty_slot.  If you remove an old routine you WILL BREAK
+## ALL programs that use it but if you feel you can do this change its slot
+## to .empty_slot and don't reuse it (leave a comment to what it was).
+
+#branch
+	_rld_load			0
+	_rld_unload			1
+	_rld_lookup			2
+	_rld_get_current_header		3
+	_rld_unload_all			4
+	_rld_address_func		5
+	_rld_load_basefile		6
+	_rld_load_from_memory		7
+	.empty_slot			8-1350 # the rest of the first page
+## Branch table slots are a jmp	0x0:l instruction that is 6 bytes long. So to
+## not quite fill a 8192 byte page it takes 1350 slots plus the 90 byte shlib
+## header that goes before the branch table.
+
+
+## These are the const global data symbols that are text symbols but do not have
+## branch table entries since they are really data.
+
+#nobranch_text
+
+## These are routines that are to be used but are global (typically because of
+## the lack of a needed level of scope just for the library).
+
+#private_externs
+	_allocate
+	_base_obj
+	_clean_objects
+	_cleanup
+	_cpusubtype
+	_cputype
+	_create_merged_section
+	_create_output_sections_array
+	_cstring_merge
+	_cstring_output
+	_cur_obj
+	_cur_set
+	_defaultsectalign
+	_define_comldsyms
+	_define_common_symbols
+	_entry_point_name
+	_error
+	_error_with_cur_obj
+	_errors
+	_fatal
+	_filetype
+	_fine_reloc_output_offset
+	_flush
+	_free_multiple_defs
+	_generic_reloc
+	_host_pagesize
+	_layout
+	_layout_merged_symbols
+	_load_map
+	_local_string_size
+	_lookup_merged_section
+	_lookup_merged_segment
+	_lookup_symbol
+	_mach_fatal
+	_merge
+	_merge_base_program
+	_merge_literal_sections
+	_merge_sections
+	_merge_symbols
+	_merged_segments
+	_merged_string_blocks
+	_merged_string_size
+	_merged_symbol_lists
+	_new_object_file
+	_new_set
+	_nlocal_symbols
+	_nmerged_symbols
+	_nobjects
+	_nreloc
+	_ntrace_syms
+	_nundef_syms
+	_obj_member_name 
+	_objects
+	_original_merged_segments
+	_output_addr
+	_output_literal_sections
+	_output_mach_header
+	_output_section
+	_output_sections
+	_output_size
+	_output_symtab_info
+	_output_thread_info
+	_outputfile
+	_pass2
+	_print
+	_print_obj_name
+	_print_whatsloaded 
+	_progname
+	_reallocate
+	_remove_merged_sections
+	_remove_merged_symbols
+	_remove_objects
+	_remove_set
+	_reset_merged_sections
+	_round
+	_save_reloc
+	_seg1addr
+	_seg1addr_specified
+	_segalign
+	_seglinkedit
+	_sets
+	_strip_level
+	_system_error
+	_system_fatal
+	_trace
+	_trace_syms
+	_undef_syms
+	_vprint
+	_warning
+	_warning_with_cur_obj
+	_whyload
+	_free_sets
+	_output_local_symbols
+	_output_merged_symbols
+	_sect_object_symbols 
+	_strip_base_symbols
+	_address_func
+	_pass1
+	_delete_from_undefined_list
+	_free_undefined_list
+	_new_archive
+	_clean_archives
+	_undefined_list
+	_headerpad
+	_sectorder_detail
+	_literal4_merge
+	_literal4_output
+	_literal8_merge
+	_literal8_output
+	_cstring_free
+	_zero_merged_sections_sizes
+	_literal4_free
+	_literal8_free
+	_literal_pointer_merge
+	_literal_pointer_output
+	_literal_pointer_free
+	_undef_bsearch
+	_reduce_indr_symbols
+	_add_last_object_file
+	_cstring_order
+	_get_cstring_from_sectorder
+	_get_hex_from_sectorder
+	_literal4_order
+	_literal8_order
+	_literal_pointer_order
+	_lookup_cstring
+	_lookup_literal4
+	_lookup_literal8
+	_remove_last_object_file
+	_link_edit_common_object
+
+## These are the assembly language stubs to get around the symbols that can't
+## have a layer of indirection put in by a macro because they are generated
+## directly by the compiler.  These are in alias.o .
+	.librld_bcopy
+
+#alias
+	_bcopy			.librld_bcopy
+
+## The objects that contain global const data are listed first then the objects
+## containing global data are listed next then all others (currently listed in
+## increasing bss size but the order is arbitrary).  The files that have any
+## global data CANNOT change in size or move in the list (if they do it will
+## be an incompatable library.
+#objects
+	pointers.o
+	alias.o
+
+	cstring_literals.o
+	fvmlibs.o
+	generic_reloc.o
+	layout.o
+	ld.o
+	objects.o
+	pass1.o
+	pass2.o
+	rld.o
+	sections.o
+	sets.o
+	specs.o
+	symbols.o
+	4byte_literals.o
+	8byte_literals.o
+	literal_pointers.o
+
+#init pointers.o
+	__librld__mh_execute_header		__mh_execute_header
+	__librld_NXArgv				_NXArgv
+	__librld_NXVPrintf			_NXVPrintf
+	__librld_bcopy				_bcopy
+	__librld_bsearch			_bsearch
+	__librld_close				_close
+	__librld_errno				_errno
+	__librld_free				_free
+	__librld_fstat				_fstat
+	__librld_getpagesize			_getpagesize
+	__librld_getsegbyname			_getsegbyname
+	__librld_longjmp			_longjmp
+	__librld_mach_error_string		_mach_error_string
+	__librld_malloc				_malloc
+	__librld_map_fd				_map_fd
+	__librld_memcpy				_memcpy
+	__librld_memset				_memset
+	__librld_open				_open
+	__librld_realloc			_realloc
+	__librld_setjmp				_setjmp
+	__librld_strcmp				_strcmp
+	__librld_strcpy				_strcpy
+	__librld_strerror			_strerror
+	__librld_strlen				_strlen
+	__librld_strncmp			_strncmp
+	__librld_strncpy			_strncpy
+	__librld_task_self_			_task_self_
+	__librld_vfprintf			_vfprintf
+	__librld_vm_allocate			_vm_allocate
+	__librld_vm_deallocate			_vm_deallocate
+	__librld_vm_protect			_vm_protect
+	__librld_unlink				_unlink
+	__librld_write				_write
+	__librld_strtol				_strtol
+	__librld_qsort				_qsort
+	__librld_strrchr			_strrchr
+	__librld_strchr				_strchr
+	__librld_strtoul			_strtoul

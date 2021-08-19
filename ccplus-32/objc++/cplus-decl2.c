@@ -1,0 +1,1 @@
+../g++/cplus-decl2.c

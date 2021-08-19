@@ -1,0 +1,4 @@
+cc -O -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -c getent.c
+vers_string -c rpc.bootparamd > vers.c
+cc -O -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -c vers.c
+cc -O -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I. -o rpc.bootparamd.NEW bootparam_svc.o bootparam_subr.o bootparam_lib.o bootparam_xdr.o  getent.o   vers.o -lsys_s

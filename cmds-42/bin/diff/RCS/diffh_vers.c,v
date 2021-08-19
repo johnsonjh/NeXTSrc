@@ -1,0 +1,44 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    mmeyer:1.2; strict;
+comment  @ * @;
+
+
+1.2
+date     89.05.22.14.28.51;  author mmeyer;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.05.22.14.28.23;  author mmeyer;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@original version
+@
+
+
+1.2
+log
+@Fixes from Mike DeMoney
+,.
+@
+text
+@char SGS_VERS[160] = "@@(#)PROGRAM:diffh  PROJECT:Unknown  DEVELOPER:mike  BUILT:Mon May 22 13:22:54 PDT 1989\n";
+char VERS_NUM[10] = "";
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 2
+a2 2
+char SGS_VERS[160] = "@@(#)PROGRAM:diffh  PROJECT:cmds-11  DEVELOPER:mmeyer  BUILT:Fri May 19 17:42:33 PDT 1989\n";
+char VERS_NUM[10] = "11";
+@

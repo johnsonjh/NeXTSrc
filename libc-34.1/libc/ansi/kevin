@@ -1,0 +1,94 @@
+# 1 "localeconv.c"
+ 
+
+# 1 "/usr/include/locale.h"
+ 
+
+
+
+
+
+
+
+
+
+
+extern char *setlocale(int category, const char *locale);
+
+
+# 3 "localeconv.c"
+
+# 1 "/usr/include/stddef.h"
+ 
+
+
+
+
+
+
+
+
+
+
+
+typedef long ptrdiff_t;
+
+
+typedef unsigned long size_t;
+
+
+
+
+extern int *_errno();
+extern int errno;
+
+
+
+# 4 "localeconv.c"
+
+# 1 "/usr/include/limits.h"
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 5 "localeconv.c"
+
+
+static const struct lconv current_lconv = {
+	".", "", "", "", "", "", "", "", "", "",
+	127  , 127  , 127  , 127  ,
+	127  , 127  , 127  , 127  
+};
+
+
+struct lconv *localeconv(void) {
+	return (struct lconv *)&current_lconv;
+}

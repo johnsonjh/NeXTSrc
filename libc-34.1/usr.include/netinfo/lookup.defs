@@ -1,0 +1,43 @@
+/* 
+ * Lookup protocol specification - internal to NeXT
+ * Copyright (C) 1989 by NeXT, Inc.
+ */
+
+subsystem lookup 4241775;
+serverprefix _;
+
+import <netinfo/lookup_types.h>;
+
+
+type port_t = MSG_TYPE_PORT;
+type int = MSG_TYPE_INTEGER_32;
+type lookup_name = (MSG_TYPE_STRING, 256*8);
+type unit = (MSG_TYPE_UNSTRUCTURED, 32);
+/*
+ * Can't reduce the size of the following without blowing binary compatibility
+ * with libc (but not libsys, since it is always shared).
+ */
+type inline_data = array [ * : 4096 ] of unit; 
+type ooline_data = ^ array [] of unit;
+
+
+routine _lookup_link(	server : port_t;
+			name : lookup_name;
+		out	procno: int);
+
+routine _lookup_all(	server : port_t;
+			proc : int;
+			indata : inline_data;
+		out	outdata  : ooline_data);
+
+routine _lookup_one(	server : port_t;
+			proc : int;
+			indata : inline_data;
+		out	outdata  : inline_data);
+
+
+routine _lookup_ooall(	server : port_t;
+			proc : int;
+			indata : ooline_data;
+		out	outdata  : ooline_data);
+

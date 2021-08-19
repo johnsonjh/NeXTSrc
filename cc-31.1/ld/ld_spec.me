@@ -1,0 +1,190 @@
+.sh 1 "Operation of the link editor"
+.lp
+The object files are concatenated in the order specified.  The segments and the
+sections in those segments will appear in the output file in the order they are
+encountered in the object files linked.  All zero fill sections will appear
+after all non-zero fill sections in their segments.
+.lp
+Sections created from files with the
+.i \-sectcreate
+option will appear in the output file last.  Section names for sections created
+from files are not allowed to overlap with a section name in the same segment
+as a section coming from an object file.  Sections created from files may be in
+a segment which has sections from object files and if so will be loaded at the
+end of the non-zero fill sections for that segment.
+.lp
+If the option
+.i \-seglinkedit
+is specified the segment it creates is the last segment in the output file.
+.lp
+Addresses of each segment can be specified by name using
+.i \-segaddr.
+As well as just specifying the address of the first segment using
+.i \-seg1addr.
+For segments that do not have an
+address specified for them they will be assigned an address in order they appear
+in the output file.  The addresses of segments being assigned will be assigned
+based on the ending address of the previous segment.  If the address of the
+first segment has not been specified by name then it's assigned address will be
+the specified (via
+.i \-seg1addr )
+or default first segment address.  The default first segment address is zero
+for all formats except the demand paged executable format (MH_EXECUTE) in which
+case the default first address is the value of the segment alignment.
+.lp
+For the demand paged executable format (MH_EXECUTE) output files
+if none of the segments addresses' covers address zero through
+the value of the segment alignment then a segment, named ``_\|_PAGEZERO'',
+with no access protection will be created to cover those addresses.  This is
+done to cause memory exceptions on dereferencing pointers with zero values.
+
+.sh 1 "New and changed flags to the link editor"
+.lp
+To fully support Mach-O object file formats there will be a number of
+new flags and command line options to the link editor.  Also since the link
+editor will no longer be outputting 4.3bsd a.out formats a few flags will
+no longer be supported.
+.lp
+The new flags to support segment specifications are:
+.ip "\-segalign \f2value\f1"
+Specifies the segment alignment.
+.i value
+is a hexadecimal number that must be an intergral power of 2.
+The default is the target pagesize (2000 hex currently).
+.ip "\-seg1addr \f2addr\f1"
+Specifies the starting address of the first segment in the output file.
+Where
+.i addr
+is a hexadecimal number and must be a multiple of the segment alignment.
+.ip "\-segaddr \f2name\f1 \f2addr\f1"
+Specifies the starting address of the named segment,
+.i name,
+to be
+.i addr.
+Where
+.i addr
+is a hexadecimal number and must be a multiple of the segment alignment.
+.ip "\-segprot \f2name\f1 \f2max\f1 \f2init\f1"
+Specifies the maximum and initial virtual memory protection of the named
+segment,
+.i name,
+to be
+.i max
+and
+.i init
+respectfully.  The values for
+.i max
+and
+.i init
+are any combination of the characters `r' (for read), `w' (for write),
+`x' (for execute) and '\-' (no access).  The default is `rwx' for the maximum
+and initial protection for all segments except the ``_\|_TEXT'' segment who's
+initial protection will be only be `rx' (not writable).
+.ip "\-seglinkedit"
+Create the link edit segment, named ``_\|_LINKEDIT'', which creates a segment
+containing all the link edit information (relocation information, symbol table,
+string table, etc) in the object file.
+
+.lp
+The new flags to support section specifications are:
+.ip "\-sectcreate \f2segname\f1 \f2sectname\f1 \f2file\f1"
+The section named,
+.i sectname,
+in the segment named,
+.i segname,
+is created from the contents of the file,
+.i file.
+This option was previously
+.i "\-segcreate"
+and will continue to be recognized but the name in the documentation and in use
+by NeXT should be changed to 
+.i "\-sectcreate."
+.ip "\-sectalign \f2segname\f1 \f2sectname\f1 \f2value\f1"
+The section named,
+.i sectname,
+in the segment named,
+.i segname,
+will have it's alignment set to
+.i value,
+where
+.i value
+is a hexadecimal number that must be an intergral power of 2.
+This can be used to set the alignment of a section created from a file or to
+increase the alignment of a section from an object file or to set the maximum
+alignment of the (_\|_DATA,_\|_common) section where common symbols are defined
+by the link editor.  Setting the alignment of a literal section causes the
+individual literals to be aligned on that boundary.  The default section
+alignment if not specified by a section header in an object file or on the
+command line will be 10 (hex) or 16 byte alignment.
+
+.lp
+Other new flags:
+.ip "\-i\f2definition:indirect\f1"
+Create an indirect symbol
+.SM (INDR)
+for the symbol name
+.i definition
+which is defined to the same as the symbol name
+.i indirect.
+This replaces the \-a\f2original:alias\f1 option.
+
+.lp
+The following flags referring to 4.3bsd a.out formats will no longer be
+supported:
+.ip "\-D"
+Take the next argument as a hexadecimal number and pad the \_\^\_DATA segment
+with zero bytes to the indicated length.  The padded area appears after the
+last zero fill section in the \_\^\_DATA segment.  This was used as a way to
+allocate area in front of the sbrk(\|) arena on a traditional UNIX system.
+.ip "\-T or \-Ttext"
+The next argument is a hexadecimal number (without the leading 0x) which sets
+the \_\^\_TEXT segment origin.  The default origin is a page size (0x2000).
+This will now be done with \-segaddr.
+.ip "\-Tdata"
+The next argument is a hexadecimal number (without the leading 0x) which sets
+the \_\^\_DATA segment origin.  The default origin is the last address of
+the \_\^\_TEXT segment a rounded to the next multiple of page size (0x2000).
+This will now also be done with \-segaddr.
+
+.lp
+The flags to specify the file format are:
+.ip "\-execute"
+Produce a Mach-O demand paged executable format file.  The headers are placed
+in the first segment and all segments are padded to the segment alignment.
+This has a file type of MH_EXECUTE.  This is the default.  If no segment address
+is specified at address zero then a segment with no protection (no read, write,
+or execute permission) is created at address zero with the size the segment
+alignment.  This segment is named ``_\|_PAGEZERO''.
+This option was previously
+.i "\-Mach"
+and will continue to be recognized but the name in the documentation and in use
+by NeXT should be changed to 
+.i "\-execute" .
+.ip "\-object"
+Produce a Mach-O file in the the relocatable object file format that is
+intended for execution.  This differs from using the
+.b \-r
+option in that it defines common symbols, does not allow undefined symbols and
+does not preserve relocation entries.  This has a file type of MH_OBJECT.
+In this format all sections are placed in one unnamed segment with all
+protections (read, write, execute) allowed on that segment.  This is intended
+for extremely small programs that would otherwise be large due to segment
+padding.
+.ip "\-preload"
+Produce a Mach-O preloaded executable format file.  The headers are not placed
+in any segment.  All sections are placed in there proper segments and they are
+padded to the segment alignment.  This has a file type of MH_PRELOAD.
+This option was previously
+.i "\-p"
+and will continue to be recognized but the name in the documentation and in use
+by NeXT should be changed to 
+.i "\-preload" .
+.ip "\-fvmlib"
+Produce a Mach-O fixed VM shared library format file.  The headers are placed
+in the first segment but the first section in that segment will be placed on
+the next segment alignment boundary in that segment.  All sections are placed
+in there proper segments and they are padded to the segment alignment.
+This has a file type of MH_FVMLIB.
+.i "\-f"
+and will continue to be recognized.  This flag is NOT documented outside of
+the NeXT software department.

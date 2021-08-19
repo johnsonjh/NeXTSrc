@@ -1,0 +1,5 @@
+SCATTER_LOAD= -sectorder __TEXT __text gmon.order -e start
+OPTIMIZE=-g -O
+LIBC= -lsys_s
+
+

@@ -1,0 +1,103 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    mmeyer:1.1; strict;
+comment  @# @;
+
+
+1.1
+date     89.06.01.10.06.32;  author mmeyer;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#
+# Generic top-level makefile for simple commands
+# (c) NeXT, Inc.  1987
+#
+PRODUCT= autodiskmount
+BINDIR=	$(DSTROOT)/usr/etc
+DSTDIRS= $(BINDIR)
+
+CDEFS=	-DNeXT_MOD -D__STRICT_BSD__ -I../../..
+CFLAGS=	-gg -O -fwritable-strings $(CDEFS)
+IFLAGS= -s -g wheel -m 2755
+LIBS= 
+
+HFILES=
+YFILES=
+CFILES= ${PRODUCT}.c mount.c umount.c lnresolve.c makeplaces.c
+SFILES=
+
+DERIVED=
+GARBAGE=
+
+SRCS= $(HFILES) $(YFILES) $(CFILES) $(SFILES)
+OBJS= $(CFILES:.c=.o) $(YFILES:.y=.o) $(SFILES:.s=.o)
+
+all:	$(PRODUCT)
+
+install: DSTROOT $(DSTDIRS) all
+	install $(IFLAGS) $(PRODUCT).NEW $(BINDIR)/$(PRODUCT)
+
+#
+# Building PRODUCT
+#
+
+$(PRODUCT).NEW:	$(OBJS) vers.o
+	$(CC) $(CFLAGS) -o $@@ $(OBJS) vers.o $(LIBS)
+
+vers.c: $(DOVERS) $(OBJS)
+	@@rm -f $@@
+	vers_string -c $(PRODUCT) > $@@
+
+#
+# Standard targets
+#
+$(PRODUCT):	Makedep $$@@.NEW
+
+clean:	ALWAYS
+	-rm -f *.o *.NEW TAGS tags vers.c Makedep $(PRODUCT) $(DERIVED) \
+		$(GARBAGE)
+
+DSTROOT:
+	@@if [ -n "$($@@)" ]; \
+	then \
+		exit 0; \
+	else \
+		echo Must define $@@; \
+		exit 1; \
+	fi
+
+$(DSTDIRS):
+	mkdirs $@@
+
+depend Makedep: $(DERIVED)
+	rm -f Makedep
+	$(CC) -M $(CDEFS) $(CFILES) $(SFILES) $(DERIVED) | \
+	    awk '{ if ($$1 != prev) { if (rec != "") print rec; \
+		rec = $$0; prev = $$1; } \
+		else { if (length(rec $$2) > 78) { print rec; rec = $$0; } \
+		else rec = rec " " $$2 } } \
+		END { print rec }' >Makedep
+
+tags:	ALWAYS
+	etags $(SRCS)
+	ctags $(SRCS)
+
+ALWAYS:
+
+-include Makedep
+@

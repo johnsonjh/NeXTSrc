@@ -1,0 +1,88 @@
+/* image.psw, support pswrap routines for image processing
+ *  
+ * Prepared by: R. E. Crandall
+ * 11-MAR-88
+ */
+
+defineps showimage(float destX; float destY; float destWidth; float destHeight; int w; int h; int bps; int rowbytes)
+	/picstr rowbytes string def
+	destX destY translate
+	destWidth destHeight scale
+	w h bps
+	[w 0 0 h neg 0 h]
+	{currentfile picstr readstring pop}
+	image
+endps
+
+#if 0
+
+defineps showimage(float destX; float destY; float destWidth; float destHeight; int w; int h; int bps; int rowbytes)
+	/picstr rowbytes string def
+	destX destY translate
+	destWidth destHeight scale
+	w h bps
+	[w 0 0 h neg 0 h]
+	{currentfile picstr readstring pop}
+	image
+endps
+
+
+defineps showdecal(float destX; float destY; float destWidth; float destHeight; int w; int h; int bps; int rowbytes)
+	/picstr rowbytes string def
+	destX destY translate
+	destWidth destHeight scale
+	w h bps
+	[w 0 0 h neg 0 h]
+	{currentfile picstr readstring pop}
+	dup true 1 alphaimage
+endps
+
+
+defineps wimage(float destX; float destY; float destWidth; float destHeight; int w; int h; int bps; int numbytes; char ptr[numbytes])
+	gsave
+	destX destY translate
+	destWidth destHeight scale
+	w h bps
+    	[w 0 0 h neg 0 h ]
+	{ (ptr)}
+	image
+	grestore
+endps
+
+
+defineps showline(float x; float y; int width; int bitsper; int numbytes; char Line[numbytes])
+	gsave
+	x y translate
+	width 1 bitsper
+	[1 0 0 -1 0 1]
+	{(Line)}
+	image
+	grestore
+endps
+
+
+defineps SizeImageInWindow(int win; float x; float y; float w; float h | int *dw; int *dh; int *depth; float m[6])
+	currentwindow 
+	win setwindow
+	x y w h matrix sizeimage aload pop 6 { m } repeat depth dh dw
+	setwindow
+endps
+
+
+defineps ReadImageFromWindow(int win; float x; float y; float w; float h; int sync)
+    gsave
+    initmatrix initclip
+    currentwindow
+    win setwindow
+    x y w h
+    {
+        sync printbinaryobject		% send a scanline back in a string
+    }
+    readimage
+    flush
+    setwindow
+    grestore
+endps
+
+#endif
+

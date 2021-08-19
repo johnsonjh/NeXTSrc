@@ -1,0 +1,422 @@
+/* 
+ * Mach Operating System
+ * Copyright (c) 1987 Carnegie-Mellon University
+ * All rights reserved.  The CMU software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ */
+
+subsystem kernel mach 2000;
+
+/*
+ *	Matchmaker definitions file for Mach kernel interface.
+ *
+ * HISTORY
+ * 23-Feb-88  Mary Thompson (mrt) at Carnegie Mellon
+ *	Changed to new form of translation syntax
+ *
+ * 21-Jan-88  David Golub (dbg) at Carnegie-Mellon University
+ *	Added new thread and task interfaces.  Obsolete interfaces
+ *	are prefixed with 'xxx_' but remain (temporarily) for binary
+ *	compatibility.  Made task_create no longer return the task's
+ *	data port (it doesn't exist).  Removed obsolete external pager
+ *	interfaces (per mwyoung): pager_data_lock, pager_clean_request,
+ *	pager_flush_request.
+ *
+ *  3-Dec-87  David Golub (dbg) at Carnegie-Mellon University
+ *	Added deallocator functions for task_t, thread_t, vm_map_t.
+ *
+ * 18-Nov-87  Avadis Tevanian (avie) at Carnegie-Mellon University
+ *	Reset history.
+ *
+ */
+
+type int = MSG_TYPE_INTEGER_32;
+type boolean_t = MSG_TYPE_BOOLEAN;
+
+type kern_return_t = int;
+
+type port_t = MSG_TYPE_PORT;
+type port_rcv_t = MSG_TYPE_PORT_RECEIVE;
+type port_array_t = ^array[] of MSG_TYPE_PORT;
+
+type task_t = port_t
+	InTran:	task_t 	convert_port_to_task(port_t)
+	OutTran:	port_t	convert_task_to_port(task_t)
+	Destructor: 	task_deallocate(task_t);
+
+type thread_t = port_t
+	InTran:	thread_t	convert_port_to_thread(port_t)
+	OutTran:port_t		convert_thread_to_port(thread_t)
+	Destructor:		thread_deallocate(thread_t);
+
+type xxx_thread_status_data_t	= struct[64] of int;		/* OBSOLETE */
+
+type thread_state_t		= array[*:1024] of int;
+
+type thread_array_t = ^array[] of port_t;	/* XXX compensate for MiG */
+
+type vm_task_t = port_t
+	InTran:	vm_map_t	convert_port_to_map(port_t)
+	Destructor:		vm_map_deallocate(vm_map_t);
+
+type vm_address_t = int;
+type vm_offset_t = int;
+type vm_size_t = int;
+type vm_prot_t = int;
+type vm_inherit_t = int;
+type vm_statistics_data_t = struct[13] of int;
+
+type xxx_thread_statistics_data_t = struct[10] of int;		/* OBSOLETE */
+type xxx_task_statistics_data_t	= struct[14] of int;		/* OBSOLETE */
+
+type thread_info_t		= array[*:1024] of int;
+type task_info_t		= array[*:1024] of int;
+
+type paging_object_t = port_t;
+type vm_pager_request_t = port_t
+	InTran:	vm_object_t	vm_object_request_object(port_t)
+	OutTran:port_t		vm_object_request_port(vm_object_t);
+
+type pointer_t = ^array [] of MSG_TYPE_BYTE;
+
+type machine_info_data_t = struct[5] of int;	/* XXX bogus */
+type machine_slot_data_t = struct[7] of int;	/* XXX bogus */
+
+type vm_page_data_t = array[4096] of MSG_TYPE_BYTE;
+
+type network_port_t = struct[6] of int;
+
+import "kern/mach_types.h";
+
+uimport <mach_extra.h>;
+
+simport "kern/mach_redefines.h";		/* XXX - for routines
+						   that haven't been
+						   implemented yet */
+simport "sys/task_statistics.h";		/* XXX - obsolete definitions */
+simport "sys/thread_statistics.h";		/* XXX - obsolete definitions */
+
+routine port_allocate(
+		target_task	: task_t;
+	out	my_port		: port_t);
+	   
+routine port_deallocate(
+		target_task	: task_t;
+		my_port		: port_t);
+
+routine port_enable(
+		target_task	: task_t;
+		my_port		: port_t);
+
+routine port_disable(
+		target_task	: task_t;
+		my_port		: port_t);
+
+routine port_select(
+		target_task	: task_t;
+	out	port_list	: port_array_t);
+	
+routine port_set_backlog(
+		target_task	: task_t;
+		my_port		: port_t;
+		backlog		: int);
+
+routine port_status(
+		target_task	: task_t;
+		my_port		: port_t;
+	out	enabled		: boolean_t;
+	out	num_msgs	: int;
+	out	backlog		: int;
+	out	ownership	: boolean_t;
+	out	receive_rights	: boolean_t);
+		
+routine task_create(
+		target_task	: task_t;
+		inherit_memory	: boolean_t;
+	out	child_task	: task_t);
+
+routine task_terminate(
+		target_task	: task_t);
+
+routine xxx_task_suspend(					/* OBSOLETE */
+		target_task	: task_t);
+			
+routine xxx_task_resume(					/* OBSOLETE */
+		target_task	: task_t);
+
+routine task_threads(
+		target_task	: task_t;
+	out	thread_list	: thread_array_t);
+
+routine task_ports(
+		target_task	: task_t;
+	out	port_list	: port_array_t);
+
+routine xxx_task_status(					/* OBSOLETE */
+		target_task	: task_t;
+	out	notify_port	: port_t;
+	out	resumed		: boolean_t);
+
+routine xxx_task_set_notify(					/* OBSOLETE */
+		target_task	: task_t;
+		notify_port	: port_t);
+			
+routine xxx_thread_create(					/* OBSOLETE */
+		parent_task	: task_t;
+	out	child_thread	: thread_t;
+	out	child_data	: port_t);
+
+routine thread_terminate(
+		target_thread	: thread_t);
+
+routine xxx_thread_suspend(					/* OBSOLETE */
+		target_thread	: thread_t);
+			
+routine xxx_thread_resume(					/* OBSOLETE */
+		target_thread	: thread_t);
+
+routine xxx_thread_status(					/* OBSOLETE */
+		target_thread	: thread_t;
+	out	resumed		: boolean_t;
+	out	old_state	: xxx_thread_status_data_t);
+	
+routine xxx_thread_mutate(					/* OBSOLETE */
+		target_thread	: thread_t;
+		new_state	: xxx_thread_status_data_t);
+
+routine vm_allocate(
+		target_task	: vm_task_t;
+	inout	address		: vm_address_t;
+		size		: vm_size_t;
+		anywhere	: boolean_t);
+
+routine vm_allocate_with_pager(
+		target_task	: vm_task_t;
+	inout	address		: vm_address_t;
+		size		: vm_size_t;
+		anywhere	: boolean_t;
+		paging_object	: paging_object_t;
+		offset		: vm_offset_t);
+		
+routine vm_deallocate(
+		target_task	: vm_task_t;
+		address		: vm_address_t;
+		size		: vm_size_t);
+
+routine vm_protect(
+		target_task	: vm_task_t;
+		address		: vm_address_t;
+		size		: vm_size_t;
+		set_maximum	: boolean_t;
+		new_protection	: vm_prot_t);
+
+routine vm_inherit(
+		target_task	: vm_task_t;
+		address		: vm_address_t;
+		size		: vm_size_t;
+		new_inheritance	: vm_inherit_t);
+
+routine vm_read(
+		target_task	: vm_task_t;
+		address		: vm_address_t;
+		size		: vm_size_t;
+	out	data		: pointer_t);
+
+routine vm_write(
+		target_task	: vm_task_t;
+		address		: vm_address_t;
+		data		: pointer_t);
+
+routine vm_copy(
+		target_task	: vm_task_t;
+		source_address	: vm_address_t;
+		size		: vm_size_t;
+		dest_address	: vm_address_t);
+
+routine vm_region(
+		target_task	: vm_task_t;
+	inout	address		: vm_address_t;
+	out	size		: vm_size_t;
+	out	protection	: vm_prot_t;
+	out	max_protection	: vm_prot_t;
+	out	inheritance	: vm_inherit_t;
+	out	is_shared	: boolean_t;
+	out	object_name	: port_t;
+	out	offset		: vm_offset_t);
+
+routine vm_statistics(
+		target_task	: vm_task_t;
+	out	vm_stats	: vm_statistics_data_t);
+
+routine task_by_unix_pid(
+		target_task	: task_t;
+		process_id	: int;
+	out	result_task	: task_t);
+
+skip;	/* preserve numbering */
+
+routine	mach_ports_register(
+		target_task	: task_t;
+		init_port_set	: port_array_t);
+		
+routine	mach_ports_lookup(
+		target_task	: task_t;
+	out	init_port_set	: port_array_t);
+
+routine unix_pid(
+		target_task	: task_t;
+	out	process_id	: int);
+
+routine netipc_listen(
+		request_port	: port_t;
+		src_addr	: int;
+		dst_addr	: int;
+		src_port	: int;
+		dst_port	: int;
+		protocol	: int;
+		ipc_port	: port_t);
+
+routine netipc_ignore(
+		request_port	: port_t;
+		ipc_port	: port_t);
+
+simpleroutine pager_data_provided(
+		paging_request	: vm_pager_request_t;
+		offset		: vm_offset_t;
+		data		: pointer_t;
+		lock_value	: vm_prot_t);
+
+simpleroutine pager_data_unavailable(
+		paging_request	: vm_pager_request_t;
+		offset		: vm_offset_t;
+		size		: vm_size_t);
+
+skip;	/* pager_data_lock: OBSOLETE */
+
+skip;	/* pager_clean_request : OBSOLETE */
+
+skip;	/* pager_flush_request : OBSOLETE */
+
+simpleroutine pager_lock_request(
+		paging_request	: vm_pager_request_t;
+		offset		: vm_offset_t;
+		size		: vm_size_t;
+		should_clean	: boolean_t;
+		should_flush	: boolean_t;
+		lock_value	: vm_prot_t;
+		reply_to	: port_t);
+
+simpleroutine pager_cache(
+		paging_request	: vm_pager_request_t;
+		should_cache	: boolean_t);
+
+routine xxx_thread_wait(					/* OBSOLETE */
+		target_thread	: thread_t;
+		wait		: boolean_t);
+
+routine xxx_task_wait(						/* OBSOLETE */
+		target_task	: task_t;
+		wait		: boolean_t);
+
+routine host_info(
+		target_task	: task_t;
+	out	info		: machine_info_data_t);
+	
+routine slot_info(
+		target_task	: task_t;
+		slot		: int;
+	out	info		: machine_slot_data_t);
+
+routine cpu_control(
+		target_task	: task_t;
+		cpu		: int;
+		running		: boolean_t);
+
+routine xxx_thread_statistics(					/* OBSOLETE */
+		target_thread	: thread_t;
+	out	thread_stats	: xxx_thread_statistics_data_t);
+
+routine xxx_task_statistics(					/* OBSOLETE */
+		target_task	: task_t;
+	out	task_stats	: xxx_task_statistics_data_t);
+
+routine	netport_init(
+		request_port	: port_t);
+
+routine	netport_enter(
+		request_port	: port_t;
+		netport		: network_port_t;
+		port		: port_t;
+		local		: boolean_t);
+
+routine	netport_remove(
+		request_port	: port_t;
+		netport		: network_port_t);
+
+simpleroutine pager_data_provided_inline(
+		paging_request	: vm_pager_request_t;
+		offset		: vm_offset_t;
+		data		: vm_page_data_t;
+		lock_value	: vm_prot_t);
+
+
+routine	task_suspend(
+		target_task	: task_t);
+
+routine	task_resume(
+		target_task	: task_t);
+
+routine task_get_special_port(
+		task		: task_t;
+		which_port	: int;
+	out	special_port	: port_t);
+
+routine task_set_special_port(
+		task		: task_t;
+		which_port	: int;
+		special_port	: port_t);
+
+routine	task_info(
+		target_task	: task_t;
+		flavor		: int;
+	out	task_info_out	: task_info_t);
+
+
+routine thread_create(
+		parent_task	: task_t;
+	out	child_thread	: thread_t);
+
+routine	thread_suspend(
+		target_thread	: thread_t);
+
+routine	thread_resume(
+		target_thread	: thread_t);
+
+routine thread_abort(
+		target_thread	: thread_t);
+
+routine thread_get_state(
+		target_thread	: thread_t;
+		flavor		: int;
+	out	old_state	: thread_state_t);
+
+routine	thread_set_state(
+		target_thread	: thread_t;
+		flavor		: int;
+		new_state	: thread_state_t);
+
+routine thread_get_special_port(
+		thread		: thread_t;
+		which_port	: int;
+	out	special_port	: port_t);
+
+routine thread_set_special_port(
+		thread		: thread_t;
+		which_port	: int;
+		special_port	: port_t);
+
+routine	thread_info(
+		target_thread	: thread_t;
+		flavor		: int;
+	out	thread_info_out	: thread_info_t);
+

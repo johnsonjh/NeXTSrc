@@ -1,0 +1,83 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    osdev:1.2; strict;
+comment  @# @;
+
+
+1.2
+date     89.06.11.17.37.14;  author osdev;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.06.11.17.33.22;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+1.2
+log
+@lee's mods.
+@
+text
+@#! /bin/csh -f
+# This shell script is called from nu to purge one account.
+#
+# it is named "nu3.sh" instead of something like "killacct.sh" to discourage
+# people from trying to run it standalone, without going through nu.
+#
+# Created:  25 Aug 84	Brian Reid
+# Modified:  9 Jun 89   Lee Tucker
+
+set exuser=$1
+set logindir=$2
+set linkdir=$3
+set Logfile=$4
+set debug=$5
+
+set egrepstr = "^${exuser}\:"
+if ($debug == 0) then
+    rm -rf $logindir; echo rm -rf $logindir
+    if ($logindir != $linkdir) then
+	rm $linkdir
+	echo rm $linkdir
+    endif
+    rm -f /usr/spool/mail/$exuser; echo rm -f /usr/spool/mail/$exuser
+endif
+echo $exuser deleted by $user `date` >> $Logfile
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d8 1
+a25 18
+# directories removed; now get them out of /etc/passwd
+if ($debug) then
+    echo egrep string is $egrepstr
+else
+    egrep -v $egrepstr /etc/passwd > /tmp/nu.temp
+    cp /tmp/nu.temp /etc/passwd
+    rm -f /tmp/nu.temp
+endif
+
+# Leave it to the person killing the user to get rid of these refs
+foreach loc ( /etc/{aliases,group} )
+    if ( -e $loc ) then
+	egrep -s $exuser $loc
+	if ($status == 0) then
+	    echo User $exuser is still referenced in $loc\; Please edit out.
+	endif
+    endif
+end
+@

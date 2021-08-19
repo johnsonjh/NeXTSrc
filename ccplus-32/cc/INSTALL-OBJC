@@ -1,0 +1,3 @@
+cp -p c-parse.y objc-parse.y
+cp -p c-parse.gperf objc-parse.gperf
+

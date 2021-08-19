@@ -1,0 +1,110 @@
+Changes for the Warp ?? release (the -25 compiler release):
+- Added the scattered_relocation_info struct to reloc.h
+
+Changes for the Warp ?? release (the -24 compiler release):
+- Added #import <sys/loader.h> to ldsyms.h (bug 6031).
+- Added rld.h to be installed in /usr/include.
+
+Changes for the 2.0 impulse X.X release (the -19 compiler release):
+- Updated ldsyms.h to match the new link editor.  Basicly removing lots of old
+  stuff.
+- Added one missing ';' in symseg.h to get rid of a warning.
+- Removed the temporay copies of <ranlib.h> and  <sys/loader.h> now that the
+  Impulse 0.02 release has the right versions.
+- Added temporary copies of <nlist.h> and <sys/machine.h> until the next libc
+  and mk projects get released and the correct versions are in /usr/include.
+
+Changes for the 0.93 release (the -12 compiler release):
+- No longer install symseg.h
+- Now own sys/exec.h as a part of a.out.h
+
+Changes for the 0.82 release (the -8 compiler release):
+- Changed the Makefile to install in /usr/include
+
+Changes for the 0.82 release (the -7 compiler release):
+- Added header_addr to fvmlib load and id commands.
+- Added the SEG_PAGEZERO segment name to sys/loader.h for the segment created
+  to protect page zero for NULL pointers.
+
+Changes for the 0.81 release (the -6 compiler release):
+- The following files to reflect what is contained in a true mach-O object
+  file (relocatables and other formats):
+	nlist.h
+	reloc.h (new)
+	symseg.h
+	stab.h
+  These along with <sys/loader.h> are now the offical files that mach-O object
+  tools should reference.  The file <a.out.h> has been updated with the same
+  changes but will go away in the 1.0 release or renamed to <a.out.h.old>.  
+
+  The logical changes are as follows:
+
+  To the nlist structure (also see comments in <nlist.h> and <stab.h>):
+
+    The modifications from the original format were changing n_other (an unused
+    field) to n_sect and the addition of the N_SECT type.   All mach-O symbols
+    defined a section (for example what use to be N_TEXT, N_DATA and N_BSS) now
+    have the type N_SECT.
+
+    If the type is N_SECT then the n_sect field contains an ordinal of the
+    section the symbol is defined in.  The sections are numbered from 1 and 
+    refer to sections in order they appear in the load commands for the file
+    they are in.  This means the same ordinal may very well refer to different
+    sections in different files.
+  
+    The n_value field for all symbol table entries (including N_STAB's) gets
+    updated by the link editor based on the value of it's n_sect field and where
+    the section n_sect references gets relocated.  If the value of the n_sect 
+    field is NO_SECT then it's n_value field is not changed by the link editor.
+    The comments in <stab.h> have been updated to reflect this.
+
+    Common symbols are represented by undefined (N_UNDF) external (N_EXT) types
+    who's values (n_value) are non-zero.  In which case the value of the n_value
+    field is the size (in bytes) of the common symbol.
+
+    Absolute, undefined and common symbols are NOT in any section and thus their
+    n_sect field must be NO_SECT to indicate this and avoid having their n_value
+    field changed.
+
+  To the relocation_info structure (see the comments in <reloc.h>):
+
+    The modifications from the original format were changing the value
+    of the r_symbolnum field for "local" (r_extern == 0) relocation entries.
+
+    In 4.3bsd a.out objects if r_extern is zero then r_symbolnum is an ordinal
+    for the segment the symbol being relocated is in.  These ordinals are the
+    symbol types N_TEXT, N_DATA, N_BSS or N_ABS.  In mach-O object files these
+    ordinals refer to the sections in the object file they are in.  The first
+    section has the ordinal 1, the second 2, and so on.  This means that the
+    same ordinal in two different object files could refer to two different
+    sections.  And further could have still different ordinals when combined
+    by the link-editor.  The value R_ABS is used for relocation entries for
+    absolute symbols which need no further relocation.
+
+  To the symseg structures (see the comments in <symseg.h>):
+
+    To handle an arbitrary number of segments and sections the symbol_root,
+    the indirect_root and the shlib_root have new structures in a mach-O
+    object file.  The change to these structures was to replace the fields
+    relating to where a segment was loaded with a load map.
+
+    The load map describes where the parts the relocatable object have been
+    loaded in the executable.  The enitre address space of the relocatable
+    is to be covered by all the map entries.  There may be multiple map entries
+    for a single section or one map entry for multiple sections.  This allows
+    the link editor to scatter load a section based on information that improves
+    performance by increasing the locality of reference.
+
+- The N_INDR symbol type was added for indirect symbols (to support building
+  the ANSI C library).
+
+    If the type is N_INDR then the symbol is defined to be the same as another
+    symbol.  In this case the n_value field is an index into the string table
+    of the other symbol's name.  When the other symbol is defined then they both
+    take on the defined type and value.
+
+- Changed the loader defined symbol names _etext, _edata, and _end to __etext,
+  __edata, __end so not to pollute the name space of ANSI C programs.  There
+  are now macros for these symbols.  The ANSI C library will have objects with
+  indirect symbols so that old names will still work if the program is linked
+  with the ANSI C library.

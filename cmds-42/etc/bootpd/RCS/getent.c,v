@@ -1,0 +1,385 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    osdev:1.2; strict;
+comment  @ * @;
+
+
+1.2
+date     89.05.30.19.29.41;  author osdev;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.05.30.19.29.16;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@original version
+@
+
+
+1.2
+log
+@New version from Brad Taylor -- 5/30/89
+@
+text
+@#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <net/if.h>
+#include <netinet/if_ether.h>
+#include <arpa/inet.h>
+
+useni()
+{
+	static int useit = -1;
+
+	if (useit == -1){
+		useit = _lu_running();
+	}
+	return (useit);
+}
+
+int
+ni_getbyether(
+	      struct ether_addr *en,
+	      char **name,
+	      struct in_addr *ip,
+	      char **bootfile
+	      )
+{
+	return (bootp_getbyether(en, name, ip, bootfile));
+}
+
+int
+ni_getbyip(
+	   struct in_addr *ip,
+	   char **name,
+	   struct ether_addr *en,
+	   char **bootfile
+	   )
+{
+	return (bootp_getbyip(en, name, ip, bootfile));
+}
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 1
+a1 9
+/*
+ * Copyright (C) 1989 by NeXT, Inc.
+ *
+ * NetInfo bootp info lookup routines. These should really be centralized
+ * with the other lookup stuff inside of libc.
+ */
+#include <stdio.h>
+#include <ctype.h>
+#include <netinfo/ni.h>
+d3 1
+d6 1
+a6 2
+#include "clib.h"
+#include "mm.h"
+a7 209
+#define MAX_INT_SIZE (3*sizeof(int) + 1) /* portable, though liberal */
+
+#define UNINIT ((void *)(-1))
+
+static const char NAME_NAME[] = "name";
+static const char NAME_BOOTFILE[] = "bootfile";
+static const char NAME_EN_ADDRESS[] = "en_address";
+static const char NAME_IP_ADDRESS[] = "ip_address";
+static const char NAME_MACHINES[] = "machines";
+
+typedef struct ni_global_state_node {
+	ni_id root_id;
+	void *ni;
+} ni_global_state_node;
+
+typedef struct ni_global_state {
+	ni_index len;
+	ni_global_state_node *val;
+} ni_global_state;
+
+static struct ni_global_state nichain = { NI_INDEX_NULL, UNINIT };
+
+typedef struct ni_local_state_node {
+	ni_id dir;
+	ni_idlist children;
+	ni_index which;
+} ni_local_state_node;
+
+typedef struct ni_local_state {
+	ni_index which;
+	ni_index len;
+	ni_local_state_node *val;
+} ni_local_state;
+
+static int
+root_init(
+	  void
+	  )
+{
+	void *local_ni;
+	ni_id root_id;
+	ni_index i;
+
+	if (nichain.val != UNINIT) {
+		return (nichain.val != NULL);
+	}
+	
+	local_ni = ni_new(NULL, ".");
+	if (local_ni == NULL) {
+		return (0);
+	}
+	if (ni_root(local_ni, &root_id) != NI_OK) {
+		ni_free(local_ni);
+		nichain.val = NULL;
+		return (0);
+	}
+	if (nichain.val != UNINIT) {
+		for (i = 0; i < nichain.len; i++) {
+			ni_free(nichain.val[i].ni);
+		}
+		MM_FREE(nichain.val);
+	}
+	MM_ALLOC(nichain.val);
+	nichain.val[0].ni = local_ni;
+	nichain.val[0].root_id = root_id;
+	nichain.len = 1;
+	return (1);
+}
+
+static int
+do_init(
+	const ni_name name,
+	ni_local_state *state
+	)
+{
+	ni_idlist match;
+	int i;
+
+	if (!root_init()) {
+		return (0);
+	}
+	if (state->val != NULL) {
+		return (1);
+	}
+	if (ni_lookup(nichain.val[0].ni, &nichain.val[0].root_id, 
+		      NAME_NAME, name, &match) != NI_OK) {
+		return (0);
+	}
+	state->len = 1;
+	state->which = 0;
+	MM_ALLOC(state->val);
+	state->val[0].dir.nii_object = match.niil_val[0];
+	state->val[0].which = NI_INDEX_NULL;
+	ni_idlist_free(&match);
+	return (1);
+}
+
+	
+static void
+do_set(
+       ni_local_state *state
+       )
+{
+	ni_index i;
+
+	for (i = 0; i < state->len; i++) {
+		if (state->val[i].which != NI_INDEX_NULL) {
+			ni_idlist_free(&state->val[i].children);
+			state->val[i].which = NI_INDEX_NULL;
+		}
+	}
+	state->which = 0;
+}
+
+static int
+do_more(
+	ni_name name,
+	ni_local_state *state,
+	ni_index which
+	)
+{
+	void *ni;
+	ni_idlist match;
+	ni_id root;
+	ni_index i;
+
+	if (nichain.len <= which + 1) {
+		/*
+		 * Need to grow it
+		 */
+		ni = ni_new(nichain.val[nichain.len - 1].ni, "..");
+		if (ni == NULL) {
+			return (0);
+		}
+		if (ni_root(ni, &root) != NI_OK) {
+			ni_free(ni);
+			return (0);
+		}
+		MM_GROW_ARRAY(nichain.val, nichain.len);
+		nichain.val[nichain.len].ni = ni;
+		nichain.val[nichain.len].root_id = root;
+		nichain.len++;
+	} else {
+		ni = nichain.val[which + 1].ni;
+		root = nichain.val[which + 1].root_id;
+	}
+	if (which + 1 >= state->len) {
+		if (ni_lookup(ni, &root, NAME_NAME, name, &match) != NI_OK) {
+			return (0);
+		}
+		MM_GROW_ARRAY(state->val, state->len);
+		state->val[state->len].dir.nii_object = match.niil_val[0];
+		state->val[state->len].which = NI_INDEX_NULL;
+		ni_idlist_free(&match);
+		state->len++;
+	}
+	if (state->val[which + 1].which != NI_INDEX_NULL) {
+		state->val[which + 1].which = NI_INDEX_NULL;
+		ni_idlist_free(&state->val[which + 1].children);
+	}
+	return (1);
+}
+	
+static void *
+do_get(
+       ni_name name,
+       ni_local_state *state,
+       ni_name prop_name,
+       ni_name prop_val,
+       void *(*readit)(),
+       void *arg
+       )
+{
+	ni_idlist match;
+	void *res;
+	ni_id id;
+	ni_status status;
+	ni_index i;
+	void *ni;
+
+	if (state->val[0].which == NI_INDEX_NULL) {
+		do_set(state);
+	}
+	for (i = 0; i < state->len; i++) {
+		ni = nichain.val[i].ni;
+		id = state->val[i].dir;
+		status = ni_lookup(ni, &id, prop_name, prop_val, &match);
+		if (status != NI_OK && status != NI_NODIR) {
+			return (NULL);
+		}
+		if (status == NI_OK) {
+			res = (*readit)(ni, &match, arg);
+			ni_idlist_free(&match);
+			if (res != NULL) {
+				return (res);
+			}
+		}
+		if (!do_more(name, state, i)) {
+			return (NULL);
+		}
+	}
+	return (NULL);
+}
+
+#define bootp_init() do_init(NAME_MACHINES, &bootp_state)
+
+static ni_local_state bootp_state = { NI_INDEX_NULL };
+static void *bootp_read(void *, ni_idlist *, void *);
+
+d13 1
+a13 1
+		useit = bootp_init();
+a17 10
+typedef struct bootp_stuff {
+	char *name;
+	struct ether_addr en_addr;
+	struct in_addr ip_addr;
+	char *bootfile;
+} bootp_stuff;
+	
+	
+static struct bootp_stuff stuff;
+
+d26 1
+a26 8
+	if (do_get(NAME_MACHINES, &bootp_state, NAME_EN_ADDRESS,
+		   ether_ntoa(en), bootp_read, &stuff) == NULL) {
+		return (0);
+	}
+	*ip = stuff.ip_addr;
+	*name = stuff.name;
+	*bootfile = stuff.bootfile;
+	return (1);
+d37 1
+a37 9
+
+	if (do_get(NAME_MACHINES, &bootp_state, NAME_IP_ADDRESS,
+		   inet_ntoa(*ip), bootp_read, &stuff) == NULL) {
+		return (0);
+	}
+	*ip = stuff.ip_addr;
+	*name = stuff.name;
+	*bootfile = stuff.bootfile;
+	return (1);
+a39 47
+static void *
+bootp_read(
+	   void *ni,
+	   ni_idlist *match,
+	   void *unused
+	   )
+{
+	ni_proplist pl;
+	ni_property prop;
+	ni_index i;
+	ni_id id;
+
+	bzero(&stuff, sizeof(&stuff));
+	id.nii_object = match->niil_val[0];
+	if (ni_read(ni, &id, &pl) != NI_OK) {
+		return (NULL);
+	}
+	if (stuff.name != NULL) {
+		ni_name_free(&stuff.name);
+	}
+	if (stuff.bootfile != NULL) {
+		ni_name_free(&stuff.bootfile);
+	}
+	bzero(&stuff, sizeof(stuff));
+	for (i = 0; i < pl.nipl_len; i++) {
+		prop = pl.nipl_val[i];
+		if (ni_name_match(prop.nip_name, NAME_NAME) &&
+		    prop.nip_val.ninl_len > 0) {
+			stuff.name = ni_name_dup(prop.nip_val.ninl_val[0]);
+		} else if (ni_name_match(prop.nip_name, 
+					 NAME_IP_ADDRESS) &&
+			   prop.nip_val.ninl_len > 0) {
+			(stuff.ip_addr.s_addr = 
+			 inet_addr(prop.nip_val.ninl_val[0]));
+		} else if (ni_name_match(prop.nip_name, 
+					 NAME_EN_ADDRESS) &&
+			   prop.nip_val.ninl_len > 0) {
+			stuff.en_addr = ether_aton(prop.nip_val.ninl_val[0]);
+		} else if (ni_name_match(prop.nip_name, 
+					 NAME_BOOTFILE) &&
+			   prop.nip_val.ninl_len > 0) {
+			stuff.bootfile = ni_name_dup(prop.nip_val.ninl_val[0]);
+		}
+	}
+	ni_proplist_free(&pl);
+	return (&stuff);
+}
+@

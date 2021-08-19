@@ -1,0 +1,7 @@
+libc-27 changes:
+
+usr.include/servers/bootstrap.defs	Remove comment concerning machports
+					registration in the
+					/etc/bootstrap.conf file.
+usr.include/servers/bootstrap_defs.h	Change BOOTSTRAP_MAX_LOOKUP_CNT to
+					BOOTSTRAP_MAX_LOOKUP_COUNT.

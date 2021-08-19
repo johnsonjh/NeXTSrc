@@ -1,0 +1,20 @@
+#
+#  Sample bootparams file
+#
+#  If you want your machine to become a bootparams server, you should
+#  edit this file, move it to /private/etc/bootparams, and then reboot
+#  your system.  The bootparams server will start up automatically.
+#
+#  This is an example client entry for a diskless machine.  To make it
+#  work, you would need to change "SERVER" to the hostname of the
+#  fileserver and "CLIENT" to the hostname of the client machine.  In
+#  the "private" file entry, the path after the "@" tells the client
+#  where in its filesystem to mount the private directory.
+#
+# CLIENT	root=SERVER:/ private=SERVER:/clients/CLIENT@/private
+#
+#  This is an example entry for a diskfull machine that will only be
+#  using bootparams to find out its hostname on this network.  To make
+#  it work, change HOST to the hostname of the diskfull machine.
+#
+# HOST

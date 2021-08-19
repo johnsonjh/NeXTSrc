@@ -1,0 +1,46 @@
+diff -r sendmail.target/Makefile sendmail/Makefile
+diff -r sendmail.target/READ_ME sendmail/READ_ME
+diff -r sendmail.target/aux/Makefile sendmail/aux/Makefile
+diff -r sendmail.target/aux/arpa.c sendmail/aux/arpa.c
+diff -r sendmail.target/aux/mailstats.c sendmail/aux/mailstats.c
+diff -r sendmail.target/aux/matchhdr.c sendmail/aux/matchhdr.c
+diff -r sendmail.target/aux/mconnect.c sendmail/aux/mconnect.c
+diff -r sendmail.target/aux/newaliases.c sendmail/aux/newaliases.c
+diff -r sendmail.target/aux/praliases.c sendmail/aux/praliases.c
+diff -r sendmail.target/aux/rmail.c sendmail/aux/rmail.c
+
+DONE diff -r sendmail.target/src/Makefile sendmail/src/Makefile
+DONE diff -r sendmail.target/src/READ_ME sendmail/src/READ_ME
+DONE diff -r sendmail.target/src/TODO sendmail/src/TODO
+DONE diff -r sendmail.target/src/Version.c sendmail/src/Version.c
+DONE diff -r sendmail.target/src/alias.c sendmail/src/alias.c
+DONE diff -r sendmail.target/src/arpadate.c sendmail/src/arpadate.c
+DONE diff -r sendmail.target/src/clock.c sendmail/src/clock.c
+DONE diff -r sendmail.target/src/collect.c sendmail/src/collect.c
+DONE diff -r sendmail.target/src/conf.c sendmail/src/conf.c
+DONE diff -r sendmail.target/src/conf.h sendmail/src/conf.h
+DONE diff -r sendmail.target/src/convtime.c sendmail/src/convtime.c
+DONE diff -r sendmail.target/src/daemon.c sendmail/src/daemon.c
+DONE diff -r sendmail.target/src/deliver.c sendmail/src/deliver.c
+diff -r sendmail.target/src/domain.c sendmail/src/domain.c
+diff -r sendmail.target/src/envelope.c sendmail/src/envelope.c
+diff -r sendmail.target/src/err.c sendmail/src/err.c
+diff -r sendmail.target/src/headers.c sendmail/src/headers.c
+diff -r sendmail.target/src/macro.c sendmail/src/macro.c
+diff -r sendmail.target/src/mailstats.h sendmail/src/mailstats.h
+diff -r sendmail.target/src/main.c sendmail/src/main.c
+diff -r sendmail.target/src/parseaddr.c sendmail/src/parseaddr.c
+diff -r sendmail.target/src/queue.c sendmail/src/queue.c
+diff -r sendmail.target/src/readcf.c sendmail/src/readcf.c
+diff -r sendmail.target/src/recipient.c sendmail/src/recipient.c
+diff -r sendmail.target/src/savemail.c sendmail/src/savemail.c
+diff -r sendmail.target/src/sendmail.h sendmail/src/sendmail.h
+diff -r sendmail.target/src/sendmail.hf sendmail/src/sendmail.hf
+diff -r sendmail.target/src/srvrsmtp.c sendmail/src/srvrsmtp.c
+diff -r sendmail.target/src/stab.c sendmail/src/stab.c
+diff -r sendmail.target/src/stats.c sendmail/src/stats.c
+diff -r sendmail.target/src/sysexits.c sendmail/src/sysexits.c
+diff -r sendmail.target/src/trace.c sendmail/src/trace.c
+diff -r sendmail.target/src/usersmtp.c sendmail/src/usersmtp.c
+diff -r sendmail.target/src/util.c sendmail/src/util.c
+diff -r sendmail.target/src/version.c sendmail/src/version.c

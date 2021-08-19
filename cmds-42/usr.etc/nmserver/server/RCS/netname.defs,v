@@ -1,0 +1,79 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    gk:1.1; strict;
+comment  @@;
+
+
+1.1
+date     88.09.30.17.18.47;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@NeXT, Inc.
+@
+
+
+
+1.1
+log
+@Initial NeXT version
+@
+text
+@/* 
+ * Mach Operating System
+ * Copyright (c) 1987 Carnegie-Mellon University
+ * All rights reserved.  The CMU software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ */
+/*
+ * netname.defs
+ *
+ * $Source: /afs/cs.cmu.edu/project/mach/member/dpj/netmsg/server/RCS/netname.defs,v $
+ *
+ * $Header: netname.defs,v 1.4 88/03/04 16:40:25 dpj Rel $
+ *
+ */
+
+/*
+ * Mig definitions for Network Name Service.
+ */
+
+/*
+ * HISTORY:
+ * 30-May-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Changes for the new mig.
+ *
+ * 20-Oct-86  Robert Sansom (rds) at Carnegie Mellon University
+ *	New network name service interface.
+ *	Added a serverprefix.
+ */
+
+subsystem netname 1040;
+
+serverprefix _;
+
+type netname_name_t	= (MSG_TYPE_STRING,640);
+type port_t		= MSG_TYPE_PORT;
+
+import "netname_defs.h";
+
+routine netname_check_in(server_port	: port_t;
+			port_name	: netname_name_t;
+			signature	: port_t;
+			port_id		: port_t);
+
+routine netname_look_up(server_port	: port_t;
+			host_name	: netname_name_t;
+			port_name	: netname_name_t;
+		    out port_id		: port_t);
+
+routine netname_check_out(server_port	: port_t;
+			port_name	: netname_name_t;
+			signature	: port_t);
+
+routine netname_version(server_port	: port_t;
+		    out	version		: netname_name_t);
+@

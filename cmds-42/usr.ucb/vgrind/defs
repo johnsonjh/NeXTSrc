@@ -1,0 +1,35 @@
+C|c:\
+	:pb=^\d?*?\d?\p\d?\(\a?\)(\d|{):\
+	:bb={:be=}:cb=/*:ce=*/:ab=//:ae=$:sb=":se=\e":lb=':le=\e':tl:\
+	:kw=asm auto break case char const continue default do double else\
+	enum extern float for fortran goto if int long register return\
+	short signed sizeof static struct switch typedef union unsigned\
+	void volatile while\
+	#define #else #endif #if #ifdef #ifndef #import #include #undef #\
+	define else endif\ if ifdef ifndef import include undef:
+ObjC|objc:\
+	:pb=(^\d?*?\d?\p\d?\(\a?\)(\d|{))|(^\d?(+|-)\d?(\(\a\))?\d?\p\d|;|\:):\
+	:bb={:be=}:cb=/*:ce=*/:ab=//:ae=$:sb=":se=\e":lb=':le=\e':tl:\
+	:kw=asm auto break case char const continue default do double else\
+	enum extern float for fortran goto if int long register return\
+	short signed sizeof static struct switch typedef union unsigned\
+	void volatile while\
+	#define #else #endif #if #ifdef #ifndef #import #include #undef #\
+	define else endif if ifdef ifndef import include undef\
+	@defs @encode @end @implementation @interface @public @selector @\
+	defs encode end implementation interface public selector\
+	id self super:
+CSH|csh:\
+	:bb={:be=}:cb=#:ce=$:sb=":se=\e":lb=':le=\e':tl:\
+	:kw=alias alloc bg break breaksw case cd chdir continue default\
+	dirs echo else end endif endsw eval exec exit fg foreach glob\
+	goto hashstat history if jobs kill limit login logout nice nohup\
+	notify onintr popd pushd rehash repeat set setenv setpath shift\
+	source stop suspend switch then time umask unalias unhash unlimit\
+	unset unsetenv wait while @ env\
+	argv autologout cdpath child cwd edithist filec histchars home\
+	ignoreeof mail noclobber noglob nomatch nonomatch path prompt\
+	savehist shell status term user verbose:
+-------
+
+

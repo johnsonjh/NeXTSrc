@@ -1,0 +1,37 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    osdev:1.1; strict;
+comment  @# @;
+
+
+1.1
+date     89.08.18.15.23.48;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version.
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@# USERFILE:
+# Lines are of form 'loginname,uucpname fileprefix[, ...]
+# It is recommended that each site have a unique login name and password.
+# fileprefix is typically / or  /usr/spool/uucppublic.
+#
+Unext,next /
+#
+# This last line is recommended to reduce aggravation.
+# Security minded sites would probably use:
+# , /usr/spool 
+# instead of
+# , /
+@

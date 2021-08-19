@@ -1,0 +1,1 @@
+../g++/cplus-init.c

@@ -1,0 +1,8 @@
+cc -O -DNeXT -bsd -c auto_main.c
+cc -O -DNeXT -bsd -c auto_look.c
+cc -O -DNeXT -bsd -c auto_proc.c
+cc -O -DNeXT -bsd -c auto_node.c
+cc -O -DNeXT -bsd -c auto_mount.c
+vers_string -c autonfsmount > vers.c
+cc -O -DNeXT -bsd -c vers.c
+cc -O -DNeXT -bsd -o autonfsmount.NEW nfs_prot.o nfs_server.o nfs_trace.o many_cast.o  auto_main.o auto_look.o auto_proc.o auto_node.o  auto_mount.o auto_all.o auto_site.o strdup.o auto_preload.o   vers.o -lrpcsvc

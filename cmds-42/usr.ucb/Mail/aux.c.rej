@@ -1,0 +1,209 @@
+***************
+*** 547,557 ****
+  	char *name;
+  {
+  	register int c;
+! 	register char *cp, *cp2;
+  	char *bufend;
+  	int gotlt, lastsp;
+  	char nbuf[BUFSIZ];
+- 	int nesting;
+  
+  	if (name == NOSTR)
+  		return(NOSTR);
+--- 547,558 -----
+  	char *name;
+  {
+  	register int c;
+! 	register char *cp;
+! 	char *cp2;
+! 	int c2;
+  	char *bufend;
+  	int gotlt, lastsp;
+  	char nbuf[BUFSIZ];
+  
+  	if (name == NOSTR)
+  		return(NOSTR);
+***************
+*** 564,617 ****
+  	for (cp = name, cp2 = bufend; c = *cp++; ) {
+  		switch (c) {
+  		case '(':
+! 			/*
+! 			 * Start of a "comment".
+! 			 * Ignore it.
+! 			 */
+! 			nesting = 1;
+! 			while ((c = *cp) != 0) {
+! 				cp++;
+! 				switch (c) {
+! 				case '\\':
+! 					if (*cp == 0)
+! 						goto outcm;
+! 					cp++;
+! 					break;
+! 				case '(':
+! 					nesting++;
+! 					break;
+! 
+! 				case ')':
+! 					--nesting;
+! 					break;
+! 				}
+! 
+! 				if (nesting <= 0)
+! 					break;
+! 			}
+! 		outcm:
+  			lastsp = 0;
+  			break;
+  
+  		case '"':
+! 			/*
+! 			 * Start of a "quoted-string".
+! 			 * Copy it in its entirety.
+! 			 */
+! 			while ((c = *cp) != 0) {
+! 				cp++;
+! 				switch (c) {
+! 				case '\\':
+! 					if ((c = *cp) == 0)
+! 						goto outqs;
+! 					cp++;
+! 					break;
+! 				case '"':
+! 					goto outqs;
+! 				}
+! 				*cp2++ = c;
+! 			}
+! 		outqs:
+  			lastsp = 0;
+  			break;
+  
+--- 565,576 -----
+  	for (cp = name, cp2 = bufend; c = *cp++; ) {
+  		switch (c) {
+  		case '(':
+! 			cp = skip_comment ( cp );
+  			lastsp = 0;
+  			break;
+  
+  		case '"':
+! 			cp = do_quoted_string ( cp, &cp2 );
+  			lastsp = 0;
+  			break;
+  
+***************
+*** 634,641 ****
+  		case '>':
+  			if (gotlt) {
+  				gotlt = 0;
+! 				while (*cp != ',' && *cp != 0)
+! 					cp++;
+  				if (*cp == 0 )
+  					goto done;
+  				*cp2++ = ',';
+--- 593,613 -----
+  		case '>':
+  			if (gotlt) {
+  				gotlt = 0;
+! 				while (*cp != ',' && *cp != 0) {
+! 					c2 = *cp++;
+! 					switch ( c2 ) {
+! 					case '\\':
+! 						if (*cp != '\0') cp++;
+! 						break;
+! 					case '(':
+! 						cp = skip_comment ( cp );
+! 						break;
+! 			
+! 					case '"':
+! 						cp = do_quoted_string ( cp, NULL );
+! 						break;
+! 					}
+! 				}
+  				if (*cp == 0 )
+  					goto done;
+  				*cp2++ = ',';
+***************
+*** 659,664 ****
+  	*cp2 = 0;
+  
+  	return(savestr(nbuf));
+  }
+  
+  /*
+--- 631,703 -----
+  	*cp2 = 0;
+  
+  	return(savestr(nbuf));
++ }
++ 
++ /*
++  * Start of a "comment".
++  * Ignore it.
++  */
++ char *
++ skip_comment(cp)
++ 	register char *cp;
++ {
++ 	register int c;
++ 	int nesting;
++ 
++ 	nesting = 1;
++ 	while ((c = *cp) != 0) {
++ 		cp++;
++ 		switch (c) {
++ 		case '\\':
++ 			if (*cp == 0)
++ 				return ( cp );
++ 			cp++;
++ 			break;
++ 		case '(':
++ 			nesting++;
++ 			break;
++ 		case ')':
++ 			--nesting;
++ 			break;
++ 		}
++ 		if (nesting <= 0)
++ 			break;
++ 	}
++ 	return ( cp );
++ }
++ 
++ /*
++  * Start of a "quoted-string".
++  * If a target string is given, copy it & advance the pointer;
++  * otherwise, just advance the source pointer.
++  */
++ char *
++ do_quoted_string(cp, cp2p)
++ 	register char *cp;
++ 	char **cp2p;
++ {
++ 	register int c;
++ 
++ 	if ( cp2p != NULL ) printf ( "do_quoted_string: cp2p is not null\n" );
++ 	else printf ( "do_quoted_string: cp2p is null\n" );
++ 
++ 	while ((c = *cp) != 0) {
++ 		cp++;
++ 		switch (c) {
++ 		case '\\':
++ 			if ((c = *cp) == 0)
++ 				return ( cp );
++ 			cp++;
++ 			break;
++ 		case '"':
++ 			return ( cp );
++ 		}
++ 		if ( cp2p != NULL ) {
++ 			**cp2p = c;
++ 			(*cp2p)++;
++ 		}
++ 	}
++ 	return ( cp );
+  }
+  
+  /*

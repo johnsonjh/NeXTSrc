@@ -1,0 +1,82 @@
+/* @(#)SYS.h UCB 4.1 83/05/10 */
+
+#include <syscall.h>
+
+	.globl	cerror
+
+#ifdef __GNU__
+
+#ifdef PROF
+	.globl  mcount
+
+#define	ENTRY(x)				\
+	.globl	_##x				;\
+_##x:	link	a6,\#0				;\
+	lea	x##1,a0				;\
+	.data					;\
+x##1:	.long	0				;\
+	.text					;\
+	jsr	mcount				;\
+	unlk	a6
+
+#else !PROF
+
+#define	ENTRY(x)				\
+	.globl	_##x				;\
+_##x:
+#endif PROF
+
+#define PARAM		sp@(4)
+#define PARAM2		sp@(8)
+
+#define	PSEUDO(x,y)				\
+ENTRY(x)					;\
+	pea	SYS_##y				;\
+	trap	\#0
+
+#define	SYSCALL(x)				\
+err:	jmp	cerror				;\
+ENTRY(x)					;\
+	pea	SYS_##x				;\
+	trap	\#0				;\
+	jcs	err
+
+#else !__GNU__
+
+#ifdef PROF
+	.globl  mcount
+
+#define	ENTRY(x)				\
+	.globl	_/**/x				;\
+_/**/x:	link	a6,#0				;\
+	lea	x/**/1,a0			;\
+	.data					;\
+x/**/1:	.long	0				;\
+	.text					;\
+	jsr	mcount				;\
+	unlk	a6
+
+#else !PROF
+
+#define	ENTRY(x)				\
+	.globl	_/**/x				;\
+_/**/x:
+#endif PROF
+
+#define PARAM		sp@(4)
+#define PARAM2		sp@(8)
+
+#define	PSEUDO(x,y)				\
+ENTRY(x)					;\
+	pea	SYS_/**/y			;\
+	trap	#0
+
+#define	SYSCALL(x)				\
+err:	jmp	cerror				;\
+ENTRY(x)					;\
+	pea	SYS_/**/x			;\
+	trap	#0				;\
+	jcs	err
+#endif !__GNU__
+
+#define RET	rts

@@ -1,0 +1,219 @@
+Release notes for the -17 compiler release (link editor, shlibs and tools)
+by Kevin Enderby
+
+.ps +4
+.b
+Major changes
+.r
+(the detailed changes follow):
+.ps -4
+.sh 1 "New link editor"
+.lp
+The link editor, ld(1), has been completely rewritten and is much more
+efficient, a bit faster and now fully supports the Mach-O format.  It is fully
+upward compatible, that is it will link old objects.  It is NOT downward
+compatible, that is the old link editor will NOT link objects created by the
+new link editor (it will most likely core dump the old link editor).
+See the new man page for the operation description
+and all the new options to fully support the Mach-O format.
+
+.sh 1 "New host shared libraries and crt0.o"
+.lp
+How shared library initialization is done has changed.  This means that the host
+shared libraries, for example /lib/libsys_s.a, and the runtime startoff,
+/lib/crt0.o, has changed.  These two items must be used as a pair from the new
+or old release and used only with the link editor from their releases.  The
+target shared libraries however remain compatible when rebuilt with the new
+tools so that binaries built with new or old tools will run on new or old
+systems using which ever target shared library that is installed.
+
+.sh 1 "No more mixed static and global data in shared library objects"
+.lp
+There is a new requirement of objects that make up shared libraries.  The
+requirement is that no object can contain both global and static data as
+was previously allowed.  The old link editor use to split the data section of
+objects, when creating a shared library, into the part that contained global
+data and the part that contained static data.  This required that all the
+object's global data follow its static data.  In the 1.0 release this affects
+only one source file, libc's ctime_data.c, and a set of changes has been made
+to the sources to keep the resulting target shared libraries compatible. 
+
+.sh 1 "Symbols _end, _etext, and _edata no longer exist"
+.lp
+The standard UNIX link editor defined symbol for a.out files, _end, _etext, and
+_edata, are no longer defined.  This change has been reflected in the versions
+of the system libraries, libc.a, libsys_s.a, and libsys_p.a, that are released
+with this complier release.  If you encounter a program that uses these symbols
+(they will be undefined and the program will fail to link) you have to
+change something.  If the program's output file format is the default MH_EXECUTE
+most likely the program is making the incorrect assumption that is is running
+under a UNIX system and not a MACH system and that program needs to be
+re-thought and fixed.  If the program's output file format is MH_PRELOAD (linked
+with the option -p or -preload) then the program should be changed to use the
+link editor defined symbols for the preload format (see the LINK EDITOR DEFINED
+SYMBOLS section on the ld(1) man page).  There does exist routines that get
+simulated values of these symbols but their use is strongly discouraged (see
+get_end(3)).
+
+
+.ps +4
+.b
+Minor changes:
+.r
+.ps -4
+.sh 1 "Changed table of contents produced by ranlib(1)" 1
+.lp
+To make link editing faster the table of contents of libraries can be produced
+in sorted order with the new '-s' option to the program ranlib(1) (the default).
+The one case that this option can't be used is when an archive is to contain
+multiple members that define the same symbol.  In this case the table of
+contents produced by ranlib(1) will not be sorted, even if the '-s' option is
+given.  Further if the '-s' option is given in this case ranlib(1) will list the
+symbols and the members that define them for symbols defined in multiple
+members.  The original behavior of ranlib(1) was to consider common symbols
+to be a definition as far as the table of contents is concerned.  This is not
+typicly what is wanted so the default is not to do this.  If this is needed
+the '-c' option will cause common symbols to be considered a definition.
+There are currently no libraries released by NeXT that have the same symbol
+defined by multiple members or requires common symbols to be considered a
+definition as far as the table of contents is concerned.  The new link editor
+does link from archives with non-sorted tables of contents and correctly loads
+members in the order of the table of contents
+as they resolve undefined symbols so archives which have multiple members
+defining the same symbol still work correctly.  In this case where the table of
+contents is not sorted a message will be printed suggesting the use of the
+ranlib(1) '-s' option and that will just have to be ignored.
+The 1.0 version of ranlib(1) will not correctly place the table of contents
+member ("_\^_.SYMDEF") at the beginning of the archive if the archive has had
+it's table of contents built with the new ranlib(1) -s option.  What happens
+is the table of contents built by ranlib(1) -s is not replaced by the member
+"_\^_.SYMDEF" because it's name is "_\^_.SYMDEF SORTED" and it uses a different
+algorithm than ar(1) which it calls to do the replacement.  This is only a
+backwards compatibility problem.
+
+.sh 1 "Faster mkshlib(l)"
+.lp
+The program mkshlib(l) is now a great deal faster.  The half of the program that
+creates the host shared library was mostly rewritten.  It no longer uses the
+assembler, as(1), the archiver, ar(1), or ranlib(1) to produce the host shared
+library.  Mkshlib(l) writes the
+entire host shared library archive itself now which is the bulk of the speed up.
+This may remove the need for the -f (fast) option which does not build the host
+library in the case a compatible library is being built and the host library is
+not needed anyway.
+
+.sh 1 "The new -minor_version option to mkshlib(l)"
+.lp
+The new -minor_version option may be used instead of the directive in the
+specification file (#minor_version).  This will allow this to be set on the
+command line making the release process less error prone.
+
+.sh 1 "Possible debugger problems"
+.lp
+The debugger may have trouble without the "file.o" local text symbols normally
+generated by a UNIX a.out style link editor.  Also it may have trouble with the
+fact that common symbols are now allocated in the (_\^_DATA,_\^_common) section
+instead of the (_\^_DATA,_\^_bss) section (which will cause the section numbers
+no longer to be constant as in the 1.0 release).
+
+.sh 1 "Change in the rounding of the preload format's segment size"
+.lp
+The preload format now has a default segment alignment of the target pagesize
+and not 4 as in 1.0 release.  This will require users to use "-segalign 4"
+option (notablely the kernel and standalone programs will need their Makefiles
+changed to get the old result).
+
+Object file format changes:
+
+.sh 1 "Small binaries can now be small"
+.lp
+MH_OBJECT format produced by the link editor with the -object option now has a
+thread and can be executed.  This is used for real small programs to save disk
+space.  This requires a kernel change to allow these programs to be executed.
+
+.sh 1 "Common symbols no longer allocated in the bss section"
+.lp
+To be cleaner common symbols are no longer allocated in the (\_\^_DATA,\_\^\_bss)
+section and now are allocated in (_\^_DATA,_\^_common) section.  This should not
+cause any problems and should allow detecting which symbols are truly allocated
+by the link editor easier.
+
+.sh 1 "Flag to prevent re-linking of an incrementally linked file"
+.lp
+To prevent a problem of the link editor incorrectly relocating symbols from the
+base file in a file that had been previously produced by the output of an ld -A
+a new flag in the mach_header was added.  It is MH_INCRLINK and is set in the
+output of all ld -A output files and a file with that set seen on input to the
+link editor will refused to be linked.
+
+Minor new link editor notes:
+
+.sh 1 "Load map changes"
+.lp
+The load map printed with -M has changed a great deal.  The information as to
+why an archive member is no longer printed is no longer printed with -M.  This
+information is now printed with the -whyload option.  The values of global and
+local symbols are also not printed.  This information can be printed with the
+nm(1) command run on the output file.  The new load map should be a great deal
+more useful in telling where a section from an input file appears in the output
+file.
+.sh 1 "Changes to old command line options"
+.lp
+In re-writing the link editor a number of options specific to UNIX link editors
+that no longer apply have been removed or changed and a number of obsolete
+flags that were previously created by NeXT were also removed.  In all cases the
+old options are either translated to appropriate new flags or ignored.  In both
+cases a warning message is printed stating what was done with the old option.
+.sh 2 "The old -D option"
+.lp
+This took the next argument as a hexadecimal number and padded the data
+section with zero bytes to the indicated length.  The padded area appeared after
+the data section and before the bss section.  This was used as a way to
+allocate area in front of the sbrk(\|) arena on a traditional UNIX system.
+Typicly this area would be addressed by a kludge of taking the address of the
+last data symbol and using the symbol _edata.  This is used on a UNIX
+system to get at and area of VM that is not possible otherwise.  On a Mach
+system this would be done easily with vm_allocate(\|).
+.sh 2 "The old -G and -g options"
+.lp
+These options dealt with the now obsolete symbol segments produced by the
+obsolete -gg compiler option.  These have simply been removed and a warning
+saying that they are being ignored is printed if they are specified.
+.sh 2 "The old -ident option"
+.lp
+This was added at the request of the previous release control individual at NeXT
+for internal use but was never used.  What this use to do was to
+create an ident command in the resulting object file and add the string,
+.i string,
+(the following argument) to that command.  More than one such option could have
+been specified but only one ident command was created.  The strings from ident
+commands of the loaded object files were always discarded.  If such a thing
+were wanted now it should be done by creating a section and placing the
+strings in that section with the -sectcreate option.
+.sh 2 "The old -T, -Ttext and -Tdata options"
+.lp
+These options specified the start of the \_\^\_TEXT and \_\^\_DATA segments and
+are automaticly translated to use the -segaddr option and a warning is printed.
+This automatic translation will be supported for one release and then the flag
+will not be recognized.
+.sh 2 "The old -v option"
+.lp
+This option never did anything and there is no indication of what used it.
+It is now ignored and a warning is printed.
+.sh 2 "The old -a option"
+.lp
+The flag -a now uses -i which is slightly different.  It is cleaner in
+functionality than -a and can be used in the two places at NeXT where the
+-a flag is used.  The difference between these two is that the original
+symbol name no longer is removed from the output's symbol table.  It simply
+takes on the value and type of the symbol it was being aliases to.  See the
+ld(1) man page for what the -i option is.
+.sh 2 "The old -Mach option"
+.lp
+This option has been renamed -execute to be consistent with all the options that
+specify the output file format but is still recognized and works the same.
+.sh 2 "The old -segcreate option"
+.lp
+This option has been renamed to -sectcreate to be more correct in that what it
+is really creating is a section.  The old name is still recognized and works
+the same.

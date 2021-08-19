@@ -1,0 +1,42 @@
+Makefile	1.1 09/08/87 11:52:28
+date and time created 87/09/08 11:52:28 by clara
+
+base.m4	1.1 09/08/87 11:52:33
+date and time created 87/09/08 11:52:33 by clara
+
+compat.m4	1.1 09/08/87 11:52:37
+date and time created 87/09/08 11:52:37 by clara
+
+ddnm.m4	1.1 09/08/87 11:52:41
+date and time created 87/09/08 11:52:41 by clara
+
+ether.m4	1.1 09/08/87 11:52:44
+date and time created 87/09/08 11:52:44 by clara
+
+etherm.m4	1.1 09/08/87 11:52:47
+date and time created 87/09/08 11:52:47 by clara
+
+localm.m4	1.1 09/08/87 11:52:51
+date and time created 87/09/08 11:52:51 by clara
+
+main.mc	1.1 09/08/87 11:52:54
+date and time created 87/09/08 11:52:54 by clara
+
+subsidiary.mc	1.1 09/08/87 11:52:57
+date and time created 87/09/08 11:52:57 by clara
+
+sunbase.m4	1.1 09/08/87 11:53:01
+date and time created 87/09/08 11:53:01 by clara
+
+suucpm.m4	1.1 09/08/87 11:53:04
+date and time created 87/09/08 11:53:04 by clara
+
+uucpm.m4	1.1 09/08/87 11:53:07
+date and time created 87/09/08 11:53:07 by clara
+
+version.m4	1.1 09/08/87 11:53:11
+date and time created 87/09/08 11:53:11 by clara
+
+zerobase.m4	1.1 09/08/87 11:53:14
+date and time created 87/09/08 11:53:14 by clara
+

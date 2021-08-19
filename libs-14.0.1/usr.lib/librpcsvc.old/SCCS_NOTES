@@ -1,0 +1,316 @@
+Makefile	1.3 06/23/87 09:29:54
+took extra sccs keywords line out.
+
+Makefile	1.2 06/22/87 15:03:02
+Add sccs keyword for 3.2/4.3NFSSRC
+
+Makefile	1.1 06/22/87 15:02:52
+date and time created 87/06/22 15:02:52 by ruggles
+
+ether.h	1.3 06/23/87 09:30:02
+took extra sccs keywords line out.
+
+ether.h	1.2 06/22/87 15:03:20
+Add sccs keyword for 3.2/4.3NFSSRC
+
+ether.h	1.1 06/22/87 15:03:11
+date and time created 87/06/22 15:03:11 by ruggles
+
+etherxdr.c	1.4 08/13/87 15:06:16
+Added Copyright Messages
+
+etherxdr.c	1.3 06/23/87 09:24:00
+took out extra sccs keyword line and adjusted any includes to be of 
+the 4.3 style that needed it.
+
+etherxdr.c	1.2 06/22/87 15:03:44
+Add sccs keyword for 3.2/4.3NFSSRC
+
+etherxdr.c	1.1 06/22/87 15:03:30
+date and time created 87/06/22 15:03:30 by ruggles
+
+klm_prot.c	1.4 08/13/87 15:06:41
+Added Copyright Messages
+
+klm_prot.c	1.3 06/23/87 09:24:06
+took out extra sccs keyword line and adjusted any includes to be of 
+the 4.3 style that needed it.
+
+klm_prot.c	1.2 06/22/87 15:04:07
+Add sccs keyword for 3.2/4.3NFSSRC
+
+klm_prot.c	1.1 06/22/87 15:03:51
+date and time created 87/06/22 15:03:51 by ruggles
+
+klm_prot.h	1.3 06/23/87 09:30:10
+took extra sccs keywords line out.
+
+klm_prot.h	1.2 06/22/87 15:04:25
+Add sccs keyword for 3.2/4.3NFSSRC
+
+klm_prot.h	1.1 06/22/87 15:04:16
+date and time created 87/06/22 15:04:16 by ruggles
+
+klm_prot.x	1.3 06/23/87 09:30:15
+took extra sccs keywords line out.
+
+klm_prot.x	1.2 06/22/87 15:04:43
+Add sccs keyword for 3.2/4.3NFSSRC
+
+klm_prot.x	1.1 06/22/87 15:04:33
+date and time created 87/06/22 15:04:33 by ruggles
+
+mount.h	1.3 06/23/87 09:30:20
+took extra sccs keywords line out.
+
+mount.h	1.2 06/22/87 15:05:01
+Add sccs keyword for 3.2/4.3NFSSRC
+
+mount.h	1.1 06/22/87 15:04:51
+date and time created 87/06/22 15:04:51 by ruggles
+
+mountxdr.c	1.4 08/13/87 15:07:10
+Added Copyright Messages
+
+mountxdr.c	1.3 06/23/87 09:24:11
+took out extra sccs keyword line and adjusted any includes to be of 
+the 4.3 style that needed it.
+
+mountxdr.c	1.2 06/22/87 15:05:21
+Add sccs keyword for 3.2/4.3NFSSRC
+
+mountxdr.c	1.1 06/22/87 15:05:08
+date and time created 87/06/22 15:05:08 by ruggles
+
+nlm_prot.c	1.3 06/23/87 09:24:16
+took out extra sccs keyword line and adjusted any includes to be of 
+the 4.3 style that needed it.
+
+nlm_prot.c	1.2 06/22/87 15:05:40
+Add sccs keyword for 3.2/4.3NFSSRC
+
+nlm_prot.c	1.1 06/22/87 15:05:30
+date and time created 87/06/22 15:05:30 by ruggles
+
+nlm_prot.h	1.3 06/23/87 09:30:28
+took extra sccs keywords line out.
+
+nlm_prot.h	1.2 06/22/87 15:05:58
+Add sccs keyword for 3.2/4.3NFSSRC
+
+nlm_prot.h	1.1 06/22/87 15:05:49
+date and time created 87/06/22 15:05:49 by ruggles
+
+nlm_prot.x	1.3 06/23/87 09:30:33
+took extra sccs keywords line out.
+
+nlm_prot.x	1.2 06/22/87 15:06:15
+Add sccs keyword for 3.2/4.3NFSSRC
+
+nlm_prot.x	1.1 06/22/87 15:06:06
+date and time created 87/06/22 15:06:06 by ruggles
+
+rex.h	1.4 07/20/87 15:10:57
+definition of ttysize is in ioctl.h in 4.3, hence it was deleted from here
+
+rex.h	1.3 06/23/87 09:30:39
+took extra sccs keywords line out.
+
+rex.h	1.2 06/22/87 15:06:32
+Add sccs keyword for 3.2/4.3NFSSRC
+
+rex.h	1.1 06/22/87 15:06:23
+date and time created 87/06/22 15:06:23 by ruggles
+
+rex_xdr.c	1.3 06/23/87 09:24:21
+took out extra sccs keyword line and adjusted any includes to be of 
+the 4.3 style that needed it.
+
+rex_xdr.c	1.2 06/22/87 15:06:50
+Add sccs keyword for 3.2/4.3NFSSRC
+
+rex_xdr.c	1.1 06/22/87 15:06:40
+date and time created 87/06/22 15:06:40 by ruggles
+
+rquota.h	1.3 06/23/87 09:30:45
+took extra sccs keywords line out.
+
+rquota.h	1.2 06/22/87 15:07:07
+Add sccs keyword for 3.2/4.3NFSSRC
+
+rquota.h	1.1 06/22/87 15:06:58
+date and time created 87/06/22 15:06:58 by ruggles
+
+rquotaxdr.c	1.4 08/13/87 15:07:40
+Added Copyright Messages
+
+rquotaxdr.c	1.3 06/23/87 09:24:26
+took out extra sccs keyword line and adjusted any includes to be of 
+the 4.3 style that needed it.
+
+rquotaxdr.c	1.2 06/22/87 15:07:25
+Add sccs keyword for 3.2/4.3NFSSRC
+
+rquotaxdr.c	1.1 06/22/87 15:07:15
+date and time created 87/06/22 15:07:15 by ruggles
+
+rstat.h	1.3 06/23/87 09:30:52
+took extra sccs keywords line out.
+
+rstat.h	1.2 06/22/87 15:07:43
+Add sccs keyword for 3.2/4.3NFSSRC
+
+rstat.h	1.1 06/22/87 15:07:32
+date and time created 87/06/22 15:07:32 by ruggles
+
+rstatxdr.c	1.6 08/13/87 15:08:03
+Added Copyright Messages
+
+rstatxdr.c	1.5 07/20/87 14:21:13
+Many implementations of this protocol did not properly handle if_opackets.  This change allows compatibility with these buggy implementations.  Fixes 1004840.
+
+rstatxdr.c	1.4 07/20/87 14:18:59
+Many implementations of this protocol did not properly
+
+rstatxdr.c	1.3 06/23/87 09:24:31
+took out extra sccs keyword line and adjusted any includes to be of 
+the 4.3 style that needed it.
+
+rstatxdr.c	1.2 06/22/87 15:08:05
+Add sccs keyword for 3.2/4.3NFSSRC
+
+rstatxdr.c	1.1 06/22/87 15:07:52
+date and time created 87/06/22 15:07:52 by ruggles
+
+rusers.h	1.3 06/23/87 09:30:58
+took extra sccs keywords line out.
+
+rusers.h	1.2 06/22/87 15:08:27
+Add sccs keyword for 3.2/4.3NFSSRC
+
+rusers.h	1.1 06/22/87 15:08:14
+date and time created 87/06/22 15:08:14 by ruggles
+
+rusersxdr.c	1.4 08/13/87 15:08:37
+Added Copyright Messages
+
+rusersxdr.c	1.3 06/23/87 09:24:36
+took out extra sccs keyword line and adjusted any includes to be of 
+the 4.3 style that needed it.
+
+rusersxdr.c	1.2 06/22/87 15:08:44
+Add sccs keyword for 3.2/4.3NFSSRC
+
+rusersxdr.c	1.1 06/22/87 15:08:34
+date and time created 87/06/22 15:08:34 by ruggles
+
+rwall.h	1.3 06/23/87 09:31:05
+took extra sccs keywords line out.
+
+rwall.h	1.2 06/22/87 15:09:03
+Add sccs keyword for 3.2/4.3NFSSRC
+
+rwall.h	1.1 06/22/87 15:08:53
+date and time created 87/06/22 15:08:53 by ruggles
+
+rwallxdr.c	1.4 08/13/87 15:09:00
+Added Copyright Messages
+
+rwallxdr.c	1.3 06/23/87 09:24:41
+took out extra sccs keyword line and adjusted any includes to be of 
+the 4.3 style that needed it.
+
+rwallxdr.c	1.2 06/22/87 15:09:21
+Add sccs keyword for 3.2/4.3NFSSRC
+
+rwallxdr.c	1.1 06/22/87 15:09:11
+date and time created 87/06/22 15:09:11 by ruggles
+
+sm_inter.c	1.4 08/13/87 15:09:21
+Added Copyright Messages
+
+sm_inter.c	1.3 06/23/87 09:24:45
+took out extra sccs keyword line and adjusted any includes to be of 
+the 4.3 style that needed it.
+
+sm_inter.c	1.2 06/22/87 15:09:38
+Add sccs keyword for 3.2/4.3NFSSRC
+
+sm_inter.c	1.1 06/22/87 15:09:29
+date and time created 87/06/22 15:09:29 by ruggles
+
+sm_inter.h	1.3 06/23/87 09:31:14
+took extra sccs keywords line out.
+
+sm_inter.h	1.2 06/22/87 15:09:56
+Add sccs keyword for 3.2/4.3NFSSRC
+
+sm_inter.h	1.1 06/22/87 15:09:46
+date and time created 87/06/22 15:09:46 by ruggles
+
+sm_inter.x	1.3 06/23/87 09:31:19
+took extra sccs keywords line out.
+
+sm_inter.x	1.2 06/22/87 15:10:13
+Add sccs keyword for 3.2/4.3NFSSRC
+
+sm_inter.x	1.1 06/22/87 15:10:04
+date and time created 87/06/22 15:10:04 by ruggles
+
+spray.h	1.3 06/23/87 09:31:24
+took extra sccs keywords line out.
+
+spray.h	1.2 06/22/87 15:10:31
+Add sccs keyword for 3.2/4.3NFSSRC
+
+spray.h	1.1 06/22/87 15:10:21
+date and time created 87/06/22 15:10:21 by ruggles
+
+sprayxdr.c	1.4 08/13/87 15:09:45
+Added Copyright Messages
+
+sprayxdr.c	1.3 06/23/87 09:24:50
+took out extra sccs keyword line and adjusted any includes to be of 
+the 4.3 style that needed it.
+
+sprayxdr.c	1.2 06/22/87 15:10:48
+Add sccs keyword for 3.2/4.3NFSSRC
+
+sprayxdr.c	1.1 06/22/87 15:10:38
+date and time created 87/06/22 15:10:38 by ruggles
+
+util.c	1.4 08/13/87 15:10:04
+Added Copyright Messages
+
+util.c	1.3 06/23/87 09:24:57
+took out extra sccs keyword line and adjusted any includes to be of 
+the 4.3 style that needed it.
+
+util.c	1.2 06/22/87 15:11:04
+Add sccs keyword for 3.2/4.3NFSSRC
+
+util.c	1.1 06/22/87 15:10:55
+date and time created 87/06/22 15:10:55 by ruggles
+
+yppasswd.h	1.3 06/23/87 09:31:32
+took extra sccs keywords line out.
+
+yppasswd.h	1.2 06/22/87 15:11:21
+Add sccs keyword for 3.2/4.3NFSSRC
+
+yppasswd.h	1.1 06/22/87 15:11:11
+date and time created 87/06/22 15:11:11 by ruggles
+
+yppasswdxdr.c	1.4 08/13/87 15:10:13
+Added Copyright Messages
+
+yppasswdxdr.c	1.3 06/23/87 09:25:05
+took out extra sccs keyword line and adjusted any includes to be of 
+the 4.3 style that needed it.
+
+yppasswdxdr.c	1.2 06/22/87 15:11:38
+Add sccs keyword for 3.2/4.3NFSSRC
+
+yppasswdxdr.c	1.1 06/22/87 15:11:29
+date and time created 87/06/22 15:11:29 by ruggles
+

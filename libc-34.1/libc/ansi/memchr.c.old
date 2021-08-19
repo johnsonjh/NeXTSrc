@@ -1,0 +1,18 @@
+/* Copyright (c) 1988 NeXT, Inc. - 9/12/88 CCH */
+
+#include <string.h>
+
+#pragma CC_OPT_OFF
+#undef memchr
+void *memchr(const void *s, int c, size_t n) {
+  unsigned char uc = (unsigned char)c;
+  unsigned char *us = (unsigned char *)s;
+
+  while (n != 0) {
+    if (*us++ == uc) {
+      return us - 1;
+    }
+    n--;
+  }
+  return NULL;
+}

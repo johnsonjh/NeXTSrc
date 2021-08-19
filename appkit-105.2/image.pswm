@@ -1,0 +1,540 @@
+
+/*
+	image.pswm
+  	Copyright 1988, NeXT, Inc.
+	Responsibility: Trey Matteson
+  
+	This file C functions and wraps for sending and reading bitmaps
+	to and from the PS server.
+*/
+
+#import "appkitPrivate.h"
+#import <stdio.h>
+#import <sys/message.h>
+#import <dpsclient/dpsclient.h>
+#import <dpsclient/wraps.h>
+#import <windowserver/imagemessage.h>
+#import "nextstd.h"
+#import "tiff.h"
+#import "graphics.h"
+#import "Application.h"
+#import "Application_Private.h"
+#import "View.h"
+
+#define MAX_STRING  (256*256-32)	/* largest PS string */
+#define INLINE_THRESHOLD 1000		/* largest msg size PS can receive */
+
+#define COLORSPACEFROMPHOTO(photoInt) \
+    (((photoInt & 3) == 3) ? NX_CMYKColorSpace : (photoInt & 3))
+
+/* divides a by b, rounding up to nearest int */
+#define ROUND_DIV(a, b)    (((a) - 1) / (b) + 1)
+
+/*
+ * A param block to pass stuff from the public to private routine.
+ */
+typedef struct {
+  /* Parameters to the external imaging function */
+    float x, y, w, h;		/* place to put image */
+    int width, height;		/* dimensions of image */
+    int bps;			/* bits per sample */
+    int spp;			/* samples per pixel */
+    int planarConfig;		/* meshed or planar data */
+    int photoInt;		/* photointerpretation mask */
+    const unsigned char *data[5];	/* data to send */
+  /* Here are some things we calculate from the above data */
+    int channels;		/* #data channels, 1 if data interleaved */
+    int stringsPerChannel;	/* number strings we write per channel */
+    int channelBytes;		/* amount of data per channel.  If data is
+				   interleaved, we say its one channel */
+    int totalBytes;		/* amount of data on all channels */
+    int alpha;			/* do we have alpha? */
+    int color;			/* do we have color? */
+    BOOL flipState;		/* is current focus flipped? */
+} ParamBlock;
+
+static void doBinaryImageBitmap(ParamBlock *p);
+static void doAsciiImageBitmap(ParamBlock *p);
+static void fillInMatrix(ParamBlock *p, float matrix[6]);
+static int roundUp(int num, int mult);
+
+extern void _DPSMsgSend(DPSContext ctxt, msg_header_t *msg, msg_option_t option);
+
+
+defineps static doNextImage(int tag)
+    tag nextimage
+endps
+
+
+static void doBinaryImageBitmap(ParamBlock *p)
+{
+    char msgStackSpace[INLINE_THRESHOLD];
+    ImageMessage *msg = (ImageMessage *)msgStackSpace;
+    msg_type_long_t *dataType;
+    int msgChannelBytes;	/* bytes per channel in inline msg */
+    int isInline;
+    int i;
+    static int ImageTagCounter = 1;
+    static const msg_header_t ImMsgHeaderTemplate = 
+		{0, 0, 0, MSG_TYPE_NORMAL, PORT_NULL, PORT_NULL, 3053};
+    static const msg_type_t ImMsgIntParamsTemplate = 
+		{MSG_TYPE_INTEGER_32, 32, IM_NUMINTPARAMS, 1, 0, 0};
+    static const msg_type_t ImMsgFloatParamsTemplate = 
+		{MSG_TYPE_REAL, 32, IM_NUMFLOATPARAMS, 1, 0, 0};
+    static const msg_type_long_t ImMsgCharTypeTemplate = 
+		{{0, 0, 0, 0, 1, 0}, MSG_TYPE_BYTE, 8, 0};
+
+    msgChannelBytes = ((p->channelBytes + 3) / 4) * 4;
+    isInline = (sizeof(ImageMessage) + (p->channels-1)*sizeof(msg_type_long_t) + p->channels*msgChannelBytes) <= INLINE_THRESHOLD;
+
+    msg->msgHeader = ImMsgHeaderTemplate;
+    msg->msgHeader.msg_size = sizeof(ImageMessage) - sizeof(msg_type_long_t) + p->channels * (sizeof(msg_type_long_t) + (isInline ? msgChannelBytes : sizeof(unsigned char *)));
+    msg->msgHeader.msg_simple = isInline;
+
+    msg->integerParams = ImMsgIntParamsTemplate;
+    msg->imageDataTag = ImageTagCounter++;
+    msg->imageDataFormat = IM_MINFORMAT;
+    msg->pixelsWide = p->width;
+    msg->pixelsHigh = p->height;
+    msg->samplesPerPixel = p->spp;
+    msg->bitsPerSample = p->bps;
+    msg->isPlanar = (p->planarConfig == NX_PLANAR);
+    msg->hasAlpha = p->alpha;
+    msg->colorSpace = COLORSPACEFROMPHOTO(p->photoInt);
+
+    msg->floatParams = ImMsgFloatParamsTemplate;
+    msg->originX = p->x;
+    msg->originY = p->y;
+    msg->sizeWidth = p->w;
+    msg->sizeHeight = p->h;
+    if (!p->flipState) {
+	msg->originY += p->h;
+	msg->sizeHeight = -p->h;
+    } else
+	msg->sizeHeight = p->h;
+
+    dataType = &msg->imageDataType;
+    for (i = 0; i < p->channels; i++) {
+	*dataType = ImMsgCharTypeTemplate;
+	dataType->msg_type_header.msg_type_inline = isInline;
+	dataType->msg_type_long_number = p->channelBytes;
+	dataType++;
+	if (isInline) {
+	    bcopy(p->data[i], dataType, p->channelBytes);
+	    dataType = (msg_type_long_t *)(((char *)dataType) + msgChannelBytes);
+	} else {
+	    *((const void **)dataType) = p->data[i];
+	    dataType = (msg_type_long_t *)(((char *)dataType) + sizeof(void *));
+	}
+    }
+    _DPSMsgSend(DPSGetCurrentContext(), &msg->msgHeader, MSG_OPTION_NONE);
+    doNextImage(msg->imageDataTag);
+}
+
+
+/*  Sends an image to the server.  This routine formulates the following
+    piece of PostScript code and sends it down:
+    
+	<< strings of data >>
+	w h bps [<< a matrix >>]
+	{} {} {}...  << a proc for each channel >>
+	<< possibly a token for planarConfig >>
+	<< possibly a token for number of colors >>
+	<< either "image", "colorimage", or "alphaimage" >>
+
+    This routine checks the current focus state to decide whether it is
+    drawing within a flipped View, and compensates accordingly.
+*/
+static void doAsciiImageBitmap(ParamBlock *p)
+{
+    register int i, j;
+    int offset;			/* offset into binarray or data buffers */
+    DPSContext currCtxt = DPSGetCurrentContext();
+    float matrixToSend[6];
+
+  /* Write string objects first */
+    offset = p->channelBytes - p->channelBytes % MAX_STRING;
+    for( i = 0; i < p->stringsPerChannel; i++, offset -= MAX_STRING )
+	for( j = p->channels; j--; )
+	  /* write a full string until the last write */
+	    PSsendchararray((char *)(p->data[j] + offset),
+			    i ? MAX_STRING : p->channelBytes % MAX_STRING);
+
+  /* Write w, h, bps and the matrix */
+    PSsendint(p->width);
+    PSsendint(p->height);
+    PSsendint(p->bps);
+    fillInMatrix(p, matrixToSend);
+    PSsendfloatarray(matrixToSend, 6);
+
+  /* Write procs for each channel */
+    for(j = p->channels; j--; )
+	DPSPrintf(currCtxt, " {} ");
+
+  /* Optionally write planar config and num colors params, and the operator */
+    if( p->alpha || p->color ) {
+	PSsendboolean(p->planarConfig == NX_PLANAR);
+	PSsendint(p->spp - p->alpha);
+	DPSPrintf(currCtxt, p->alpha ? " alphaimage\n" : " colorimage\n");
+    } else
+	DPSPrintf(currCtxt, " image\n");
+}
+
+
+/* Fill in matrix for image operators.  Let SRC, UNIT and USER be the coord
+   spaces of the source image, the default PS coord system, and the current
+   user coordinate space.  Let CTM be the transformation from UNIT to USER.
+   Let IM be the transformation specified by the matrix passed to the image
+   operator.  IM maps the unit square in UNIT space to the source data in
+   SRC space.  Let inv(X) be the inverse matrix of X.
+   
+   Normally inv(IM) is used to map the source image to the unit square,
+   and then CTM is translated and scaled to place the image in the window.
+   Let T be this total transformation ( T = inv(IM)*CTM ).  We can achieve
+   the same transformation T without changing CTM if we find the right
+   matrix X to use in place of IM.  X = inv(T) = inv(CTM) * IM.  Basically,
+   we are folding the positioning scale and translate normally applied to
+   the CTM back into the matrix passed to the image operator.
+ */
+static void fillInMatrix(ParamBlock *p, float matrix[6])
+{
+    matrix[1] = matrix[2] = 0.0;
+    if( p->width == p->w ) {
+	matrix[0] = 1.0;
+	matrix[4] = -p->x;
+    } else {
+	matrix[0] = (float)(p->width)/p->w;
+	matrix[4] = -p->x * matrix[0];
+    }
+    if( p->height == p->h ) {
+	matrix[3] = 1.0;
+	matrix[5] = -p->y;
+    } else {
+	matrix[3] = (float)(p->height)/p->h;
+	matrix[5] = -p->y * matrix[3];
+    }
+    if( !p->flipState ) {
+	matrix[3] = -matrix[3];
+	matrix[5] = -matrix[5];
+	matrix[5] += p->height;
+    }
+}
+
+/*
+ * Private version of NXImageBitmap that allows specifying whether the
+ * imaging should pay attention to the flippedness of the currently focused
+ * view.  Sometimes you might be focused on an PostScript window whose
+ * flippedness is different than that of the current window.
+ */ 
+extern void _NXImageBitmapWithFlip(const NXRect *rect, int width, int height,
+			int bps, int spp, int planarConfig, int photoInt,
+			const void *data1, const void *data2,
+			const void *data3, const void *data4,
+			const void *data5, 
+			BOOL useFlipState)
+{
+    ParamBlock p;
+    int i;
+    unsigned char *dataPtr;
+    BOOL dataAlloced = NO;
+
+    if (((photoInt & NX_ALPHAMASK) != 0)  && (NXDrawingStatus != NX_DRAWING)) {
+	BOOL isPlanar = planarConfig == NX_PLANAR ? YES : NO;
+	const unsigned char *withAlpha[5];
+ 	unsigned char *withoutAlpha[5];
+	withAlpha[0] = data1;
+	withAlpha[1] = data2;
+	withAlpha[2] = data3;
+	withAlpha[3] = data4;
+	withAlpha[4] = data5;	
+	if (_NXRemoveAlpha(withoutAlpha, withAlpha, width, height, bps, spp,
+		    ROUND_DIV(bps * width * (isPlanar ? 1 : spp), 8), isPlanar)) {
+	    data1 = withoutAlpha[0];
+	    data2 = withoutAlpha[1];
+	    data3 = withoutAlpha[2];
+	    data4 = withoutAlpha[3];
+	    data5 = withoutAlpha[4];	
+	    spp--;
+	    photoInt &= ~NX_ALPHAMASK;
+	    dataAlloced = YES;
+	} else {
+	    NXLogError ("NXImageBitmap: Printing with alpha.\n");
+	}	
+    }
+
+    p.x = NX_X(rect);
+    p.y = NX_Y(rect);
+    p.flipState = (useFlipState ? [NXApp _flipState] : NO);
+    p.w = NX_WIDTH(rect);
+    p.h = NX_HEIGHT(rect);
+    p.width = width;
+    p.height = height;
+    p.bps = bps;
+    p.spp = spp;
+    p.planarConfig = planarConfig;
+    p.photoInt = photoInt;
+
+    p.alpha = (photoInt & NX_ALPHAMASK) != 0;
+    p.color = (photoInt & NX_COLORMASK) != 0;
+    if (planarConfig == NX_MESHED) {
+	p.channelBytes = height * ROUND_DIV(bps * width * spp, 8);
+	p.channels = 1;
+    } else {
+	p.channelBytes = height * ROUND_DIV(bps * width, 8);
+	p.channels = spp;
+    }
+    p.totalBytes = p.channelBytes * p.channels;
+    p.stringsPerChannel = ROUND_DIV(p.channelBytes, MAX_STRING);
+
+    p.data[0] = data1;
+    p.data[1] = data2;
+    p.data[2] = data3;
+    p.data[3] = data4;
+    p.data[4] = data5;
+
+    if (!(photoInt & NX_MONOTONICMASK) && (spp - p.alpha) == 1) {
+	unsigned char *complementedData = 
+	    dataAlloced ? p.data[0] : NXZoneMalloc(NXDefaultMallocZone(), p.totalBytes);
+	dataAlloced = YES;
+	for (dataPtr = complementedData, i = 0; i < p.channels; i++)
+	    if (p.data[i]) {
+		_NXComplement(p.data[i], dataPtr, p.channelBytes);
+		p.data[i] = dataPtr;
+		dataPtr += p.channelBytes;
+	    }
+    }
+    NX_ASSERT(!p.color ||
+	((photoInt & NX_MONOTONICMASK ? 1 : 0) == ((spp - p.alpha) == 4)),
+	    		"CMY data unsupported in image bitmap");
+
+    if (NXDrawingStatus == NX_DRAWING)
+	doBinaryImageBitmap(&p);
+    else
+	doAsciiImageBitmap(&p);
+    if (dataAlloced) {
+	free((unsigned char *)p.data[0]);
+    }
+}
+
+/* Sends an image to the PS server */
+extern void NXImageBitmap(const NXRect *rect, int width, int height,
+			int bps, int spp, int planarConfig, int photoInt,
+			const void *data1, const void *data2,
+			const void *data3, const void *data4,
+			const void *data5)
+{
+    _NXImageBitmapWithFlip(rect, width, height,
+			    bps, spp, planarConfig, photoInt,
+			    data1, data2, data3, data4, data5, YES);
+}
+
+
+
+/* ensures we have a buffer for readimage */
+defineps static makeBuffer( int size )
+    userdict /__NXReadImageBuffer size string put
+endps
+
+
+defineps static freeBuffer()
+    userdict /__NXReadImageBuffer undef
+endps
+
+
+/* writes all scan lines in a row, for one call to AwaitReturnValues */
+defineps static getImageData(float x; float y; float w; float h;
+					boolean doAlpha; int extraProcs)
+    0 x y w h
+    {
+	1 index printobject		% send scanlines back in a string
+	1 add				% bump sync count
+    } extraProcs {dup} repeat
+    __NXReadImageBuffer
+    doAlpha
+    readimage
+    0 exch printobject			% terminating object
+    flush
+endps
+
+
+/* reads a bitmap from the server. */
+void NXReadBitmap( const NXRect *rect, int width, int height, int bps, int spp, 
+		int planarConfig, int photoInt,
+		void *data1, void *data2, void *data3,
+		void *data4, void *data5 )
+{
+#define MAX_TOKENS 249
+#define DEFAULT_BUF 8100
+    int bytesPerScan;
+    DPSResultsRec resultSpace[MAX_TOKENS];
+    DPSResultsRec *res;
+    int totalBytes;
+    int channelBytes;
+    int channels;
+    int alpha;
+    int numChannelResults;
+    int offset;
+    int i, j;
+    DPSContext currContext = DPSGetCurrentContext();
+    static int serverBufSize = 0;
+    int neededBufSize;
+    int chunkSize;
+    unsigned char *data[5];
+
+    bytesPerScan = ROUND_DIV(bps * width, 8);
+    channelBytes = height * bytesPerScan;
+    totalBytes = channelBytes * spp;
+    alpha = (photoInt & NX_ALPHAMASK) != 0;
+  /* channels' data interleaved or separate */
+    if( planarConfig == NX_MESHED ) {
+	channelBytes = totalBytes;
+	channels = 1;
+	bytesPerScan *= spp;
+    } else
+	channels = spp;
+
+  /* Calc how big a buffer we will need in the server.  Server will send
+     back chunks that are as big as the most scanlines it can fit in its
+     buffer. 
+   */
+    neededBufSize = ROUND_DIV(channelBytes, MAX_TOKENS / channels);
+    neededBufSize = roundUp(neededBufSize, bytesPerScan);
+    if( neededBufSize < DEFAULT_BUF )
+	neededBufSize = DEFAULT_BUF;
+    if( neededBufSize > serverBufSize ) {
+	if( serverBufSize )
+	    freeBuffer();
+	makeBuffer( neededBufSize );
+	serverBufSize = neededBufSize;
+    }
+
+  /* given the server's buffer size, figure size and number of chunks */
+    chunkSize = serverBufSize - (serverBufSize % bytesPerScan);
+    numChannelResults = ROUND_DIV(channelBytes, chunkSize);
+
+    data[0] = data1;
+    data[1] = data2;
+    data[2] = data3;
+    data[3] = data4;
+    data[4] = data5;
+    res = resultSpace;
+    for( i = numChannelResults, offset = 0; i--; offset += chunkSize ) {
+	for( j = 0; j < channels; res++, j++ ) {
+	    res->type = dps_tChar;
+	    if (i)
+		 res->count = chunkSize;
+	     else {
+		 res->count = channelBytes % chunkSize;
+		 if (!res->count)   /* if channelBytes a mult of chunkSize */
+		     res->count = chunkSize;
+	     }
+	    res->value = (char *)(data[j] + offset);
+	}
+    }
+    currContext->resultTable = resultSpace;
+    currContext->resultTableLength = numChannelResults * channels;
+    getImageData( NX_X(rect), NX_Y(rect), NX_WIDTH(rect), NX_HEIGHT(rect),
+						    alpha, channels - 1 );
+    DPSAwaitReturnValues( currContext );
+}
+
+
+/* rounds a up to being a multiple of b */
+static int roundUp( int num, int mult )
+{
+    int result;
+
+    result = num + mult - 1;
+    return (result - result % mult);
+}
+
+
+defineps static getWindowAlpha( | int *alpha)
+	currentwindow currentwindowalpha alpha
+endps
+
+
+void NXSizeBitmap( const NXRect *rect, int *size, int *width, int *height,
+		int *bps, int *spp, int *planarConfig, int *photoInt )
+{
+    int multiproc;
+    int numColors;
+    float matrix[6];
+    int hasAlpha;
+
+    PSsizeimage( NX_X(rect), NX_Y(rect), NX_WIDTH(rect), NX_HEIGHT(rect),
+			width, height, bps, matrix, &multiproc, &numColors);
+    if (numColors != 1 && numColors != 3 && numColors != 4) {
+	NXLogError("Unexpected numColors of %d in NXSizeBitmap", numColors);
+	return;
+    }
+    getWindowAlpha( &hasAlpha );
+    hasAlpha = (hasAlpha != 2 && hasAlpha != -2);    
+    *spp = numColors + hasAlpha;
+    *planarConfig = multiproc ? NX_PLANAR : NX_MESHED;
+    *photoInt = 0;
+    *size = *spp * *height * (((*width * *bps) + 7) / 8);
+    if( hasAlpha )
+	*photoInt |= NX_ALPHAMASK;
+    if( numColors == 1 )
+	*photoInt |= NX_MONOTONICMASK;
+    else {
+	*photoInt |= NX_COLORMASK;
+	if( numColors == 4 )
+	    *photoInt |= NX_MONOTONICMASK;
+    }
+}
+
+    
+/*
+
+Modifications (starting at 0.8):
+
+12/10/88 trey	made NXImageBitmap and NXReadBitmap work in flipped and
+		 non-flipped views
+		made bitmaps print
+		rewrite NXImageBitmap for more efficient transmission
+ 1/11/89 trey	bug fix in calc'ing total size for interleaved images
+ 2/15/89 trey	bug fix sending the "alphaimage" op to server
+ 2/24/89 trey	upgraded NXReadBitmap to new readimage operator
+ 3/12/89 trey	added NXSizeImage
+		completed NXReadBitmap implementation - API fully supported
+		fixed NXImageBitmap to not divide into strips, using
+		 extended wrap format
+		NXImageBitmap, NXReadBitmap, NXSizeBitmap take NXRect instead
+		 of four floats
+0.91
+----
+ 5/19/89 trey	minimized static data
+
+0.94
+----
+ 6/07/89 trey	bug fix in NXReadBitmap, channels is not counted twice
+		 in loop to setup results offsets and sizes
+ 7/08/89 trey	fixed NXImageBitmap to handle data with monotonic bit off
+		 in the black and white case
+
+ 8/01/89 trey	fixed NXReadBitmap to handle data whose size is a multiple
+		 of chunkSize
+
+12/21/89 trey	fixed NXImageBitmap bug, where it used spp instead of channels
+		 in the case of interleaved color data
+
+79
+--
+ 3/22/90 aozer	created _NXImageBitmapWithFlip (private version of 
+		NXImageBitmap) allowing the imaging to ignore flipstate of the 
+		currently focused view.
+
+91
+--
+ 8/8/90 trey	reimplemented to use nextimage operator
+
+92
+--
+ 8/20/90 trey	fixed channelBytes/totalBytes calc to do the byte alignment
+ 		 at the right time depending on whether data is planar
+ 8/17/90 aozer	Call _NXRemoveAlpha() if image contains alpha and we're
+		 printing.
+		Removed call of _NXRemoveAlpha() from NXBitmapImageRep.
+*/

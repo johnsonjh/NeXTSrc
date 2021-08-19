@@ -1,0 +1,7 @@
+mkdir doc
+mv *.aux *.cps *.dvi *.fns *.info* *.kys *.pgs *.tex *.texinfo *.tps *.vrs *.1 doc
+mkdir vms
+mv *.com *.hlp vms
+mkdir include
+mv assert.h gvarargs.h limits.h math-68881.h stdarg.h stddef.h va*.h include
+

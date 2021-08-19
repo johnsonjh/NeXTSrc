@@ -1,0 +1,6 @@
+The include files for rpc are shared with the kernel.  Installation
+of these include files is the responsibility of the kernel.  If you
+need to change these include files, you must negotiate with the kernel
+group.
+
+--Mike

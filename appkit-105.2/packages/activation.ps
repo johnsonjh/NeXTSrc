@@ -1,0 +1,264 @@
+
+currentshared true setshared
+  % allocate all of these procs in shared VM and leave previous state on 
+  % stack for restore
+
+windowPackage1.0 begin
+
+/_hideMenus {		%		 <ctxt> _hideMenus
+  % hides the menus for the given context.  First we get the screenlist for
+  % the context.  Then we loop through the screenlist, looking for windows
+  % we should hide, and hiding them (ignoring errors).  Finally we store the
+  % list of hidden windows with the context.
+  %
+  %	WL = window list		WLS = window list storage
+  %	win = a window from WL
+    true exch /getWindows winexec {		% WLS WL
+	mark exch				% WLS mk win
+	dup currentwindowdict			% WLS mk win wdict
+	dup null ne {				% WLS mk w wdict
+	    /hideOnDeact get {			% WLS mk win
+		{
+		    Out exch 0 exch orderwindow
+		} stopped
+	    } if
+	} if
+	cleartomark				% WLS
+    } forall
+    /returnWindows winexec			%
+} _NXDefProc
+
+/_showMenus {		%	   <win> <ctxt> _showMenus
+  % shows the menus for the given context.  It first looks up the windows for
+  % the context.  For all these window, it checks for ones that hide on
+  % deactivate and that the kit thinks should be visible.  These it shows
+  % while ignoring errors.  When showing the window, it either orders it to
+  % the front or tucks it behind the window being activated.  It goes to the
+  % front if its not in the document tier or if there wasnt a particular
+  % window clicked on to activate.
+  %	WL = window list		WLS = window list storage
+  %	win = a window from WL		AWin = window being activated
+    false exch /getWindows winexec {		% AWin WLS WL
+	mark exch				% AWin WLS mk win
+	dup currentwindowdict			% AWin WLS mk win wdict
+	dup null ne {				% AWin WLS mk w wdict
+	    dup /hideOnDeact get exch		% AWin WLS mk w hdFlag wdict
+	    /kitVisible get and {		% AWin WLS mk win
+		{
+		    dup currentwindowlevel 0 ne	% AWin WLS mk win !level?
+		    4 index 0 eq or {		% AWin WLS mk win
+			Above exch 0 exch orderwindow
+		    }{
+			Below exch		% AWin WLS mk Below win
+			4 index exch		% AWin WLS mk Below AWin win
+			orderwindow
+		    } ifelse
+		} stopped
+	    } if
+	} if
+	cleartomark				% AWin WLS
+    } forall
+    /returnWindows winexec pop			%
+} _NXDefProc
+
+/_lockedDoDeactivate {	%			_lockedDoDeactivate
+  % Does the work of deactivating the currently active app.  We send it a
+  % deactivate event and clear the ActiveApp variable.  The cursor is not
+  % changed.  Assumes appLock is held.
+    activeApp 0 eq not {
+	activeApp //_hideMenus exec
+	//Kitdefined 0 0 0 0 0 //AppDeact 0 0 
+	activeApp false /postByContext winexec
+	nextdict /activeApp 0 put
+	0 setactiveapp
+    } if
+} _NXDefProc
+
+/_lockedDoActivate {	%<time> <context> <win> _lockedDoActivate
+  % Does the work of activating an app.  We send it an activate event,
+  % set the ActiveApp variable and update the cursor.  Assumes appLock is
+  % held.  <context> is the context to activate, <win> is the window that
+  % was clicked on to cause the activation (if any). <time> goes in the
+  % time field.
+    2 copy exch //_showMenus exec
+    dup 0 ne {					% t o win
+	currentwindowdict dup null ne {		% t o wDict
+	    /localNum get			% t o lN
+	}{
+	    pop 0				% t o 0
+	} ifelse
+    } if					% t o lN
+    1 index setactiveapp
+    //Kitdefined 0 0				% t o lN Kd 0 0
+    6 -1 roll 0 0				% o lN Kd 0 0 t 0 0
+    //AppAct 					% o lN Kd 0 0 t 0 0 Aa
+    curActivation 1 add dup			% o lN Kd 0 0 t 0 0 Aa cA cA
+    nextdict /curActivation 3 -1 roll put	% o lN Kd 0 0 t 0 0 Aa cA 
+    9 -1 roll					% o Kd 0 0 t 0 0 Aa cA lN		
+    9 index false /postByContext winexec	% o
+    nextdict /activeApp 			% o nd aA
+    3 -1 roll					% nd aA o
+    put
+} _NXDefProc
+
+/doShellActivate {	%	<context> <win> doActivate
+    appLock {
+	0 3 1 roll /_lockedDoActivate winexec
+    } monitor
+} _NXDefProc
+
+/doShellDeactivate {	%	     <context> doDeactivate
+    appLock {
+	/_lockedDoDeactivate winexec
+	nextdict /activeApp 3 -1 roll put
+    } monitor
+} _NXDefProc
+
+/activateByWindow {	%	       <winnum> activateByWindow
+  % activates the app who owns a window.  Sends a deactivate event to any
+  % existing app.  Then sends an activate event to the owner of the window.
+  % If that app is waiting, put up the wait cursor.  Assumes that the caller
+  % will handle setting mouse window, since the activation was caused by
+  % interaction with a window.  Sends back activation sync count in flags
+  % field of the event.
+    appLock {
+	{					% win
+	    //_lockedDoDeactivate exec		% win
+	    0 exch dup currentowner exch	% time owner win
+	    //_lockedDoActivate exec		%
+	} stopped
+	{handleerror} if
+    } monitor
+} _NXDefProc
+
+/_lockedActivateContext {%     <time> <context> _lockedActivateContext
+  % Activates a particular context.  If there is an active app, it sends it a
+  % deactivate.  Sends the context an activate.  Sets wait cursor if
+  % necessary.  Assumes caller holds activeApp lock.  Sends back activation
+  % sync count in flags field of the event.  <time> is placed in time field.
+    dup activeApp ne {
+	{
+	    //_lockedDoDeactivate exec
+	    0 //_lockedDoActivate exec
+	} stopped
+	{handleerror} if
+    }{
+	pop pop
+    } ifelse
+} _NXDefProc
+
+/activateContext {	%	      <context> activateContext
+  % cover existing to grab lock
+    appLock {
+	0 exch //_lockedActivateContext exec
+    } monitor
+} _NXDefProc
+
+/activateSelf {		%	    <forceFlag> activateSelf
+  % Activates the current context.  If force is true,
+  % the context will always be activated.  If force is false, then the context
+  % will only be activated if no one else is active.  This is useful when apps
+  % are launched, so they activate themselves so long as no other app became
+  % active in the meantime.
+    appLock {
+	0 ne				% force?
+	activeApp 0 eq or {
+	    0 currentcontext //_lockedActivateContext exec
+	} if
+    } monitor
+} _NXDefProc
+
+/deactivateCurrContext {%			deactivateCurrContext
+  % Deactivate the currently active app.  Sends it a deactivate event and
+  % clears some state.
+    appLock {
+	//_lockedDoDeactivate exec
+	/setArrowCursor winexec
+    } monitor
+} _NXDefProc
+
+/deactivateSelf {	%			deactivateSelf
+  % Deactivate the current context if it is the active app.  Sends it a
+  % deactivate event and clears some state.
+    appLock {
+	activeApp currentcontext eq {
+	    //_lockedDoDeactivate exec
+	    /setArrowCursor winexec
+	} if
+    } monitor
+} _NXDefProc
+
+/activateNextApp {	%      <time> <context> activateContext
+  % Activates the next app in line, if the given context is the active app
+  % or if there is no active app.  The context to activate is found by
+  % searching the screenlist for the topmost modal panel or normal window.
+  %	WL = window list		WLS = window list storage
+    appLock {
+	dup activeApp eq activeApp 0 eq or {
+	    true 0 /getWindows winexec		% time ctxt WLS WL
+	    false exch {
+		dup currentwindowlevel		% time ctxt WLS false win winlevel
+		dup //mainMenuLevel gt exch
+		//dockLevel lt or {		% time ctxt WLS false win
+		    dup currentwindowdict	% time ctxt WLS false win dict
+		    dup null ne {
+			/icon get 1 ne {	% time ctxt WLS false win
+			    dup currentowner	% time ctxt WLS false win newCtxt
+			    4 index ne {
+				true exit
+			    } if
+			} if
+		    }{
+			pop
+		    } ifelse
+		} if
+		pop
+	    } forall				% time ctxt WLS false <win true>
+	    {
+		4 index exch currentowner //_lockedActivateContext exec
+		pop
+	    } if				% time ctxt WLS
+	    /returnWindows winexec
+	} if					% time ctxt
+	pop pop
+    } monitor
+} _NXDefProc
+
+/orderPanelIfActive {	%   <place> <rel> <win> orderPanelIfActive
+  % orders a hideOnDeactivate panel, keeping the kitVisible flag up
+  % to date.  The packages need to know whether the kit intends the
+  % window to be visible so that can hide and show it on activation.
+    appLock {
+	activeApp currentcontext eq {
+	    3 copy orderwindow
+	} if
+	currentwindowdict /kitVisible		% place rel wDict /kvis
+	4 2 roll pop				% wDict /kvis place
+	Out ne put				%
+    } monitor
+} _NXDefProc
+
+/setHideOnDeact {	%    <vis> <flag> <win> setHideOnDeact
+  % sets the window's hide on deactivate flag.  To keep enforce the
+  % meaning of this flag, if the app is not active we must hide the
+  % window if we are setting the flag.
+    mark 4 1 roll				% mk vis flg win
+    appLock {
+	dup currentwindowdict			% mk vis flg win dict
+	dup /hideOnDeact get			% mk vis flg win dict oldFlg
+	3 index ne {				% mk vis flg win dict
+	    dup /hideOnDeact 4 index put	% mk vis flg win dict
+	    3 -1 roll {				% mk vis win dict
+		/kitVisible 4 -1 roll put	% mk win
+		activeApp currentcontext ne {	% mk win
+		    Out exch 0 exch orderwindow % mk
+		} if				% mk <junk>
+	    } if				% mk <junk>
+	} if					% mk <junk>
+    } monitor
+    cleartomark
+} _NXDefProc
+
+
+end			% close window dict
+setshared		% restore VM allocation mode

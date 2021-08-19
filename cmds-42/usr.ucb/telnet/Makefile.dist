@@ -1,0 +1,142 @@
+#
+# Copyright (c) 1987 Regents of the University of California.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms are permitted
+# provided that the above copyright notice and this paragraph are
+# duplicated in all such forms and that any documentation,
+# advertising materials, and other materials related to such
+# distribution and use acknowledge that the software was developed
+# by the University of California, Berkeley.  The name of the
+# University may not be used to endorse or promote products derived
+# from this software without specific prior written permission.
+# THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+#	@(#)Makefile	1.17 (Berkeley) 11/14/89
+#
+
+#
+# TERMCAP	Define this if your system is termcap based,
+#		otherwise a terminfo based system is assumed.
+#
+# SRCRT		Includes code to allow you to specify source routes.
+#		Format is:
+#			[!]@hop1@hop2...[@|:]dst
+#		Leading ! means strict source route.
+#
+# SYSV_TERMIO	Define this if you have System V termio structures,
+#		This code works under Cray UNICOS.
+#
+# NO_CC_T	Define this if your termio.h file does not have
+#		a typedef for cc_t.
+#
+# USE_TERMIO	Define this if you have the POSIX termios structures.
+#		This code works under the BSD 4.4 terminal driver.
+#
+# KLUDGELINEMODE Define this to get the kludged up version of linemode
+#		that was in 4.3BSD.  This is a good thing to have
+#		around for talking to older systems.
+#
+# NOSTRNCASECMP	Define this if you do not have strncasecmp() in
+#		your C libarary.
+#
+# strrchr=rindex Define this if you do not have strrchr() in your
+#		C libaray (but you do have rindex...)
+#
+# HAS_IP_TOS	Define this if you have the setsockopt() option for
+#		setting the IP Type of Service bit (IP_TOS) and you
+#		have the gettosbyname() function.
+#
+# NEED_GETTOS	Define this if you have the setsockopt() option for
+#		setting the IP Type Of Service bits, but you don't
+#		have the gettosbyname() function.  If you define
+#		this, you don't need to define HAS_IP_TOS.
+#
+
+
+#
+# LIBS should be set to any libraries that need to be included,
+# like the termcap or terminfo library.  LIBPATH is the paths
+# to these libraries, for dependencies.
+#
+
+all:
+	@echo "you must specify what type of system you are on,"
+	@echo "or modify the makefile for your system."
+	@echo "Known system types are:"
+	@echo " 4.4bsd 4.3bsd unicos5.0 unicos6.0 sun3.5 sun4.0 sun4.1 dynix"
+
+4.4bsd:
+	make -f Makefile.generic ${WHAT} \
+		LIBS="-ltermcap" \
+		LIBPATH="/lib/libc.a /usr/lib/libtermcap.a" \
+		DEST=${DESTDIR}/usr/bin \
+		DEFINES="-DTERMCAP -DSRCRT -DKLUDGELINEMODE -DUSE_TERMIO"
+
+4.3bsd:
+	make -f Makefile.generic ${WHAT} \
+		LIBS="-ltermcap" \
+		LIBPATH="/lib/libc.a /usr/lib/libtermcap.a" \
+		DEST=${DESTDIR}/usr/bin \
+		DEFINES="-DTERMCAP -DSRCRT -DKLUDGELINEMODE"
+
+unicos5.0 unicos5.1:
+	make -f Makefile.generic ${WHAT} \
+		LIBS="-lcurses -lnet" \
+		LIBPATH="/lib/libc.a /usr/lib/libcurses.a" \
+		DEST=${DESTDIR}/usr/ucb \
+		DEFINES="-Dvfork=fork -Dsignal=sigset -DSRCRT \
+			-DKLUDGELINEMODE -DSYSV_TERMIO -DNO_CC_T"
+
+unicos6.0:
+	make -f Makefile.generic ${WHAT} \
+		LIBS="-lcurses -lnet" \
+		LIBPATH="/lib/libc.a /usr/lib/libcurses.a" \
+		DEST=${DESTDIR}/usr/ucb \
+		DEFINES="-Dvfork=fork -Dsignal=bsdsignal -DSRCRT \
+			-DKLUDGELINEMODE -DSYSV_TERMIO -DHAS_IP_TOS"
+
+sun3.5:
+	make -f Makefile.generic ${WHAT} \
+		LIBS=-ltermcap \
+		LIBPATH="/lib/libc.a /usr/lib/libtermcap.a" \
+		DEST=${DESTDIR}/usr/ucb \
+		DEFINES="-DTERMCAP -DSRCRT -DKLUDGELINEMODE -DNOSTRNCASECMP"
+sun4.0.3c sun4.0:
+	make -f Makefile.generic ${WHAT} \
+		LIBS=-ltermcap \
+		LIBPATH="/lib/libc.a /usr/lib/libtermcap.a" \
+		DEST=${DESTDIR}/usr/ucb \
+		DEFINES="-DFILIO_H -DTERMCAP -DUSE_TERMIO -DNO_CC_T \
+			-DSRCRT -DKLUDGELINEMODE"
+
+sun4.1:
+	make -f Makefile.generic ${WHAT} \
+		LIBS=-ltermcap \
+		LIBPATH="/lib/libc.a /usr/lib/libtermcap.a" \
+		DEST=${DESTDIR}/usr/ucb \
+		DEFINES="-DFILIO_H -DTERMCAP -DUSE_TERMIO -DSRCRT \
+			-DKLUDGELINEMODE"
+
+dynix3.0.12 dynix:
+	make -f Makefile.generic ${WHAT} \
+		LIBS=-ltermcap \
+		LIBPATH="/lib/libc.a /usr/lib/libtermcap.a" \
+		DEST=${DESTDIR}/usr/ucb \
+		DEFINES="-DTERMCAP -DSRCRT -DKLUDGELINEMODE -Dstrrchr=rindex \
+			-DNOSTRNCASECMP"
+
+ultrix3.1:
+	make -f Makefile.generic ${WHAT} \
+		LIBS=-ltermcap \
+		LIBPATH="/lib/libc.a /usr/lib/libtermcap.a" \
+		DEST=${DESTDIR}/usr/ucb \
+		DEFINES="-DTERMCAP -DSRCRT -DKLUDGELINEMODE"
+
+clist:
+	@make -f Makefile.generic clist
+
+hclist:
+	@make -f Makefile.generic hclist

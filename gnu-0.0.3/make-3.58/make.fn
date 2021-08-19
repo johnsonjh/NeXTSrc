@@ -1,0 +1,87 @@
+\entry {objects}{13}{objects}
+\entry {include}{18}{\code {include}}
+\entry {MAKEFILES}{19}{MAKEFILES}
+\entry {wildcard}{26}{\code {wildcard}}
+\entry {VPATH}{27}{VPATH}
+\entry {vpath}{27}{\code {vpath}}
+\entry {.PHONY}{31}{\code {.PHONY}}
+\entry {.SILENT}{41}{\code {.SILENT}}
+\entry {SHELL}{42}{SHELL}
+\entry {.IGNORE}{44}{\code {.IGNORE}}
+\entry {.PRECIOUS}{45}{\code {.PRECIOUS}}
+\entry {MAKE}{46}{MAKE}
+\entry {MAKELEVEL}{47}{MAKELEVEL}
+\entry {MAKEFILES}{47}{MAKEFILES}
+\entry {MAKEFLAGS}{48}{MAKEFLAGS}
+\entry {MFLAGS}{48}{MFLAGS}
+\entry {override}{61}{\code {override}}
+\entry {define}{61}{\code {define}}
+\entry {endef}{61}{\code {endef}}
+\entry {ifdef}{66}{\code {ifdef}}
+\entry {ifeq}{66}{\code {ifeq}}
+\entry {ifndef}{66}{\code {ifndef}}
+\entry {ifneq}{66}{\code {ifneq}}
+\entry {else}{66}{\code {else}}
+\entry {endif}{66}{\code {endif}}
+\entry {subst}{70}{\code {subst}}
+\entry {patsubst}{70}{\code {patsubst}}
+\entry {strip}{71}{\code {strip}}
+\entry {findstring}{71}{\code {findstring}}
+\entry {filter}{71}{\code {filter}}
+\entry {filter-out}{71}{\code {filter-out}}
+\entry {sort}{71}{\code {sort}}
+\entry {dir}{73}{\code {dir}}
+\entry {notdir}{73}{\code {notdir}}
+\entry {suffix}{73}{\code {suffix}}
+\entry {basename}{73}{\code {basename}}
+\entry {addsuffix}{73}{\code {addsuffix}}
+\entry {addprefix}{74}{\code {addprefix}}
+\entry {join}{74}{\code {join}}
+\entry {word}{74}{\code {word}}
+\entry {words}{74}{\code {words}}
+\entry {firstword}{74}{\code {firstword}}
+\entry {wildcard}{74}{\code {wildcard}}
+\entry {foreach}{75}{\code {foreach}}
+\entry {origin}{76}{\code {origin}}
+\entry {shell}{78}{\code {shell}}
+\entry {AR}{92}{AR}
+\entry {AS}{92}{AS}
+\entry {CC}{92}{CC}
+\entry {C{@fam @ttfam @tentt @char 43}{@fam @ttfam @tentt @char 43}}{92}{C{@fam @ttfam @tentt @char 43}{@fam @ttfam @tentt @char 43}}
+\entry {CO}{92}{CO}
+\entry {CPP}{92}{CPP}
+\entry {FC}{92}{FC}
+\entry {GET}{92}{GET}
+\entry {LEX}{92}{LEX}
+\entry {PC}{92}{PC}
+\entry {FC}{92}{FC}
+\entry {EC}{92}{EC}
+\entry {RC}{92}{RC}
+\entry {YACC}{92}{YACC}
+\entry {YACCR}{92}{YACCR}
+\entry {YACCE}{92}{YACCE}
+\entry {MAKEINFO}{92}{MAKEINFO}
+\entry {TEX}{92}{TEX}
+\entry {TEXINDEX}{92}{TEXINDEX}
+\entry {WEAVE}{92}{WEAVE}
+\entry {CWEAVE}{92}{CWEAVE}
+\entry {TANGLE}{92}{TANGLE}
+\entry {CTANGLE}{93}{CTANGLE}
+\entry {RM}{93}{RM}
+\entry {ARFLAGS}{93}{ARFLAGS}
+\entry {ASFLAGS}{93}{ASFLAGS}
+\entry {CFLAGS}{93}{CFLAGS}
+\entry {C{@fam @ttfam @tentt @char 43}{@fam @ttfam @tentt @char 43}FLAGS}{93}{C{@fam @ttfam @tentt @char 43}{@fam @ttfam @tentt @char 43}FLAGS}
+\entry {COFLAGS}{93}{COFLAGS}
+\entry {CPPFLAGS}{93}{CPPFLAGS}
+\entry {EFLAGS}{93}{EFLAGS}
+\entry {FFLAGS}{93}{FFLAGS}
+\entry {GFLAGS}{93}{GFLAGS}
+\entry {LDFLAGS}{93}{LDFLAGS}
+\entry {LFLAGS}{93}{LFLAGS}
+\entry {PFLAGS}{93}{PFLAGS}
+\entry {RFLAGS}{93}{RFLAGS}
+\entry {YFLAGS}{93}{YFLAGS}
+\entry {.DEFAULT}{101}{\code {.DEFAULT}}
+\entry {.SUFFIXES}{103}{\code {.SUFFIXES}}
+\entry {SUFFIXES}{103}{SUFFIXES}

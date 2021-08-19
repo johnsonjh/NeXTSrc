@@ -1,0 +1,11 @@
+./
+../
+Makedep
+Makefile
+Mkinc.dir
+README
+SGS_ENV
+etc/
+lib/
+unused/
+usr/

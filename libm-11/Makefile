@@ -1,0 +1,148 @@
+#
+#	@(#)Makefile	4.9	9/11/85
+#
+SCCSID = "@(#)Makefile	4.9 9/11/85"
+#
+# This high quality math library is intended to run on either a VAX in
+# D_floating format or a machine that conforms to the IEEE standard 754
+# for double precision floating-point arithmetic.
+#
+# WARNING: On machines other than the ones mentioned above, run the original
+# Version 7 math library, if nothing better is available.
+
+#
+# MACH indicates the type of floating point hardware you are using; legal
+# values are:
+#
+# VAX		- for the VAX D_floating format, the default.
+# NATIONAL	- for those IEEE machines whose floating point implementation
+#		  has similar byte ordering as the NATIONAL 32016 with 32081.
+# IEEE		- for other IEEE machines, we hope.
+#
+MACH = IEEE
+
+#
+# invoke object-code optimizer with appropriate MACH definition
+# suncc if for bugs in sun compiler that won't accept full C lang
+#
+CFLAGS=-O -D${MACH} -DNeXT_MOD -DINLINE_MATH
+NAME = libm
+
+INSTALL=install
+MV= mv -f
+
+DSTDIR=
+LIBDIR=$(DSTDIR)/usr/lib
+
+SHLIB_OBJ=shlib_obj
+PROFILE_OBJ=profile_obj
+
+#
+# Files comprising the standard Math library;
+# actually there are more under ${MACH}/ subdirectory.
+#
+VERSFILE = $(NAME)_vers
+VERSFLAGS = -l
+
+SRCS =	acosh.c asincos.c asinh.c atan.c atanh.c cosh.c erf.c \
+	exp.c exp__E.c expm1.c floor.c lgamma.c j0.c j1.c jn.c \
+	log.c log10.c log1p.c log__L.c pow.c sinh.c signgam.c tanh.c
+
+FILES =	acosh.o asincos.o asinh.o atan.o atanh.o cosh.o erf.o \
+	exp.o exp__E.o expm1.o floor.o lgamma.o j0.o j1.o jn.o \
+	log.o log10.o log1p.o log__L.o pow.o sinh.o signgam.o tanh.o \
+	$(VERSFILE).o
+
+TAGSFILE=tags
+
+.c.o:
+####	generate additional code for profiling (-p)
+	${CC} -pg ${CFLAGS} -c $*.c
+####	generate relocation bits (-r) & preserve symbols that begin with L (-X)
+	-ld -X -r $*.o
+	${MV} a.out profiled/$*.o
+	${CC} ${CFLAGS} -c $*.c
+####	generate relocation bits (-r) but don't preserve local symbols (-x)
+	-ld -x -r $*.o
+	${MV} a.out $*.o
+
+$(VERSFILE).c:
+	vers_string $(VERSFLAGS) $(PRODUCT) > $@
+
+all: libm.a libm_p.a
+	/bin/rm -f $(VERSFILE).c
+
+shlib_ofiles: libm.a
+	-rm -rf $(SHLIB_OBJ)
+	-mkdir $(SHLIB_OBJ)
+	cd $(SHLIB_OBJ); ar x ../libm.a
+
+profile_ofiles: libm_p.a
+	-rm -rf $(PROFILE_OBJ)
+	-mkdir $(PROFILE_OBJ)
+	cd $(PROFILE_OBJ); ar x ../libm_p.a
+
+hack:
+	cd $(SHLIB_OBJ); mkshlib -s ../spec_m -t ../libm_s.A.shlib -h \
+		../libm_s.a
+
+libm.a libm_p.a: ${FILES} more
+	cd profiled; ar cru ../libm_p.a ${FILES}
+	ar cru libm.a ${FILES}
+
+more:
+	@cd ${MACH}; make "MACH=${MACH}" "CFLAGS=${CFLAGS}"
+
+install: ckdstroot libm.a libm_p.a $(DSTROOT)/${LIBDIR}
+	-rm -f $(DSTROOT)/${LIBDIR}/libnm.a $(DSTROOT)/${LIBDIR}/libnm_p.a
+	${INSTALL} libm.a $(DSTROOT)/${LIBDIR}
+	ln $(DSTROOT)/${LIBDIR}/libm.a $(DSTROOT)/${LIBDIR}/libnm.a
+	ranlib $(DSTROOT)/${LIBDIR}/libm.a
+	${INSTALL} libm_p.a $(DSTROOT)/${LIBDIR}
+	ln $(DSTROOT)/${LIBDIR}/libm_p.a $(DSTROOT)/${LIBDIR}/libnm_p.a
+	ranlib $(DSTROOT)/${LIBDIR}/libm_p.a
+
+local: cklclroot libm.a libm_p.a $(LCLROOT)/${LIBDIR}
+	-rm -f $(LCLROOT)/${LIBDIR}/libnm.a $(LCLROOT)/${LIBDIR}/libnm_p.a
+	${INSTALL} libm.a $(LCLROOT)/${LIBDIR}
+	ln $(LCLROOT)/${LIBDIR}/libm.a $(LCLROOT)/${LIBDIR}/libnm.a
+	ranlib $(LCLROOT)/${LIBDIR}/libm.a
+#	${INSTALL} libm_p.a $(LCLROOT)/${LIBDIR}
+#	ln $(LCLROOT)/${LIBDIR}/libm_p.a $(LCLROOT)/${LIBDIR}/libnm_p.a
+#	ranlib $(LCLROOT)/${LIBDIR}/libm_p.a
+
+ckdstroot:
+	@if [ -n "${DSTROOT}" ]; then exit 0; \
+	else echo Must define DSTROOT; exit 1; \
+	fi
+
+cklclroot:
+	@if [ -n "${LCLROOT}" ]; then exit 0; \
+	else echo Must define LCLROOT; exit 1; \
+	fi
+
+$(DSTROOT)/${LIBDIR} $(LCLROOT)/${LIBDIR}:
+	mkdirs $@
+
+installsrc:	SRCROOT
+	tar cf - . | (cd ${SRCROOT}; tar xfBp -)
+
+SRCROOT:
+	@if [ -n "${$@}" ]; \
+	then \
+		exit 0; \
+	else \
+		echo Must define $@; \
+		exit 1; \
+	fi
+
+tags:
+	cwd=`pwd`; \
+	for i in ${SRCS}; do \
+		ctags -a -f ${TAGSFILE} $$cwd/$$i; \
+	done
+
+clean:
+	-rm -f *.o ${MACH}/*.o profiled/*.o libm.a libm_p.a tags
+	-rm -rf $(SHLIB_OBJ) $(PROFILE_OBJ)
+	-rm -f $(VERSFILE).c $(VERSFILE).o

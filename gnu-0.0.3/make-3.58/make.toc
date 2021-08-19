@@ -1,0 +1,107 @@
+\chapentry {Overview of \code {make}}{1}{1}
+\unnumbchapentry {GNU GENERAL PUBLIC LICENSE}{3}
+\unnumbsecentry{Preamble}{3}
+\unnumbsecentry{TERMS AND CONDITIONS}{4}
+\unnumbsecentry{Appendix: How to Apply These Terms to Your New Programs}{7}
+\chapentry {Problems and Bugs}{2}{9}
+\chapentry {Simple Example of \code {make}}{3}{11}
+\secentry {How \code {make} Processes This Makefile}{3}{1}{12}
+\secentry {Variables Make Makefiles Simpler}{3}{2}{13}
+\secentry {Letting \code {make} Deduce the Commands}{3}{3}{13}
+\secentry {Another Style of Makefile}{3}{4}{14}
+\secentry {Rules for Cleaning the Directory}{3}{5}{15}
+\chapentry {Writing Makefiles}{4}{17}
+\secentry {What Makefiles Contain}{4}{1}{17}
+\secentry {What Name to Give Your Makefile}{4}{2}{17}
+\secentry {Including Other Makefiles}{4}{3}{18}
+\secentry {The Variable \code {MAKEFILES}}{4}{4}{19}
+\secentry {How Makefiles Are Remade}{4}{5}{19}
+\secentry {Overriding Part of One Makefile with Another Makefile}{4}{6}{21}
+\chapentry {Writing Rules}{5}{23}
+\secentry {Rule Syntax}{5}{1}{23}
+\secentry {Using Wildcards Characters in File Names}{5}{2}{24}
+\subsecentry {Wildcard Examples}{5}{2}{1}{25}
+\subsecentry {Pitfalls of Using Wildcards}{5}{2}{2}{25}
+\subsecentry {The Function \code {wildcard}}{5}{2}{3}{26}
+\secentry {Searching Directories for Dependencies}{5}{3}{27}
+\subsecentry {\code {VPATH}: Search Path for All Dependencies}{5}{3}{1}{27}
+\subsecentry {The \code {vpath} Directive}{5}{3}{2}{28}
+\subsecentry {Writing Shell Commands with Directory Search}{5}{3}{3}{29}
+\subsecentry {Directory Search and Implicit Rules}{5}{3}{4}{29}
+\subsecentry {Directory Search for Link Libraries}{5}{3}{5}{30}
+\secentry {Phony Targets}{5}{4}{30}
+\secentry {Rules without Commands or Dependencies}{5}{5}{32}
+\secentry {Empty Target Files to Record Events}{5}{6}{33}
+\secentry {Special Built-in Target Names}{5}{7}{33}
+\secentry {Multiple Targets in a Rule}{5}{8}{34}
+\secentry {Static Pattern Rules}{5}{9}{35}
+\subsecentry {Syntax of Static Pattern Rules}{5}{9}{1}{35}
+\subsecentry {Static Pattern Rules versus Implicit Rules}{5}{9}{2}{36}
+\secentry {Multiple Rules for One Target}{5}{10}{37}
+\secentry {Double-Colon Rules}{5}{11}{38}
+\chapentry {Writing the Commands in Rules}{6}{41}
+\secentry {Command Echoing}{6}{1}{41}
+\secentry {Command Execution}{6}{2}{42}
+\secentry {Parallel Execution}{6}{3}{42}
+\secentry {Errors in Commands}{6}{4}{44}
+\secentry {Interrupting or Killing \code {make}}{6}{5}{45}
+\secentry {Recursive Use of \code {make}}{6}{6}{45}
+\subsecentry {How the \code {MAKE} Variable Works}{6}{6}{1}{46}
+\subsecentry {Communicating Variables to a Sub-\code {make}}{6}{6}{2}{47}
+\subsecentry {Communicating Options to a Sub-\code {make}}{6}{6}{3}{48}
+\subsecentry {The \samp {-w} Option}{6}{6}{4}{49}
+\secentry {Defining Canned Command Sequences}{6}{7}{49}
+\secentry {Defining Empty Commands}{6}{8}{50}
+\chapentry {How to Use Variables}{7}{53}
+\secentry {Basics of Variable References}{7}{1}{53}
+\secentry {The Two Flavors of Variables}{7}{2}{54}
+\secentry {Advanced Features for Reference to Variables}{7}{3}{56}
+\subsecentry {Substitution References}{7}{3}{1}{56}
+\subsecentry {Computed Variable Names}{7}{3}{2}{57}
+\secentry {How Variables Get Their Values}{7}{4}{60}
+\secentry {Setting Variables}{7}{5}{60}
+\secentry {The \code {override} Directive}{7}{6}{61}
+\secentry {Defining Variables Verbatim}{7}{7}{61}
+\secentry {Variables from the Environment}{7}{8}{62}
+\chapentry {Conditional Parts of Makefiles}{8}{65}
+\secentry {Example of a Conditional}{8}{1}{65}
+\secentry {Syntax of Conditionals}{8}{2}{66}
+\secentry {Conditionals that Test Flags}{8}{3}{68}
+\chapentry {Functions for Transforming Text}{9}{69}
+\secentry {Function Call Syntax}{9}{1}{69}
+\secentry {Functions for String Substitution and Analysis}{9}{2}{70}
+\secentry {Functions for File Names}{9}{3}{72}
+\secentry {The \code {foreach} Function}{9}{4}{75}
+\secentry {The \code {origin} Function}{9}{5}{76}
+\secentry {The \code {shell} Function}{9}{6}{78}
+\chapentry {How to Run \code {make}}{10}{79}
+\secentry {Arguments to Specify the Makefile}{10}{1}{79}
+\secentry {Arguments to Specify the Goals}{10}{2}{79}
+\secentry {Instead of Executing the Commands}{10}{3}{81}
+\secentry {Avoiding Recompilation of Some Files}{10}{4}{82}
+\secentry {Overriding Variables}{10}{5}{83}
+\secentry {Testing the Compilation of a Program}{10}{6}{84}
+\secentry {Summary of Options}{10}{7}{84}
+\chapentry {Using Implicit Rules}{11}{87}
+\secentry {Using Implicit Rules}{11}{1}{87}
+\secentry {Catalogue of Implicit Rules}{11}{2}{88}
+\secentry {Variables Used by Implicit Rules}{11}{3}{91}
+\secentry {Chains of Implicit Rules}{11}{4}{93}
+\secentry {Defining and Redefining Pattern Rules}{11}{5}{94}
+\subsecentry {Introduction to Pattern Rules}{11}{5}{1}{94}
+\subsecentry {Pattern Rule Examples}{11}{5}{2}{96}
+\subsecentry {Automatic Variables}{11}{5}{3}{97}
+\subsecentry {How Patterns Match}{11}{5}{4}{98}
+\subsecentry {Match-Anything Pattern Rules}{11}{5}{5}{99}
+\subsecentry {Canceling Implicit Rules}{11}{5}{6}{100}
+\secentry {Defining Last-Resort Default Rules}{11}{6}{101}
+\secentry {Old-Fashioned Suffix Rules}{11}{7}{102}
+\secentry {Implicit Rule Search Algorithm}{11}{8}{103}
+\chapentry {Using \code {make} to Update Archive Files}{12}{107}
+\secentry {Archive Members as Targets}{12}{1}{107}
+\secentry {Implicit Rule for Archive Member Targets}{12}{2}{107}
+\subsecentry {Updating Archive Symbol Directories}{12}{2}{1}{108}
+\chapentry {Features of GNU \code {make}}{13}{111}
+\chapentry {Missing Features in GNU \code {make}}{14}{115}
+\unnumbchapentry {Index of Concepts}{117}
+\unnumbchapentry {Index of Functions, Variables, and Directives}{119}

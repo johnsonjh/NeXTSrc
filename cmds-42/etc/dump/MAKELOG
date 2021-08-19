@@ -1,0 +1,17 @@
+rm -f Makedep
+cc -M -DNeXT_MOD -DNeXT_NFS -DDEBUG dumpitime.c dumpmain.c dumpoptr.c dumprmt.c dumprtape.c  dumptraverse.c unctime.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -bsd -DNeXT_MOD -DNeXT_NFS -DDEBUG -c dumpitime.c
+cc -O -g -fwritable-strings -bsd -DNeXT_MOD -DNeXT_NFS -DDEBUG -c dumpmain.c
+cc -O -g -fwritable-strings -bsd -DNeXT_MOD -DNeXT_NFS -DDEBUG -c dumpoptr.c
+cc -O -g -fwritable-strings -bsd -DNeXT_MOD -DNeXT_NFS -DDEBUG -c dumptape.c
+cc -O -g -fwritable-strings -bsd -DNeXT_MOD -DNeXT_NFS -DDEBUG -c dumptraverse.c
+cc -O -g -fwritable-strings -bsd -DNeXT_MOD -DNeXT_NFS -DDEBUG -c unctime.c
+vers_string -c dump > dump_vers.c
+cc -O -g -fwritable-strings -bsd -DNeXT_MOD -DNeXT_NFS -DDEBUG -c dump_vers.c
+cc -O -g -fwritable-strings -bsd -DNeXT_MOD -DNeXT_NFS -DDEBUG -o dump.NEW dumpitime.o dumpmain.o dumpoptr.o dumptape.o dumptraverse.o  unctime.o dump_vers.o -lsys_s
+cc -O -g -fwritable-strings -bsd -DNeXT_MOD -DNeXT_NFS -DDEBUG -DRDUMP -c dumprmain.c
+cc -O -g -fwritable-strings -bsd -DNeXT_MOD -DNeXT_NFS -DDEBUG -c dumprmt.c
+cc -O -g -fwritable-strings -bsd -DNeXT_MOD -DNeXT_NFS -DDEBUG -DRDUMP -c dumprtape.c
+vers_string -c rdump > rdump_vers.c
+cc -O -g -fwritable-strings -bsd -DNeXT_MOD -DNeXT_NFS -DDEBUG -c rdump_vers.c
+cc -O -g -fwritable-strings -bsd -DNeXT_MOD -DNeXT_NFS -DDEBUG -o rdump.NEW dumpitime.o dumprmain.o dumpoptr.o dumprmt.o dumprtape.o  dumptraverse.o unctime.o rdump_vers.o -lsys_s

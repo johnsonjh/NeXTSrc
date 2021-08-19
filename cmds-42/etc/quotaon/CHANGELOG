@@ -1,0 +1,5 @@
+1-19-89 btaylor@NeXT.COM
+	Changed occurrences of MNTTAB to NULL to force setmntent() to look in 
+	"the standard place" instead of hard-coding a filename.
+
+

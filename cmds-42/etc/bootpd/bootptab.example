@@ -1,0 +1,55 @@
+#
+# /etc/bootptab
+#
+#	example database for bootp server (/private/etc/bootpd)
+#
+#
+# This file is an example file for the bootp server.  BOOTP allows a
+# machine to find out its internet address from its ethernet hardware
+# address, information which is kept in this file.  To enable bootp
+# service, edit this file appropriately and move it to
+# /private/etc/bootptab
+#
+# Blank lines and lines beginning with '#' are ignored.
+#
+# NOTE: The first two uncommented, non-blank lines in this file MUST be
+# the default boot directory and then the default boot file (as shown
+# below).
+#
+# default boot directory
+#
+# The format of the default boot directory is homedir[:bootdir] where
+# "homedir" is the location of the files on the local machine and
+# "bootdir" is the where the files appear to the TFTP server.  That is,
+# if you are running a secure TFTP server that changes is root to
+# /private/tftpboot, you should use "/private/tftpboot:/".  If you
+# are running an insecure TFTP server and your bootfiles are kept in
+# the same place, the entry will be "/private/tftpboot".
+#
+/private/tftpboot
+
+# default bootfile
+
+mach
+
+# end of first section
+
+%%
+
+#
+# The remainder of this file contains one line per client
+# with the information shown by the table headings below.
+# The 'host' name is also tried as a suffix for the 'bootfile'
+# when searching the home directory.  (e.g., bootfile.host)
+#
+# To set up a client, change "CLIENT" to the hostname of the client
+# and change the hardware address to its ethernet address.  The IP
+# address should be changed to the address you want the client to use.
+# Each number in the hardware address is hexadecimal and should be
+# between 00 and ff.  Each number in the IP address is in decimal and
+# should be between 1 and 254.  Note that the IP address for the CLIENT
+# should also be found in the host tables.
+#
+# host		htype 	haddr			iaddr	 	  bootfile
+#
+# CLIENT 	1	1a:2b:3c:4d:5e:6f	XXX.XXX.XXX.XXX	  mach

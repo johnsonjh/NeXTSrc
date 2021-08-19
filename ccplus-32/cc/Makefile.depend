@@ -1,0 +1,184 @@
+# Dependencies for File: c-convert.o :
+c-convert.o : c-convert.c config.h config/tm-m68k.h machmode.def real.h tm.h
+c-convert.o : tree.def tree.h
+# Dependencies for File: c-decl.o :
+c-decl.o : c-decl.c c-parse.h c-tree.h config.h config/tm-m68k.h flags.h
+c-decl.o : machmode.def real.h tm.h tree.def tree.h
+# Dependencies for File: c-typeck.o :
+c-typeck.o : c-tree.h c-typeck.c config.h config/tm-m68k.h flags.h machmode.def
+c-typeck.o : real.h tm.h tree.def tree.h
+# Dependencies for File: caller-save.o :
+caller-save.o : basic-block.h caller-save.c config.h config/tm-m68k.h flags.h
+caller-save.o : hard-reg-set.h insn/insn-config.h machmode.def recog.h regs.h
+caller-save.o : reload.h rtl.def rtl.h tm.h
+# Dependencies for File: cc1_vers.o :
+cc1_vers.o : cc1_vers.c
+# Dependencies for File: cc_vers.o :
+cc_vers.o : cc_vers.c
+# Dependencies for File: cccp.o :
+cccp.o : cccp.c config.h config/tm-m68k.h tm.h
+# Dependencies for File: cexp.o :
+cexp.o : cexp.c config.h config/tm-m68k.h tm.h
+# Dependencies for File: combine.o :
+combine.o : basic-block.h combine.c config.h config/tm-m68k.h flags.h
+combine.o : insn/insn-config.h machmode.def recog.h regs.h rtl.def rtl.h tm.h
+# Dependencies for File: cpp_vers.o :
+cpp_vers.o : cpp_vers.c
+# Dependencies for File: cse.o :
+cse.o : config.h config/tm-m68k.h cse.c flags.h hard-reg-set.h machmode.def
+cse.o : real.h regs.h rtl.def rtl.h tm.h
+# Dependencies for File: dbxout.o :
+dbxout.o : config.h config/tm-m68k.h dbxout.c flags.h machmode.def real.h
+dbxout.o : rtl.def rtl.h tm.h tree.def tree.h
+# Dependencies for File: emit-rtl.o :
+emit-rtl.o : config.h config/tm-m68k.h emit-rtl.c insn/insn-config.h
+emit-rtl.o : machmode.def real.h regs.h rtl.def rtl.h tm.h
+# Dependencies for File: explow.o :
+explow.o : config.h config/tm-m68k.h explow.c expr.h flags.h insn/insn-codes.h
+explow.o : machmode.def real.h rtl.def rtl.h tm.h tree.def tree.h
+# Dependencies for File: expmed.o :
+expmed.o : config.h config/tm-m68k.h expmed.c expr.h flags.h insn/insn-codes.h
+expmed.o : insn/insn-config.h insn/insn-flags.h machmode.def real.h recog.h
+expmed.o : rtl.def rtl.h tm.h tree.def tree.h
+# Dependencies for File: expr.o :
+expr.o : config.h config/tm-m68k.h expr.c expr.h flags.h insn/insn-codes.h
+expr.o : insn/insn-config.h insn/insn-flags.h machmode.def real.h recog.h
+expr.o : rtl.def rtl.h tm.h tree.def tree.h typeclass.h
+# Dependencies for File: final.o :
+final.o : conditions.h config.h config/tm-m68k.h final.c flags.h gdbfiles.h
+final.o : insn/insn-config.h machmode.def output.h real.h recog.h regs.h
+final.o : rtl.def rtl.h tm.h
+# Dependencies for File: flow.o :
+flow.o : basic-block.h config.h config/tm-m68k.h flags.h flow.c hard-reg-set.h
+flow.o : machmode.def obstack.h regs.h rtl.def rtl.h tm.h
+# Dependencies for File: fold-const.o :
+fold-const.o : config.h config/tm-m68k.h fold-const.c machmode.def real.h tm.h
+fold-const.o : tree.def tree.h
+# Dependencies for File: gcc.o :
+gcc.o : config.h config/tm-m68k.h gcc.c obstack.h tm.h
+# Dependencies for File: gencodes.o :
+gencodes.o : config.h config/tm-m68k.h gencodes.c machmode.def obstack.h
+gencodes.o : rtl.def rtl.h tm.h
+# Dependencies for File: genconfig.o :
+genconfig.o : config.h config/tm-m68k.h genconfig.c machmode.def obstack.h
+genconfig.o : rtl.def rtl.h tm.h
+# Dependencies for File: genemit.o :
+genemit.o : config.h config/tm-m68k.h genemit.c machmode.def obstack.h rtl.def
+genemit.o : rtl.h tm.h
+# Dependencies for File: genextract.o :
+genextract.o : config.h config/tm-m68k.h genextract.c machmode.def obstack.h
+genextract.o : rtl.def rtl.h tm.h
+# Dependencies for File: genflags.o :
+genflags.o : config.h config/tm-m68k.h genflags.c machmode.def obstack.h
+genflags.o : rtl.def rtl.h tm.h
+# Dependencies for File: genoutput.o :
+genoutput.o : config.h config/tm-m68k.h genoutput.c machmode.def obstack.h
+genoutput.o : rtl.def rtl.h tm.h
+# Dependencies for File: genpeep.o :
+genpeep.o : config.h config/tm-m68k.h genpeep.c machmode.def obstack.h rtl.def
+genpeep.o : rtl.h tm.h
+# Dependencies for File: genrecog.o :
+genrecog.o : config.h config/tm-m68k.h genrecog.c machmode.def obstack.h
+genrecog.o : rtl.def rtl.h tm.h
+# Dependencies for File: global-alloc.o :
+global-alloc.o : basic-block.h config.h config/tm-m68k.h flags.h global-alloc.c
+global-alloc.o : hard-reg-set.h insn/insn-config.h machmode.def regs.h rtl.def
+global-alloc.o : rtl.h tm.h
+# Dependencies for File: insn-emit.o :
+insn-emit.o : config.h config/tm-m68k.h expr.h insn/insn-codes.h
+insn-emit.o : insn/insn-config.h insn/insn-emit.c insn/insn-flags.h
+insn-emit.o : machmode.def real.h rtl.def rtl.h tm.h
+# Dependencies for File: insn-extract.o :
+insn-extract.o : config.h config/tm-m68k.h insn/insn-extract.c machmode.def
+insn-extract.o : rtl.def rtl.h tm.h
+# Dependencies for File: insn-output.o :
+insn-output.o : aux-output.c conditions.h config.h config/tm-m68k.h
+insn-output.o : hard-reg-set.h insn/insn-config.h insn/insn-flags.h
+insn-output.o : insn/insn-output.c machmode.def output.h real.h regs.h rtl.def
+insn-output.o : rtl.h tm.h
+# Dependencies for File: insn-peep.o :
+insn-peep.o : config.h config/tm-m68k.h insn/insn-peep.c machmode.def real.h
+insn-peep.o : regs.h rtl.def rtl.h tm.h
+# Dependencies for File: insn-recog.o :
+insn-recog.o : config.h config/tm-m68k.h insn/insn-config.h insn/insn-recog.c
+insn-recog.o : machmode.def real.h recog.h rtl.def rtl.h tm.h
+# Dependencies for File: integrate.o :
+integrate.o : config.h config/tm-m68k.h expr.h flags.h insn/insn-codes.h
+integrate.o : insn/insn-flags.h integrate.c machmode.def obstack.h real.h
+integrate.o : rtl.def rtl.h tm.h tree.def tree.h
+# Dependencies for File: jump.o :
+jump.o : config.h config/tm-m68k.h flags.h jump.c machmode.def regs.h rtl.def
+jump.o : rtl.h tm.h
+# Dependencies for File: local-alloc.o :
+local-alloc.o : basic-block.h config.h config/tm-m68k.h flags.h hard-reg-set.h
+local-alloc.o : insn/insn-config.h local-alloc.c machmode.def recog.h regs.h
+local-alloc.o : rtl.def rtl.h tm.h
+# Dependencies for File: loop.o :
+loop.o : config.h config/tm-m68k.h expr.h flags.h hard-reg-set.h
+loop.o : insn/insn-codes.h insn/insn-config.h loop.c machmode.def recog.h
+loop.o : regs.h rtl.def rtl.h tm.h
+# Dependencies for File: objc-actions.o :
+objc-actions.o : c-parse.h c-tree.h config.h config/tm-m68k.h flags.h
+objc-actions.o : machmode.def objc-actions.c objc-actions.h real.h rtl.def
+objc-actions.o : rtl.h tm.h tree.def tree.h
+# Dependencies for File: objc-parse.o :
+objc-parse.o : c-parse.h c-tree.h config.h config/tm-m68k.h flags.h input.h
+objc-parse.o : machmode.def objc-actions.h objc-parse.c real.h tm.h tree.def
+objc-parse.o : tree.h
+# Dependencies for File: obstack.o :
+obstack.o : obstack.c obstack.h
+# Dependencies for File: optabs.o :
+optabs.o : config.h config/tm-m68k.h expr.h flags.h insn/insn-codes.h
+optabs.o : insn/insn-config.h insn/insn-flags.h machmode.def optabs.c real.h
+optabs.o : recog.h rtl.def rtl.h tm.h tree.def tree.h
+# Dependencies for File: print-tree.o :
+print-tree.o : config.h config/tm-m68k.h machmode.def print-tree.c real.h tm.h
+print-tree.o : tree.def tree.h
+# Dependencies for File: recog.o :
+recog.o : config.h config/tm-m68k.h hard-reg-set.h insn/insn-config.h
+recog.o : machmode.def real.h recog.c recog.h regs.h rtl.def rtl.h tm.h
+# Dependencies for File: regclass.o :
+regclass.o : basic-block.h config.h config/tm-m68k.h flags.h hard-reg-set.h
+regclass.o : insn/insn-config.h machmode.def recog.h regclass.c regs.h rtl.def
+regclass.o : rtl.h tm.h
+# Dependencies for File: reload.o :
+reload.o : config.h config/tm-m68k.h flags.h hard-reg-set.h insn/insn-config.h
+reload.o : machmode.def real.h recog.h regs.h reload.c reload.h rtl.def rtl.h
+reload.o : tm.h
+# Dependencies for File: reload1.o :
+reload1.o : basic-block.h config.h config/tm-m68k.h flags.h hard-reg-set.h
+reload1.o : insn/insn-config.h machmode.def recog.h regs.h reload.h reload1.c
+reload1.o : rtl.def rtl.h tm.h
+# Dependencies for File: rtl.o :
+rtl.o : config.h config/tm-m68k.h machmode.def obstack.h rtl.c rtl.def rtl.h
+rtl.o : tm.h
+# Dependencies for File: rtlanal.o :
+rtlanal.o : config.h config/tm-m68k.h machmode.def rtl.def rtl.h rtlanal.c tm.h
+# Dependencies for File: sdbout.o :
+sdbout.o : config.h config/tm-m68k.h sdbout.c tm.h
+# Dependencies for File: stmt.o :
+stmt.o : config.h config/tm-m68k.h expr.h flags.h hard-reg-set.h
+stmt.o : insn/insn-codes.h insn/insn-config.h insn/insn-flags.h machmode.def
+stmt.o : real.h regs.h rtl.def rtl.h stmt.c tm.h tree.def tree.h
+# Dependencies for File: stor-layout.o :
+stor-layout.o : config.h config/tm-m68k.h machmode.def real.h rtl.def rtl.h
+stor-layout.o : stor-layout.c tm.h tree.def tree.h
+# Dependencies for File: stupid.o :
+stupid.o : config.h config/tm-m68k.h hard-reg-set.h machmode.def regs.h rtl.def
+stupid.o : rtl.h stupid.c tm.h
+# Dependencies for File: symout.o :
+symout.o : config.h config/tm-m68k.h gdbfiles.h machmode.def real.h rtl.def
+symout.o : rtl.h symout.c symseg.h tm.h tree.def tree.h
+# Dependencies for File: toplev.o :
+toplev.o : c-tree.h config.h config/tm-m68k.h flags.h input.h machmode.def
+toplev.o : objc-actions.h obstack.h real.h rtl.def rtl.h tm.h toplev.c tree.def
+toplev.o : tree.h
+# Dependencies for File: tree.o :
+tree.o : config.h config/tm-m68k.h flags.h machmode.def obstack.h real.h tm.h
+tree.o : tree.c tree.def tree.h
+# Dependencies for File: varasm.o :
+varasm.o : config.h config/tm-m68k.h expr.h flags.h hard-reg-set.h
+varasm.o : insn/insn-codes.h machmode.def obstack.h real.h rtl.def rtl.h tm.h
+varasm.o : tree.def tree.h varasm.c
+# Dependencies for File: version.o :
+version.o : version.c

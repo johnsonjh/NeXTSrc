@@ -1,0 +1,664 @@
+/*
+	graphicOps.pswm
+  	Copyright 1988, NeXT, Inc.
+	Responsibility: Trey Matteson
+
+	This file provides graphic rendering functions
+
+*/
+
+
+#ifdef SHLIB
+#import "shlib.h"
+#endif SHLIB
+
+#import "appkitPrivate.h"
+#import "Application_Private.h"
+#import "Window_Private.h"
+#import "View_Private.h"
+#import "graphics.h"
+#import "privateWraps.h"
+#import <dpsclient/wraps.h>
+
+/*
+    These constants determine how many rects we do per wrap.
+    When drawing, the number of rects we can do is limited by the size of a binary object sequence (64K), which is 4K rects worth of data.  We shave this to 4050 rects to be safe.
+    When printing, we accumulate these coords on the opstack.  On a LaserWriter the stack can only be 500 deep, so we do 120 rects at a time.
+*/
+#define DRAW_RECT_LIMIT		4050
+#define PRINT_RECT_LIMIT	120
+
+static void doSomeRectsFast(const NXRect *aRect, int num, void (*singleFunc)(float x, float y, float w, float h), void (*multipleFunc)(float *coords, int num), BOOL allowEmpties);
+
+static void drawOffsetRects(const NXRect *base, const NXRect *clipRect, const float *unflippedOffsets, const float *flippedOffsets, const float *grays);
+
+static NXRect *doTiledRects(NXRect *boundsRect, const NXRect *clipRect, const int *sides, const float *grays, int count, float fillGray);
+
+static void _doRectFillListWithGrays(const NXRect *rects, const float *grays, int count);
+
+/* for statically sized buffers */
+#define MAX_STATIC_RECTS 10
+
+#define EMPTY_RECT(r)	(((r)->size.width <= 0.0) || ((r)->size.height <= 0.0))
+
+
+defineps static drawingMultRectclip(float numstring coords[num]; int num)
+    coords rectclip
+endps
+
+defineps static drawingMultRectfill(float numstring coords[num]; int num)
+    coords rectfill
+endps
+
+defineps static printingMultRectclip(float coords[num]; int num)
+    coords rectclip
+endps
+
+defineps static printingMultRectfill(float coords[num]; int num)
+    coords rectfill
+endps
+
+defineps static drawingJustFillRects(float gray; float numstring coords[num]; int num)
+    gray setgray
+    coords rectfill
+endps
+
+defineps static eraseRect(float x; float y; float w; float h)
+	gsave
+	1.0 setgray
+	x y w h rectfill
+	grestore
+endps
+
+defineps static doHighlight(float x; float y; float width; float height)
+	x y width height Highlight compositerect
+endps
+
+
+void _NXJustFillRects(float gray, float *coords, int num)
+{
+    int numToSend;
+    int rectLimit;
+
+    rectLimit = (NXDrawingStatus == NX_DRAWING) ? DRAW_RECT_LIMIT*4 : PRINT_RECT_LIMIT*4;
+    for ( ; num; num -= numToSend, coords += numToSend) {
+	numToSend = MIN(num, rectLimit);
+	if (NXDrawingStatus == NX_DRAWING)
+	    drawingJustFillRects(gray, coords, numToSend);
+	else {
+	    PSsetgray(gray);
+	    printingMultRectfill(coords, numToSend);
+	}
+    }
+}
+
+
+void NXRectClip(const NXRect *aRect)
+{
+    doSomeRectsFast(aRect, 1, &PSrectclip, NULL, YES);
+}
+
+
+void NXRectClipList(const NXRect *rects, int count)
+{
+    doSomeRectsFast(rects, count, &PSrectclip, (NXDrawingStatus == NX_DRAWING) ? &drawingMultRectclip : &printingMultRectclip, YES);
+}
+
+
+void NXFrameRect(const NXRect *aRect)
+{
+    NXFrameRectWithWidth(aRect, 1.0);
+}
+
+
+void NXFrameRectWithWidth(const NXRect *aRect, NXCoord frameWidth)
+{
+    NXCoord             sp[16];
+
+    if (!EMPTY_RECT(aRect)) {
+	sp[0] = sp[4] = sp[8] = NX_X(aRect);
+	sp[1] = NX_Y(aRect);
+	sp[2] = sp[6] = NX_WIDTH(aRect);
+	sp[3] = sp[7] = sp[10] = sp[14] = frameWidth;
+	sp[12] = sp[0] + sp[2] - sp[3];
+	sp[5] = sp[1] + NX_HEIGHT(aRect) - sp[3];
+	sp[9] = sp[13] = sp[1] + sp[3];
+	sp[11] = sp[15] = NX_HEIGHT(aRect) - sp[3] - sp[3];
+	if (NXDrawingStatus == NX_DRAWING)
+	    drawingMultRectfill(sp, 16);
+	else
+	    printingMultRectfill(sp, 16);
+    }
+}
+
+
+void NXRectFill(const NXRect *aRect)
+{
+    doSomeRectsFast(aRect, 1, &PSrectfill, NULL, NO);
+}
+
+
+void NXRectFillList(const NXRect *rects, int count)
+{
+    doSomeRectsFast(rects, count, &PSrectfill, (NXDrawingStatus == NX_DRAWING) ? &drawingMultRectfill : &printingMultRectfill, NO);
+}
+
+
+NXRect *NXDrawTiledRects(NXRect *boundsRect, const NXRect *clipRect, const int *sides, const float *grays, int count)
+{
+    return doTiledRects(boundsRect, clipRect, sides, grays, count, -1.0);
+}
+
+
+/* Does the tiled rects, and if fillgray >= 0, fills the remaining rect */
+static NXRect *doTiledRects(NXRect *boundsRect, const NXRect *clipRect, const int *sides, const float *grays, int count, float fillGray)
+{
+    float		drawRectsBuffer[MAX_STATIC_RECTS*4];
+    float		drawGraysBuffer[MAX_STATIC_RECTS];
+    float		*drawRects;
+    float		*drawGrays;
+    float		*f, *g;
+    NXRect		tempRect;
+    int			i;
+    int			extraRect;
+
+    extraRect = (fillGray >= 0.0) ? 1 : 0;
+    if ((count + extraRect) > MAX_STATIC_RECTS) {
+	drawGrays = NXZoneMalloc(NXDefaultMallocZone(), 5 * (count + extraRect));
+	drawRects = drawGrays + (count + extraRect);
+    } else {
+	drawGrays = drawGraysBuffer;
+	drawRects = drawRectsBuffer;
+    }
+    for (f = drawRects, g = drawGrays, i = count; i--; sides++, grays++)
+	if (!EMPTY_RECT(boundsRect)) {
+	    NXDivideRect(boundsRect, &tempRect, 1.0, *sides);
+	    if (!clipRect || NXIntersectionRect(clipRect, &tempRect)) {
+		*g++ = *grays;
+		*f++ = tempRect.origin.x;
+		*f++ = tempRect.origin.y;
+		*f++ = tempRect.size.width;
+		*f++ = tempRect.size.height;
+	    }
+	}
+    if (extraRect) {
+	*g++ = fillGray;
+	*f++ = boundsRect->origin.x;
+	*f++ = boundsRect->origin.y;
+	*f++ = boundsRect->size.width;
+	*f++ = boundsRect->size.height;
+    }
+    NXRectFillListWithGrays((NXRect *)drawRects, drawGrays, g - drawGrays);
+    if ((count + extraRect) > MAX_STATIC_RECTS)
+	free(drawGrays);
+    return boundsRect;
+}
+
+
+static void drawOffsetRects(const NXRect *base, const NXRect *clipRect, const float *unflippedOffsets, const float *flippedOffsets, const float *grays)
+{
+    NXRect		realRects[4];
+    NXRect		*r = realRects;
+    float		realGrays[4];
+    float		*f = realGrays;
+    const float		*offsets;
+    int			i;
+
+    if (base && base->size.width >= 4.0 && base->size.height >= 4.0) {
+	*r = *base;
+	if (!clipRect || NXIntersectionRect(clipRect, r)) {
+	    r++;
+	    *f++ = grays[0];
+	}
+	offsets = [NXApp _flipState] ? flippedOffsets : unflippedOffsets;
+	for (i = 1; i < 4; i++) {
+	    r->origin.x = base->origin.x + *offsets++;
+	    r->origin.y = base->origin.y + *offsets++;
+	    r->size.width = base->size.width + *offsets++;
+	    r->size.height = base->size.height + *offsets++;
+	    if (!clipRect || NXIntersectionRect(clipRect, r)) {
+		r++;
+		*f++ = grays[i];
+	    }
+	}
+	NXRectFillListWithGrays(realRects, realGrays, r - realRects);
+    }
+}
+
+
+void NXDrawGrayBezel(const NXRect *aRect, const NXRect *clipRect)
+{
+    static const float flippedOffsets[12] = {0.0, 0.0, -1.0, -1.0,
+						1.0, 1.0, -3.0, -3.0,
+						2.0, 2.0, -3.0, -3.0};
+    static const float unflippedOffsets[12] = {0.0, 1.0, -1.0, -1.0,
+						1.0, 2.0, -3.0, -3.0,
+						2.0, 1.0, -3.0, -3.0};
+    static const float grays[4] = {NX_WHITE, NX_DKGRAY, NX_BLACK, NX_LTGRAY};
+
+    drawOffsetRects(aRect, clipRect, unflippedOffsets, flippedOffsets, grays);
+}
+
+
+void NXDrawGroove(const NXRect *aRect, const NXRect *clipRect)
+{
+    static const float flippedOffsets[12] = {1.0, 1.0, -1.0, -1.0,
+						2.0, 2.0, -3.0, -3.0,
+						2.0, 2.0, -4.0, -4.0};
+    static const float unflippedOffsets[12] = {1.0, 0.0, -1.0, -1.0,
+						2.0, 1.0, -3.0, -3.0,
+						2.0, 2.0, -4.0, -4.0};
+    static const float grays[4] = {NX_DKGRAY, NX_WHITE, NX_DKGRAY, NX_LTGRAY};
+
+    drawOffsetRects(aRect, clipRect, unflippedOffsets, flippedOffsets, grays);
+}
+
+
+void NXDrawRidge(const NXRect *aRect)
+{
+    NXDrawGroove(aRect, NULL);
+}
+
+
+void NXDrawWhiteBezel(const NXRect *aRect, const NXRect *clipRect)
+{
+    static const int    psSides[] = {NX_YMAX, NX_YMIN, NX_XMAX, NX_XMIN,
+				     NX_YMAX, NX_YMIN, NX_XMAX, NX_XMIN};
+    static const int    flipSides[] = {NX_YMIN, NX_YMAX, NX_XMAX, NX_XMIN,
+				       NX_YMIN, NX_YMAX, NX_XMAX, NX_XMIN};
+    static const float  grays[] = {NX_DKGRAY, NX_WHITE, NX_WHITE, NX_DKGRAY,
+				NX_DKGRAY, NX_LTGRAY, NX_LTGRAY, NX_DKGRAY};
+    NXRect              tempRect = *aRect;
+
+    if (aRect->size.width >= 4.0 && aRect->size.height >= 4.0)
+	(void)doTiledRects(&tempRect, clipRect, [NXApp _flipState] ? flipSides : psSides, grays, 8, NX_WHITE);
+}
+
+
+void NXDrawButton(const NXRect *aRect, const NXRect *clipRect)
+{
+    static const int    psSides[] = {NX_YMIN, NX_XMAX, NX_YMAX, NX_XMIN,
+				     NX_YMIN, NX_XMAX};
+    static const int    flipSides[] = {NX_YMAX, NX_XMAX, NX_YMIN, NX_XMIN,
+				       NX_YMAX, NX_XMAX};
+    static const float  grays[] = {NX_BLACK, NX_BLACK, NX_WHITE, NX_WHITE,
+				   NX_DKGRAY, NX_DKGRAY};
+    NXRect              tempRect = *aRect;
+
+    if (aRect->size.width >= 4.0 && aRect->size.height >= 4.0)
+	(void)doTiledRects(&tempRect, clipRect, [NXApp _flipState] ? flipSides : psSides, grays, 6, NX_LTGRAY);
+}
+
+
+void NXEraseRect(const NXRect *aRect)
+{
+    if (!EMPTY_RECT(aRect))
+	eraseRect(aRect->origin.x, aRect->origin.y, aRect->size.width, aRect->size.height);
+}
+
+
+void NXCopyBits(int sgnum, const NXRect *sRect, const NXPoint *dPoint)
+{
+    if (!EMPTY_RECT(sRect))
+	PScomposite(sRect->origin.x, sRect->origin.y, sRect->size.width, sRect->size.height, sgnum, dPoint->x, dPoint->y, NX_COPY);
+}
+
+
+void NXHighlightRect(const NXRect *aRect)
+{
+    if (!EMPTY_RECT(aRect))
+	if (NXDrawingStatus == NX_DRAWING)
+	    doHighlight(aRect->origin.x, aRect->origin.y,
+			   aRect->size.width, aRect->size.height);
+	else {
+	    PSgsave();
+	    PSsetgray(NX_LTGRAY);
+	    PSrectfill(aRect->origin.x, aRect->origin.y,
+			  aRect->size.width, aRect->size.height);
+	    PSgrestore();
+	}
+}
+
+
+static void doSomeRectsFast(const NXRect *aRect, int num, void (*singleFunc)(float x, float y, float w, float h), void (*multipleFunc)(float *coords, int num), BOOL allowEmpties)
+{
+    int numValidCoords;
+    const NXRect *firstValidRect;
+    int i;
+    const NXRect *r;
+    int rectLimit;		/* max #coords we can do in one wrap */
+    BOOL skipRect;
+
+    if (num == 1) {
+	if (allowEmpties || !EMPTY_RECT(aRect))
+	    (*singleFunc)(aRect->origin.x, aRect->origin.y, aRect->size.width, aRect->size.height);
+    } else if (num > 0) {
+	rectLimit = (NXDrawingStatus == NX_DRAWING) ? DRAW_RECT_LIMIT*4 : PRINT_RECT_LIMIT*4;
+	numValidCoords = 0;
+	firstValidRect = aRect;
+	for (i = num, r = aRect; i--; r++) {
+	    skipRect = (!allowEmpties && EMPTY_RECT(r));
+	    if (!skipRect)
+		numValidCoords += 4;
+	    if (!i || skipRect || numValidCoords >= rectLimit) {
+		if (numValidCoords == 4)
+		    (*singleFunc)(firstValidRect->origin.x, firstValidRect->origin.y, firstValidRect->size.width, firstValidRect->size.height);
+		else if (numValidCoords > 4)
+		    (*multipleFunc)((float *)firstValidRect, numValidCoords);
+		numValidCoords = 0;
+		firstValidRect = r+1;
+	    }
+	}
+    }
+}
+
+
+void NXRectFillListWithGrays(const NXRect *rects, const float *grays, int num)
+{
+    int rectLimit;		/* max # rects we can do in one wrap */
+    int numToSend;
+
+    rectLimit = (NXDrawingStatus == NX_DRAWING) ? DRAW_RECT_LIMIT : PRINT_RECT_LIMIT;
+    for ( ; num; num -= numToSend, rects += numToSend, grays += numToSend) {
+	numToSend = MIN(num, rectLimit);
+	_doRectFillListWithGrays(rects, grays, numToSend);
+    }
+}
+
+
+static void _doRectFillListWithGrays(const NXRect *rects, const float *grays, int count)
+{
+    DPSBinObjSeqRec *seq;
+    DPSBinObjRec *fobj;		/* moves forward through array for names */
+    DPSBinObjRec *robj;		/* moves backward through array for floats */ 
+    int i, j;
+    const float *coords;
+    const float *g;
+    int totalBytes;
+    int totalObjs;
+    struct {
+   	DPSBinObjSeqRec seq;
+	DPSBinObjRec objs[MAX_STATIC_RECTS*7];
+    } defaultBuf;
+    float lastGray;			/* starts at nonsense value */
+    int dupGrays = 0;
+
+    if (count <= 0)
+	return;
+    lastGray = -1;
+    for (i = count, g = grays; i--; g++)
+	if (lastGray == *g)
+	    dupGrays++;
+	else
+	    lastGray = *g;
+
+    totalObjs = count * 7 - 2 * dupGrays;
+    totalBytes = totalObjs * sizeof(DPSBinObjRec) + sizeof(DPSBinObjSeq);
+    if (totalBytes > sizeof(defaultBuf))
+	seq = NXZoneCalloc(NXDefaultMallocZone(), totalBytes, 1);
+    else {
+	seq = (DPSBinObjSeqRec *)&defaultBuf;
+	bzero(seq, totalBytes);
+    }
+
+    seq->tokenType = DPS_DEF_TOKENTYPE;
+    seq->nTopElements = totalObjs;
+    seq->length = totalBytes;
+
+    lastGray = -1;
+    coords = (float *)rects;
+    robj = fobj = seq->objects + count * 5 - dupGrays;
+    for (i = count, g = grays; i--; g++) {
+	if (lastGray != *g) {
+	    robj--;
+	    robj->attributedType = DPS_REAL;
+	    robj->val.realVal = *g;
+	    fobj->attributedType = DPS_NAME | DPS_EXEC;
+	    fobj->length = DPSSYSNAME;
+	    fobj->val.nameVal = 150;		/* magic code for setgray */
+	    fobj++;
+	    lastGray = *g;
+	}
+	for (j = 4, robj -= 4; j--; robj++) {
+	    robj->attributedType = DPS_REAL;
+	    robj->val.realVal = *coords++;
+	}
+	robj -= 4;
+	fobj->attributedType = DPS_NAME | DPS_EXEC;
+	fobj->length = DPSSYSNAME;
+	fobj->val.nameVal = 128;		/* magic code for rectfill */
+	fobj++;
+    }
+
+    DPSBinObjSeqWrite(DPSGetCurrentContext(), seq, totalBytes);
+    if (totalBytes > sizeof(defaultBuf))
+	free(seq);
+}
+
+/*
+ * Serious hackery to make bezel drawing go fast on initial window draw.
+ */
+
+static NXRect *_doTiledRects(NXRect *boundsRect, const NXRect *clipRect, const int *sides, const float *grays, int count, float fillGray, id view)
+{
+    float		drawRectsBuffer[MAX_STATIC_RECTS*4];
+    float		drawGraysBuffer[MAX_STATIC_RECTS];
+    float		*drawRects = NULL;
+    float		*drawGrays = NULL;
+    float		*f, *g;
+    NXRect		tempRect;
+    int			i;
+    int			extraRect, optimize;
+
+#ifdef NO_OPTIMIZED_DRAWING
+    return doTiledRects(boundsRect, clipRect, sides, grays, count, fillGray);
+#else
+    extraRect = (fillGray >= 0.0) ? 1 : 0;
+    optimize = [view _canOptimizeDrawing];
+    if (!optimize) {
+	if ((count + extraRect) > MAX_STATIC_RECTS) {
+	    drawGrays = NXZoneMalloc(NXDefaultMallocZone(), 5 * (count + extraRect));
+	    drawRects = drawGrays + (count + extraRect);
+	} else {
+	    drawGrays = drawGraysBuffer;
+	    drawRects = drawRectsBuffer;
+	}
+    }
+    for (f = drawRects, g = drawGrays, i = count; i--; sides++, grays++) {
+	if (!EMPTY_RECT(boundsRect)) {
+	    NXDivideRect(boundsRect, &tempRect, 1.0, *sides);
+	    if (!clipRect || NXIntersectionRect(clipRect, &tempRect)) {
+		if (optimize) {
+		     if (![view _optimizedRectFill:&tempRect gray:*grays]) {
+			PSsetgray(*grays);
+			NXRectFill(&tempRect);
+		     }
+		} else {
+		    *g++ = *grays;
+		    *f++ = tempRect.origin.x;
+		    *f++ = tempRect.origin.y;
+		    *f++ = tempRect.size.width;
+		    *f++ = tempRect.size.height;
+		}
+	    }
+	}
+    }
+
+    if (extraRect) {
+	if (optimize) {
+	    PSsetgray(fillGray);
+	    NXRectFill(boundsRect);
+	} else {
+	    *g++ = fillGray;
+	    *f++ = boundsRect->origin.x;
+	    *f++ = boundsRect->origin.y;
+	    *f++ = boundsRect->size.width;
+	    *f++ = boundsRect->size.height;
+	}
+    }
+
+    if (!optimize) NXRectFillListWithGrays((NXRect *)drawRects, drawGrays, g - drawGrays);
+    if ((count + extraRect) > MAX_STATIC_RECTS) free(drawGrays);
+
+    return boundsRect;
+#endif
+}
+
+NXRect *_NXDrawTiledRects(NXRect *boundsRect, const NXRect *clipRect, const int *sides, const float *grays, int count, id view)
+{
+    return _doTiledRects(boundsRect, clipRect, sides, grays, count, -1.0, view);
+}
+
+void _NXDrawGrayBezel(const NXRect *aRect, const NXRect *clipRect, id view)
+{
+    static const int    psSides[] =   {NX_YMIN,  NX_XMAX,  NX_YMAX,   NX_XMIN,   NX_XMAX,   NX_YMIN,   NX_YMAX,  NX_XMIN};
+    static const int    flipSides[] = {NX_YMAX,  NX_XMAX,  NX_YMIN,   NX_XMIN,   NX_XMAX,   NX_YMAX,   NX_YMIN,  NX_XMIN};
+    static const float  grays[] =     {NX_WHITE, NX_WHITE, NX_DKGRAY, NX_DKGRAY, NX_LTGRAY, NX_LTGRAY, NX_BLACK, NX_BLACK};
+    NXRect              tempRect = *aRect;
+
+    if (aRect->size.width >= 4.0 && aRect->size.height >= 4.0)
+	(void)_doTiledRects(&tempRect, clipRect, [NXApp _flipState] ? flipSides : psSides, grays, 8, NX_LTGRAY, view);
+}
+
+
+void _NXDrawGroove(const NXRect *aRect, const NXRect *clipRect, id view)
+{
+    static const int    psSides[] =   {NX_YMAX,   NX_XMIN,   NX_YMAX,  NX_XMIN,  NX_YMIN,  NX_XMAX,  NX_XMAX,   NX_YMIN};
+    static const int    flipSides[] = {NX_YMIN,   NX_XMIN,   NX_YMIN,  NX_XMIN,  NX_YMAX,  NX_XMAX,  NX_XMAX,   NX_YMAX};
+    static const float  grays[] =     {NX_DKGRAY, NX_DKGRAY, NX_WHITE, NX_WHITE, NX_WHITE, NX_WHITE, NX_DKGRAY, NX_DKGRAY};
+    NXRect              tempRect = *aRect;
+
+    if (aRect->size.width >= 4.0 && aRect->size.height >= 4.0)
+	(void)_doTiledRects(&tempRect, clipRect, [NXApp _flipState] ? flipSides : psSides, grays, 8, NX_LTGRAY, view);
+}
+
+void _NXDrawGrooveExceptTop(const NXRect *aRect, const NXRect *clipRect, id view)
+{
+    static const int    psSides[] =   { NX_XMIN, NX_XMIN, NX_XMAX, NX_YMIN, NX_YMIN, NX_XMAX };
+    static const int    flipSides[] = { NX_XMIN, NX_XMIN, NX_XMAX, NX_YMAX, NX_YMAX, NX_XMAX };
+    static const float  grays[] =     { NX_DKGRAY, NX_WHITE, NX_WHITE, NX_WHITE, NX_DKGRAY, NX_DKGRAY };
+    NXRect              tempRect = *aRect;
+
+    if ([NXApp _flipState]) tempRect.origin.y += 2.0;
+    tempRect.size.height -= 2.0;
+    if (aRect->size.width >= 4.0 && aRect->size.height >= 4.0)
+	(void)_doTiledRects(&tempRect, clipRect, [NXApp _flipState] ? flipSides : psSides, grays, 6, NX_LTGRAY, view);
+}
+
+void _NXDrawButton(const NXRect *aRect, const NXRect *clipRect, id view)
+{
+    static const int    psSides[] = {NX_YMIN, NX_XMAX, NX_YMAX, NX_XMIN, NX_YMIN, NX_XMAX};
+    static const int    flipSides[] = {NX_YMAX, NX_XMAX, NX_YMIN, NX_XMIN, NX_YMAX, NX_XMAX};
+    static const float  grays[] = {NX_BLACK, NX_BLACK, NX_WHITE, NX_WHITE, NX_DKGRAY, NX_DKGRAY};
+    NXRect              tempRect = *aRect;
+
+    if (aRect->size.width >= 4.0 && aRect->size.height >= 4.0)
+	(void)_doTiledRects(&tempRect, clipRect, [NXApp _flipState] ? flipSides : psSides, grays, 6, NX_LTGRAY, view);
+}
+
+
+void _NXDrawWhiteBezel(const NXRect *aRect, const NXRect *clipRect, id view)
+{
+    static const int    psSides[] = {NX_YMAX, NX_YMIN, NX_XMAX, NX_XMIN,
+				     NX_YMAX, NX_YMIN, NX_XMAX, NX_XMIN};
+    static const int    flipSides[] = {NX_YMIN, NX_YMAX, NX_XMAX, NX_XMIN,
+				       NX_YMIN, NX_YMAX, NX_XMAX, NX_XMIN};
+    static const float  grays[] = {NX_DKGRAY, NX_WHITE, NX_WHITE, NX_DKGRAY,
+				NX_DKGRAY, NX_LTGRAY, NX_LTGRAY, NX_DKGRAY};
+    NXRect              tempRect = *aRect;
+
+    if (aRect->size.width >= 4.0 && aRect->size.height >= 4.0)
+	(void)_doTiledRects(&tempRect, clipRect, [NXApp _flipState] ? flipSides : psSides, grays, 8, NX_WHITE, view);
+}
+
+
+/*
+ * NOTE: The following four functions assume that the NXWindowDepthType
+ * values are constructed using the colorSpace << 8 + bps formula.
+ * These functions will need work when we add more color spaces and/or depths.
+ */
+int NXNumberOfColorComponents (NXColorSpaceType colorSpace)
+{
+    if (colorSpace == NX_RGBColorSpace) return 3;
+    else if (colorSpace < NX_RGBColorSpace) return 1;
+    else if (colorSpace == NX_CMYKColorSpace) return 4;
+    else return 0;
+}
+
+NXColorSpaceType NXColorSpaceFromDepth (NXWindowDepthType windowDepth)
+{
+    return (NXColorSpaceType) (windowDepth >> 8);
+}
+
+int NXBPSFromDepth (NXWindowDepthType windowDepth)
+{
+    return windowDepth & 255;
+}
+
+/*
+ * This function returns the best depth value that can represent the given
+ * number of color components & bps.  If no exact match is found, a better 
+ * depth is returned.
+ * (Ie someone asks for 4 bit gray, they get NX_EightBitGrayDepth.) 
+ * If no better exists, windowDepth is set to the closest, and the return
+ * value is NO.
+ */
+BOOL NXGetBestDepth (NXWindowDepthType *windowDepth, int numColors, int bps)
+{
+    BOOL canDo = YES;
+    NXColorSpaceType colorSpace;
+    if (numColors == 1) {		/* monochrome */
+	canDo = (bps <= 8);
+	bps = (bps == 0 || bps > 2) ? 8 : 2;
+	colorSpace = NX_OneIsWhiteColorSpace;
+    } else {				/* color */
+	canDo = (bps <= 8) && (numColors == 0 || numColors == 3);
+	bps = (bps == 0 || bps > 4) ? 8 : 4;
+	colorSpace = NX_RGBColorSpace;
+    }
+    *windowDepth = (NXWindowDepthType) ((colorSpace << 8) + bps);
+    return canDo;
+}
+
+
+/*
+  
+Modifications (starting at 0.8):
+  
+ 1/18/88 wrp	moved the function NXDrawRidge from Box.m to graphicsOps.m
+		  and changed declaration to void.
+03/21/89 wrp	Made declarations const where needed.
+
+0.93
+----
+ 6/17/89 pah	add clip rect argument to NXDrawGrayBezel()  
+ 6/17/89 wrp	Added code to check for empty rectangles
+ 7/05/89 pah	Changed NXDrawRidge to NXDrawGroove and add clip rect
+ 7/24/89 wrp	Changed NXRectClipList not have a PSclosepath before PSclip 
+ 		 because _NXRectPath was changed to do the closepath on each 
+		 subpath.
+
+83
+--
+ 4/28/90 trey	speedups of tiled rects, ridge and groove functions by always
+		 creating one big wrap for the resulting rects and setgrays  
+		speedup up filling and clipping multiple rects by using array
+		 flavor of rectclip and rectfill
+		added NXRectFillListWithGrays
+
+85
+--
+ 5/22/90 trey	NXRectFillListWithGrays fixed to work with count==0
+		drawOffsetRects pays attention to clip arg
+		eraseRect does gsave/grestore instead of currentgray/setgray
+		 so that the current color isnt monochromed
+ 6/4/90 pah	added _doTiledRects which uses the optimized drawing routines
+		 in View.  Also added various _NXDraw*Bezel-type functions to
+		 call _doTiledRects.  -DNO_OPTIMIZED_DRAWING will cause none
+		 of this optimization stuff to happen.
+
+93
+--
+9/4/90 trey	rect routines fixed to work with unbounded number of rects
+
+*/

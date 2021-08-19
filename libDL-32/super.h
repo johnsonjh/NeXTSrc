@@ -1,0 +1,2 @@
+#define NX_SUPERSCRIPT 2
+#define NX_SUBSCRIPT 3

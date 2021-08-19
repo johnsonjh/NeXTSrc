@@ -1,0 +1,93 @@
+
+currentshared true setshared
+  % allocate all of these procs in shared VM and leave previous state on 
+  % stack for restore
+
+% global constants & vars
+    windowPackage1.0 /_winList null _NXCheckAndDef
+      % storage for those who ask for the screenlist
+    nextdict /_winListLock lock _NXCheckAndDef
+      % lock to protect _winList variable
+
+windowPackage1.0 begin
+
+% BAGGAGE for workspace
+/setWindowLevel /setwindowlevel load def
+
+/localScreenList {		%   <array> localScreenList <subarray>
+  % returns the screenlist with local window numbers filled in
+    currentcontext screenlist			% subar
+    0 1 2 index length 1 sub {
+						% subar i
+	1 index exch				% subar subar i
+	2 copy get				% subar subar i gNum
+	currentwindowdict dup null ne {		% subar subar i wDict
+	    /localNum get			% subar subar i lNum
+	}{
+	    pop -1				% subar subar i lNum
+	} ifelse
+	put					% subar
+    } for
+} _NXDefProc
+
+/getWindows {		%   <screenFlag> <ctxt> getWindows <array> <subarray>
+  % returns either the screen list or the window list for a given context,
+  % as returned by the screenlist or windowlist operators.  <screenFlag>
+  % determines whether we return all windows or just the ones on screen.
+  % The subarray returned is the screenlist requested.  The array
+  % that is returned should be checked back in with returnScreenList.
+  %   This routine allocates new storage for the window list if there isn't
+  % already storage hanging around, or if that storage is too small.  It
+  % allocs 5 more slots than are in the screen list as a hedge agains
+  % people showing new windows while this routine is operating.
+    //_winListLock {
+	dup 2 index {				% flg ctxt ctxt
+	    countscreenlist
+	}{
+	    countwindowlist
+	} ifelse
+	5 add					% flg ctxt n
+	/_winList //pkget exec
+	/_winList null //pkput exec		% flg ctxt n WL
+    } monitor
+    dup null eq {				% flg ctxt n WL
+	true					% flg ctxt n WL alloc?
+    }{
+	dup length 2 index lt			% flg ctxt n WL alloc?
+    } ifelse
+    {						% flg ctxt n WL
+	pop currentshared true setshared	% flg ctxt n shFlag
+	exch array				% flg ctxt shFlag WL'
+	exch setshared				% flg ctxt WL'
+    }{
+	exch pop				% flg ctxt WL
+    } ifelse
+    dup 4 2 roll exch {				% WL WL ctxt
+	screenlist
+    }{
+	windowlist
+    } ifelse					% WL WLsub
+} _NXDefProc
+
+/returnWindows {	%		<array> returnWindows
+  % returns storage previously returned by getScreenList.  If there is no
+  % currently held storage, we save the one being returned.  If we already
+  % have some storage, we save whichever one is larger.
+    //_winListLock {
+	/_winList pkget				% array WL
+	dup null eq {				% array WL
+	    pop					% array
+	}{
+	    1 index length			% array WL arrayLen
+	    1 index length			% array WL arrayLen WLLen
+	    lt {
+		exch
+	    } if pop				% largerArray
+	} ifelse
+	/_winList exch //pkput exec		%
+    } monitor
+} _NXDefProc
+
+end			% close window dict
+setshared		% restore VM allocation mode
+

@@ -1,0 +1,2 @@
+VAXVPATH=	VAX
+VAXOBJS=	vmtpsys.o

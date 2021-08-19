@@ -1,0 +1,194 @@
+head     1.3;
+access   ;
+symbols  ;
+locks    osdev:1.3;
+comment  @ * @;
+
+
+1.3
+date     89.07.26.17.37.11;  author osdev;  state Exp;
+branches ;
+next     1.2;
+
+1.2
+date     89.07.21.17.09.38;  author osdev;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.07.21.16.21.09;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@The main program.
+@
+
+
+1.3
+log
+@Changes to just check for "swapdisk" in the label
+instead of the disk capacity threshold.
+@
+text
+@/*
+ *   checkswap - see if sd0 is a swap device.
+ *  
+ *   The crieria for "swap device" is:
+ *	-- sd0 exists, and 
+ *	-- The first 8 chars of the label name (disk_label.dl_label) are
+ *	   "swapdisk".
+ */
+ 
+#include <sys/types.h>
+#include <sys/param.h>
+#include <sys/ioctl.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <nextdev/disk.h>
+
+/*
+ *  exit codes
+ */
+ 
+#define FSR_NONE	0	/* disk not present */
+#define FSR_NOLABEL	1	/* disk present, no valid label */
+#define FSR_LABEL	2	/* disk present, valid label, not swapdisk */
+#define FSR_SWAPDISK	3	/* present, label, swapdisk */
+#define FSR_ERROR	-1
+
+#define SWAPDISK_NAME	"swapdisk"
+#define DEV_NAME 	"/dev/rsd0a"	/* default device */
+
+int verbose=0;
+
+main(int argc, char **argv) {
+
+	int fd;
+	struct disk_label label;
+	char diskname[80];
+	int arg;
+	char *devname=DEV_NAME;
+	
+	if(argc > 4) 
+		usage(argv);
+	for(arg=1; arg<argc; arg++) {
+		if(argv[arg][1] == 'v') {
+			verbose++;
+			continue;
+		}
+		if(argv[arg][1] == 'f') {
+			devname = argv[++arg];
+			continue;
+		}
+	}
+	if((fd = open(devname,O_RDONLY)) <= 0)
+		quit(FSR_NONE);
+	if(ioctl(fd, DKIOCGLABEL, &label))
+		quit(FSR_NOLABEL);		/* no label present */
+	if(strncmp(label.dl_label,SWAPDISK_NAME,8) != 0)
+		quit(FSR_LABEL);		/* nope */
+	else
+		quit(FSR_SWAPDISK);		/* TA DA! */
+	
+} /* main() */
+
+usage(char **argv) {
+	printf("\nusage: %s [-v] [-f raw_device]\n", argv[0]);
+	quit(FSR_ERROR);
+}
+
+quit(int exit_code) {
+	if(verbose)
+		printf("..exit_code = %d\n",exit_code);
+	exit(exit_code);
+}
+@
+
+
+1.2
+log
+@Added support for specifying a specific device to check.
+@
+text
+@d6 2
+a7 2
+ *	-- its capacity is less than or equal to "threshold" bytes. 
+ *	   "threshold" is passed as argv[1].
+a16 2
+#define DEV_NAME "/dev/rsd0a"	/* default device */
+
+d21 4
+a24 5
+#define FSR_NONE	0	/* sd0 not present */
+#define FSR_TOOLARGE	1	/* sd0 present; capacity > threshold */
+#define FSR_NODISKTAB	2	/* sd0 present, no disktab entry */
+#define FSR_NOLABEL	3	/* swapdisk present, no valid label */
+#define FSR_LABEL	4	/* swapdisk with valid label present */
+d27 3
+a35 4
+	struct drive_info info;
+	struct disktab *dtp;
+	u_int capacity;			/* disk capacity in bytes */
+	u_int threshold;
+d40 1
+a40 1
+	if(argc < 2) 
+d42 1
+a42 2
+	threshold = atoi(argv[1]);
+	for(arg=2; arg<argc; arg++) {
+a51 2
+	if((threshold <= 0) || (devname == 0))
+		usage(argv);
+a53 16
+	if(ioctl(fd, DKIOCINFO, &info))
+		quit(FSR_ERROR);
+	/* 
+	 * we have a device type name for sd0. get the disktab struct for it.
+	 */
+	sprintf(diskname, "%s-%d", info.di_name, info.di_devblklen);
+	dtp = getdiskbyname(diskname);
+	if(dtp == 0)
+		quit(FSR_NODISKTAB);
+	capacity = dtp->d_ncylinders * dtp->d_ntracks * 
+	           dtp->d_nsectors * dtp->d_secsize;
+	if(capacity == 0)
+		quit(FSR_ERROR);
+	if(capacity > threshold)		/* this disk is too big to
+						 * be a swapdisk */
+		quit(FSR_TOOLARGE);
+d56 4
+a59 1
+	quit(FSR_LABEL);			/* usable swapdisk */
+d64 1
+a64 1
+	printf("\nusage: %s threshold [-v] [-f raw_device]\n", argv[0]);
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d17 2
+a18 1
+#define DISK_NAME "/dev/rsd0a"
+d41 2
+d47 2
+a48 2
+	if(argc == 3) {
+		if(argv[2][1] == 'v')
+d50 6
+d57 1
+a57 1
+	if(threshold <= 0)
+d59 1
+a59 1
+	if((fd = open(DISK_NAME,O_RDONLY)) <= 0)
+d84 1
+a84 1
+	printf("\nusage: %s threshold [-v]\n");
+@

@@ -1,0 +1,264 @@
+Fri Jan 26 16:11:20 EST 1990	Jay Fenlason	(hack@wookumz)
+
+	* diffarch.c (compare_chunk)  Include correct arguments in
+	a call to fprintf() for an error msg.
+	(compare_chunks, compare_dir)  First argument is a long, not an int.
+
+	* tar.c (options)  Use tar variable (argv[0]) as the name to print
+ 	in an error msg, instead of a constant "tar".
+	(confirm)  Use external variable char TTY_NAME[] for name of file
+	to open for confirmation input.
+	
+	* buffer.c (new_volume)  Ditto.
+
+	* port.c  Add declaration for TTY_NAME[].
+
+	* rmt.h  Add long declarations for lseek() and __rmt_lseek();
+
+Tue Jan 23 14:06:21 EST 1990	Jay Fenlason (hack@wookumz)
+	* tar.c, create.c  Create the +newer-mtime option, which is like
+	+newer, but only looks for files whose mtime is newer than the
+	given date.
+
+	* rtape_lib.c  Make *both* instances of signal-handler stuff use
+	void (*foo)() on USG systems.
+
+Thu Jan 11 14:03:45 EST 1990  Jay Fenlason  (hack@wookumz)
+
+	* getdate.y  Parse European dates of the form YYMMDD.
+	In ftime()  Init timezone by calling localtime(), and remember that
+	timezone is in seconds, but we want timeb->timezone to be in minutes.
+	This small patch from Joergen Haegg  (jh@aahas.se)
+
+	* rtape_lib.c (__rmt_open)  Also look for /usr/bsd/rsh.
+	Declare signal handler as returning void instead of int if USG is
+	defined.
+
+	* port.c Declare WANT_GETWD for SGI 4-D IRIS.
+
+	* Makefile  Include defines for SGI 4D version.  There are a simple
+	patch from Mike Muuss (mike@brl.mil).
+
+	* buffer.c (fl_read)  Work properly on broken Ultrix systems where
+	read() returns -1 with errno==ENOSPC on end of tape.  Correctly go
+	on to the next volume if f_multivol.
+
+	* list.c (list_archive,print_header)  Flush msg_file after printing
+	messages.
+
+	* port.c Delete unused references to alloca().
+	Don't crash if malloc() returns zero in quote_copy_string.
+	Flush stderr in msg() and msg_perror().
+
+	* tar.c  Flush msg_file after printing confirmation msg.
+
+Wed Jan 10 01:58:46 1990  David J. MacKenzie  (djm at hobbes.ai.mit.edu)
+
+	* tar.c (main): Change -help option and references to it to +help,
+	and remove suggestion to run info (which is unreleased, so not
+	likely to be of any help).
+
+Tue Jan  9 16:16:00 EST 1990	Jay Fenlason  (hack @wookumz)
+
+	* create.c (dump_file)  Close file descriptor if start_header()
+	fails.
+		(dump_file)  Change test for ./ ness to not think that
+	.{any character} is a ./  These are both trivial changes from
+	Piercarlo "Peter" Grandi  pcg%cs.aber.ac.uk@nsfnet-relay.ac.uk
+
+	* diffarch.c (diff_init)  Print correct number of bytes in error
+	message.
+
+Tue Jan  9 03:19:49 1990  David J. MacKenzie  (djm at hobbes.ai.mit.edu)
+
+	* Makefile: Add comment at top noting that two source files also
+	contain #defines that might need to be changed by hand.
+
+	* create.c, diffarch.c, extract.c: Change L_SET to 0 in lseek
+	calls, because only BSD defines it.
+	* create.c (dump_file): Make sparse file checking code conditional
+	on BSD42 because it uses st_blocks, which the other systems lack.
+
+Tue Jan  2 13:35:56 EST 1990 Jay Fenlason (hack@gnu)
+
+	* port.c (quote_copy_string)  Fix so it doesn't scramble memory if
+	the last character is non-printable.  A trivial fix from Kian-Tat Lim
+	(ktl@wag240.caltech.edu).
+
+Tue Dec 19 11:19:37 1989  Jim Kingdon  (kingdon at pogo)
+
+	* port.c [BSD42]: Define DOPRNT_MSG.
+	tar.h [BSD42]: Do not prototype msg{,_perror}.
+
+Fri Dec  8 11:02:47 EST 1989	Jay Fenlason (hack@gnu)
+
+	* create.c (dump_file)  Remove typo in msg.
+
+Fri Dec  1 19:26:47 1989  David J. MacKenzie  (djm at trix)
+
+	* Makefile: Remove comments referring to certain systems lacking
+	getopt, since it is now provided always and needed by all systems.
+
+	* port.c: Remove copy of getopt.c, as it is now linked in
+	separately to always get the current version.
+
+	* tar.c: Rename +cat-tars option to +catenate or +concatenate, 
+	and +local-filesystem to +one-file-system (preferred by rms
+	and used in GNU cp for the same purpose).
+	(describe): Reflect changes.
+
+Tue Nov 28 04:28:26 1989  David J. MacKenzie  (djm at hobbes.ai.mit.edu)
+
+	* port.c: Move declaration of alloca into #else /* sparc */
+	so it will compile on sparcs.
+
+Mon Nov 27 15:17:08 1989  David J. MacKenzie  (djm at hobbes.ai.mit.edu)
+
+	* tar.c (options): Remove -version option (replaced by +version).
+	(describe): Mention long options.
+
+Sat Nov 25 04:25:23 1989  David J. MacKenzie  (djm at hobbes.ai.mit.edu)
+
+	* getoldopt.c (getoldopt): Make `opt_index' argument a pointer to
+	an int, not char.
+
+	* tar.c: Modify long options per rms's suggestions:
+	Make preserve-permissions an alias for same-permissions.
+	Make preserve-order an alias for same-order.
+	Define preserve to mean both of those combined.
+	Make old an alias for old-archive.
+	Make portability an alias for old-archive, also.
+	Rename sym-links to dereference.
+	Rename gnudump to incremental.
+	Rename filename to file.
+	Make compare an alias for diff.  Leave diff but prefer compare.
+	Rename blocking-factor to block-size.
+	Rename chdir to directory.
+	Make uncompress an alias for compress.
+	Rename confirm to interactive.
+	Make get an alias for extract.
+	Rename volume-header to volume.
+
+	Also make +version an alias for -version.
+
+	(options): Shorten code that interprets long options by using
+	the equivalent short options' code.  This also makes it tons
+	easier to change the long options.
+
+	(describe): Make usage message more internally consistent
+	stylistically. 
+
+Mon Nov 20 14:55:39 EST 1989	hack@ai.mit.edu
+
+	* list.c (read_and)  Call check_exclude() to see if the files
+	should be skipped on extract or list.
+
+Thu Nov  9 18:59:32 1989  Jim Kingdon  (kingdon at hobbes.ai.mit.edu)
+
+	* buffer.c (fl_read): Fix typos in error message
+	"tar EOF not on block boundary".
+
+Mon Oct 23 13:09:40 EDT 1989		(hack@ai.mit.edu)
+
+	* tar.c (long_options[])  Add an option for blocked compression.
+
+Thu Oct 19 13:38:16 EDT 1989		(hack@ai.mit.edu)
+
+	* buffer.c (writeerror)  Print a more useful error msg.
+
+Wed Sep 27 18:33:41 EDT 1989		(hack@ai.mit.edu)
+
+	* tar.c (main)  Mention "tar -help" if the luser types a non-workable
+	set of options.
+
+Mon Sep 11 15:03:29 EDT 1989		(hack@ai.mit.edu)
+
+	* tar.c (options)  Have -F correctly set info_script.
+
+Tue Aug 29 12:58:06 EDT 1989		(hack@ai.mit.edu)
+
+	* Makefile  Include ChangeLog in tar.tar and tar.tar.Z
+
+Mon Aug 28 17:42:24 EDT 1989		(hack@ai.mit.edu)
+
+	* tar.c (options) Made -F imply -M
+	Also remind tar that the -f option takes an argument!
+
+	* Modified -F option to make it do what (I think) it
+	should.  e.g, if you say -F, tar won't send a msg to
+	msg_file and wait for a <return> It'll just run the program
+	it was given, and when the prog returns, the new tape had
+	*better* be ready. . .
+
+	* buffer.c (open_archive)  Give error message and abort if
+	the luser didn't give an archive name.
+
+Fri Aug 25 20:05:27 EDT 1989		Joy Kendall (jak at hobbes)
+
+	* Added code to make a new option to run a specified script
+	at the end of each tape in a multi-volume backup.  Changed:
+	tar.c: made new switch, -F, and new long-named option,
+	"info-script".  Code is where you would expect.
+	tar.h: added flag f_run_script_at_end, and an extern char *
+	called info_script, which optarg gets set to.
+	buffer.c: line 1158 in new_volume(): if f_run_script_at_end
+	is set, we give info_script to system(), otherwise we do
+	what we've always done.  **FIXME** I'm not sure if that's all
+	that has to be done here.
+	
+Thu Aug 24 10:09:38 EDT 1989		Joy Kendall (jak at spiff)
+(These changes made over the course of 6/89 - 8/89)
+	
+	* diffarch.c: diff_archive: Added switches for LF_SPARSE in the
+	case statements that needed it.  Also, skip any extended headers
+	if we need to when we skip over a file.  (need to change
+	the bit about, if the size doesn't agree AND the file is NOT
+	sparse, then there's a discrepancy, because I added another
+	field to the header which should be able to deal with the
+	sizes)   If the file is sparse, call the added routine
+	"diff_sparse_files" to compare.  Also added routine 
+	"fill_in_sparse_array".
+
+	* extract.c: extract_archive: added the switch LF_SPARSE
+	to the case statement as needed, and code to treat the 
+	sparse file.  At label "again_file", modified opening the
+	file to see if we should have O_APPEND be one of the modes.
+	Added code at label "extract_file" to call the new routine
+ 	"extract_sparse_file" when we have an LF_SPARSE flag.
+
+	Note: really should erase the commented-out code in there,
+	because it's confusing.
+
+	* update.c: made sure that if a file needed to be "skipped" 
+	over, it would check to see if the linkflag was sparse, and
+	if so, would then make sure to skip over any "extended 
+	headers" that might come after the header itself.  Do so by
+	calling "skip_extended_headers".
+	
+	* create.c: create_archive: added code to detect a sparse
+	file when in the long case statement.  Added ways to detect
+	extended headers, and label "extend" (ack! should get rid of
+	that, is atrocious).  Call the new routine "finish_sparse_file"
+	if the linkflag is LF_SPARSE to write the info to the tape.
+	Also added routines "init_sparsearray", "deal_with_sparse",
+	"clear_buffer", "where_is_data", "zero_record", and 
+	"find_new_file_size".
+	
+	* tar.h:  Added the #define's SPARSE_EXT_HDR and 
+	SPARSE_IN_HDR.  Added the struct sparse and the struct
+	sp_array.  Added the linkflag LF_SPARSE. Changed the tar
+ 	header in several ways:
+		- added an array of struct sparse's SPARSE_IN_HDR long
+		- added a char flag isextended
+		- added a char string realsize to store the true
+		size of a sparse file
+	Added another choice to the union record called a
+	struct extended_header, which is an array of 21 struct
+	sparse's and a char isextended flag.  Added flag
+	f_sparse_file to list of flags.
+	
+	* tar.c: added long-named options to make tar compatible with
+	getopt_long, changed Makefile.
+
+ChangeLog started at Thu Aug 24 10:09:38 EDT 1989 by Joy Kendall
+(jak at spiff)

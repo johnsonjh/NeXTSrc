@@ -1,0 +1,37 @@
+.TH NMSERVER 8 2/22/88
+.CM 4
+.SH NAME
+nmserver \- Mach network server
+.SH SYNOPSIS
+.B nmserver
+[ -c ] [ -t ] [ -p print_level ]
+.SH DESCRIPTION
+The 
+.I network server
+is the program responsible for forwarding Mach IPC over the network.
+Currently, it also implements a simple network name service.
+
+.B -c
+enables debugging in the
+.I cthreads
+library.
+
+.B -t
+enables procedure call tracing, if the executable was compiled with
+this facility turned on.
+
+.B -p
+is used to set the level of debugging messages to be printed on the
+console.
+
+The network server should be started once and for all at boot time.
+It
+is shared by all users of the machine.
+.SH "SEE ALSO"
+nmcontrol(1), netname(3)
+.br
+"Network Server Design", internal document from the Mach group.
+.SH HISTORY
+.TP 
+22-Feb-88  Daniel Julin (dpj) at Carnegie-Mellon University
+Created.

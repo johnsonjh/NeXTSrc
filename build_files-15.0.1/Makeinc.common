@@ -1,0 +1,120 @@
+# Include file common to standard makefiles.
+# Copyright 1988, NeXT, Inc.
+#
+# A series of standard rules here describe all
+# transformations for the standard build process.
+
+help:
+	echo "Standard mechanism supports these targets:"
+	echo "  all: make .NEW versions";
+	echo "  install: make .NEW versions and install them in DSTROOT";
+	echo "  local: install (w/o docs) in LCLROOT";
+	echo "  clean: remove *.o *.NEW *.spec *.aux";
+	echo "  docs: install man and spec pages in DSTROOT";
+	echo "  includes: install user .h files in DSTROOT";
+
+MAKEFILE = Makefile
+PRODUCT_INSTALL = $(PRODUCT).install
+PRODUCT_ALL = $(PRODUCT).all
+PRODUCT_LOCAL = $(PRODUCT).local
+PRODUCT_CLEAN = $(PRODUCT).clean
+PRODUCT_NEW= $(PRODUCT).NEW
+PRODUCT_DOCS= $(PRODUCT).docs
+PRODUCT_INCLUDES= $(PRODUCT).includes
+
+OFILES = $(MFILES:.m=.o) $(CFILES:.c=.o) $(PSWFILES:.psw=.o) \
+	$(PSWMFILES:.pswm=.o) $(SFILES:.s=.o) $(LFILES:.l=.o) \
+	$(LMFILES:.lm=.o) $(YFILES:.y=.o) $(YMFILES:.ym=.o)
+
+$(PRODUCT_ALL): $(PRODUCT_NEW)
+
+$(PRODUCT_INSTALL): $(PRODUCT_NEW) $(PRODUCT_DOCS) $(PRODUCT_INCLUDES)
+	mkdirs -m 755 $(DSTROOT)/$(INSTALLDIR)
+	install $(IFLAGS) $(@:.install=.NEW) $(DSTROOT)/$(INSTALLDIR)/$(@:.install=)
+
+$(PRODUCT_INCLUDES):
+# install the include files
+	-if [ -n "$(USER_HFILES)" ]; then \
+	  mkdirs -m 755 $(DSTROOT)/$(HINSTALLDIR); \
+	  install -m 444 $(HIFLAGS) $(USER_HFILES) $(DSTROOT)/$(HINSTALLDIR); \
+	fi
+
+$(PRODUCT_LOCAL): $(PRODUCT_NEW)
+	-if [ -n "$(USER_HFILES)" ]; then \
+	  mkdirs -m 755 $(LCLROOT)/$(HINSTALLDIR); \
+	  install -m 444 $(HIFLAGS) $(USER_HFILES) $(LCLROOT)/$(HINSTALLDIR); \
+	fi
+	mkdirs -m 755 $(LCLROOT)/$(INSTALLDIR); \
+	install $(IFLAGS) $(@:.local=.NEW) $(LCLROOT)/$(INSTALLDIR)/$(@:.local=)
+
+$(PRODUCT_CLEAN):
+	\rm -f *.o *.NEW $(SPECFILES) $(SPECFILES:.spec=.aux)
+	\rm -f $(GARBAGE)
+	\rm -f Makedep
+	touch Makedep
+
+$(PRODUCT_NEW): $$@first $(OFILES) $(CSHFILES) $(SHFILES)
+	if [ `expr $(@:.NEW=) : '.*\.a' + 1 ` -ne 1 ] ; then\
+		if [ -f $@ ] ; then\
+		  $(AR) ru $@ $(OFILES);\
+		else\
+		  $(AR) q $@ $(OFILES);\
+		fi\
+	elif [ -n "$(CSHFILE)" ] ; then\
+		cp $(CSHFILE) $@;\
+	elif [ -n "$(SHFILE)" ] ; then\
+		cp $(SHFILE) $@;\
+	else\
+		$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OFILES) $(LOADLIBS);\
+	fi
+
+$(PRODUCT_DOCS): $(SPECFILES)
+# install spec files and man pages
+	-if [ -n "$(MANFILES)" ]; then\
+	  mkdirs -m 755 $(DSTROOT)/$(MANINSTALLDIR); \
+	  install -m 444 $(MANIFLAGS) $(MANFILES) $(DSTROOT)/$(MANINSTALLDIR); \
+	fi
+	-if [ -n "$(SPECFILES)" ]; then\
+	  mkdirs -m 755 $(DSTROOT)/$(SPECINSTALLDIR); \
+	  install -m 444 $(MANIFLAGS) $(SPECFILES) $(SPECFILES:.spec=.aux) \
+	      $(DSTROOT)/$(SPECINSTALLDIR); \
+	fi
+
+.m.spec:
+	speculate $(SPECFLAGS) $*.m
+
+vers.c: $(DOVERS) $(OFILES)
+	@rm -f $@
+	vers_string -c $(PRODUCT) > $@
+
+# A target for DOVERS to be set to when it should always be done
+ALWAYS:
+
+.c.o:
+	$(CC) $(CFLAGS) -c $*.c
+	md -u Makedep -d $*.d
+
+all install local clean docs includes:
+	-if [ -n "$(PRODUCT)" ]; then\
+		$(MAKE) $(PRODUCT).$@ ;\
+	fi;
+	for i in `echo $(PRODUCTS)`; do\
+		echo ======= make $$i.$@ =======;\
+		$(MAKE) -f $$i.mk PRODUCT=$$i MAKEFILE=$$i.mk $$i.$@;\
+	done;
+	
+	
+	CWD=`pwd`; cd $(DSTROOT); DSTROOT=`pwd`; cd $$CWD; \
+	for i in `echo ${SUBDIRS}`; \
+	  do \
+		echo ================= make $@ for $$i =================; \
+		(cd $$i; ${MAKE} DSTROOT=$$DSTROOT $@); \
+	  done
+
+$(DSTROOT):
+	echo 'Please make a directory for $@ and try again'; exit 1
+
+DSTROOT LCLROOT:
+	-@if [ -n "${$@}" ]; then exit 0; else echo $@ must be defined; exit 1; fi
+
+-include Makedep

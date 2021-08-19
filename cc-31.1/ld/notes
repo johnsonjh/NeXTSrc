@@ -1,0 +1,191 @@
+Changes for the Warp ?? release (the -30 compiler release):
+- Allowed using -sectorder on zero fill sections (including the section for
+  common symbols) and for all literal sections (each type of literal section
+  has it's own format of the sectorder file) (bug #9404).
+- Improved handling of sectorder file where the specifications don't exactly
+  match the object names of what's loaded.  A hash table of symbol names is used
+  to attempt to match up symbol names in the specifications to the symbol names
+  in the object files loaded.  Also removed the requirement of a separating ':'
+  between the object name and symbol name which allows just a symbol name to be
+  specified.  Also removed the fatal error of the same object file loaded more
+  than once with -sectorder and the same symbol in the same object file.  This
+  introduces ambiguity but that exist anyway when the requirement of exact
+  matches was removed.  Also improved the allocation of the name arrays data
+  structure for better performance (bug #9403). 
+- Fixed a bug in clean_archives that indexed the sets array with cur_set when
+  cur_set was equal to -1 (bug #9402)
+- Fixed a bug if any section specification was given for the (__DATA,__common)
+  section it caused the common symbols not to be defined (bug #9401).
+- Fixed a bug that caused ld to hang if processing an old library and a member
+  had an error in the object file.  The fix was to add the expresion errors == 0
+  to the while loop to terminate the algorithm in the case of an error.  The
+  error was that an object contained an LC_SYMSEG which was handled as an error.
+  This is now a warning and the message was changed to include "object produced
+  by pre-1.0 compiler, please recompile" (bug #9141).
+
+Changes for the Warp ?? release (the -29 compiler release):
+- Fixed a bug in new_sets that did not zero out the entire structure when
+  reallocating it (bug #8037).
+- Replaced the buggy literal pointer code (literal_ptrs.[ch] got
+  literal_pointers.[ch]) (bug #7994).
+- Changed the sizes of the literal 4 and 8 tables from 20 to 60 which seems to
+  be about the right number of literals so that a large program will have only
+  one table.
+- Changed the calls to map_fd again to match the current prototype in libc.h
+  which now matches the NeXT documentation.  Casts for all the parameters were
+  added.  Hopefully this will now remain correct.
+
+Changes for the Warp ?? release (the -28 compiler release):
+- Fixed bug #7770 where the logic around free() in the literal 8,4,pointers
+  free code was wrong.
+
+Changes for the Warp ?? release (the -27 compiler release):
+- The first version of the literal pointers code was added.
+- Fixed a bug that caused floating-point constants to be relocated wrong.  The
+  output_offset for the fine relocation map for the first table entry of all
+  second and larger tables got set wrong.
+- Fixed a bug where if symbols were being traced with -y and common symbols
+  were being allocated then some of the common symbols might not be allocated.
+  The problem was in defined_common_symbols() where the loop that looped through
+  the trace symbols and the loop that looped through the merged symbol list were
+  using the same variable.
+- Fixed a bug where the contents of a section was not placed in the output file
+  at the right address.  This was caused by an zero sized section that had an
+  alignment that caused it's address to be greater than its previous section.
+  Then when the offsets were assigned to the sections a test for zero sized
+  sections prevented the running "offset" to be incremented if the size of the
+  section was zero even though the difference of the address of the section and
+  the next section in this case was not zero.  This showed up with a zero sized
+  literal8 section with rld because the section came from the basefile and was
+  not in the loaded objects.
+
+Changes for the Warp 3H release (the -26 compiler release):
+- Fixed a bug in generic_reloc that produced scattered relocation entries for
+  absolute symbols.
+- Fixed a bug in the rld package and ld -A where the common section did not have
+  the correct alignment.  The problem was in merge_sections if the base file was
+  being merged the alignment was not propagated into the merged section.
+- Fixed a bug in layout_sections that did not assign addresses to zerofill
+  sections correctly aligned (it was fixed for content sections but not for
+  zerofill sections).
+- Fixed a bug in output_cstrings() when freeing up the data the loop was using
+  a pointer to a free()'ed item.
+- Changed the checks in check_symbol() to allow stabs to have any of the N_TYPE
+  bits on and treated like N_SECT (their n_sect feild checked).
+- Added 4 byte and 8 byte literals.
+- Added a test in allocate() so that if a size of zero is asked for then NULL
+  is returned and malloc is not called.  This allows malloc() to return NULL 
+  if a zero size is requested and not to be flagged as an error.
+- Added a comma between the perror string and the printing of errno = x in the
+  error routines.
+
+Changes for the Warp 3 (OS update) release (the -25 compiler release):
+- Added rld_load_from_memory() and fixed a vm_allocate leak for the input object
+  file when an error ocurred.
+- Added scattered relocation entries to generic_reloc() in generic_reloc.c.
+  See the comments in <reloc.h>.  This allows scattered loading to work
+  relibly.
+- Fixed bug 6264 which produced a error with an archive that had zero ranlib
+  structures in it.  It now prints a warning.
+- Fixed bug 6261 which printed the linkedit segment has zero size when using -s
+  and the no seglinkedit flag was specified.  It is no longer printed in this
+  case but is printed when the -seglinkedit flag is specified.
+
+Changes for the Warp 3 release (the -24 compiler release):
+- Fixed a bug in lookup_fvmlib() which did not bzero the memory it allocated
+  for a merged_fvmlib structure causing a bogus next pointer in that struct.
+- Fixed a bug in rld_load_basefile() that is not set the host_pagesize which
+  caused enter_string to allocate each string in it's own string block.
+- Fixed a bug where the <segment>__end symbols did not get the correct value
+  because their section number was set to the last section in their segment
+  and not their first as they should have been.
+- Removed all compiler "might be" warning messages for -DDEBUG and -DRLD.
+- Implemented scattered loading vi -sectorder <segname> <sectname> <orderfile>
+  (and added the -sectorder_detail option along with this).  This has NOT been
+  put on the man page because of the relocation limititations it can't detect.
+- Removed "mach_missing.h" (mach_error_string from <mach_error.h> and map_fd
+  from libc.h (brain damaged but there)).
+- Added one argument (headers_size) to the function passed to rld_address_func.
+- Moved rld.h to ../include and it will be installed in /usr/include.
+- Added a -w flag to suppress warnings.
+- Added saving away errno in the system_{error,fatal} routines before doing any
+  thing that could cause a system call (like a print).  This is in hope to get
+  rid of the wrong error string (Inapropate ioctl for device) when it can't open
+  a file (the value of errno is also printed).
+
+Changes for the Warp 1 release (the -23 compiler release):
+- Added the -headerpad <hex value> option to pad the header for MH_EXECUTE
+  files.  The header is allways padded for MH_EXECUTE by the greater of this or
+  the round off due to the segment rounding.
+- Fixed a bug in clean_archives() when an rld_load_basefile() was called there
+  are no sets so the the loop in clean_archives() was wrapped with an
+  if(sets != NULL) .
+- Fixed a bug that merge_literal_sections() merged the sections contents from
+  the base file.
+- Now is linked with libsys.
+- Made created seglinkedit by default for object formats that can have it and
+  set the default init protect to r-x.  Also added the -noseglinkedit option
+  to turn this off.
+- Added a message to the rld() calls when they return failure because of
+  previous fatal errors (otherwise they print nothing and it fails).
+
+Changes for the 2.0 impulse X.X release (the -22 compiler release):
+- Added the ablity to link from archives with rld_load().
+- Fixed a memory leak in the rld package when an rld_load() failed before
+  pass2() and it was never called then the undefined_maps for that object set
+  were not free()'ed.  Remove object now also frees these maps if they are not
+  already free.
+
+Changes for the 2.0 impulse X.X release (the -21 compiler release):
+- Changed the default format if -A is specified and no filetype is specified,
+  it now is MH_OBJECT.
+- Added the following functions to the rld package: rld_unload_all,
+  rld_load_basefile, rld_address_func and added another argument to rld_load
+  which is the output name of the debugging file for gdb.
+- Fixed -X to not strip stab symbols that start with 'L'.
+- Added the -b flag to strip the base symbols from the output file when doing
+  an ld -A.  This results in a much smaller output file which should still be
+  useful for gdb(1)'s addfile command.
+- Added coded in pass1() and rld_load() to handle the bug in the kernel that
+  will not allow map_fd() to map a file with zero length.
+
+Changes for the 2.0 impulse X.X release (the -20 compiler release):
+- Added the -sectobjectsymbols <segname> <sectname> option to produce the
+  file.o symbols.
+- Fixed some nits in pass1() in some error cases printing the member name with
+  out trimming the trailing blanks.
+- Fixed two bugs in generic_reloc() in the error case when an external
+  relocation entry's r_symbolnum is not found in the undefined_map and then
+  the wrong index (i) was used instead of (symbolnum) to index the symbol table
+  and determine the error in the object file.
+
+Changes for the 2.0 impulse X.X release (the -19 compiler release):
+- Fixed a bug in the rld package to correctly unload common symbols allocated
+  in a set of objects loaded.
+- Fixed a bug in the rld package to not enter undefined, common and indirect
+  symbols from the base program (this causes the hash table to be in an
+  incorrect state if a dymnamicly loaded object defines one of these symbols
+  and it is unloaded).
+- Added a check to make sure the string table ends with a '\0'.
+- ld is no longer installed as ld-<version_number> to match the rest of the
+  project.
+- Changed so that no longer allow two absolute symbols with the same value to
+  not cause a multiply defined symbol.
+- Updated for the changes to CPU_TYPE and CPU_SUBTYPE with the changes to
+  <sys/machine.h>
+- Fixed a bug in layout() that didn't get the addresses of sections right (and
+  then possibly the filesizes of segments right).  This was cause by setting
+  the section address to the rounded value of 'addr' but not setting 'addr' to
+  that value before incrementing it by the section size.
+- Fixed a bug in check_size_offset*() in pass1.c that printed the wrong string.
+  And made the alignment checks in there a warning not an error (ifdef'ed
+  mc68000).
+- Built the rld package from the new link editor.  This is all ifdef'ed RLD and
+  lots of stuff is ifdef'ed out to kept the code size down.
+
+Changes for the 2.0 impulise 0.01A release (the -18 compiler release):
+- Fixed the problem if the output file is not writable but can be removed.
+  Added an unlink() in pass2().
+
+Changes for the 2.0 impulse 0.01 release (the -17 compiler release):
+- Rewrote the entire link editor.

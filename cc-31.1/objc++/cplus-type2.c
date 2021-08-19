@@ -1,0 +1,1 @@
+../g++/cplus-type2.c

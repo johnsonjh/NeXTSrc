@@ -1,0 +1,654 @@
+/*
+ * netinfo.c - Routines for dealing with the NetInfo database.
+ *
+ **********************************************************************
+ * HISTORY
+ * 10-Jun-89  Peter King
+ *	Created.
+ **********************************************************************
+ */
+
+/*
+ * Include Files
+ */
+#import <ctype.h>
+#import <pwd.h>
+#import	<netdb.h>
+#import <string.h>
+#import <syslog.h>
+#import <sys/types.h>
+#import <sys/socket.h>
+#import <net/if.h>
+#import <netinet/in.h>
+#import <netinet/if_ether.h>
+#import	"netinfo.h"
+
+
+/*
+ * Constants
+ */
+
+/* Important directories */
+#define	NIDIR_MACHINES	"/machines"
+
+/* Important properties */
+#define NIPROP_ASSIGNIPADDR	"assignable_ipaddr"
+#define	NIPROP_BOOTFILE		"bootfile"
+#define	NIPROP_BOOTPARAMS	"bootparams"
+#define	NIPROP_CONFIPADDR	"configuration_ipaddr"
+#define	NIPROP_DEFBOOTFILE	"default_bootfile"
+#define	NIPROP_ENADDR		"en_address"
+#define	NIPROP_IPADDR		"ip_address"
+#define	NIPROP_MASTER		"master"
+#define	NIPROP_NAME		"name"
+#define	NIPROP_NETPASSWD	"net_passwd"
+#define NIPROP_PROMISC		"promiscuous"
+#define	NIPROP_SERVES		"serves"
+
+/*
+ * Global variables
+ */
+static void	*ni = NULL;		/* Handle on our parent domain */
+static boolean_t	initdone = FALSE;
+extern char	myhostname[];
+
+/*
+ * External Routines
+ */
+extern char	*crypt(char *, char *);
+
+
+/*
+ * Internal Routines
+ */
+
+/*
+ * Routine: init
+ * Function:
+ *	Initialize this module.
+ * Returns:
+ *	TRUE	- Initialization has been done.
+ *	FALSE	- Initialization failed.
+ */
+static boolean_t
+init()
+{
+
+	if (initdone) {
+		return (TRUE);
+	}
+
+	/* Set up a connection with our NetInfo parent */
+	if (ni == NULL && (ni = ni_new(NULL, "..")) == NULL) {
+		syslog(LOG_ERR, "can't open NetInfo parent domain");
+		return (FALSE);
+	}
+	initdone = TRUE;
+	return (TRUE);
+}
+
+/*
+ * Routine: ni_proplist_addprop
+ * Function:
+ *	Add a property with a given value to a property list.
+ */
+static void
+ni_proplist_addprop(
+		    ni_proplist	*proplist,
+		    ni_name	key,
+		    ni_name	value
+		    )
+{
+	ni_property	prop;
+
+	NI_INIT(&prop);
+	prop.nip_name = key;
+	if (value) {
+		ni_namelist_insert(&prop.nip_val, value, 0);
+	}
+	ni_proplist_insert(proplist, prop, 0);
+	ni_namelist_free(&prop.nip_val);
+}
+
+
+/*
+ * Routine: ni_proplist_addprop2
+ * Function:
+ *	Add a property with the given two values to a property list.
+ */
+static void
+ni_proplist_addprop2(
+		    ni_proplist	*proplist,
+		    ni_name	key,
+		    ni_name	value1,
+		    ni_name	value2
+		    )
+{
+	ni_property	prop;
+
+	NI_INIT(&prop);
+	prop.nip_name = key;
+	if (value1 || value2) {
+		ni_namelist_insert(&prop.nip_val, value2, 0);
+		ni_namelist_insert(&prop.nip_val, value1, 0);
+	}
+	ni_proplist_insert(proplist, prop, 0);
+	ni_namelist_free(&prop.nip_val);
+}
+
+
+/*
+ * Exported routines
+ */
+
+/*
+ * Routine: promiscuous
+ * Function:
+ *	Determine whether we are a promiscuous server
+ * Returns:
+ *	TRUE	- Promiscuous
+ *	FALSE	- Not promiscuous
+ */
+boolean_t
+promiscuous()
+{
+	ni_id		id;
+	ni_namelist	nl;
+	ni_status	status;
+	ni_index	which;
+	char		*cp;
+
+	if (!init()) {
+		return (FALSE);
+	}
+
+	/* Make sure we are the master of the database */
+	if ((status = ni_root(ni, &id)) != NI_OK) {
+		syslog(LOG_ERR, "NetInfo error getting root: %s",
+		       ni_error(status));
+		return (FALSE);
+	}
+
+	if ((status = ni_lookupprop(ni, &id, NIPROP_MASTER, &nl)) != NI_OK) {
+		syslog(LOG_ERR, "NetInfo error reading master property: %s",
+		       ni_error(status));
+		return (FALSE);
+	}
+
+	if (nl.ninl_len == 0 ||
+	    (cp = strchr(nl.ninl_val[0], '/')) == NULL) {
+		syslog(LOG_ERR, "malformed master property");
+		return (FALSE);
+	}
+	*cp = '\0';
+	if (strcmp(myhostname, nl.ninl_val[0])) {
+		*cp = '/';
+		ni_namelist_free(&nl);
+		return (FALSE);
+	}
+	*cp = '/';
+	ni_namelist_free(&nl);
+
+	/* Get the /machines directory */
+	if ((status = ni_pathsearch(ni, &id, NIDIR_MACHINES)) != NI_OK) {
+		syslog(LOG_ERR, "NetInfo error opening /machines: %s",
+		       ni_error(status));
+		return (FALSE);
+	}
+
+	/* Read the props */
+	if ((status = ni_listprops(ni, &id, &nl)) != NI_OK) {
+		syslog(LOG_ERR, "NetInfo failure reading /machines proplist: %s",
+		       ni_error(status));
+		return (FALSE);
+	}
+
+	/* Find the promiscuous property */
+	which = ni_namelist_match(nl, NIPROP_PROMISC);
+	ni_namelist_free(&nl);
+	return (which != NI_INDEX_NULL);
+}
+
+/*
+ * Routine: ni_getconfigipaddr
+ * Function:
+ *	Look up the address to use for configuring machines.
+ * Returns:
+ *	0:	Success, address in addrp;
+ *	-1:	Failure.
+ */
+int
+ni_getconfigipaddr(
+		   struct in_addr *addrp
+		   )
+{
+	ni_id			id;
+	ni_namelist		nl;
+	ni_status		status;
+	struct in_addr		in_addr;
+
+	if (!init()) {
+		return (-1);
+	}
+
+	/* Get the /machines directory */
+	if ((status = ni_pathsearch(ni, &id, NIDIR_MACHINES)) != NI_OK) {
+		syslog(LOG_ERR, "NetInfo failure opening /machines: %s",
+		       ni_error(status));
+		return (-1);
+	}
+
+	/* Get the configuration ip address */
+	if ((status = ni_lookupprop(ni, &id, NIPROP_CONFIPADDR, &nl)) !=
+	    NI_OK) {
+		syslog(LOG_ERR, "NetInfo failure reading configuration ip_addr: %s",
+		       ni_error(status));
+		return (-1);
+	}
+
+	/* Convert ascii to the address */
+	if ((in_addr.s_addr = inet_addr(nl.ninl_val[0])) == -1) {
+		syslog(LOG_ERR, "malformed %s property", NIPROP_CONFIPADDR);
+		ni_namelist_free(&nl);
+		return (-1);
+	}
+	ni_namelist_free(&nl);
+
+	*addrp = in_addr;
+	return (0);
+}
+
+/*
+ * Routine: ni_getnextipaddr
+ * Function:
+ *	Get next available IP address.
+ * Returns:
+ *	0:	Address in addrp.
+ *	-1:	No address available.
+ */
+int
+ni_getnextipaddr(
+		 struct in_addr	*addrp
+		 )
+{
+	ni_id			id;
+	ni_namelist		nl;
+	ni_status		status;
+	struct in_addr		in_addr;
+	struct in_addr		min;
+	struct in_addr		max;
+	struct in_addr		confaddr;
+	struct hostent		*h;
+
+	if (!init()) {
+		return (-1);
+	}
+
+	/* Get the /machines directory */
+	if ((status = ni_pathsearch(ni, &id, NIDIR_MACHINES)) != NI_OK) {
+		syslog(LOG_ERR, "NetInfo failure opening /machines: %s",
+		       ni_error(status));
+		return (-1);
+	}
+
+	/* Get the available ip address property */
+	if ((status = ni_lookupprop(ni, &id, NIPROP_ASSIGNIPADDR, &nl)) !=
+	    NI_OK) {
+		syslog(LOG_ERR, "NetInfo failure reading assignable ip_addr property: %s",
+		       ni_error(status));
+		return (-1);
+	}
+
+	/* Get the min and max of the available range */
+	if (nl.ninl_len != 2 ||
+	    (min.s_addr = inet_addr(nl.ninl_val[0])) == -1 ||
+	    (max.s_addr = inet_addr(nl.ninl_val[1])) == -1 ||
+	    max.s_addr < min.s_addr ||
+	    inet_netof(min) != inet_netof(max)) {
+		syslog(LOG_ERR, "malformed %s property", NIPROP_ASSIGNIPADDR);
+		ni_namelist_free(&nl);
+		return (-1);
+	}
+	ni_namelist_free(&nl);
+
+	/* Get the configuration address, we don't want to use it */
+	if (ni_getconfigipaddr(&confaddr)) {
+		confaddr.s_addr = 0;
+	}
+
+	/* Search for the first unassigned address in this range */
+	for (in_addr = min; in_addr.s_addr <= max.s_addr; in_addr.s_addr++) {
+		if ((h = gethostbyaddr(&in_addr, sizeof(in_addr),
+				       AF_INET)) == NULL
+		    && (confaddr.s_addr == 0 ||
+			confaddr.s_addr != in_addr.s_addr)) {
+			/* Found one */
+			*addrp = in_addr;
+			return (0);
+		}
+	}
+	return (-1);
+}
+
+/*
+ * Routine: ni_getbootfile
+ * Function:
+ *	Get the default bootfile to give a new machine.
+ * Returns:
+ *	0	- Success
+ *	-1	- Failure
+ */
+int
+ni_getbootfile(
+	       char	*bootfile,
+	       int	len
+	       )
+{
+	ni_id		id;
+	ni_namelist	nl;
+	ni_status	status;
+
+	if (!init()) {
+		return (-1);
+	}
+
+	/* Get the /machines directory */
+	if ((status = ni_pathsearch(ni, &id, NIDIR_MACHINES)) != NI_OK) {
+		syslog(LOG_ERR, "NetInfo failure opening /machines: %s",
+		       ni_error(status));
+		return (-1);
+	}
+
+	/* Get the bootfile property */
+	if ((status = ni_lookupprop(ni, &id, NIPROP_DEFBOOTFILE, &nl)) !=
+	    NI_OK) {
+		syslog(LOG_ERR, "NetInfo failure reading bootfile property: %s",
+		       ni_error(status));
+		return (-1);
+	}
+
+	if (nl.ninl_len == 0) {
+		bootfile[0] = '\0';
+	} else {
+		strncpy(bootfile, nl.ninl_val[0], len);
+	}
+	return (0);
+}
+
+/*
+ * Routine: ni_hostismine
+ * Function:
+ *	Determine if a particular host is configured from this BOOTP daemon.
+ * Returns:
+ *	TRUE	: Host is mine
+ *	FALSE	: Host is not mine.
+ */
+boolean_t
+ni_hostismine(
+	      char	*hostname
+	      )
+{
+	ni_id		id;
+	ni_namelist	nl;
+	ni_status	status;
+	char		buf[512];
+
+	if (!init()) {
+		return (FALSE);
+	}
+
+	/* Build a path the the host's entry */
+	strcpy(buf, NIDIR_MACHINES);
+	strcat(buf, "/");
+	strcat(buf, hostname);
+
+	/* And find it */
+	if ((status = ni_pathsearch(ni, &id, buf)) != NI_OK) {
+		return (FALSE);
+	}
+
+	/* Make sure that we have an ethernet address for it */
+	if ((status = ni_lookupprop(ni, &id, NIPROP_ENADDR, &nl)) != NI_OK){
+		return (FALSE);
+	}
+
+	/* Ok, this is ours. */
+	ni_namelist_free(&nl);
+	return (TRUE);
+}
+
+/*
+ * Routine: ni_getnetpasswd
+ * Function:
+ *	Look up the network passwd
+ */
+ni_name
+ni_getnetpasswd()
+{
+	ni_id		id;
+	ni_namelist	nl;
+	ni_status	status;
+	ni_name		netpasswd;
+	struct passwd	*pw;
+
+	if (!init()) {
+		return (NULL);
+	}
+
+	/* Get the /machines directory */
+	if ((status = ni_pathsearch(ni, &id, NIDIR_MACHINES)) != NI_OK ||
+	    (status = ni_lookupprop(ni, &id, NIPROP_NETPASSWD, &nl)) !=
+	    NI_OK) {
+		if ((pw = getpwnam("root")) == NULL) {
+			syslog(LOG_ERR, "can't read root passwd entry");
+			return (NULL);
+		}
+		return (ni_name_dup((const ni_name) pw->pw_passwd));
+	}
+
+	/* If there are no values, assume a null password */
+	if (nl.ninl_len == 0) {
+		ni_namelist_free(&nl);
+		return (ni_name_dup(""));
+	}
+	netpasswd = ni_name_dup(nl.ninl_val[0]);
+	ni_namelist_free(&nl);
+	return (netpasswd);
+}
+
+/*
+ * Routine: ni_passwdok
+ * Function:
+ *	Check the given password to see if the user can have write
+ *	access to the database.  It first checks for the existence of
+ *	a network password.  If the doesn't exist, then it checks the
+ *	password against the root password of this machine.
+ */
+boolean_t
+ni_passwdok(
+	    char *passwd
+	    )
+{
+	ni_name		netpasswd;
+	char		*cp;
+
+	if ((netpasswd = ni_getnetpasswd()) == NULL) {
+		return (FALSE);
+	}
+
+	if (*netpasswd == '\0') {
+		if (*passwd == '\0') {
+			goto good;
+		}
+		goto bad;
+	}
+
+	cp = crypt(passwd, netpasswd);
+	if (strcmp(cp, netpasswd)) {
+bad:		
+		ni_name_free(&netpasswd);
+		return (FALSE);
+	}
+good:
+	ni_name_free(&netpasswd);
+	return (TRUE);
+}
+
+/*
+ * Routine: ni_setenbyname
+ * Function:
+ *	Update the ethernet address in the NetInfo machines directory
+ *	for a given host.
+ * Returns:
+ *	0	- Success
+ *	-1	- Failure
+ */
+int
+ni_setenbyname(
+	       char		*hostname,
+	       unsigned char	*enaddr
+	       )
+{
+	ni_id		id;
+	ni_index	which;
+	ni_index	bpwhich;
+	ni_namelist	nl;
+	ni_property	prop;
+	ni_status	status;
+	char		buf[512];
+
+	/* Get the machine's directory */
+	strcpy(buf, NIDIR_MACHINES);
+	strcat(buf, "/");
+	strcat(buf, hostname);
+	if ((status = ni_pathsearch(ni, &id, buf)) != NI_OK) {
+		syslog(LOG_ERR, "can't find %s NetInfo directory",
+		       buf);
+		return (-1);
+	}
+
+	/* Locate the en_address property */
+	if ((status = ni_listprops(ni, &id, &nl)) != NI_OK) {
+		syslog(LOG_ERR, "Netinfo failure reading /machines proplist: %s",
+		       ni_error(status));
+		return (-1);
+	}
+	which = ni_namelist_match(nl, NIPROP_ENADDR);
+	bpwhich = ni_namelist_match(nl, NIPROP_BOOTPARAMS);
+	ni_namelist_free(&nl);
+
+	/* Create a new namelist for this property */
+	ni_namelist_insert(&nl, (ni_name)ether_ntoa((struct ether_addr *)
+						    enaddr), 0);
+	
+	/* Write it out */
+	if ((status = ni_writeprop(ni, &id, which, nl)) != NI_OK) {
+		syslog(LOG_ERR, "Netinfo failure writing %s %s property: %s",
+		       buf, NIPROP_ENADDR, ni_error(status));
+		ni_namelist_free(&nl);
+		return (-1);
+	}
+	ni_namelist_free(&nl);
+
+	/* If there is no bootparams property, create one. */
+	if (bpwhich == NI_INDEX_NULL) {
+		NI_INIT(&prop);
+		prop.nip_name = ni_name_dup(NIPROP_BOOTPARAMS);
+		if ((status = ni_createprop(ni, &id, prop, NI_INDEX_NULL))
+		    != NI_OK) {
+			syslog(LOG_ERR, "NetInfo failure creating %s property",
+			       NIPROP_BOOTPARAMS);
+			ni_prop_free(&prop);
+			return (-1);
+		}
+		ni_prop_free(&prop);
+	}
+		
+	return (0);
+}
+
+/*
+ * Routine: ni_createhost
+ * Function:
+ *	Create a new host entry.
+ * Returns:
+ *	0	- Success
+ *	-1	- Failure
+ */
+int
+ni_createhost(
+	      char		*hostname,
+	      unsigned char	*enaddr,
+	      struct in_addr	inaddr,
+	      char		*bootfile
+	      )
+{
+	ni_id		id;
+	ni_id		hostid;
+	ni_proplist	proplist;
+	ni_status	status;
+	char		buf[128];
+	int		hasupper = 0;
+	char		*cp;
+	char		lowerhost[128];
+	
+	/* Get the machines directory */
+	if ((status = ni_pathsearch(ni, &id, NIDIR_MACHINES)) != NI_OK) {
+		syslog(LOG_ERR,
+		       "NetInfo error finding /machines directory: %s",
+		       ni_error(status));
+		return (-1);
+	}
+	
+	/* Build a property list for this new entry */
+	NI_INIT(&proplist);
+	ni_proplist_addprop(&proplist, NIPROP_ENADDR,
+			    (ni_name) ether_ntoa(enaddr));
+	ni_proplist_addprop(&proplist, NIPROP_IPADDR,
+			    (ni_name) inet_ntoa(inaddr));
+	ni_proplist_addprop(&proplist, NIPROP_BOOTFILE, (ni_name) bootfile);
+	ni_proplist_addprop(&proplist, NIPROP_BOOTPARAMS, NULL);
+	strcpy(buf, hostname);
+	strcat(buf, "/local");
+	ni_proplist_addprop(&proplist, NIPROP_SERVES, buf);
+
+	/*
+	 * Check for upper case characters in hostname, if there are any
+	 * create an aliases that's all lower case.
+	 */
+	strncpy(lowerhost, hostname, sizeof (lowerhost) - 1);
+	for (cp = lowerhost; *cp; cp++) {
+		if (isupper(*cp)) {
+			hasupper++;
+			*cp = tolower(*cp);
+		}
+	}
+
+#if	SAVE_IT_FOR_LATER
+	if (hasupper) {
+		ni_proplist_addprop2(&proplist, NIPROP_NAME,
+				     (ni_name)hostname, (ni_name)lowerhost);
+	} else {
+		ni_proplist_addprop(&proplist, NIPROP_NAME,
+				    (ni_name)hostname);
+	}
+#else	SAVE_IT_FOR_LATER
+	ni_proplist_addprop(&proplist, NIPROP_NAME,
+			    (ni_name)lowerhost);
+#endif	SAVE_IT_FOR_LATER
+
+
+	/* And create the entry */
+	if ((status = ni_create(ni, &id, proplist, &hostid,
+				NI_INDEX_NULL)) != NI_OK) {
+		syslog(LOG_ERR, "NetInfo error creating host entry: %s",
+		       ni_error(status));
+		ni_proplist_free(&proplist);
+		return (-1);
+	}
+
+	/* It worked! */
+	ni_proplist_free(&proplist);
+	return (0);
+}
+

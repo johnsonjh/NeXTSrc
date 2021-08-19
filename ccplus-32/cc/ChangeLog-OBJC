@@ -1,0 +1,134 @@
+
+	* ChangeLog-OBJC:  This file.
+
+	* INSTALL-OBJC:  New file.  Run before installing patches.  Copies
+	c-parse.y and c-parse.gperf to objc-parse.y and objc-parse.gperf so
+	patches to these files will succeed.
+
+	* Makefile (OBJC_OBJS, cc1, cc1.debug, cc1.profile, objc-parse.tab.o,
+	objc-parse.tab.c obj-actions.o):  Added support for making Objective-C.
+	Since Objective-C is a proper superset of ANSI-C, there is no need for
+	a separate objcc1 compiler proper.  Any valid ANSI-C program will still
+	compile.
+
+	* c-typeck.c (comptypes):  Call objc_comptypes for RECORD_TYPE's.
+	Conditional on NeXT_OBJC.
+
+	* cccp.c (node_type,  directive_table, do_include, import_hash,
+	lookup_import, add_import):  Added support for Objective-C #import
+	directive.  This #include's a file if it hasn't been #include'd already.
+	Conditional on NeXT_OBJC.
+
+	* gcc.c (compilers):  New spec for .m files.  Same as spec for .c files
+	except for adding -ObjC, passing -genDecl, and including -D__OBJC__.
+	Conditional on NeXT_OBJC.
+
+	* objc-actions.c:  New file.  Objective-C parse actions which are called
+	from objc-parse.y.
+
+	* objc-actions.h:  New file.  Provides communication between objc-actions.c
+	and objc-parse.y.
+
+	* objc-parse.gperf:  New file.  This is a modified version of c-parse.gperf
+	with the Objective-C keywords added.  All new keywords begin with '@'.
+	Use this file to regenerate the perfect hash table in objc-parse.y using
+	gperf if you need to add any keywords to C.  Unconditional change.
+
+	* objc-parse.y:  New file.  This is a modifed version of c-parse.y with
+	support for Objective-C added.  There are no #ifdef's since this is not
+	processed by the C-preprocessor.  Unconditional changes.
+
+	* toplev.c:  Added support for -ObjC and -genDecl switches.  Changed error
+	messages to refer to "method" rather than "function" where appropriate.
+	Conditional on NeXT_OBJC.
+
+	* tree.c:  Added support for Objective-C nodes.  Conditional on NeXT_OBJC.
+
+	* tree.def:  Added for Objective-C types and decls.  Conditional on
+	NeXT_OBJC.
+
+	* tree.h:  Added new Objective-C types.  Conditional on NeXT_OBJC.
+
+Bug fixes for categories (1/23/89):
+
+	* objc-actions.c (add_category, lookup_instance_method_static,
+	lookup_class_method_static, start_class, finish_class, check_methods),
+	tree.h (struct objc_tree_class_type), tree.c (make_node, copy_node):
+	Added separate category interface and implementation nodes.  This
+	permits checking for completeness of category implementations, and
+	fixes several bugs.  The names should be changed before this is done.
+
+-Wselector warning (1/23/89):
+
+	* objc-actions.c (finish_objc), flags.h, toplev.c:  Added switch
+	-Wselector to warn about all potential selector conflicts in the
+	interfaces seen.  Simply runs through the selector hash table.
+
+Elimintaion of untagged struct instance variable weirdness (1/23/89):
+
+	* objc-actions.c (check_ivars):  #ifdef'ed out code to allow untagged
+	struct instance variable in interface to match an untagged struct
+	instance variable in implementation.  ANSI C considers all untagged
+	structs separate types, so this should simply fail.
+	
+	* objc-actions.c (gen_declspecs):  Improved error messages for type
+	clashes involving untagged structs (and unions and enums).  Now prints
+	"untagged struct" rather than "struct ".
+
+_OBJC_CATEGORY_Foo defined but not used warning with -Wall (1/29/90):
+
+	* objc-actions.c (generate_category):  Mark decl as TREE_USED.
+
+More bug fixes for categories with the same name (1/29/90):
+
+	* objc-actions.c (synth_id_with_class_suffix, reallyStartMethod):
+	Changed category names to be ...Foo_Bar... instead of ...Bar..., so
+	that you can have several categories with the same name in one source file.
+
+Fix to statically type messages to Class objects (1/31/90):
+
+	* objc-actions.c (receiver_is_class_object):  New function to determine
+	whether the receiver object is a Class object.
+
+	* objc-actions.c (build_message_expr):  Use new function to test for
+	Class objects, and then statically type messages to it.  This allows
+	class methods of th same name to return different types, and it catches
+	the case where an instance method is sent to a Class object.
+
+Changes to fix referencing super in category of Object (2/9/90):
+
+	* objc-actions.c (get_super_receiver):  Give error if super_name is null.
+
+Fix for bogus line number bug (2/19/90):
+
+	* objc-actions.c (finish_method):  Stallman changed finish_function to take
+	an argument, lineno.  Use it.  Also change the prototype for it.
+
+Change to permit unnamed bit-field instance variables (2/22/90):
+
+	* objc-actions.c (build_ivar_list_initializer):  Set ivar_name field
+	to NULL for unnamed bit-field ivar's.
+
+Code generation to make `forwarding' work (3/7/90):
+
+	* tree.h: add `encode_type' field to method_decl node.
+	add encode_method_def() and call if from finish_method_def().
+	remove encode_method_decl() and dont call it from 
+	build_dispatch_table_initializer().
+
+Fix bug in dependency info for .m files (3/13/90):
+
+	* cccp.c (main):  Check for .m suffix as well as .c and .cc.
+
+Pass -ObjC flag from command line (3/13/90):
+
+	gcc.c (compilers[]):  Pass -ObjC and -genDecl for .c files also.
+
+Changes to improve Objective-C symbol names (4/16/90):
+
+	* objc-actions.c (reallyStartMethod):  Create symbol with standard
+	syntax for methods: +[ClassName(CategoryName) method:name:].
+
+	* config/tm-next.h:  Redefine ASM_OUTPUT_LABELREF to put quotes around
+	method symbols.  Don't use an underscore.
+

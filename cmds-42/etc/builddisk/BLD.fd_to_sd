@@ -1,0 +1,45 @@
+# NeXT File System build procedure
+# Build Base Hard Disk from Base Floppy file system
+# Release 2.0
+#
+# Build the "private" symlinks
+#
+symlink	a private/dev					/dev
+symlink	a private/etc					/etc
+symlink	a private/tmp					/tmp
+#
+# Put kernels on the disk
+#
+copy	a /odmach
+chmod	a 555							/odmach
+link	a /odmach						/sdmach
+symlink	a $BOOTFILE						/mach
+#
+# Load client template
+#
+load	a /usr/template/client
+#
+# Put down enough commands to boot
+# hard disk and load rest of image
+# from floppies
+#
+load	a /bin
+load	a /usr/bin
+load	a /usr/etc
+load	a /usr/ucb
+load	a /usr/shlib
+load	a /usr/lib/bootimages
+mkdirs	a /Net
+#
+# Create /private
+#
+newclient a /usr/etc
+#
+# Patch the hard disk so that it boots
+# into hard disk build procedure
+#
+copy	a /etc/rc.boot.ldsd100			/etc/rc.boot
+copy	a /etc/rc.bldsd100				/etc/rc
+
+
+

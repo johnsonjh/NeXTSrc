@@ -1,0 +1,14 @@
+This directory contains the Bison parser generator.
+
+When installing Bison on Sequent (or Pyramid?) systems, you must
+be in the Berkeley universe.
+
+On systems that do not have a working `alloca' function, you will
+have to get a working `alloca' (perhaps from GNU Emacs) and edit the
+Makefile so that it will be used.
+
+On system V, you will need to define the macro USG while compiling.
+
+Send bug reports to bug-gnu-utils@prep.ai.mit.edu.
+Please include the date and author of the last entry in ChangeLog
+in each bug report; this serves as a version number for Bison.

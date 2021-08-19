@@ -1,0 +1,84 @@
+Tue Dec  5 15:17:12 1989  Matthew Self  (mself at next.com)
+
+	* ChangeLog-NeXT:  This file.
+
+	* make-links-g++:  Don't link to standard header files.  Use system
+ 	versions instead.  Change ../gcc to ../cc.  Also copy config.h md,
+	aux-output.c, insn, and gen.
+
+ 	* cplus-lex.c:  #undef atof before declaring it.  This prevents the macro
+ 	for atof (declared in <stdlib.h>) from causing a syntax error.
+
+	* expr.c, gcc.c, tree.c:  Changed "gvarargs.h" to <varargs.h>.
+
+	* Makefile:  Copied over from cc, and edited.
+
+	* Makefile:  Use -I../include for a.out.h, sys/exec.h which are needed to
+	compile collect.c.  We should remove this dependency someday....
+
+	* cplus-decl.c: (init_decl_processing):  Declare __builtin_alloca () to
+	take an unsigned long rather than an int, since this is how <stdlib.h>
+	declares it.
+
+	* cplus-*.[hy]:  Use <assert.h> instead of "assert.h".
+
+	* toplev.c:  Don't #include <unistd.h> or #define SEEK_SET, SEEK_CUR,
+	SEEK_END.
+
+	* tm.h:  Copied from cc-18.  Do #define USE_COLLECT and FASCIST_ASSEMBLER.
+	Don't #define NeXT_OBJC.
+
+	* gnulib3.c:  Use ANSI atexit rather than on_exit.
+	Define COFF, so we won't use the _1xyzzy hack.
+
+	* collect.c:  Support added for Mach-O format.  ASM_INT_OP defined
+	to be ".long".  Extraneous space deleted.
+
+	* collect.c:  Added usage description when argc = 1.
+
+	* Makefile:  Don't use -fstrength-reduce!  Optimizer bug in cplus-class.c!
+
+	* dbxout.c:  Integrate NeXT changes.  Note that Tiemann already caught the
+	qualified struct tag bug....
+
+	* flags.h:  Integrate NeXT changes.
+
+	* varasm.c:  Integrate NeXT changes.
+
+	* tree.h:  Integrate NeXT changes.
+
+	* tree.c:  Integrate NeXT changes.
+
+	* toplev.c:  Integrate NeXT changes.
+
+	* integrate.c:  Patches from Tiemann.  No!  Use copy from 1.37.0
+
+	* Makefile:  Don't use -DNeXT_STATISTICS, since it causes a crash.
+
+	* cplus-cvt.c:  Return error_mark_node if expr is error_mark_node to avoid
+	compiler crash.
+
+Changes to remove gnulib3.o from libsys (4/12/90):
+
+	* Makefile:  Create libc++.a from gnulib3.o, and install it in /usr/lib
+
+	* gcc.c:  Link with -lc++ on second link (after collect).
+
+Changes to improve Objective-C method lables (4/17/90):
+
+	* collect.c (ASM_OUTPUT_LABELREF_AS_INT):  Use do-while rather than a
+	comma expression, since ASM_OUTPUT_LABELREF may not be a valid expression.
+
+Preventative fix from Tiemann for inline functions (4/18/90):
+
+	* inline.c (expand_inline_function):  Round up size of parm_map.
+
+Changes to fix problems with linker options and double link (9/6/90):
+
+	* tm.h:  Defined FINAL_LINK_SPEC.
+	* gcc.c:  Added support for FINAL_LINK_SPEC.
+
+Don't put out stabs for Objective-C internal symbols (9/6/90):
+
+	* dbxout.c (dbxout_symbol):  Don't out put stabs for symbols which
+	begin with "_OBJC_".

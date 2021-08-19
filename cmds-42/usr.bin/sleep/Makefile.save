@@ -1,0 +1,60 @@
+#
+# Generic command makefile
+# (c) NeXT, Inc.  1987
+#
+WHOAMI=	sleep	
+BINDIR=	${DSTROOT}/usr/bin
+CFLAGS=	-O
+IFLAGS= -s
+SRCS=	${WHOAMI}.c
+OBJS=	${WHOAMI}.o
+LIBS=	
+
+MYDIR=	${BINDIR}
+
+all:	new_${WHOAMI}
+
+new_${WHOAMI}: ${OBJS}
+	${CC} ${CFLAGS} -o new_${WHOAMI} ${OBJS} ${LIBS}
+
+clean:
+	rm -f ${OBJS} new_${WHOAMI} core
+
+install: ckdstroot ${MYDIR} new_${WHOAMI}
+	install ${IFLAGS} new_${WHOAMI} ${MYDIR}/${WHOAMI}
+
+ckdstroot:
+	@if [ -n "${DSTROOT}" ]; \
+	then \
+		exit 0; \
+	else \
+		echo Must define DSTROOT; \
+		exit 1; \
+	fi
+
+${MYDIR}:
+	mkdirs $@
+
+depend:
+	rm -f eddep makedep Makefile.bak
+	cc -M ${SRCS} | \
+	    awk '{ if ($$1 != prev) { if (rec != "") print rec; \
+		rec = $$0; prev = $$1; } \
+		else { if (length(rec $$2) > 78) { print rec; rec = $$0; } \
+		else rec = rec " " $$2 } } \
+		END { print rec }' >makedep
+	echo '/^# DO NOT DELETE THIS LINE/+2,$$d' >eddep
+	echo '$$r makedep' >> eddep
+	echo 'w' >>eddep
+	mv Makefile Makefile.bak
+	cp Makefile.bak Makefile
+	ed - Makefile < eddep
+	rm -f eddep makedep
+	echo '' >> Makefile
+	echo '# DEPENDENCIES MUST END AT END OF FILE' >> Makefile
+	echo '# IF YOU PUT STUFF HERE IT WILL GO AWAY' >> Makefile
+	echo '# see make depend above' >> Makefile
+
+# DO NOT DELETE THIS LINE or the 2 more below it -- make depend uses it
+
+

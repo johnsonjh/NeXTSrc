@@ -1,0 +1,1 @@
+../cc/symout.c

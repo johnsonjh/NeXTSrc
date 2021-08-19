@@ -1,0 +1,236 @@
+/*
+	pbs.defs
+  	Copyright 1988, NeXT, Inc.
+	Responsibility: Trey Matteson
+	
+	This file holds the mig definitions for messages sent from an
+	app to the appkit server.   There are pasteboard and afm services.
+*/
+
+#include <std_types.defs>
+subsystem pbs 0;
+
+/* timeout of 15 sec */
+WaitTime 15000;
+
+import "pbtypes.h";
+
+/*
+ *  These types are unfortunately duplicated in pbtypes.h and app.defs.
+ */
+/* type string (NOTE size is in bits) */
+type pbtype_t = (MSG_TYPE_STRING, 256*8);
+/* data buffer, or all type strings laid end to end */
+type data_t = ^ array [] of char;
+/* data buffer for out params that is freed on reply */
+type deallocData_t = ^ array [] of (MSG_TYPE_BYTE, 8, dealloc);
+
+/* function to call when errors occur */
+error _NXMsgError;
+
+/* First function gives us the version info. */
+procedure _NXPBSRendezVous (
+    WaitTime wTime: int;
+    server: port_t; 
+    kitVersion: int;
+    out pbsVersion: int);
+
+
+/*
+ * All these functions return error codes, as defined in pbtypes.h.  The
+ * clients rely on knowing what return codes are possible from each
+ * routine.  As errors are added, the server and client should be changed
+ * in concert.
+ */
+
+/*
+ * Pasteboard functions
+ */
+
+function _NXSetTypes (
+    WaitTime wTime: int;
+    server: port_t; 
+    pbName: pbtype_t; 
+    client: port_t;
+    userData: int;		/* blind data for client */
+    typeList: data_t; 
+    numTypes: int;
+    out session: int): int;
+
+function _NXGetTypes (
+    WaitTime wTime: int;
+    server: port_t; 
+    pbName: pbtype_t; 
+    out typeList: data_t; 
+    out numTypes: int;
+    out session: int) : int;
+
+function _NXSetData(
+    WaitTime wTime: int;
+    server: port_t; 
+    pbName: pbtype_t; 
+    ourSession: int;
+    pbType: pbtype_t; 
+    data:data_t;
+    out session: int) : int;
+
+function _NXBlockingGetData(
+    WaitTime wTime: int;
+    server: port_t; 
+    pbName: pbtype_t; 
+    pbType: pbtype_t; 
+    ourSession: int;
+    out data: data_t;
+    out session: int) : int;
+
+function _NXNonBlockingGetData(
+    WaitTime wTime: int;
+    server: port_t; 
+    pbName: pbtype_t; 
+    pbType: pbtype_t; 
+    ourSession: int;
+    out data: data_t;
+    out session: int) : int;
+
+function _NXGetSession(
+    WaitTime wTime: int;
+    server: port_t;
+    pbName: pbtype_t; 
+    out session: int) : int;
+
+function _NXFreePasteboard(
+    WaitTime wTime: int;
+    server: port_t;
+    pbName: pbtype_t) : int;
+
+/* some padding for other pasteboard messages */
+skip; skip; skip; skip; skip; skip; skip; skip; skip; skip; skip; skip; 
+
+
+/*
+ * AFM functions
+ */
+
+function _NXGetFontDirectory(
+    server: port_t;
+    path: data_t;
+    user: data_t;
+    home: data_t;
+    out info: data_t) : int;
+
+function _NXBuildFontDirectory(
+    server: port_t;
+    waittime waitval: int;
+    path: data_t;
+    user: data_t;
+    home: data_t;
+    out info: data_t) : int;
+
+/* some padding for other buildafmdir messages */
+skip; skip; skip; skip; skip; skip; skip; skip; skip; skip; skip; skip; 
+
+
+function _NXGetFullAFMInfoBigE(
+    WaitTime wTime: int;
+    server: port_t;
+    inout attributes: int;
+    paramStrings: data_t;
+    out globalInfo: data_t; 
+    out widths: data_t; 
+    out widthsTag: int; 
+    out fullData: data_t; 
+    out fullDataTag: int; 
+    out ccData: data_t; 
+    out ccDataTag: int; 
+    out strings: data_t;
+    out stringsTag: int) : int;
+
+function _NXGetFullAFMInfoLittleE(
+    WaitTime wTime: int;
+    server: port_t;
+    inout attributes: int;
+    paramStrings: data_t;
+    out globalInfo: data_t; 
+    out widths: data_t; 
+    out widthsTag: int; 
+    out fullData: data_t; 
+    out fullDataTag: int; 
+    out ccData: data_t; 
+    out ccDataTag: int; 
+    out strings: data_t;
+    out stringsTag: int) : int;
+
+simpleprocedure _NXFreeFontData(
+    server: port_t);
+
+function _NXGetAFMFileContents(
+    WaitTime wTime: int;
+    server: port_t;
+    paramStrings: data_t;
+    out fileContents: deallocData_t) : int;
+
+/* some padding for other AFM info messages */
+skip; skip; skip; skip; skip; skip; skip; skip; skip; skip; 
+
+function _NXGetServicesMenuData(
+    WaitTime wTime: int;
+    server: port_t;
+    littleEndian: int;
+    user: data_t;
+    out data: data_t): int;
+
+function _NXLoadFileExtensions(
+    server: port_t;
+    out data: data_t): int;
+
+/* these are only sent by WSM */
+
+simpleprocedure _NXUpdateRequestServers(
+    server: port_t;
+    user: data_t;
+    data: data_t);
+
+simpleprocedure _NXUpdateFileExtensions(
+    server: port_t;
+    data: data_t);
+
+function _NXDoSetServicesMenuItemEnabled(
+    WaitTime wTime: int;
+    server: port_t;
+    name: data_t;
+    user: data_t;
+    enable: int): int;
+
+function _NXIsServicesMenuItemEnabled(
+    WaitTime wTime: int;
+    server: port_t;
+    name: data_t;
+    user: data_t): int;
+
+simpleprocedure _NXUpdateDynamicServices(
+    server: port_t;
+    user: data_t);
+
+/*
+
+Modifications (starting at 0.8):
+
+01/06/89 trey	added this file to appkit, making it true source, and
+		  fixed build procedures
+		fixed up error code returns from server
+ 3/09/89 trey	added timeout to calls to pbs server
+ 6/21/89 trey	added _NXGetAFMInfo
+10/29/89 trey	added _NXLittleEndianGetAFMInfo
+
+80
+--
+  4/6/90 pah	added _NXRequestMenuData, _NXLoadFileExtensions, and
+		 _NXUpdateApplicationInfo
+  4/6/90 trey	added _NXGetFullAFMInfoBigE, _NXGetFullAFMInfoLittleE
+
+86
+--
+  6/10/90 trey	added _NXFreePasteboard, _NXPBSRendezVous
+
+*/
+

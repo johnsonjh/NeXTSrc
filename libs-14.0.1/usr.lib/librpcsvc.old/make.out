@@ -1,0 +1,72 @@
+	/bin/make all DSTROOT=/release/NeXT_root LCLROOT=/BSD/btaylor/NeXT_\
+	root DOVERS=ALWAYS machine=next
+if [ -n "librpcsvc.a" ]; then make librpcsvc.a.all ; fi;
+	/bin/make librpcsvc.a.all DSTROOT=/release/NeXT_root LCLROOT=/BSD/b\
+	taylor/NeXT_root DOVERS=ALWAYS machine=next
+cc -O -MD -DNeXT_MOD -bsd -c klm_prot.c
+	/bin/cc -O -MD -DNeXT_MOD -bsd -c klm_prot.c -I/BSD/btaylor/LIBS/li\
+	bs/usr/include -I/os/osdev/MK/mk
+md -u Makedep -d klm_prot.d
+	/usr/bin/md -u Makedep -d klm_prot.d
+cc -O -MD -DNeXT_MOD -bsd -c mountxdr.c
+	/bin/cc -O -MD -DNeXT_MOD -bsd -c mountxdr.c -I/BSD/btaylor/LIBS/li\
+	bs/usr/include -I/os/osdev/MK/mk
+md -u Makedep -d mountxdr.d
+	/usr/bin/md -u Makedep -d mountxdr.d
+cc -O -MD -DNeXT_MOD -bsd -c nlm_prot.c
+	/bin/cc -O -MD -DNeXT_MOD -bsd -c nlm_prot.c -I/BSD/btaylor/LIBS/li\
+	bs/usr/include -I/os/osdev/MK/mk
+md -u Makedep -d nlm_prot.d
+	/usr/bin/md -u Makedep -d nlm_prot.d
+cc -O -MD -DNeXT_MOD -bsd -c rex_xdr.c
+	/bin/cc -O -MD -DNeXT_MOD -bsd -c rex_xdr.c -I/BSD/btaylor/LIBS/lib\
+	s/usr/include -I/os/osdev/MK/mk
+md -u Makedep -d rex_xdr.d
+	/usr/bin/md -u Makedep -d rex_xdr.d
+cc -O -MD -DNeXT_MOD -bsd -c rquotaxdr.c
+	/bin/cc -O -MD -DNeXT_MOD -bsd -c rquotaxdr.c -I/BSD/btaylor/LIBS/l\
+	ibs/usr/include -I/os/osdev/MK/mk
+md -u Makedep -d rquotaxdr.d
+	/usr/bin/md -u Makedep -d rquotaxdr.d
+cc -O -MD -DNeXT_MOD -bsd -c rstatxdr.c
+	/bin/cc -O -MD -DNeXT_MOD -bsd -c rstatxdr.c -I/BSD/btaylor/LIBS/li\
+	bs/usr/include -I/os/osdev/MK/mk
+md -u Makedep -d rstatxdr.d
+	/usr/bin/md -u Makedep -d rstatxdr.d
+cc -O -MD -DNeXT_MOD -bsd -c rusersxdr.c
+	/bin/cc -O -MD -DNeXT_MOD -bsd -c rusersxdr.c -I/BSD/btaylor/LIBS/l\
+	ibs/usr/include -I/os/osdev/MK/mk
+md -u Makedep -d rusersxdr.d
+	/usr/bin/md -u Makedep -d rusersxdr.d
+cc -O -MD -DNeXT_MOD -bsd -c rwallxdr.c
+	/bin/cc -O -MD -DNeXT_MOD -bsd -c rwallxdr.c -I/BSD/btaylor/LIBS/li\
+	bs/usr/include -I/os/osdev/MK/mk
+md -u Makedep -d rwallxdr.d
+	/usr/bin/md -u Makedep -d rwallxdr.d
+cc -O -MD -DNeXT_MOD -bsd -c sm_inter.c
+	/bin/cc -O -MD -DNeXT_MOD -bsd -c sm_inter.c -I/BSD/btaylor/LIBS/li\
+	bs/usr/include -I/os/osdev/MK/mk
+md -u Makedep -d sm_inter.d
+	/usr/bin/md -u Makedep -d sm_inter.d
+cc -O -MD -DNeXT_MOD -bsd -c sprayxdr.c
+	/bin/cc -O -MD -DNeXT_MOD -bsd -c sprayxdr.c -I/BSD/btaylor/LIBS/li\
+	bs/usr/include -I/os/osdev/MK/mk
+md -u Makedep -d sprayxdr.d
+	/usr/bin/md -u Makedep -d sprayxdr.d
+cc -O -MD -DNeXT_MOD -bsd -c util.c
+	/bin/cc -O -MD -DNeXT_MOD -bsd -c util.c -I/BSD/btaylor/LIBS/libs/u\
+	sr/include -I/os/osdev/MK/mk
+md -u Makedep -d util.d
+	/usr/bin/md -u Makedep -d util.d
+cc -O -MD -DNeXT_MOD -bsd -c yppasswdxdr.c
+	/bin/cc -O -MD -DNeXT_MOD -bsd -c yppasswdxdr.c -I/BSD/btaylor/LIBS\
+	/libs/usr/include -I/os/osdev/MK/mk
+md -u Makedep -d yppasswdxdr.d
+	/usr/bin/md -u Makedep -d yppasswdxdr.d
+if [ `expr librpcsvc.a : '.*\.a' + 1 ` -ne 1 ] ; then if [ -f librpcsvc.a.NEW ] ; then ar ru librpcsvc.a.NEW  etherxdr.o klm_prot.o mountxdr.o nlm_prot.o rex_xdr.o rquotaxdr.o  rstatxdr.o rusersxdr.o rwallxdr.o sm_inter.o sprayxdr.o util.o  yppasswdxdr.o         ; else ar q librpcsvc.a.NEW  etherxdr.o klm_prot.o mountxdr.o nlm_prot.o rex_xdr.o rquotaxdr.o  rstatxdr.o rusersxdr.o rwallxdr.o sm_inter.o sprayxdr.o util.o  yppasswdxdr.o         ; fi elif [ -n "" ] ; then cp  librpcsvc.a.NEW; elif [ -n "" ] ; then cp  librpcsvc.a.NEW; else cc -O -MD -DNeXT_MOD -bsd  -o librpcsvc.a.NEW  etherxdr.o klm_prot.o mountxdr.o nlm_prot.o rex_xdr.o rquotaxdr.o  rstatxdr.o rusersxdr.o rwallxdr.o sm_inter.o sprayxdr.o util.o  yppasswdxdr.o          ; fi
+	/bin/ar q librpcsvc.a.NEW etherxdr.o klm_prot.o mountxdr.o nlm_prot\
+	.o rex_xdr.o rquotaxdr.o rstatxdr.o rusersxdr.o rwallxdr.o sm_inter\
+	.o sprayxdr.o util.o yppasswdxdr.o
+ar: creating librpcsvc.a.NEW
+for i in `echo `; do echo ======= make $i.all =======; make -f $i.mk PRODUCT=$i MAKEFILE=$i.mk $i.all; done;
+CWD=`pwd`; cd /release/NeXT_root; DSTROOT=`pwd`; cd $CWD;  for i in `echo `;  do  echo ================= make all for $i =================;  (cd $i; make DSTROOT=$DSTROOT all);  done

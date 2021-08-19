@@ -1,0 +1,214 @@
+/*
+	linkUnreferencedClasses
+  	Copyright 1988, NeXT, Inc.
+	Responsibility: Paul Hegarty
+*/
+
+/*
+ * This file is necessary only for non-shlib versions
+ * of the Application Kit.  It forces all classes to
+ * get linked into the target app so that classes which
+ * are not referenced by code in the Application Kit
+ * itself (but which may appear in an archive file,
+ * for example) are linked in.
+ */
+
+#import "ActionCell.h"
+#import "Alert.h"
+#import "Application.h"
+#import "Box.h"
+#import "Button.h"
+#import "ButtonCell.h"
+#import "Cell.h"
+#import "ChoosePrinter.h"
+#import "ClipView.h"
+#import "ColumnCell.h"
+#import "Control.h"
+#import "CustomObject.h"
+#import "CustomView.h"
+#import "Font.h"
+#import "FontFile.h"
+#import "FontManager.h"
+#import "FontPanel.h"
+#import "Form.h"
+#import "FocusState.h"
+#import "PSMatrix.h"
+#import "FormCell.h"
+#import "FrameView.h"
+#import "Listener.h"
+#import "Matrix.h"
+#import "Menu.h"
+#import "MenuCell.h"
+#import "MenuTemplate.h"
+#import "NXBitmapImageRep.h"
+#import "NXBrowser.h"
+#import "NXBrowserCell.h"
+#import "NXCachedImageRep.h"
+#import "NXColorCell.h"
+#import "NXColorCustom.h"
+#import "NXColorPalette.h"
+#import "NXColorPanel.h"
+#import "NXColorPicker.h"
+#import "NXColorSlider.h"
+#import "NXColorSwatch.h"
+#import "NXColorWell.h"
+#import "NXColorWheel.h"
+#import "NXCursor.h"
+#import "Cursor.h"
+#import "NXCustomImageRep.h"
+#import "NXEPSImageRep.h"
+#import "NXFaxCoverView.h"
+#import "NXFaxPanel.h"
+#import "NXFaxPaperBox.h"
+#import "NXFaxText.h"
+#import "NXImage.h"
+#import "NXImageRep.h"
+#import "NXJournalListener.h"
+#import "NXJournalSpeaker.h"
+#import "NXJournaler.h"
+#import "NXLazyBrowserCell.h"
+#import "NXRulerView.h"
+#import "NXSplitView.h"
+#import "NXXYShow.h"
+#import "NameTable.h"
+#import "NibData.h"
+#import "OpenPanel.h"
+#import "PageLayout.h"
+#import "Panel.h"
+#import "PaperView.h"
+#import "Pasteboard.h"
+#import "PopUpList.h"
+#import "PrintInfo.h"
+#import "PrintPanel.h"
+#import "QueryCell.h"
+#import "QueryText.h"
+#import "Responder.h"
+#import "SavePanel.h"
+#import "ScrollView.h"
+#import "Scroller.h"
+#import "SelectionCell.h"
+#import "Slider.h"
+#import "SliderCell.h"
+#import "Speaker.h"
+#import "TaggedCell.h"
+#import "Text.h"
+#import "TextField.h"
+#import "TextFieldCell.h"
+#import "View.h"
+#import "Window.h"
+#import "WindowTemplate.h"
+#import "rtfstructs.h"
+#import "textprivate.h"
+
+#import <soundkit/Sound.h>
+#import <soundkit/SoundMeter.h>
+#import <soundkit/SoundView.h>
+
+#import <objc/HashTable.h>
+#import <objc/List.h>
+#import <objc/NXStringTable.h>
+#import <objc/Object.h>
+#import <objc/Storage.h>
+#import <objc/StreamTable.h>
+
+static void linkUnreferencedClasses()
+{
+    [Application class];
+    [ActionCell class];
+    [Alert class];
+    [ButtonCell class];
+    [Bitmap class];
+    [View class];
+    [Box class];
+    [Button class];
+    [ChoosePrinter class];
+    [Cell class];
+    [FontFile class];
+    [ClipView class];
+    [ColumnCell class];
+    [Control class];
+    [NXCursor class];
+    [Cursor class];
+    [CustomObject class];
+    [CustomView class];
+    [Font class];
+    [FontManager class];
+    [Form class];
+    [FontPanel class];
+    [FormCell class];
+    [FrameView class];
+    [Listener class];
+    [Matrix class];
+    [Menu class];
+    [MenuCell class];
+    [MenuTemplate class];
+    [NameTable class];
+    [NibData class];
+    [OpenPanel class];
+    [PageLayout class];
+    [Panel class];
+    [PaperView class];
+    [Pasteboard class];
+    [PopUpList class];
+    [PSMatrix class];
+    [FocusState class];
+    [PrintInfo class];
+    [PrintPanel class];
+    [QueryCell class];
+    [QueryText class];
+    [Responder class];
+    [Text class];
+    [NXColorPicker class];
+    [SavePanel class];
+    [ScrollView class];
+    [Scroller class];
+    [SelectionCell class];
+    [Slider class];
+    [SliderCell class];
+    [Speaker class];
+    [TaggedCell class];
+    [TextField class];
+    [TextFieldCell class];
+    [WindowTemplate class];
+    [NXImageRep class];
+    [NXBitmapImageRep class];
+    [NXEPSImageRep class];
+    [NXCustomImageRep class];
+    [NXCachedImageRep class];
+    [Window class];
+    [NXTabStopList class];
+    [NXUniqueTabs class];
+    [NXSplitView class];
+    [NXBrowser class];
+    [NXBrowserCell class];
+    [NXColorPalette class];
+    [NXColorPanel class];
+    [NXColorSlider class];
+    [NXImage class];
+    [NXFaxText class];
+    [NXFaxPanel class];
+    [NXColorSwatch class];
+    [NXFaxCoverView class];
+    [NXColorCell class];
+    [NXColorCustom class];
+    [NXColorWheel class];
+    [NXFaxPaperBox class];
+    [NXRulerView class];
+    [NXJournaler class];
+    [NXJournalListener class];
+    [NXJournalSpeaker class];
+    [NXLazyBrowserCell class];
+    [NXColorWell class];
+    [NXXYShow class];
+
+    [Sound class];
+    [SoundMeter class];
+    [SoundView class];
+
+    [HashTable class];
+    [List class];
+    [NXStringTable class];
+    [Object class];
+    [Storage class];
+    [StreamTable class];
+}

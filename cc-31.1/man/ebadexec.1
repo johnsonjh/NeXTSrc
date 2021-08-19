@@ -1,0 +1,15 @@
+.TH EBADEXEC 1 "March 12, 1990" "NeXT, Inc."
+.SH NAME
+ebadexec \- determine why a file will not execute
+.SH SYNOPSIS
+.B ebadexec
+executable
+.SH DESCRIPTION
+.I Ebadexec
+performs a series of tests on the executable
+in an attempt to determine why it or the shared libraries it uses
+might not be executable.
+.SH BUGS
+The kernel is very buggy in executing anything but a perfect file.  This program
+prints warnings when it finds some thing it knows the kernel has trouble with
+and maybe the cause why the kernel will not correctly execute the program.

@@ -1,0 +1,35 @@
+Release notes for the -23 compiler release (link editor, shlibs and tools)
+by Kevin Enderby
+
+Changes related to cc-23:
+New major sections:
+    GNU Assembler
+	The assembler now allows ""'s around symbol names and takes everything
+	inside the ""'s as the symbol name.  This feature is what enables the
+	compiler to now produce symbol table names of the form
+	"+[ClassName(CategoryName) Method:Name:]" for objective-C methods.
+
+    GNU Profiler
+	The progiler, gprof(1), now knows about objective-C categories and
+	prints method names with the category name if it was in a category.
+
+Addtional notes for the release notes "Link Editor, Shared Libraries,and Tools":
+"Major Changes" section:
+    The Link Edit Segment Gets Created by Default
+	The link edit segment gets created by default for the output formats
+	that can have it.  To not create this segment the -noseglinkedit option 
+	must be specified.
+    A New Tool to Diagnose EBADEXEC Errors
+	The program ebadexec(1) takes a program as it's argument and trys to
+	determine why it can't be executed.
+
+Addtional notes for the release notes "Link Editor, Shared Libraries,and Tools":
+"Minor Changes" section:
+    The Default Output Format of ld(1) -A is Now MH_OBJECT
+	The default output format of ld(1) -A is now MH_OBJECT and previouly
+	was the MH_EXECUTE format.  This was done because the __PAGEZERO
+	segment of the output file will typically overlap with the __PAGEZERO
+	segment of the base file if both file's formats are the default
+	MH_EXECUTE.  There now is a new option, -b, used when using -A to strip
+	the base file symbols from the output file which can greatly reduce
+	the size for the output.

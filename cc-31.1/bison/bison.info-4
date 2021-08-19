@@ -1,0 +1,434 @@
+Info file bison.info, produced by Makeinfo, -*- Text -*- from input
+file bison.texinfo.
+
+This file documents the Bison parser generator.
+
+Copyright (C) 1988 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided also
+that the sections entitled ``Bison General Public License'' and
+``Conditions for Using Bison'' are included exactly as in the
+original, and provided that the entire resulting derived work is
+distributed under the terms of a permission notice identical to this
+one.
+
+Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that the text of the translations of the sections
+entitled ``Bison General Public License'' and ``Conditions for Using
+Bison'' must be approved for accuracy by the Foundation.
+
+
+
+File: bison.info,  Node: Glossary,  Next: Index,  Prev: Table of Symbols,  Up: top
+
+Glossary
+********
+
+Backus-Naur Form (BNF)
+     Formal method of specifying context-free grammars.  BNF was
+     first used in the ``ALGOL-60'' report, 1963.  *Note Language and
+     Grammar::.
+
+Context-free grammars
+     Grammars specified as rules that can be applied regardless of
+     context.  Thus, if there is a rule which says that an integer
+     can be used as an expression, integers are allowed *anywhere* an
+     expression is permitted.  *Note Language and Grammar::.
+
+Dynamic allocation
+     Allocation of memory that occurs during execution, rather than
+     at compile time or on entry to a function.
+
+Empty string
+     Analogous to the empty set in set theory, the empty string is a
+     character string of length zero.
+
+Finite-state stack machine
+     A ``machine'' that has discrete states in which it is said to
+     exist at each instant in time.  As input to the machine is
+     processed, the machine moves from state to state as specified by
+     the logic of the machine.  In the case of the parser, the input
+     is the language being parsed, and the states correspond to
+     various stages in the grammar rules.  *Note Algorithm::.
+
+Grouping
+     A language construct that is (in general) grammatically
+     divisible; for example, `expression' or `declaration' in C. 
+     *Note Language and Grammar::.
+
+Infix operator
+     An arithmetic operator that is placed between the operands on
+     which it performs some operation.
+
+Input stream
+     A continuous flow of data between devices or programs.
+
+Language construct
+     One of the typical usage schemas of the language.  For example,
+     one of the constructs of the C language is the `if' statement. 
+     *Note Language and Grammar::.
+
+Left associativity
+     Operators having left associativity are analyzed from left to
+     right: `a+b+c' first computes `a+b' and then combines with `c'. 
+     *Note Precedence::.
+
+Left recursion
+     A rule whose result symbol is also its first component symbol;
+     for example, `expseq1 : expseq1 ',' exp;'.  *Note Recursion::.
+
+Left-to-right parsing
+     Parsing a sentence of a language by analyzing it token by token
+     from left to right.  *Note Algorithm::.
+
+Lexical analyzer (scanner)
+     A function that reads an input stream and returns tokens one by
+     one.  *Note Lexical::.
+
+Lexical tie-in
+     A flag, set by actions in the grammar rules, which alters the
+     way tokens are parsed.  *Note Lexical Tie-ins::.
+
+Look-ahead token
+     A token already read but not yet shifted.  *Note Look-Ahead::.
+
+Nonterminal symbol
+     A grammar symbol standing for a grammatical construct that can
+     be expressed through rules in terms of smaller constructs; in
+     other words, a construct that is not a token.  *Note Symbols::.
+
+Parse error
+     An error encountered during parsing of an input stream due to
+     invalid syntax.  *Note Error Recovery::.
+
+Parser
+     A function that recognizes valid sentences of a language by
+     analyzing the syntax structure of a set of tokens passed to it
+     from a lexical analyzer.
+
+Postfix operator
+     An arithmetic operator that is placed after the operands upon
+     which it performs some operation.
+
+Reduction
+     Replacing a string of nonterminals and/or terminals with a
+     single nonterminal, according to a grammar rule.  *Note
+     Algorithm::.
+
+Reentrant
+     A reentrant subprogram is a subprogram which can be in invoked
+     any number of times in parallel, without interference between
+     the various invocations.  *Note Pure Decl::.
+
+Reverse polish notation
+     A language in which all operators are postfix operators.
+
+Right recursion
+     A rule whose result symbol is also its last component symbol;
+     for example, `expseq1: exp ',' expseq1;'.  *Note Recursion::.
+
+Semantics
+     In computer languages the semantics are specified by the actions
+     taken for each instance of the language, i.e., the meaning of
+     each statement.  *Note Semantics::.
+
+Shift
+     A parser is said to shift when it makes the choice of analyzing
+     further input from the stream rather than reducing immediately
+     some already-recognized rule.  *Note Algorithm::.
+
+Single-character literal
+     A single character that is recognized and interpreted as is. 
+     *Note Grammar in Bison::.
+
+Start symbol
+     The nonterminal symbol that stands for a complete valid
+     utterance in the language being parsed.  The start symbol is
+     usually listed as the first nonterminal symbol in a language
+     specification.  *Note Start Decl::.
+
+Symbol table
+     A data structure where symbol names and associated data are
+     stored during parsing to allow for recognition and use of
+     existing information in repeated uses of a symbol.  *Note
+     Multi-function Calc::.
+
+Token
+     A basic, grammatically indivisible unit of a language.  The
+     symbol that describes a token in the grammar is a terminal symbol.
+     The input of the Bison parser is a stream of tokens which comes
+     from the lexical analyzer.  *Note Symbols::.
+
+Terminal symbol
+     A grammar symbol that has no rules in the grammar and therefore
+     is grammatically indivisible.  The piece of text it represents
+     is a token.  *Note Language and Grammar::.
+
+
+
+File: bison.info,  Node: Index,  Prev: Glossary,  Up: top
+
+Index
+*****
+
+* Menu:
+
+* $$: Actions.
+* $N: Actions.
+* %expect: Expect Decl.
+* %left: Using Precedence.
+* %nonassoc: Using Precedence.
+* %prec: Contextual Precedence.
+* %pure_parser: Pure Decl.
+* %right: Using Precedence.
+* %start: Start Decl.
+* %token: Token Decl.
+* %type: Type Decl.
+* %union: Union Decl.
+* @N: Action Features.
+* `calc': Infix Calc.
+* `else', dangling: Shift/Reduce.
+* `mfcalc': Multi-function Calc.
+* `rpcalc': RPN Calc.
+* BNF: Language and Grammar.
+* Backus-Naur form: Language and Grammar.
+* Bison declaration summary: Decl Summary.
+* Bison declarations: Declarations.
+* Bison declarations section (introduction): Bison Declarations.
+* Bison grammar: Grammar in Bison.
+* Bison invocation: Invocation.
+* Bison parser: Bison Parser.
+* Bison symbols, table of: Table of Symbols.
+* Bison utility: Bison Parser.
+* C code, section for additional: C Code.
+* C declarations section: C Declarations.
+* C-language interface: Interface.
+* YYABORT: Parser Function.
+* YYACCEPT: Parser Function.
+* YYDEBUG: Debugging.
+* action: Actions.
+* action data types: Action Types.
+* action features summary: Action Features.
+* actions in mid-rule: Mid-Rule Actions.
+* actions, semantic: Semantic Actions.
+* additional C code section: C Code.
+* algorithm of parser: Algorithm.
+* associativity: Why Precedence.
+* calculator, infix notation: Infix Calc.
+* calculator, multi-function: Multi-function Calc.
+* calculator, simple: RPN Calc.
+* character token: Symbols.
+* compiling the parser: Rpcalc Compile.
+* conflicts: Shift/Reduce.
+* conflicts, preventing warnings of: Expect Decl.
+* context-dependent precedence: Contextual Precedence.
+* context-free grammar: Language and Grammar.
+* controlling function: Rpcalc Main.
+* dangling `else': Shift/Reduce.
+* data types in actions: Action Types.
+* data types of semantic values: Value Type.
+* debugging: Debugging.
+* declaration summary: Decl Summary.
+* declarations section, Bison (introduction): Bison Declarations.
+* declarations, Bison: Declarations.
+* declarations, C: C Declarations.
+* declaring operator precedence: Precedence Decl.
+* declaring the start-symbol: Start Decl.
+* declaring token type names: Token Decl.
+* declaring value types: Union Decl.
+* declaring value types, nonterminals: Type Decl.
+* error: Error Recovery.
+* error recovery: Error Recovery.
+* error recovery, simple: Simple Error Recovery.
+* error reporting function: Error Reporting.
+* error reporting routine: Rpcalc Error.
+* examples, simple: Examples.
+* exercises: Exercises.
+* finite-state machine: Parser States.
+* formal grammar: Grammar in Bison.
+* glossary: Glossary.
+* grammar file: Grammar Layout.
+* grammar rule syntax: Rules.
+* grammar rules section: Grammar Rules.
+* grammar, context-free: Language and Grammar.
+* grouping, syntactic: Language and Grammar.
+* infix notation calculator: Infix Calc.
+* interface: Interface.
+* introduction: Introduction.
+* invoking Bison: Invocation.
+* language semantics: Semantics.
+* layout of Bison grammar: Grammar Layout.
+* left recursion: Recursion.
+* lexical analyzer: Lexical.
+* lexical analyzer, purpose: Bison Parser.
+* lexical analyzer, writing: Rpcalc Lexer.
+* lexical tie-in: Lexical Tie-ins.
+* literal token: Symbols.
+* look-ahead token: Look-Ahead.
+* main function in simple example: Rpcalc Main.
+* mid-rule actions: Mid-Rule Actions.
+* multi-function calculator: Multi-function Calc.
+* mutual recursion: Recursion.
+* nonterminal symbol: Symbols.
+* operator precedence: Precedence.
+* operator precedence, declaring: Precedence Decl.
+* options for Bison invocation: Invocation.
+* parse error: Error Reporting.
+* parser: Bison Parser.
+* parser stack: Algorithm.
+* parser state: Parser States.
+* polish notation calculator: RPN Calc.
+* precedence of operators: Precedence.
+* preventing warnings about conflicts: Expect Decl.
+* pure parser: Pure Decl.
+* recovery from errors: Error Recovery.
+* recursive rule: Recursion.
+* reduce/reduce conflict: Reduce/Reduce.
+* reduction: Algorithm.
+* reentrant parser: Pure Decl.
+* reverse polish notation: RPN Calc.
+* right recursion: Recursion.
+* rule syntax: Rules.
+* rules section for grammar: Grammar Rules.
+* running Bison (introduction): Rpcalc Gen.
+* semantic actions: Semantic Actions.
+* semantic value: Semantic Values.
+* semantic value type: Value Type.
+* semantics of the language: Semantics.
+* shift/reduce conflicts: Shift/Reduce.
+* shifting: Algorithm.
+* simple examples: Examples.
+* single-character literal: Symbols.
+* stack, parser: Algorithm.
+* stages in using Bison: Stages.
+* start symbol: Language and Grammar.
+* start-symbol, declaring: Start Decl.
+* state (of parser): Parser States.
+* summary, Bison declaration: Decl Summary.
+* summary, action features: Action Features.
+* symbol: Symbols.
+* symbol table example: Mfcalc Symtab.
+* symbols (abstract): Language and Grammar.
+* symbols in Bison, table of: Table of Symbols.
+* syntactic grouping: Language and Grammar.
+* syntax error: Error Reporting.
+* syntax of grammar rules: Rules.
+* terminal symbol: Symbols.
+* token: Language and Grammar.
+* token type: Symbols.
+* token type names, declaring: Token Decl.
+* tracing the parser: Debugging.
+* unary operator precedence: Contextual Precedence.
+* value type, semantic: Value Type.
+* value types, declaring: Union Decl.
+* value types, nonterminals, declaring: Type Decl.
+* warnings, preventing: Expect Decl.
+* writing a lexical analyzer: Rpcalc Lexer.
+* yychar: Look-Ahead.
+* yyclearin: Error Recovery.
+* yydebug: Debugging.
+* yyerrok: Error Recovery.
+* yyerror: Error Reporting.
+* yyerror: Rpcalc Error.
+* yylex: Lexical.
+* yylloc: Token Positions.
+* yylval: Token Values.
+* yynerrs: Error Reporting.
+* yyparse: Parser Function.
+* |: Rules.
+
+
+ 
+Tag Table:
+Node: Top1084
+Node: Introduction2183
+Node: Conditions3257
+Node: Copying5110
+Node: Concepts12480
+Node: Language and Grammar13514
+Node: Grammar in Bison17980
+Node: Semantic Values19702
+Node: Semantic Actions21773
+Node: Bison Parser22950
+Node: Stages25185
+Node: Grammar Layout26402
+Node: Examples27644
+Node: RPN Calc28723
+Node: Rpcalc Decls29899
+Node: Rpcalc Rules31401
+Node: Rpcalc Input33131
+Node: Rpcalc Line34587
+Node: Rpcalc Expr35692
+Node: Rpcalc Lexer37643
+Node: Rpcalc Main40157
+Node: Rpcalc Error40533
+Node: Rpcalc Gen41506
+Node: Rpcalc Compile42614
+Node: Infix Calc43486
+Node: Simple Error Recovery46045
+Node: Multi-function Calc47920
+Node: Mfcalc Decl49458
+Node: Mfcalc Rules51410
+Node: Mfcalc Symtab52788
+Node: Exercises58935
+Node: Grammar File59443
+Node: Grammar Outline60211
+Node: C Declarations60968
+Node: Bison Declarations61569
+Node: Grammar Rules61961
+Node: C Code62393
+Node: Symbols63286
+Node: Rules66896
+Node: Recursion68518
+Node: Semantics70195
+Node: Value Type71284
+Node: Multiple Types71918
+Node: Actions72872
+Node: Action Types75235
+Node: Mid-Rule Actions76530
+Node: Declarations81807
+Node: Token Decl83050
+Node: Precedence Decl84354
+Node: Union Decl85901
+Node: Type Decl86738
+Node: Expect Decl87467
+Node: Start Decl88989
+Node: Pure Decl89386
+Node: Decl Summary90641
+Node: Multiple Parsers91842
+Node: Interface93527
+Node: Parser Function94362
+Node: Lexical95205
+Node: Calling Convention96589
+Node: Token Values97904
+Node: Token Positions99040
+Node: Pure Calling99914
+Node: Error Reporting100690
+Node: Action Features102394
+Node: Algorithm104879
+Node: Look-Ahead106999
+Node: Shift/Reduce109101
+Node: Precedence111489
+Node: Why Precedence112143
+Node: Using Precedence113995
+Node: Precedence Examples114956
+Node: How Precedence115655
+Node: Contextual Precedence116756
+Node: Parser States118544
+Node: Reduce/Reduce119778
+Node: Error Recovery122928
+Node: Context Dependency127776
+Node: Semantic Tokens128609
+Node: Lexical Tie-ins131632
+Node: Tie-in Recovery133125
+Node: Debugging135277
+Node: Invocation137694
+Node: Table of Symbols140378
+Node: Glossary145529
+Node: Index150850

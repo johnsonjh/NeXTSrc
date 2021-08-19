@@ -1,0 +1,30 @@
+; /etc/nu.cf
+;
+; This configuration file is used to control the behavior of the nu (new
+; user) program. Case is significant in variable names. Please read nu(8)
+; before changing anything.
+;
+; Modified for NeXT:	 9 Jun 89	Lee Tucker
+; Modified for NeXT:	 2 Nov 88	Peter King
+; Created:		25 Aug 84	Brian Reid
+;
+Debug=0				; 0 -> No debugging.
+NetInfoDomain = "."		; "." -> Local domain
+WantMHsetup =0			; 0 -> don't ask about setting up MH mailbox
+WantSymbolicLinks = 0		; 0 -> don't make everybody be /user/name ?
+SymbolicLinkDir="/user"		; see above.
+NoviceUser = 1			; 1 -> don't show shell script details
+PWFillHoles = 1			; 1 -> Fill the holes in the password file
+PWUserBase = 21			; Fill passwd file starting at uid 21
+
+DefaultGroup=20 		; default user-group number
+DefaultShell="/bin/csh"		; login shell
+MaxNameLength=8			; limit on chars in a login id
+Logfile="/usr/adm/nu.log"	; null name ==> no logging
+CreateDir="/etc/nulib/nu1.sh"	; shell script to make new directory
+CreateFiles="/etc/nulib/nu2.sh" ; script to load it with some contents
+DestroyAccts="/etc/nulib/nu3.sh" ; script to get rid of old accounts
+DeleteAccts="/etc/nulib/nu4.sh" ; script to get rid of an account
+
+DefaultHome = 	   ""
+GroupHome=	20 ""

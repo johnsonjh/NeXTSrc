@@ -1,0 +1,35 @@
+#
+# Standard configuration for the network server.
+# (NOTE: a '#' in column 1 flags a comment, so this entire file is
+# currently commented out.)
+#
+#debug print_level	5
+#debug ipc_in		65535
+#debug ipc_out		65535
+#debug tracing		0
+#debug vmtp		0
+#debug netname		65535
+#debug deltat		0
+#debug tcp		3
+#debug mem		0
+#param srr_max_tries	3
+#param srr_retry_sec	3
+#param srr_retry_usec	0
+#param deltat_max_tries	60
+#param deltat_retry_sec	3
+#param deltat_retry_usec	0
+#param deltat_msg_life	60
+#param pc_checkup_interval	60
+#param crypt_algorithm	0
+#param transport_default	0
+#param conf_network	1
+#param conf_netport	1
+#param timer_quantum	500
+#param tcp_conn_steady	6
+#param tcp_conn_opening	8
+#param tcp_conn_max	10
+#param compat		0
+#param syslog		1
+#param old_nmmonitor	1
+# No more compatability server
+# env   compat_server	/usr/mach/etc/old_netmsgserver

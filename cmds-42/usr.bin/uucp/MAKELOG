@@ -1,0 +1,127 @@
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ anlwrk.c anyread.c assert.c cfgets.c chkpth.c  chksum.c cico.c cntrl.c condevs.c conn.c cpmv.c expfile.c  fio.c gename.c getargs.c getprm.c getpwinfo.c getwd.c gio.c  gnamef.c gnsys.c gnxseq.c imsg.c ioctl.c lastpart.c  logent.c mailst.c mkdir.c pk0.c pk1.c prefix.c setline.c strpbrk.c  subdir.c sysacct.c systat.c tio.c ulockf.c uuclean.c uucp.c  uucpd.c uucpdefs.c uucpname.c uudecode.c uuencode.c uulog.c  uuname.c uupoll.c uuq.c uusend.c uusnap.c uux.c uuxqt.c versys.c  xqt.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c cico.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c cntrl.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c conn.c
+conn.c: In function alarmtr:
+conn.c:54: warning: argument passing between incompatible pointer types
+conn.c: In function clsacu:
+conn.c:287: warning: argument passing between incompatible pointer types
+conn.c: In function expect:
+conn.c:628: warning: argument passing between incompatible pointer types
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c condevs.c
+condevs.c: In function diropn:
+condevs.c:206: warning: argument passing between incompatible pointer types
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c gnsys.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c pk0.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c chksum.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c pk1.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c tio.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c fio.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c gio.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c imsg.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c anlwrk.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c anyread.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c assert.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c cfgets.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c chkpth.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c cpmv.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c expfile.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c gename.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c getargs.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c getprm.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c getpwinfo.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c gnamef.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c gnxseq.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c lastpart.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c logent.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c mailst.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c prefix.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c setline.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c strpbrk.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c subdir.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c sysacct.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c systat.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c ulockf.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uucpname.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c versys.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c xqt.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uucpdefs.c
+vers_string -l uulib > uulib_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uulib_vers.c
+rm -f uulib.a
+ar cr uulib.a `lorder anlwrk.o anyread.o assert.o cfgets.o chkpth.o  cpmv.o expfile.o gename.o getargs.o getprm.o  getpwinfo.o gnamef.o gnxseq.o lastpart.o logent.o mailst.o  prefix.o setline.o strpbrk.o subdir.o sysacct.o systat.o  ulockf.o uucpname.o versys.o xqt.o uucpdefs.o uulib_vers.o | tsort`
+ranlib uulib.a
+cd aculib; make 
+cc -O   -DNeXT_MOD -bsd -c bsdtcp.c
+bsdtcp.c: In function bsdtcpopn:
+bsdtcp.c:52: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c df2.c
+df2.c: In function df2opn:
+df2.c:37: warning: argument passing between incompatible pointer types
+df2.c:67: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c df12.c
+df12.c: In function df12opn:
+df12.c:54: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c dk.c
+cc -O   -DNeXT_MOD -bsd -c dn.c
+dn.c: In function dnopn:
+dn.c:40: warning: argument passing between incompatible pointer types
+dn.c:67: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c hys.c
+hys.c: In function hysopn:
+hys.c:64: warning: argument passing between incompatible pointer types
+hys.c:110: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c hysq.c
+cc -O   -DNeXT_MOD -bsd -c mic.c
+cc -O   -DNeXT_MOD -bsd -c nov.c
+nov.c: In function novopn:
+nov.c:40: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c pen.c
+pen.c: In function penopn:
+pen.c:28: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c pnet.c
+cc -O   -DNeXT_MOD -bsd -c rvmacs.c
+rvmacs.c: In function rvmacsopn:
+rvmacs.c:75: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c sy.c
+cc -O   -DNeXT_MOD -bsd -c unet.c
+cc -O   -DNeXT_MOD -bsd -c va212.c
+va212.c: In function va212opn:
+va212.c:27: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c va811.c
+va811.c: In function va811opn:
+va811.c:45: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c va820.c
+va820.c: In function va820opn:
+va820.c:47: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c vad.c
+vad.c: In function vadopn:
+vad.c:34: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c vent.c
+vent.c: In function ventopn:
+vent.c:25: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c vmacs.c
+vmacs.c: In function vmacsopn:
+vmacs.c:77: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c hys24.c
+hys24.c: In function hysopn24:
+hys24.c:52: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c cds224.c
+cds224.c: In function cdsopn224:
+cds224.c:36: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c att2224.c
+att2224.c: In function attopn:
+att2224.c:25: warning: argument passing between incompatible pointer types
+att2224.c:47: warning: argument passing between incompatible pointer types
+att2224.c:70: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c telebit.c
+telebit.c: In function tbtopn:
+telebit.c:58: warning: argument passing between incompatible pointer types
+telebit.c:103: warning: argument passing between incompatible pointer types
+ar cr aculib.a bsdtcp.o df2.o df12.o dk.o dn.o hys.o hysq.o mic.o nov.o pen.o pnet.o  rvmacs.o sy.o unet.o va212.o va811.o va820.o vad.o vent.o vmacs.o  hys24.o cds224.o att2224.o telebit.o
+ar: cannot create aculib.a
+*** Exit 1
+Stop.
+*** Exit 1
+Stop.

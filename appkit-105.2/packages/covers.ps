@@ -1,0 +1,165 @@
+
+currentshared true setshared
+  % allocate all of these procs in shared VM and leave previous state on 
+  % stack for restore
+
+% global constants & vars
+    nextdict /_NXNullGState null _NXCheckAndDef
+      % common null gstate
+
+windowPackage1.0 begin
+
+/setNullGState {	%			setNullGState
+    _NXNullGState null eq {
+	currentshared true setshared
+	gsave
+	initgraphics
+	0 0 0 0 Nonretained window windowdeviceround
+	gstate
+	grestore
+	nextdict /_NXNullGState 3 -1 roll put
+	setshared
+    } if
+    _NXNullGState setgstate
+} _NXDefProc
+
+
+/ImageWindow {		% <x> <y> <w> <h> <type> ImageWindow <num>
+  % instantiates a new kit window of type <type> at <x> <y> of width <w> 
+  % and height <h>.  Returns with the window id <num> on the stack.
+    {
+	% Create the window
+	window
+
+	% Create the window's dictionary and open it
+	dup 
+	currentshared true setshared //WindowDictSize dict exch setshared
+	dup 3 -1 roll setwindowdict
+	begin
+
+	% Record the window-specific info
+	/num exch def
+	/level 0 def				%window tier
+	/icon 1 def				%icon window
+	/otherWindows null def			%for moving multiple windows
+	/localNum null def			%local context user object
+	/rightMargin 0 def			%margins in title bar
+	/leftMargin 0 def			%
+	/topMargin 0 def			%
+	/title null def				%window title
+	/clientEventMask //Lmousedownmask //Lmouseupmask or def
+	/hideOnDeact false def			%does win hide on deactivation?
+	/kitVisible false def			%does kit think its visible?
+	/otherOwner null def			%real owner (for WS tokens)
+
+	% Set the default event mask, and event procs
+	//Lmousedownmask //Lmouseupmask or num /setEventMask winexec
+	/eventHandlers pkget num seteventprocedures
+
+    } stopped {handleerror} if
+    num		% return the window number
+    end		% of the window's dictionary
+} _NXDefProc
+
+/Window {		% <x> <y> <w> <h> <type> Window <num>
+  % instantiates a new kit window of type <type> at <x> <y> of width <w> 
+  % and height <h>.  Returns with the window id <num> on the stack.
+    {
+	% Create the window
+	window
+
+	% Create the window's dictionary and open it
+	dup 
+	currentshared true setshared //WindowDictSize dict exch setshared
+	dup 3 -1 roll setwindowdict
+	begin
+
+	% Record the window-specific info
+	/num exch def
+	/level 0 def				%window tier
+	/icon null def				%icon window
+	/otherWindows null def			%for moving multiple windows
+	/localNum null def			%local context user object
+	/rightMargin 0 def			%margins in title bar
+	/leftMargin 0 def			%
+	/topMargin 0 def			%
+	/title null def				%window title
+	/clientEventMask //defaultClientMask def%real client event mask
+	/hideOnDeact false def			%does win hide on deactivation?
+	/kitVisible false def			%does kit think its visible?
+	/otherOwner null def			%real owner (for WS tokens)
+
+	% Set the default event mask, and event procs
+	//defaultClientMask num /setEventMask winexec
+	/eventHandlers pkget num seteventprocedures
+
+    } stopped {handleerror} if
+    num		% return the window number
+    end		% of the window's dictionary
+} _NXDefProc
+
+/moveWindow {		%	   <x> <y> <num> moveWindow
+  % moves the given window so that the client area has its lower left
+  % at the given coordinate
+    movewindow
+} _NXDefProc
+
+/placeWindow {		% <gs> <x> <y> <w> <h> <num> placeWindow
+    gsave
+	5 index setgstate
+	placewindow
+	initmatrix initclip
+	currentgstate pop
+    grestore
+} _NXDefProc
+
+/currentWindowBounds	%	      <num> currentWindowBounds <x> <y> <w> <h>
+    /currentwindowbounds load
+def
+
+/setTitle {		%	  <title> <num> setTitle
+  % Sets the title of the given window to the given string.
+	% Open this window's dictionary
+	currentwindowdict begin
+	% Copy the string to a new one.  FIX!!! This is a
+	% bad, bad workaround for an unrelated bug in the
+	% interpreter's scanner.  Oh, for the reclaimer... FIX!
+	dup length 
+	currentshared true setshared exch string exch setshared
+	copy
+	% Set title entry in window's dictionary to new title
+	/title exch def
+	end		% of window's dictionary
+} _NXDefProc
+
+/currentTitle {		%		  <num> currentTitle <title>
+  % Returns the current title of the given window.
+    currentwindowdict /title get
+} _NXDefProc
+
+/setPid {		%	   <ctxt> <num> setPid
+  % sets the context's pid
+    /contextDataLock pkget {
+	//CDPid exch /setContextData winexec
+    } monitor
+} _NXDefProc
+
+/setOtherOwner {	%	       <winnum> setOtherOwner
+  % sets the window's other owner to the current context, and sets the
+  % context's token window number to <winnum>
+    dup currentwindowdict /otherOwner currentcontext put
+    /contextDataLock pkget {
+	currentcontext exch
+	//CDToken exch /setContextData winexec
+    } monitor
+} _NXDefProc
+
+/setWSOtherOwner {	%			setWSOtherOwner
+  % sets the window's other owner to -1, a special value used by Workspace.
+  % This causes all events for the tile to get passed through.
+    currentwindowdict /otherOwner -1 put
+} _NXDefProc
+
+end			% close window dict
+setshared		% restore VM allocation mode
+

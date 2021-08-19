@@ -1,0 +1,16 @@
+vmstat.o: vmstat.c /usr/include/stdio.h /usr/include/stddef.h
+vmstat.o: /usr/include/stdarg.h /usr/include/ctype.h /usr/include/nlist.h
+vmstat.o: /usr/include/sys/param.h /usr/include/sys/features.h
+vmstat.o: /usr/include/machine/machparam.h /usr/include/sys/assert.h
+vmstat.o: /usr/include/next/vm_param.h /usr/include/sys/types.h
+vmstat.o: /usr/include/next/eventc.h /usr/include/sys/signal.h
+vmstat.o: /usr/include/machine/signal.h /usr/include/sys/types.h
+vmstat.o: /usr/include/sys/file.h /usr/include/sys/fcntl.h
+vmstat.o: /usr/include/sys/vm.h /usr/include/sys/vmparam.h
+vmstat.o: /usr/include/machine/vmparam.h /usr/include/sys/resource.h
+vmstat.o: /usr/include/sys/time.h /usr/include/time.h /usr/include/stddef.h
+vmstat.o: /usr/include/sys/vmmac.h /usr/include/sys/vmmeter.h
+vmstat.o: /usr/include/sys/vmsystm.h /usr/include/sys/dk.h
+vmstat.o: /usr/include/sys/buf.h /usr/include/sys/dir.h
+vmstat.o: /usr/include/sys/types.h /usr/include/sys/inode.h
+vmstat.o: /usr/include/sys/namei.h

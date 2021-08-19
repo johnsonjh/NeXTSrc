@@ -1,0 +1,3611 @@
+
+
+
+
+                          Network Server Design
+
+
+
+                            MACH Networking Group
+
+
+
+                                February 22, 1988
+
+
+
+1. Introduction
+
+
+
+NOTE: This document describes a new, experimental network server, and not the s*
+ *erver currently
+in use in the MACH system.
+
+
+   Thenetwork server is responsible for extending the local MACHInter-Process C*
+ *ommunication ab-
+straction over the network which interconnects MACH hosts. We have designed and*
+ * implemented a new
+version of the network server in a way in which we hope makes it more ef#cient,*
+ * easier to understand,
+more modular and easier to extend.In particular we intend to use this new netwo*
+ *rk server to experiment
+with various ideas in the area of distributed systems networking, such as:
+
+
+
+   fflevaluating the merits of various protocols for network interprocess commu*
+ *nication # inparticular,
+     we want to examine:
+
+
+       # connection-oriented versus connectionless protocols,
+
+       # request-response protocols for remote procedure calls, and
+
+       # the use of special-purpose protocols depending on the size or the dest*
+ *ination of the data tobe
+         transported;
+
+
+   fflevaluating various models for the distribution of network functions betwe*
+ *en the operating system
+     kernel and user processes, and how these two components should interact;
+
+
+   fflsecurityin the network environment;
+
+
+   fflmulticast groups, and associated delivery problems; and
+
+
+   fflcopy-on-reference operations over a network.
+
+
+
+   This document describes the design of the network server and details the int*
+ *erfaces to the modules
+that are used to implement it. It is intended for implementers rather than user*
+ *s. This document re#ects
+the current state of the implementation,and does not constitute a commitment fo*
+ *r future developments.
+
+
+   Inthe next section the overall design of the network server is explained. Th*
+ *e subsequent sections
+describe the structure of individual modules.
+
+
+
+                                       1
+
+
+2. Overall Structure
+
+
+
+2.1. GeneralOperation
+
+
+
+The set of all network servers on a network cooperate to provide IPC (Inter-Pro*
+ *cess Communication)
+between processes on different hosts on that network.  They achieve that cooper*
+ *ation by exchanging
+Network Server Messages. Some of these messages contain the data of IPCmessages*
+ * that are to be
+transported across the network,while others are used by the network servers to *
+ *communicate information
+about the status of the operations in progress, and to maintain a consistent vi*
+ *ew of the location ofthe
+ports used in the network environment.A small dispatcher header is used to dist*
+ *inguish between these
+various network server messages.
+
+
+   Thenetwork servers maintain a space of Network Ports and each network server*
+ * maintains a mapping
+between ports local to its host and network ports. Each network port is represe*
+ *nted by a Network Port
+Identi#er which contains information tolocate the receiver and owner for the ne*
+ *twork port and information
+which allows the security of the Mach port abstraction to be maintained in the *
+ *network environment. (See
+[2] for further details.)
+
+
+
+2.2. ControlStructure
+
+
+
+The server is structured as a collectionof threads sharing the same address spa*
+ *ce. Each thread is used to
+perform one speci#c task asynchronouslywith the other threads. Typically,there *
+ *is one thread for each
+#wait point# in the system. Wait points are most often waits for IPC messages.T*
+ *he thread is awakened
+whenever something happens at this waitpoint, performs all operations pertinent*
+ * to the current event, and
+goes back to sleep. Shouldthe service of an event require a further wait, anoth*
+ *er thread is signalled and
+asked to continue operations after thatwait. In general, one thread should not *
+ *have more than one wait
+point. Appropriate locking facilities are used where threads must share access *
+ *to data structures. There
+are a #xed number of threads in the system:
+
+
+
+Timer Used by all the other threads whenever they need to schedule some action *
+ *to take place at some
+     given time in the future. The most common use of this facility is to sched*
+ *ule packet retransmission.
+
+
+IPC Send Waits for messages to arrive on any of the ports that are local repres*
+ *entatives of remote
+     network ports. Upon reception of such a message,performs the necessary tra*
+ *nslations and initiates
+     transmission on the network. This thread does not wait for the transmissio*
+ *n to complete; subsequent
+     actions will be taken by the timer thread or by a transport receive thread.
+
+
+IPC Re-SendIs awakened when some other thread or some external condition indica*
+ *tes that a message
+     previously handled by the IPC send thread should be re-sent either tothe o*
+ *riginal or to another
+     destination.  It essentially performs the same functions as the IPC send t*
+ *hread, but might take
+     advantageof some work already done by the former. This thread is called in*
+ *to action when a port
+     is not found at the expected location, when a remote port is blocked, or w*
+ *hen network errors occur.
+
+
+TransportReceive(Oneor more per each transport protocol.) Waits for packets to *
+ *arrive from the
+     network interface.  Processes these packets, perhaps assembling multiple p*
+ *ackets intocontiguous
+     data andperhaps matching incoming packets with previously queued outgoing *
+ *transmissions.Passes
+     IPCand other network server data received from remote network servers on t*
+ *o higher level modules
+
+
+
+                                       2
+
+
+     for further processing. As suggested above,this thread may use the service*
+ *s of the timer thread to
+     scheduleretransmissions of packets and to determine when a transmission sh*
+ *ould be aborted.
+
+
+Notify MessagesWaits for notify messages from the kernel to arrive on the serve*
+ *r's notify port. These
+     messagesindicate changes in the status of local ports (death, movements of*
+ *rights or local IPC
+     message accepted). Takes appropriate action in each case to update the ser*
+ *ver's records and may
+     destroy aport, transfer access rights to a network port to a remote networ*
+ *k server or signal the IPC
+     re-send thread to retry a message transmission.
+
+
+Name ServiceHandles requests from other tasks for network name service. Allows *
+ *names to be looked
+     up on this host, on a speci#c remote host or by broadcasting to all hosts.
+
+
+Key Management Handles messages from the external Key Distribution Server. Thes*
+ *e messages tell the
+     network server to use new encryption keys for remote hosts.
+
+
+Other ServicesA number of other threads may be used to provide other services i*
+ *ncluded with the
+     network server, such as monitoring and specialized name services. In each *
+ *case, the thread is
+     waiting for requests on a particular service port.
+
+
+
+   Inaddition, if the operations to be performed upon reception of a network me*
+ *ssage are too long,
+the Transport Receive threads may hand the message to other specialized process*
+ *ing threads,in order to
+remain available for new network messages. Note that it is impractical to alloc*
+ *ate one thread to each IPC
+message in transit due to resource limitations.
+
+
+
+2.3. CodeStructure
+
+
+
+The code is distributed between severalmodules, each pertaining to some speci#c*
+ * set of related operations
+or the management of some data structure. The main modules are:
+
+
+
+Port RecordsOperations for the handling of port records. The main data structur*
+ *e used is a database
+     of port records, which maintains a mapping between local ports and network*
+ * port identi#ers, as
+     well as keeping general status information on the ports themselves. Almost*
+ *every module uses this
+     databaseto obtain information, and a number of modules modify the informat*
+ *ion to re#ect new
+     situations that they have detected.
+
+
+TransportProtocolsProvide the complete transport mechanism for a block of data *
+ *of arbitrary size
+     over thenetwork. There are several such modules implementing several proto*
+ *cols; some guarantee
+     reliabledelivery, others don't. Clients of the transport protocols transmi*
+ *t messages by making
+     a function call into the transport module; for all incoming messages a tra*
+ *nsport protocol calls a
+     dispatcher function to deliver the message.
+
+
+DispatcherDispatches incoming network messages assembled by the transport proto*
+ *cols to the appro-
+     priate module according the dispatcher type contained in the network messa*
+ *ge header. The handler
+     functionsare directly called by the dispatcher.
+
+
+IPC Message HandlingProvides operations for receiving local IPCmessages and han*
+ *ding them to the
+     transportlayer, and receiving messages from the transport layer and handin*
+ *g them to the local
+     user processes.  To do this it must translate IPC messages to and from a f*
+ *ormat appropriate for
+     transmission on the network. In particular it must translate ports, identi*
+ *fy out-of-line data and, if
+
+
+
+                                       3
+
+
+     necessaryperform byte-swapping (this corresponds to the ISO presentation l*
+ *ayer roughly). It also
+     handles the blocking mechanism for network ports.
+
+
+Port OperationsProvides all port translation functions for the IPC module. Also*
+ * handles transfers and
+     deletionof port access rights due to the reception of notify messages from*
+ * the kernel and from
+     remote network servers.
+
+
+Port CheckupsPeriodically veri#es theinformation maintained in the local port r*
+ *ecords by consulting
+     other network servers.
+
+
+Port SearchImplements the sequence of operations needed to update the informati*
+ *on kept about a remote
+     port whenit is believed that the current information is incorrect. The che*
+ *ckups module calls this
+     module when it #nds an inconsistency in the information maintained about a*
+ * port.
+
+
+Key Management Maintains a mapping between remote hosts andthe keys that should*
+ * be use to encrypt
+     secure messages.  Alsoresponsible for interfacing with the key distributio*
+ *n server to obtain new
+     keys forremote hosts.
+
+
+Crypt Provides functions to encrypt and decrypt network messages.
+
+
+Network Name ServiceProvides a simple, host-directed network name look up servi*
+ *ce.
+
+
+Memory Management  Provides allocation and deallocation functions for all memor*
+ *y objects used in the
+     networkserver.
+
+
+Read/WriteLock Provides functionsimplementing read/write locks with multiple us*
+ *ers.
+
+
+Locked Queue Operations on shared (i.e. locked) queues of objects.
+
+
+Timer ServiceAllows other modules to schedule actions after a speci#ed interval.
+
+
+
+   Other, miscellaneous modules provide for the generation of unique identi#ers*
+ *, the initialization of the
+network server, the actual transmission of datagrams over the network, and othe*
+ *r ancillary functions.
+
+
+
+2.4. DataRepresentation
+
+
+
+There are a number of circumstances during the processing of IPC messages when *
+ *the server has to
+manipulate large amounts of data.In order to minimize overhead, large blocks of*
+ * data are represented in
+a special format designed to limit the need for data copying and space allocati*
+ *on.
+
+
+   Anyconceptually contiguous block of data may be stored internally as a set o*
+ *f separate segments of
+any size,and a special sbuf (Segmented Buffer) structure is used to identify th*
+ *e segments constituting one
+block. No special meaning is attached tohow a block is segmented, i.e. the segm*
+ *ents do not necessarily
+represent logical parts of a block of data. The segments reside in shared memor*
+ *y and are accessible by
+every thread. Data modi#cation and data transferbetween modules are accomplishe*
+ *d by operations on
+sbufs (typedef struct -..." sbuf_t, *sbuf_ptr_t).
+
+
+   Forinstance, if some data must be inserted at the head or the tail of some e*
+ *xisting buffer, a new
+segment is allocated and placed at the right location in the sbuf.  If some dat*
+ *ainside a buffer must
+be modi#ed (possibly changing its length), the sbuf is modi#ed so that the targ*
+ *et data spans complete
+
+
+
+                                       4
+
+
+segments only, and those segments are replaced in the sbuf by new segments cont*
+ *aining the modi#ed
+data.
+
+
+   Maximum ef#ciency for the allocation and deallocation of space for the segme*
+ *ntscannot be attained
+with a general mechanism, consequently, space management is handled on a case b*
+ *y case basis by the
+modules that use sbufs and is private toan individual module. The information n*
+ *eeded to deallocate the
+space used by segments of a given sbuf is not kept in the sbuf itself, but is r*
+ *ecorded by the module that
+created each particular segment.To simplify record-keeping,no segment may be re*
+ *ferenced in more than
+one (public) sbuf. Typically, when an sbuf is passed between modules, the syste*
+ *m provides a call-back
+procedure to signal the module that created the sbuf that it is no longer neede*
+ *d.
+
+
+   Special macros are provided to extract data from an sbuf, making its structu*
+ *re transparent to most
+modules. Special macros are also provided for inserting data, but for performan*
+ *ce reasons, they cannot
+be made entirely transparent.
+
+
+
+3. Port Records
+
+
+
+3.1. Description
+
+
+
+The port record module maintains all thedata associated with ports. In particul*
+ *ar it enables the network
+server to map local to network and network to local ports. An individual port r*
+ *ecord:
+
+
+
+typedef struct -..." port_rec_t, *port_rec_ptr_t;
+
+
+
+contains the local port, the network port, status information about the port, s*
+ *everal #elds used by the IPC
+module, several #elds for security, a reference count and a read/write lock.
+
+
+   A network port identi#er has the following structure:
+
+
+
+typedef struct -
+    long         np_uid_high;
+    long         np_uid_low;
+" np_uid_t;
+
+
+
+typedef struct -
+    netaddr_t    np_receiver;
+    netaddr_t    np_owner;
+     np_uid_t     np_puid;
+     np_uid_t     np_sid;
+" network_port_t, *network_port_ptr_t;
+
+
+
+where the np_puid is the network port's Public Unique Identi#er and the np_sid *
+ *is the port's Secret
+Identi#er.
+
+
+
+typedef unsigned long netaddr_t;
+
+
+
+is used to identify all network addresses within the network server.
+
+
+                                       5
+
+
+3.2. Interface
+
+
+
+boolean_t pr_init()
+
+
+
+initializes the port records module.
+
+
+
+void pr_reference(port_rec_ptr)
+port_rec_ptr_t port_rec_ptr;
+
+
+
+increments the reference count for the port record.
+
+
+
+void pr_release(port_rec_ptr)
+port_rec_ptr_t port_rec_ptr;
+
+
+
+decrements the reference count for the port record, unlocks it and frees all me*
+ *mory associated with it if
+the reference count becomes zero.
+
+
+
+void pr_destroy(port_rec_ptr)
+port_rec_ptr_t           port_rec_ptr;
+
+
+
+logically destroys a port record by removing it from all tables and deallocatin*
+ *g the local port associated
+with it. The actual spaceoccupied by the port record is not freed until the ref*
+ *erence count becomes zero,
+but this function performs one pr_release before exiting.
+
+
+
+port_rec_ptr_t pr_np_puid_lookup(np_puid)
+np_uid_t                 np_puid;
+
+
+
+looks up and locks a port record given anetwork port's public unique identi#er.
+
+
+
+extern port_rec_ptr_t pr_nportlookup(nport_ptr)
+network_port_ptr_t     nport_ptr;
+
+
+
+looks up and locks a port record given anetwork port.
+
+
+
+portrec_ptr_t pr_ntran(nport_ptr)
+network_port_ptr_t     nport;
+
+
+
+looks up and locks a port record given anetwork port, creating a new port recor*
+ *d and allocating a new
+local port if necessary.
+
+
+
+extern port_rec_ptr_t pr_lportlookup(lport)
+port_t                   lport;
+
+
+
+                                       6
+
+
+looks up and locks a port record given alocal port.
+
+
+
+portrec_ptr_t pr_ltran(lport)
+port_t                   lport;
+
+
+
+looks up and locks a port record given alocal port, creating a new port record *
+ *and allocating a new
+network port if necessary.
+
+
+
+boolean_t nport_equal(nport_ptr_1,nport_ptr_2)
+network_port_ptr_t     nport_ptr_1;
+network_port_ptr_t     nport_ptr_2;
+
+
+
+tests to see if two network ports are equal.
+
+
+
+void pr_nporttostring(nport_str,nport_ptr)
+char                     *nport_str;
+network_port_ptr_t     nport_ptr;
+
+
+
+returns in nport_str a printable representation of a network port.
+
+
+
+lock_queue_t pr_list()
+
+
+
+returns a list of all the local ports for which there is a port record. (See th*
+ *e section on locked queuesfor
+the de#nition of lock_queue_t.)
+
+
+   Ingeneral, all functions that return a port record lock that recordbefore re*
+ *turning.  Functions that
+take a port record as an argument require that record to be already locked on e*
+ *ntry. The reference count
+normally re#ects the presence of the port record in both the local and global t*
+ *ables, but no additional
+reference is taken by any of the above functions when returning a locked port r*
+ *ecord. Note that these
+functions will block on the lock if therecord is already locked.
+
+
+
+4. Transport Protocols
+
+
+
+4.1. Description
+
+
+
+Several transport modules co-exist within the network server, each of them impl*
+ *ementing a different
+protocol. Some protocols under consideration are Delta-t, VMTP,NETBLT, TCP, UDP*
+ *, and various
+multicast schemes. It is up to clients of the transport modules to choose the o*
+ *ne that satis#es their needs
+best. All the transport modules deliver messages into the same dispatcher,and a*
+ *re accessed via separate
+entry points, grouped into a table similar to the Mach device table.
+
+
+   Theorganization of each protocol module is up to each implementor. Layered a*
+ *nd non-layered
+approaches are both acceptable, as wellas the use of external servers, not resi*
+ *ding in the same address
+space as the network server. Implementors are encouraged to use the sbuf mechan*
+ *ism to represent and
+manipulate data internally,and to copy data only at the last level before thene*
+ *twork interface. The timer
+module is available for handling periodic retransmission and other protocol fun*
+ *ctions needing timeouts.
+
+
+                                       7
+
+
+4.2. Interface
+
+
+
+Because of an ongoing revision of the implementation, there are currently two m*
+ *odes of operation for
+transport modules.
+
+
+   The#rst mode of operation speci#es a simple send operation to transmit a mes*
+ *sage to a given desti-
+nation. It is used by allmodules except the IPC module,to exchange information *
+ *with the corresponding
+modules in the network servers at othernodes.
+
+
+   Thesecond mode of operation speci#es a request-response interaction,in which*
+ * one node (the client)
+sends a request to another node (the server), and then awaits the reception of *
+ *exactly oneresponse from
+that server. The transport protocolalways supports the transmission of a 32-bit*
+ * completion code in the
+response, and may optionally support the transmission of data in that same resp*
+ *onse. This mode of
+operation is used by the IPC module forthe transmission of IPC message data; it*
+ * is intended to bethe
+standard for all transport protocols, and all other modules will be converted t*
+ *o use it.
+
+
+   Currently, each speci#c transport module only implements one or the other mo*
+ *de of operation; and
+can therefore be used either by the IPCmodule or by all other modules, but not *
+ *both. Inthe future, all
+modules will be converted to the secondmode of operations.
+
+
+   Thefollowing table is used to hold all the entry points for all the possible*
+ * transport modules. Each
+transport module is assigned a speci#c number, to be used as an index into this*
+ * table when invoking it,
+and to be used to identify it when it delivers a message to the upper level.
+
+
+
+typedef struct -
+    int          (*send)();
+    int          (*sendrequest)();
+    int          (*sendreply)();
+" transport_sw_entry_t;
+
+
+
+   Theentries in this table are #lled by each transport module when it initiali*
+ *zes itself. Any unused entry
+is set to the special function transport_no_function, which simply returns afte*
+ *r emitting an error
+message. The send entry is used for thesimple send interface. The sendrequest a*
+ *nd sendreply
+entries are used for the request-response interface. Any protocol supporting th*
+ *at interfacemust implement
+sendrequest, but not necessarily sendreply, as described above.
+
+
+   Inthe following descriptions, xxx_ is used as a generic pre#x, to be replace*
+ *d by the name of each
+transport module.
+
+
+
+boolean_t xxx_init()
+
+
+
+initializes the transport module and places the entry points in the transport s*
+ *witch table.
+
+
+
+int xxx_send(client_id,trid,data,to,service,crypt_level,cleanup)
+int                       client_id;
+int                       trid;
+sbuf_ptr_t               data;
+netaddr_t                to;
+
+
+
+                                       8
+
+
+int                       service;
+int                       crypt_level;
+int                       (*cleanup)();
+
+
+
+attempts to send message data to destination to. client_id is an ID used by the*
+ * client toidentify
+this message. trid is a transport-level ID used to identifya current request-re*
+ *sponse interaction; it
+should be 0 if not used. service is the kind of service required for this messa*
+ *ge; possible values are:
+
+
+
+   fflTRSERV_NORMAL: normal transmission of a single message.
+
+
+   fflTRSERV_IPC: transmission of an IPC message, #call-back# required. (OBSOLE*
+ *TE)
+
+
+   fflTRSERV_RPC: transmission part of a request-response at the IPC level.  Pa*
+ *iring information re-
+     quired and #call-back# required. Note that the #call-back# can be implicit*
+ *ly bethe delivery of the
+     responseif the RPC succeeds. (OBSOLETE)
+
+
+   fflTRSERV_URGENT: transmission of an urgent single message, to be delivered *
+ *before other non-
+     urgenttransmissions in progress if possible.
+
+
+
+crypt_level determines what kind of encryption should be used to protect the da*
+ *ta. Possible levels of
+encryption include: CRYPT_DONT_ENCRYPT and CRYPT_ENCRYPT. cleanup is a function*
+ * supplied
+by the client,to be called when the transmission is complete and the message da*
+ *ta is no longer needed.
+Depending on the service requested, it may indicate a simple local completion, *
+ *or participate in the
+#call-back# mechanism. It takes two arguments: the client ID, and a completion *
+ *code.
+
+
+   cleanup returns 0 when all is well.  xxx_send also returns a completion code*
+ * to indicate the
+immediate local result of the call.
+
+
+
+int xxx_sendrequest(client_id,data,to,crypt_level,reply_proc)
+int              client_id;
+sbuf_ptr_t       data;
+netaddr_t        to;
+int              crypt_level;
+int              (*reply_proc)();
+
+
+
+   attempts to send a request containing data to destination to. client_id is a*
+ *n ID used by the
+client to identify this request-responseinteraction. crypt_level determines wha*
+ *t kind of encryption
+should be used to protect the data.Possible levels of encryption include: CRYPT*
+ *_DONT_ENCRYPTand
+CRYPT_ENCRYPT. reply_proc is a procedureto be called from the transport module *
+ *to deliver a
+response.
+
+
+   xxx_sendrequest returns either TR_SUCCESS or a speci#c failure code. In the *
+ *#rst case, a
+request-response interaction is initiated, that will terminate when reply_proc *
+ *is called. The data
+supplied in the request must be kept valid by the caller for the whole duration*
+ * of the request-response
+interaction. The reply procedure is guaranteed to be called exactly once, with *
+ *the following arguments:
+
+
+
+void reply_proc(client_id,reply_code,data)
+
+
+
+                                       9
+
+
+int              client_id;
+int              reply_code;
+sbuf_ptr_t       data;
+
+
+
+client_id is the IDgiven as argument to xxx_sendrequest. reply_code is a comple*
+ *tion code
+supplied either by the transport module(in case of transport errors) or by the *
+ *server process that handled
+the request. data may contain data supplied by the server in the response, or i*
+ *t may by null. This data
+is kept valid by the transport module only until reply_proc returns.
+
+
+   Ifxxx_sendrequest returns anything other than TR_SUCCESS, no request-respons*
+ *e interaction
+is initiated, and reply_proc is never called.
+
+
+   Thehandler on the server side of a request-response interaction is invoked v*
+ *ia thedispatcher module
+(see below). This handler must return acode that determines how the response is*
+ * sent. If this code is
+anything other than DISP_WILL_REPLY, a response containing that code and no dat*
+ *a is immediately
+sent back by the transport module. If this code is DISP_WILL_REPLY, no response*
+ * is generated by
+the transport module,and the higher-level module must explicit call xxx_sendrep*
+ *ly to terminate the
+request-responseinteraction:
+
+
+
+int xxx_sendreply(trid,code,data,crypt_level)
+int              trid;
+int              code;
+sbuf_ptr_t       data;
+int              crypt_level;
+
+
+
+trid is a transport-level IDsupplied by the dispatcher with the request. codean*
+ *d data are the reply
+code and data to be used in the call toreply_proc on the client. crypt_level de*
+ *termines what
+kind of encryption should be used to protect the data. data can be null. If it *
+ *is not, the datamust be
+kept valid by the caller only until xxx_sendreply returns.
+
+
+   Theprocedure returns TR_SUCCESS or TR_FAILURE. It is anerror to call xxx_sen*
+ *dreply for
+a terminated request-response interaction, including one terminated by the hand*
+ *ler returning a code other
+than DISP_WILL_REPLY. Similarly, it is an error for the handler to return DISP_*
+ *WILL_REPLY if the
+transport module in use does not implement xxx_sendreply.
+
+
+   Note  that  since  multiple  threads  are  involved, the  reply  procedure  *
+ *may  be  called  before
+xxx_sendrequest returns. Similarly, it isacceptable for the server to call xxx_*
+ *sendreply be-
+fore returning from the handler procedure for the request, provided that this h*
+ *andler eventually returns
+DISP_WILL_REPLY.
+
+
+   Thecompletion codes for transport operations are:
+
+
+
+   fflTR_CRYPT_FAILURE: the transmission failed either because of a local encry*
+ *ption or a remote
+     decryption failure # the local client module should try and get a new key *
+ *for the destination host
+     and thenretry the transmission;
+
+
+   fflTR_SEND_FAILURE: something went wrong with the transmission before any da*
+ *ta could be sent.
+
+
+   fflTR_FAILURE: something went wrong with the transmission within either the *
+ *local or remote
+     transportmodule; the error was detected too late to return TR_SEND_FAILURE.
+
+
+
+                                       10
+
+
+   fflTR_OVERLOAD: the transport module is currently overloaded. No data was se*
+ *nt;the user should
+     retrylater.
+
+
+   fflTR_SUCCESS: the transmission was successful but it was not possible to de*
+ *termine whether the
+     message was accepted by the remote client.
+
+
+   ffla client-speci#c completion code (see, for example, the codes returned by*
+ * the IPC module).
+
+
+
+Note that the transport-speci#c completion codes are in the same space as the c*
+ *lient-speci#c completion
+codes; care must be taken to avoid collisions.
+
+
+
+4.3. Speci#c Transport Protocols
+
+
+
+4.3.1.Delta-t
+
+
+
+Delta-t is a connectionless transport protocol in which each packet sent over t*
+ *he network is individually
+acknowledged by the destination networkserver before the next packet is sent. A*
+ *ll the transport-level
+protocol handling is performed in the network server; network access at the IPl*
+ *evel is achieved through
+the Mach network interface described below. Retransmissions are scheduled using*
+ * the timer module. In
+order to detect duplicate packets,information about an incoming data packet is *
+ *maintainedby a network
+server either until the next packet in asequence is received or the information*
+ * has been held more that
+some minimum amount of time.
+
+
+   Delta-t currently implements the request-response interface without deltat_s*
+ *endreply.
+
+
+   Delta-t is suitable for transmitting messages containing small amounts of da*
+ *ta (less than a few packets
+in total). If the message is part of a RPC protocol in which theresponse to the*
+ * request is expected shortly,
+then it is better to use a more specialized request-response protocol such as V*
+ *MTP.
+
+
+
+4.3.2.VMTP
+
+
+
+VMTP (Versatile Message Transport Protocol) is the request-response protocol de*
+ *veloped at Stanford by
+D. Cheriton and his group [1]. The VMTP module creates a single well-known serv*
+ *er entity to receive
+all network requests,and keeps a pool of client entities to use on the client s*
+ *ide to initiatetransactions.
+Whenever vmtp_sendrequest is called,an unused client entity is pulled out of th*
+ *atpool; it is returned
+to the pool when the reply is delivered.The actual VMTP protocol handling modul*
+ *e is in the kernel; it
+communicates with the network server using sockets.
+
+
+   There are currently two versions of the VMTP module. vmtp1 implements the si*
+ *mple send interface
+and should not be used. vmtp2 implements the full request-response interface, a*
+ *nd is suitable for IPC
+messages.
+
+
+
+4.3.3.TCP
+
+
+
+The TCP module keeps a pool of TCP connections to the network servers on other *
+ *nodes. Each connection
+is created when needed to transmit a request, and is kept open as long as possi*
+ *ble to service further requests
+
+
+                                       11
+
+
+to the same destination. Open connections arerecycled using a least-recently-us*
+ *ed policy to limit their
+number. The protocol handlingmodule is in the kernel; it communicates with the *
+ *network server using
+sockets.
+
+
+   TCPcurrently implements the full request-response interface, and is suitable*
+ * for IPC messages.
+
+
+
+4.3.4.Datagram
+
+
+
+The #datagram# transport protocol simplyprovides an interface to the UDP level.*
+ * It allows unreliable
+datagrams to be sent over the network.
+
+
+   Datagram currently implements the simple send interface and cannot be used t*
+ *o transmit IPC message
+data.
+
+
+
+4.3.5.Simple Request-Response
+
+
+
+The simple request-response protocol permits the sending of a request over the *
+ *network for which a
+response is expected. The data of the request is guaranteed to #t in one networ*
+ *k datagram. This protocol
+will treat responses as acknowledgementsto requests and inform its client eithe*
+ *r of the failure of the
+request (if no response was received after some number of tries) or of the succ*
+ *ess of the request in which
+case the response is returned to the client. It is assumed that a request can b*
+ *e handled without delay by
+the higher-level protocol and the response is supplied on return from the reque*
+ *st call. Requests made
+using this protocol should be idempotent.
+
+
+   Although SRR is oriented toward request-responseinteractions, it implements *
+ *the simple send inter-
+face and not the request-response interface. It cannot therefore be used to tra*
+ *nsmit IPC message data.
+
+
+
+5. Dispatcher Module
+
+
+
+5.1. Operation
+
+
+
+The dispatcher module is responsible forinvoking the correct handler procedure *
+ *when some network
+message has been received. It is called by the various transport modules, exami*
+ *nes the dispatcher
+header, and selects the appropriate routine to call according to the message ty*
+ *pe (incoming IPC, port
+death, and so on).
+
+
+   This module can optionally establish a separation between a network thread a*
+ *nd oneor more other
+threads used to process the messages atthe network server level. This last sche*
+ *me is to be used if the
+network thread would not be fast enoughif it had to completely process each mes*
+ *sage before listening
+to the net again. Note thatwith this mechanism, care must be taken to avoidprob*
+ *lems when a transport
+module deallocates the space used by incoming data before that data has been pr*
+ *ocessed at the higher
+level.
+
+
+   To allow communication between machines with different data representation, *
+ *the dispatcher header
+always use a standard representation.The rest of each message uses whatever rep*
+ *resentation is in use on
+
+
+
+                                       12
+
+
+the sending machine;a code for that representation is stored in the dispatcher *
+ *header and made available
+to the message handler modules.
+
+
+   To allow future expansion, the dispatcher also checks a version numberfor ea*
+ *ch incoming message.
+
+
+
+5.2. Interface
+
+
+
+As discussed in 4.2., there are currently two transport interfaces, to which co*
+ *rrespond two dispatcher
+interfaces. The following table holds a set of entry points for each message ty*
+ *pe.
+
+
+
+typedef struct -
+    int          (*disp_indata)();
+    int          (*disp_inprobe)();
+    int          (*disp_indata_simple)();
+    int          (*disp_rr_simple)();
+    int          (*disp_in_request)();
+" dispatcher_switch_t;
+
+
+
+   Allmodules place entry points in the table for each message type and each ty*
+ *pe ofhandler procedure
+that they support and wish to receive messages for.  Unused entries are set to *
+ *the special procedure
+disp_no_function;the network server is organized in such a way that there are n*
+ *ot collisions in the
+table.
+
+
+   disp_indata, disp_inprobe, disp_indata_simple and disp_rr_simple are called *
+ *by
+transport modules using the simple xxx_send interface, and will eventually be e*
+ *liminated.
+
+
+   disp_in_request is the sole entry point used with the request-response inter*
+ *face.
+
+
+
+int disp_init()
+
+
+
+initializes the dispatcher module.
+
+
+
+int disp_indata(trid,data,from,tr_cleanup,trmod,
+                  client_id,crypt_level,broadcast)
+int                       trid;
+sbuf_ptr_t               *data;
+netaddr_t                from;
+int                       (*tr_cleanup)();
+int                       trmod;
+int                       client_id;
+int                       crypt_level;
+boolean_t                broadcast;
+
+
+
+is the primary function used to dispatchincoming data in the simple send mode o*
+ *f operation. trid
+is a transport level identi#er assignedby the transport module trmod. It should*
+ * be used in the call to
+
+
+                                       13
+
+
+tr_cleanup which signals to the transport module that the higher-level module i*
+ *s #nished with the data
+contained in the sbuf data.Other arguments are: from, the host that sent thedat*
+ *a; client_id, an iden-
+ti#er assigned by the client module within a prior call to disp_inprobe (see be*
+ *low); crypt_level,
+the encryption level used to send data over the network; and broadcast whether *
+ *the data was broadcast
+or not. disp_indata returns DISP_FAILUREis the dispatcher module did not #nd a *
+ *higher-level
+routine to be called for the incoming message type or if the version number of *
+ *the incoming message did
+not match the current version number ofthis implementation of the network serve*
+ *r; otherwise it returns
+the value returned by the higher-levelroutine.
+
+
+
+int disp_inprobe(trid,pkt,from,cancel,trmod,
+                  client_id,crypt_level,broadcast)
+int                       trid;
+sbuf_ptr_t               pkt;
+netaddr_t                from;
+int                       *((*cancel)());
+int                       trmod;
+int                       *client_id;
+int                       crypt_level;
+boolean_t                broadcast;
+
+
+
+allows the #rst packet of a message to be dispatched to a higher-level probe ro*
+ *utine. This allows the
+higher-level routine to decide before-hand whether to accept or reject an incom*
+ *ing message. If it decides
+to accept the message based on the probepacket, the it returns a client_id to a*
+ *llow it to later identify
+the whole incoming message.cancel (an out parameter) is called by the transport*
+ * module if it is unable
+to deliver the complete message after aprobe has been accepted. It takes as arg*
+ *ument the client_id
+and a reason code. Other parameters are as for disp_indata.
+
+
+
+int disp_indata_simple(client_id,data,from,crypt_level,broadcast)
+int                       client_id;
+sbuf_ptr_t               data;
+netaddr_t                from;
+int                       crypt_level;
+boolean_t                broadcast;
+
+
+
+is similar to disp_indata except that itis guaranteed that the data is processe*
+ *d at the higher-level
+within the same thread that made the call. Hence there is no need for a tr_clea*
+ *nup call because,when
+the dispatcher call returns,the transport module knows that the data is no long*
+ *er needed and can do the
+cleanup synchronously.
+
+
+
+int disp_rr_simple(data,from,crypt_level,broadcast)
+sbuf_ptr_t               data;
+netaddr_t                from;
+int                       crypt_level;
+boolean_t                broadcast;
+
+
+
+allows a transport-level protocol to make a simple request-response interaction*
+ * with a higher level module.
+The higher-level module should processthe request immediately and include the r*
+ *esponse on returning
+
+
+                                       14
+
+
+from the call. Note that this procedure is intended for request-response intera*
+ *ctions within the simple
+send mode of operations, and not withinthe full request-response interface desc*
+ *ribed above.
+
+
+
+int disp_in_request(trmod,trid,data_ptr,from,crypt_level,broadcast);
+int                       trmod;
+int          trid;
+sbuf_ptr_t          data_ptr;
+netaddr_t          from;
+int          crypt_level;
+boolean_t          broadcast;
+
+
+
+is the single function for dispatching in the request-response mode of operatio*
+ *n. The arguments are
+similar to those of disp_indata.The data pointed to by data_ptr is valid only u*
+ *ntil this procedure
+returns. Any return value other than DISP_WILL_REPLYis interpreted by the trans*
+ *port module as a
+completion code to be returned immediately in a response to the client. DISP_WI*
+ *LL_REPLYmeans that
+the higher-level module assumes the responsibility to send a response, and the *
+ *transport module should do
+nothing when this procedure returns (other than deallocate the space occupied b*
+ *y the data,if appropriate).
+Note that if the dispatcher returns DISP_FAILURE, that code is returned to the *
+ *client in the normal way.
+
+
+   Insubsequent sections of this document, functions which are called via the d*
+ *ispatcher module do not
+have their arguments described.The arguments are exactly as for the correspondi*
+ *ng dispatcher function.
+
+
+
+6. IPC Message Handling
+
+
+
+The IPC MessageTransfer module implements the upper layer of the mechanism used*
+ * to communicate
+with remote ports. It relies on a separate transport module to provide the lowe*
+ *r-level network transmission
+operations, and communicates with it using sbufs.  To maximize performance, the*
+ * IPC module tries to
+identify messages that are part of a remote procedure call (RPC), and attempts *
+ *to map the request-response
+structure of such calls into a request-response interaction at the transport le*
+ *vel.
+
+
+
+6.1. NormalOperation
+
+
+
+The IPCmodule receives messages addressed to ports that are local representativ*
+ *es of remote ports. Upon
+reception of such a local IPC message, the IPC module
+
+
+
+  1. allocatesa transaction record (ipc_rec) to keep information about the tran*
+ *sfer in progress,
+
+
+  2. consultsthe port records to #nd the remote port corresponding to the local*
+ * port,
+
+
+  3. generatesan IPC Header to contain special information to be used by the re*
+ *mote network server,
+
+
+  4. translates the ports and out-of-line pointers in the message so that they *
+ *will be intelligible on the
+     receivingnode, and
+
+
+  5. selects atransport protocol to use, and hands the whole message to the app*
+ *ropriate module via
+     xxx_sendrequest.
+
+
+
+                                       15
+
+
+Note that the breakup of the message into several packets is the task of a tran*
+ *sport module and not the
+IPC module.
+
+
+   Allthese operations are performed on a message represented using an sbuf.In *
+ *general, the segments
+contained in the sbuf are:
+
+
+
+   fflthe IPCreceive buffer, containing the inline data;
+
+
+   ffleach out-of-line data section;
+
+
+   fflthe IPCheader, allocated by this module; and
+
+
+   fflany special data structures needed for the message translation process,su*
+ *ch as accessibility maps
+     or a network port dictionary.
+
+
+
+   Inthe remote network server receiving the message, all the component packets*
+ * are assembled by
+the transport module,which calls the IPC module and hands it ansbuf representin*
+ *g the whole message.
+Typically segments in that sbuf are part of packet buffers in which the message*
+ * was received.The module
+uses ipc_rec records to store information about current incoming messages. It p*
+ *erforms all necessary
+translations (including byte-swapping and data type conversion), copies the mes*
+ *sage into a sendbuffer,
+and delivers it to its local destination.
+
+
+   TheIPC module on the sending network server may not discard the message imme*
+ *diately after
+calling the transport module to initiatea transmission, because it may be neces*
+ *sary to effect a complete
+retransmission, possibly to anew destination and with different accompanying da*
+ *ta. This is the case
+when some exceptional events, describedin the next section, prevent the receivi*
+ *ng network server from
+delivering the message to its ultimate destination.  In addition,some operation*
+ *s pertaining to security
+must be performed by the IPCmodule on the sending node only when it is certain *
+ *that the message
+has been correctly transmitted. For these reasons, the network server on the re*
+ *ceiving node uses the
+request-response transport mechanism toreturn a completion code indicating if i*
+ *t was able to deliver the
+message, or what happened if it was not.Upon reception of this completion code,*
+ * the sending network
+server may deallocate its ipc_rec and the message data, or undertake the approp*
+ *riate recoveryaction
+in case of error, including initiating a new transmission.
+
+
+
+6.2. Exceptional Events
+
+
+
+The exceptional events are detected either at the transport level or by the IPC*
+ * module in the remote
+network server. They are reported to the sending IPC module through the request*
+ *-response completion
+code described above. The IPC module must then freeze the current transmission,*
+ * and call another
+module to deal with that exception. That module may in turn request the IPC mod*
+ *ule to attempt to
+retry the transmission of any pending messages for a given destination port, po*
+ *ssiblyafter changing some
+information in the port's record.  In that case,the IPC module will restart pro*
+ *cessing of any affected
+messages as if that message had just been received on a local port. As an optim*
+ *ization, it could reuse
+some of the information already gathered, and stored in the record for this pen*
+ *ding message.
+
+
+   Exceptional events include:
+
+
+
+   fflModi#cation of a port record while a message for that port is in transit *
+ *by some otherthread running
+
+
+
+                                       16
+
+
+     concurrently with the IPC sending thread (for example in response toa port*
+ * death message). It
+     simply triggers re-processing of the message.
+
+
+   fflNetworkfailure, detected by the transport module. TheIPC module must deci*
+ *de to abort or retry
+     the message, and #nd out if the port is dead.
+
+
+   fflCrypt failure, detected by the transport module at the local or remote no*
+ *de when it does not possess
+     the correct key to encrypt or decrypt the message. The IPC module calls th*
+ *e key management
+     module toestablish a new key.
+
+
+   fflRemote port not found at the expected node, signalled by the receiving IP*
+ *C module # a portsearch
+     procedureis initiated (in another thread), and its completion will decide *
+ *whether the transmission
+     is to berestarted or aborted.
+
+
+   fflRemote port blocked, signalled by the remote IPCmodule. The sending nodes*
+ *uspends the message
+     until further notice and indicates the situation in its port record. A ipc*
+ *_block record forthe
+     sending node is allocated at the receiving node. When the port becomes unb*
+ *locked, the list of
+     those records is scanned and a special PORT_UNBLOCKED message is transmitt*
+ *ed to each waiting
+     network server, to indicate that transmission should be restarted.  If thi*
+ *s unblock message is lost
+     then theport checkups module will discover that the port has become unbloc*
+ *ked and will retry the
+     messagetransmission.
+
+
+
+   To avoid blocking the message delivery thread in the receiving networkserver*
+ *, all messages are always
+delivered using the SEND_NOTIFYoption of msg_send. If the return from msg_send *
+ *indicates that
+the local port has become blocked,no other messages will be accepted for that p*
+ *ort until the kernel
+indicates that it has been unblocked. Appropriate marking and locking of the po*
+ *rt record guarantees
+that no two threads can be in the situation of exercising the SEND_NOTIFY optio*
+ *n on the same port
+at the same time. Note that this mechanism does not requirethe receiving networ*
+ *k server to return a
+port blocked indication for a message accepted under the SEND_NOTIFY option,the*
+ *reby allowing the
+actual message delivery to be performedin another thread after the dispatcher p*
+ *rocedure has returned (the
+current implementation does not take advantage of this feature).
+
+
+
+6.3. RPCInteractions
+
+
+
+The IPC module offers an optimizationfor RPC interactions for which the user is*
+ * willing to accept some
+semantic restrictions:
+
+
+
+   fflthe request message is followed by exactly one response message addressed*
+ * to the replyport
+     indicatedin the request.
+
+
+   fflthe reply port is local to the node issuing the request.
+
+
+   fflno new request is sent using the same reply port while awaiting a respons*
+ *e on that reply port.
+
+
+   fflthe reply port is not deallocated while awaiting a response.
+
+
+   fflthe receive rights for the reply port are not transferred while awaiting *
+ *a response.
+
+
+   fflthe reply port is not blocked or locked while awaiting a response.
+
+
+
+                                       17
+
+
+   Ifany of those rules is violated, the response is not guaranteed to be deliv*
+ *ered,or may be delivered out
+of order;the behavior of the network server may vary from one instance of such *
+ *an erroneous situation to
+the next. The user must specify the MSG_TYPE_RPC bit in the msg_type #eld ofthe*
+ * message header
+for the request to indicate that he accepts those modi#ed message semantics.
+
+
+   Whenever a valid request is received with the MSG_TYPE_RPC bitset, the netwo*
+ *rk server on the
+server side uses DISP_WILL_REPLYif possible to delay the transmission of the co*
+ *mpletion code at the
+transport level. It keeps track ofthe pending request in a ipc_rec, and conside*
+ *rs a new IPC message
+destined to the reply port as the response for the RPC interaction. Instead of *
+ *sending this message with
+a new transport interaction,it places it in the response for the pending intera*
+ *ction.Because the transport
+interface does not provide an end-to-endacknowledgment that the data portion of*
+ * a response was correctly
+handled by the IPC module on the client side, the network server on the server *
+ *side must rely on the
+above assumptions for delivery of the response to the reply port.
+
+
+   This scheme also relies on the assumption that the response message will eve*
+ *ntually be sent from the
+same node that received the request message, and that no other traf#c involving*
+ * the reply port takes place
+until that response is delivered.This assumption may easily be invalidated both*
+ * by erroneous actions on
+the part of the client or server processes, or by normal operations such as req*
+ *uest forwarding.Because
+resources in the transport module are tied up as long as the response has not b*
+ *een delivered, the IPC
+modules on both sides check for all events that may suggest that a response may*
+ * not be forthcoming
+in the normal way. When any such event occurs, they force the transmission of a*
+ * dummy response to
+terminate the request-response interaction, letting the real response, if any, *
+ *proceed normally as a new
+single IPC message. The events causing such an abort include:
+
+
+
+   ffltransferof receive or ownership rights for the reply port.
+
+
+   ffltransmission of a new message using the same reply port.
+
+
+   fflreception of a message on the reply port on the client side,from a source*
+ * other the expected server.
+
+
+   fflreception of a message on the reply port on the server side, with the MSG*
+ *_TYPE_RPC bitset.
+
+
+   ffltimeoutat the network server on the server side (triggered by the port ch*
+ *eckups mechanism).
+
+
+
+   Note that none of these aborts compromise the semantics of an RPC; they simp*
+ *ly nullify the perfor-
+mance bene#ts of the RPCoptimization when the situation is not simple. In addit*
+ *ion, the network server
+itself never sets the MSG_TYPE_RPCbit when delivering a message to a local port*
+ *, to avoidhidden
+forwardingproblems.
+
+
+
+6.4. MessageOrdering
+
+
+
+A weak ordering of message delivery is provided through the use of a queue of p*
+ *ending transactions for
+each remote network port. This queue operates in the following way:
+
+
+
+   fflall outgoing RPC requests and single IPC messages are queued in the order*
+ * in which theyare
+     receivedon the local port.
+
+
+   fflas longas there are only RPC requests on the queue,each is transmitted as*
+ * soon as it is queued;
+     the system does not wait for a response before transmitting the next reque*
+ *st.
+
+
+                                       18
+
+
+   fflas soonas one single IPC message is queued, newer messages (IPC or RPC) a*
+ *re queued but not
+     transmitted until that IPC message is successfully transmitted and dequeue*
+ *d (including any number
+     ofretransmissions).
+
+
+   fflRPC responses are never queued; they are transmitted at once and never re*
+ *transmitted.
+
+
+   fflwheneverthe status of the network port changes, retransmissions are initi*
+ *ated as needed in the order
+     in whichrecords are on the queue.
+
+
+   fflthe local port is locked when the queue becomes too long and new messages*
+ * cannot be transmitted.
+
+
+
+   This strategy guarantees that single IPC messages directed at the same desti*
+ *nation port from the same
+node are strictly ordered. RPC's are naturally ordered simply because the clien*
+ *t waits for the response
+before issuing the next request.There are no ordering guarantees for a single I*
+ *PCimmediately following
+the request for a RPC.
+
+
+
+6.5. Interface
+
+
+
+boolean_t ipc_init()
+
+
+
+initializes the IPC module.
+
+
+
+int ipc_in_request(trmod,trid,data_ptr,from,crypt_level,broadcast)
+
+
+
+is called from disp_in_request when a RPC request or single IPC is received ove*
+ *r the network by
+a transport module.  It is the main entry point for incoming messages.  See the*
+ * dispatcher module for
+details about the parameters to this call.
+
+
+
+void ipc_in_reply(client_id,code,data_ptr)
+
+
+
+is the procedure used by the IPCmodule to receive responses from the transport *
+ *module after acall to
+xxx_sendrequest for IPCmessage data. See the transport module for details about*
+ * the parameters
+to this call.
+
+
+
+ipc_in_unblock(client_id,data,from,broadcast,crypt_level)
+
+
+
+is called by disp_indata_simple when anunblock message is received from a remot*
+ *e network
+server. It will cause the message transmission to be retried. See the dispatche*
+ *r module for details about
+the parameters to this call.
+
+
+
+void ipc_msg_accepted(port_rec_ptr)
+port_rec_ptr_t           port_rec_ptr;
+
+
+
+                                       19
+
+
+is called by the local port operations module when it receives a notify message*
+ * from the kernel saying
+that a particular port is now unblocked. The IPC module will send unblock noti#*
+ *cation messages to
+remote network servers that are blockedwaiting to send a message to the port.
+
+
+
+void ipc_port_dead(port_rec_ptr)
+port_rec_ptr_t           port_rec_ptr;
+
+
+
+is called by the local port operations module either when it receives a notify *
+ *message from the kernel
+saying that a particular port is now dead or when it receives a message from a *
+ *remote network server
+saying that a particular network port isnow dead. The IPC module will clean up *
+ *any data structures it
+has associated with the deceased port.
+
+
+
+void ipc_port_moved(port_rec_ptr)
+port_rec_ptr_t           port_rec_ptr;
+
+
+
+is called by the local port operations module when it receives a message from a*
+ * remote network server
+saying that a particular network port has moved. The IPC modulewill abort any p*
+ *ending RPC's involving
+this port.
+
+
+
+int ipc_in_abortreq(trmod,trid,data_ptr,from,crypt_level,broadcast)
+
+
+
+is called from disp_in_request when a request to abort a pending request-respon*
+ *se interaction is
+received over the network by a transportmodule. The data speci#es which RPC is *
+ *to be aborted. If it
+is still pending, a dummy response is sent at once; otherwise, this request is *
+ *ignored.See the dispatcher
+module for details about the parametersto this call.
+
+
+
+void ipc_in_abortreply(client_id,code,data_ptr)
+
+
+
+is the procedure used by the IPCmodule to receive responses from the transport *
+ *module after acall to
+xxx_sendrequest for a request to abort apending RPC. See the transport module f*
+ *or details about
+the parameters to this call.
+
+
+
+void ipc_retry(port_rec_ptr)
+port_rec_ptr_t           port_rec_ptr;
+
+
+
+is called from other modules when a message transmission should be retried foll*
+ *owing some change in
+the port records. It willcause the retransmission to be executed in a special #*
+ *resend# thread distinct from
+the one making the ipc_retry call.
+
+
+
+void ipc_freeze(port_rec_ptr)
+port_rec_ptr_t           port_rec_ptr;
+
+
+
+is called from other modules when the status of a port becomes such that no fur*
+ *ther transmissions should
+be attempted to that port.Transmission will be resumed when ipc_retry is called.
+
+
+
+                                       20
+
+
+7. Port Operations
+
+
+
+7.1. Description
+
+
+
+The functions provided by the port operations module are called in one of the f*
+ *ollowing three circum-
+stances:
+
+
+
+  1. Amessage is received from the local kernel notifying the network server ab*
+ *out a change in condition
+     of a local port. These changes are:
+
+
+       fflthe death ofthe local port;
+
+       fflthe transferof port access rights to another task (probably because t*
+ *he task holding the rights
+         has died); and
+
+       fflthe local unblocking of the port.
+
+
+  2. Amessage is received over the network notifying the network server of a ch*
+ *ange in the remote
+     network port's condition. The possible changes are as for the local case e*
+ *xcept that they should be
+     interpreted in the context of the remote port.
+
+
+  3. Access rights to a port are being transferred in a normal IPCmessage which*
+ * is about to be sent to
+     a remotenetwork server or has been received from a remote network server.
+
+
+
+   Thebehavior of the port operations module depends on whether the port that i*
+ *t is handling must be
+treated securely or not. For instance, if send rights to a port are beingtransf*
+ *erred in an IPC message and
+the port is meant to be secure,then a token should be created for the port and *
+ *transferred along with the
+network port identi#er when the messageis sent to the remote network server. Si*
+ *milarly,at the receiving
+end, the port operations module should store the token in the network port's re*
+ *cord. However, if the port
+is not meant to be treated securely, then no transfer and storing of a token ne*
+ *ed be done.
+
+
+   Ingeneral the port operations module will often have to directly modify the *
+ *port's records, it may
+retry or freeze the sending of an IPCmessage, it may initiate a port search, or*
+ *, when port rights are being
+transferred, it will provide the information that must be sent to the remote ne*
+ *twork server. Conversely, it
+must process this information when the information is received from a remote ne*
+ *twork server. Inaddition,
+when it is considering a secure port,it may have to generate or check a token f*
+ *or the port or it may have
+to transfer or check the key that represents receive or ownership rights to the*
+ * port.
+
+
+
+7.2. Interface
+
+
+
+boolean_t po_init()
+
+
+
+initializes the port operations module.
+
+
+
+po_check_ipc_seq_no(port_rec_ptr, host_id, ipc_seq_no)
+port_rec_ptr_t           port_rec_ptr;
+netaddr_t                host_id;
+long                      ipc_seq_no;
+
+
+
+                                       21
+
+
+checks that the incoming IPCsequence number of a message is greater that the la*
+ *st sequence number
+received for the network port with portrecord port_rec_ptr from the network ser*
+ *ver on machine
+host_id. This check is only done for secure messages and ensures that complete *
+ *IPCmessages cannot
+be replayed by a malicious party.
+
+
+
+typedef struct -..." secure_info_t, *secure_info_ptr_t;
+
+
+
+is used to hold the key representing receiver or ownership rights to a network *
+ *port.
+
+
+
+long po_create_token(port_rec_ptr, token_ptr)
+port_rec_ptr_t           port_rec_ptr;
+secure_info_ptr_t        token_ptr;
+
+
+
+creates a token for a port. Stores the token in token_ptr and returnsthe random*
+ * number used to
+construct the token.
+
+
+
+void po_notify_port_death(port_rec_ptr)
+port_rec_ptr_t           port_rec_ptr;
+
+
+
+triggers handling of a local port death.Marks the port's record as deleted, sen*
+ *ds out anunreliable port
+death noti#cation messages and does other local cleanups.
+
+
+
+void po_port_deallocate(lport)
+port_t                    lport
+
+
+
+deallocates a port but retains send rights to it.  This allows the networkserve*
+ *r to transfer receive or
+ownership rights to a port to a local task using the noti#cation mechanism of t*
+ *he kernel.
+
+
+
+int po_translate_lport_rights(client_id,lport,right,security_level,
+                  destination_hint,port_data)
+int                       client_id;
+port_t                    lport;
+int                       right;
+int                       security_level;
+netaddr_t                destination_hint;
+pointer_t                port_data;
+
+
+
+is called by the IPCmodule to pack up the data that needs to be sent to the hos*
+ *t destination_hint
+in order to transfer the access rights right to port lport. The data that needs*
+ * to be sent depends on
+the security_level of the transfer.  The data is packed into the space pointed *
+ *to by port_data
+and the size of the network port data that has been created is returned as the *
+ *function's result. The
+client_id is an identi#er remembered bythe port operations module so that it ca*
+ *n match up a subse-
+quent po_port_rights_commit (see below)with this call of po_translate_lport_rig*
+ *hts.
+
+
+
+                                       22
+
+
+po_port_rights_commit(client_id, completion_code, destination)
+int                       client_id;
+int                       completion_code;
+netaddr_t                destination;
+
+
+
+informs the port operations module thata transfer of rights to a remote network*
+ * host has either suc-
+ceeded or failed. The client_id allows the port operations module to match this*
+ * call with a previous
+call of po_translate_lport_rights. The completion_code can be one ofPO_RIGHTS_
+XFER_SUCCESSand PO_RIGHTS_XFER_FAILURE. The destination names the remote network
+server to which the port rights were actually transferred. It may be different *
+ *from the destination_
+hint passed to po_translate_lport_rights.
+
+
+
+int po_translate_nport_rights(source,port_data,security_level,
+                  lport,right)
+netaddr_t                source;
+pointer_t                port_data;
+int                       security_level;
+port_t                    *lport;
+int                       *right;
+
+
+
+is called by the IPCmodule when it receives access rights to a remote network p*
+ *ort in amessage from a
+remote network server.The access rights are contained in the data pointed to by*
+ * port_data and were
+received from the network server on hostsource and at security_level. The port *
+ *data received
+is handled according to what access rights are being transferred and the local *
+ *port corresponding to the
+network port that was transferred is returned in lport. In addition the actual *
+ *right transferred is returned
+in right and the size of the port data that was processed is returned as the fu*
+ *nction's result.
+
+
+
+int po_handle_ro_xfer_request(request,from,broadcast,crypt_level)
+
+
+
+is called by disp_indata_simple to handle an incoming transfer of receiver or o*
+ *wnership rights.
+
+
+
+int po_handle_ro_xfer_reply(client_id,reply,from,broadcast,crypt_level)
+
+
+
+is called by disp_rr_simple to handle the response to a transfer of receiver or*
+ * ownership rights.
+
+
+
+int po_handle_ro_xfer_hint(request,from,broadcast,crypt_level)
+
+
+
+is called by disp_indata_simple to handle an unreliable noti#cation of a transf*
+ *er of receiver or
+ownership rights.
+
+
+
+int po_handle_nport_death(hint,from,broadcast,crypt_level)
+
+
+
+is called by disp_indata_simple to handle an unreliable noti#cation of the deat*
+ *h of a network port.
+
+
+
+                                       23
+
+
+int po_handle_token_request(request,from,broadcast,crypt_level)
+
+
+
+is called by disp_indata_simple to handle an incoming request for a token of re*
+ *ceiver/owner
+authenticity.
+
+
+
+int po_handle_token_reply(client_id,reply,from,broadcast,crypt_level)
+
+
+
+is called by disp_rr_simple to handle the response to a request for a token of *
+ *receiver/owner
+authenticity.
+
+
+
+8. Port Checkups
+
+
+
+8.1. Description
+
+
+
+The port checkups module does a periodicprobing of other network servers to #nd*
+ * out whether the status
+of network ports has changed. In particular, it is the default way in which the*
+ * networkserver #nds out
+about the death of a network port or thefact that receive or ownership rights h*
+ *ave moved to a different
+network server. Thesespecial conditions can also be detected as part of the nor*
+ *mal transmission of IPC
+messages across the network.The port checkups routine should only be called per*
+ *iodically and when the
+network server is otherwise idle; in other words it is of low priority.
+
+
+   Thecheckups module needs to be able to look at the port records in order to *
+ *examine a #aliveness#
+parameter associated with each port record. The aliveness parameter is decremen*
+ *ted by the port checkups
+module every time it is called. Only when it goes below some predetermined valu*
+ *e, is a checkup
+performed for the port. Moreover,the aliveness parameter is updated to fully-al*
+ *ive whenthe IPC
+module has successfully sent a message over the network to the port. In other w*
+ *ords, if the port is in
+regular use then no checkup is done forit.
+
+
+   When the checkups module actually decides to send a checkup request to #nd o*
+ *ut about ports, it
+constructs an sbuf for each network server that it must query. An sbuf contains*
+ * the ports in which it is
+interested for which it believes the remote network server is responsible. To t*
+ *ransmit and receive checkup
+information across the network,the port checkups module uses the simple request*
+ *-response transport
+protocol. After making a request by calling srr_send, the checkups module will *
+ *either receive a
+checkup reply or a failure noti#cation from the transport module.
+
+
+   Onreceiving a checkup request, the checkups module looks at each port contai*
+ *ned in the request. If
+the information about the port that therequester sent does not match the inform*
+ *ation held locally,then
+the port in the checkup packet is markedas being #bad#. The checkup reply packe*
+ *t is then sent back to
+the requester.
+
+
+   Onreceiving a checkup reply, the requester examines all the ports in the rep*
+ *ly and for those ports with
+a #bad# status it calls the port searchmodule. It is up to the port search modu*
+ *le to #nd out more about
+the status of the port. If no response was received to the checkup request then*
+ * the checkups module must
+call the port search module for each port in the checkup request in order to re*
+ *solve the port's status (e.g.
+to determine whether it is dead).
+
+
+   Oneother function of the checkups module is to determine whether there exist*
+ * any tasks with send
+rights to each port the network server knows about. This is in order to extend *
+ *the MACH#no-senders#
+
+
+                                       24
+
+
+noti#cation message into the network environment. The checkups module can deter*
+ *mine that a network
+port has no senders if there has been nointeractions (the reception of either a*
+ *n IPCmessage or a checkup
+request) involving this port for some period of time (typically some number of *
+ *checkup rounds). If the
+network port has no senders then the checkups module can deallocate send rights*
+ * to the corresponding
+local port and destroy the associated port record.
+
+
+   Inaddition the checkups module is responsible for handling hints received sa*
+ *ying that a remote network
+server has just restarted.For such a hint the checkups module calls the port se*
+ *arch module for each port
+that had the restarted network server asits owner or receiver.
+
+
+
+8.2. Interface
+
+
+
+boolean_t pc_init()
+
+
+
+initializes the checkups module.
+
+
+
+int pc_do_checkups()
+
+
+
+is called by the timer module to performa checkup.
+
+
+
+pc_handle_checkup_request(request,from,broadcast,crypt_level)
+
+
+
+is called by disp_indata_simple to handle an incoming checkup request.
+
+
+
+pc_handle_checkup_reply(client_id,reply,from,broadcast,crypt_level)
+
+
+
+is called by disp_rr_simple to handle anincoming checkup reply.
+
+
+
+void pc_send_startup_hint()
+
+
+
+is called on start-up to send out a hintsaying that this network server has jus*
+ *t restarted.
+
+
+
+int pc_handle_startup_hint(hint,from,broadcast,crypt_level)
+
+
+
+is called by disp_indata_simple to handle an incoming network server restart hi*
+ *nt.
+
+
+
+9. Port Search
+
+
+
+9.1. Description
+
+
+
+The port search module is called when some other module (probably either the po*
+ *rt checkups module or
+the IPCmodule) determines that the information held about a network port is no *
+ *longer correct. The task
+
+
+                                       25
+
+
+of the port search module is to update that information, in particular it may d*
+ *etermine that the network
+port is dead.
+
+
+   Thesearch procedure is basically as follows:
+
+
+
+    query network server believed to be the receiver;
+    if receiver responds with useful information
+    then believe it
+    else -
+         query network server believedto be the owner;
+         if owner responds with usefulinformation
+         then believe it
+         else broadcast a request forinformation
+    "
+
+
+
+   Theresponse to a port search query can be one of:
+
+
+
+   fflport here, in which case the port search concludes successfully;
+
+
+   fflport here but receive or ownership transferred, in which case the port se*
+ *arch concludes successfully
+     with theport record updated to re#ect the new owner or receiver;
+
+
+   fflport nothere but receive and ownership rights transferred,in which case t*
+ *he port search continues
+     by querying the new receiver;
+
+
+   fflport dead, in which case the port search concludes and the port is destro*
+ *yed locally; or
+
+
+   fflport notknown, in which case the port search continues by resorting to a *
+ *broadcast query.
+
+
+
+In addition, a query may receive no response in which case the port search cont*
+ *inues by resortingto a
+broadcast query. To actually transmit port search queries and responses the por*
+ *t search module uses the
+simple request-response transport protocol.
+
+
+   Theport search module is also responsible for authenticating a new receiver *
+ *or owner for a network
+port if the identity of the new receiveror owner was obtained as a result of a *
+ *broadcast search for the
+port. This authentication is only necessary is the port is being handled secure*
+ *ly.
+
+
+
+9.2. Interface
+
+
+
+boolean_t ps_init()
+
+
+
+initializes the port search module.
+
+
+
+ps_do_port_search(port_rec_ptr,new_information,new_nport_ptr,retry)
+port_rec_ptr_t           port_rec_ptr;
+boolean_t                new_information;
+network_port_ptr_t      new_nport_ptr;
+int                       (*retry)();
+
+
+                                       26
+
+
+is called to begin a port search for thenetwork port recorded in port_rec_ptr. *
+ *If the caller has new_
+information about the port (either the possible identity of a new receiver or o*
+ *wner for the port) then
+that new information is contained in thenetwork port pointed to by new_nport_pt*
+ *r. retry is a
+function supplied by the client to be called if the port search concludes succe*
+ *ssfully. It takes asits only
+parameter the port_rec_ptr.
+
+
+
+int ps_handle_request(request,from,broadcast,crypt_level)
+
+
+
+is called by disp_indata_simple to handle an incoming port search query.
+
+
+
+int ps_handle_reply(client_id,reply,from,broadcast,crypt_level)
+
+
+
+is called by disp_rr_simple to handle anincoming reply to a port search query.
+
+
+
+int ps_handle_auth_request(request,from,broadcast,crypt_level)
+
+
+
+is called by disp_indata_simple to handle an incoming request for authenticatio*
+ *n of a receiver or
+owner.
+
+
+
+int ps_handle_auth_reply(client_id,reply,from,broadcast,crypt_level)
+
+
+
+is called by disp_indata_simple to handle an incoming reply to a request for au*
+ *thentication of a
+receiver or owner.
+
+
+
+10. Key Management
+
+
+
+10.1. Description
+
+
+
+The key management module maintains a table which maps remote hosts to keys. Wh*
+ *en it has to send a
+message securely over the network,the IPC module checks that thekey management *
+ *module has a key
+for the message's destination.The actual encryption is done at the transport le*
+ *vel when the message data
+has been placed in packets.
+
+
+   Ifthe key management module has no key for a particular remote host,or the k*
+ *ey that it possesses
+is obsolete, thenit must call upon the local KDS (Key Distribution Server) to d*
+ *o a key exchange. The
+local KDS uses a central KDS to performthe key exchange. After the key exchange*
+ * is complete,the key
+management module should retry the suspended IPC message.
+
+
+
+10.2. Interface
+
+
+
+boolean_t km_init()
+
+
+
+                                       27
+
+
+initializes the key management module.
+
+
+
+typedef struct -..." key_t, *key_ptr_t;
+
+
+
+is used to hold an encryption or decryption key.
+
+
+
+boolean_t km_get_key(host_id, key_ptr)
+netaddr_t                host_id;
+key_ptr_t                key_ptr;
+
+
+
+looks up the key for the host_id.If there is a key it returns TRUE and places t*
+ *he key in key_ptr.
+
+
+
+boolean_t km_get_ikey(host_id, ikey_ptr)
+netaddr_t                host_id;
+key_ptr_t                key_iptr;
+
+
+
+looks up the inverse key for the host_id.  If there is a key returns TRUE and p*
+ *laces the key in
+ikey_ptr.
+
+
+
+km_do_key_exchange(client_id, client_retry, host_id)
+int                       client_id;
+int                       (*client_retry)();
+netaddr_t                host_id;
+
+
+
+is called by a client module to get a key exchange done for host_id. When the k*
+ *ey exchange succeeds,
+the key management module calls the function client_retry with the parameter cl*
+ *ient_id to
+inform the client that there is now a key for the host.
+
+
+
+km_kds_connect(server_port, kds_port)
+port_t                    server_port;
+port_t                    kds_port;
+
+
+
+is called by the local KDS to register its port (kds_port) with the network ser*
+ *ver.
+
+
+
+km_use_key_for_host(server_port, host_id, key)
+port_t                    server_port;
+netaddr_t                host_id;
+key_t                     key;
+
+
+
+is called by the local KDS to tell the network server to use key for all future*
+ * communication with
+host_id.
+
+
+   Inthe above two calls the server_port should always be a special port which *
+ *is known only to the
+network server and the local KDS. The network server is responsible for startin*
+ *g the KDS and passing
+send rights to this special port to theKDS.
+
+
+                                       28
+
+
+11. Crypt
+
+
+
+The crypt module is responsible for theactual encryption and decryption of pack*
+ *ets that are to be sent
+out over the network and received over the network.
+
+
+
+11.1.Interface
+
+
+
+typedef struct -..." netipc_t, *netipc_ptr_t;
+
+
+
+points to an Internet packet encapsulated in a MACH IPC message.
+
+
+
+int crypt_encrypt_packet(packet_ptr, crypt_level)
+netipc_ptr_t             packet_ptr;
+int                       crypt_level;
+
+
+
+encrypts the packet pointed to by packet_ptr at the encryption level given by c*
+ *rypt_level. Returns
+either CRYPT_SUCCESS or CRYPT_FAILURE ifthere is no key for the remote host.
+
+
+
+crypt_decrypt_packet(packet_ptr, crypt_level)
+netipc_ptr_t             packet_ptr;
+int                       crypt_level;
+
+
+
+decrypts the packet pointed to by packet_ptr at the encryption level given by c*
+ *rypt_level. Re-
+turns either CRYPT_SUCCESS, CRYPT_FAILURE if there is no key for the remote hos*
+ *t or CRYPT_
+CHECKSUM_FAILURE if the decrypted checksum is incorrect.
+
+
+
+12. Network Name Service
+
+
+
+12.1. Description
+
+
+
+The network name service module providesa simple name service that is suf#cient*
+ * to boot-strap a higher-
+level name service that will provide a distributed and replicated user-level na*
+ *me service. The network
+name service is host-directed;that is requests for name look ups are sent to sp*
+ *eci#c hosts and are not
+broadcast.
+
+
+
+12.2. Interface
+
+
+
+boolean_t netname_init()
+
+
+
+initializes the network name module.
+
+
+
+                                       29
+
+
+nn_remove_entries(port_id)
+port_t                    port_id;
+
+
+
+removes all entries for the local port port_id from the local name table.
+
+
+
+typedef char netname_name_t[80]
+
+
+
+kern_return_t netname_check_in(ServPort,port_name,signature,port_id)
+vport_t                   ServPort;
+netname_name_t           port_name;
+port_t                    signature;
+port_t                    port_id;
+
+
+
+checks in the port port_id under the name port_name protected by signature.
+
+
+
+kern_return_t netname_look_up(ServPort,host_name,port_name,port_id)
+port_t                    ServPort;
+netname_name_t           host_name;
+netname_name_t           port_name;
+port_t                    *port_id;
+
+
+
+looks up port_name at host given by host_name. Returns in port_id the port foun*
+ *d.
+
+
+
+kern_return_t netname_check_out(ServPort,port_name,signature,port_id)
+port_t                    ServPort;
+netname_name_t           port_name;
+port_t                    signature;
+
+
+
+checks out the port checked in under port_name.  The signature must match the s*
+ *ignature
+supplied to the netname_check_in call.
+
+
+
+kern_return_t netname_version(ServPort,version)
+port_t                    ServPort;
+netname_name_t           version;
+
+
+
+returns in version some version identi#cation for the network server.
+
+
+
+int nn_handle_request(request,from,broadcast,crypt_level)
+
+
+
+is called by disp_indata_simple to handle an incoming request for a network nam*
+ *e look up.
+
+
+
+int nn_handle_reply(client_id,reply,from,broadcast,crypt_level)
+
+
+
+is called by disp_rr_simple to handle anincoming response to a request for a ne*
+ *twork name look
+up.
+
+
+                                       30
+
+
+13. Memory Management
+
+
+
+13.1. Operation
+
+
+
+The memory management module is responsible for allocating and deallocating var*
+ *ious objects used by
+the different modules, such as port and message records, buffers, and so on. It*
+ * attempts to use knowledge
+of the types of objects required to achieve good performance. It tries to reduc*
+ *e the load placed on the
+MACH virtual memory system.
+
+
+
+13.2. Interface
+
+
+
+boolean_t mem_init()
+
+
+
+initializes the memory management module.
+
+
+
+int mem_clean()
+
+
+
+attempts to free as much unused space aspossible to reduce the paging load on t*
+ *he operating system;it
+is potentially slow.
+
+
+
+pointer_t mem_allocobj(objtype)
+int                       objtype;
+
+
+
+allocates one instance of an object of the given objtype and returns its addres*
+ *s, or 0in case of failure.
+
+
+
+void mem_deallocobj(ptr,objtype)
+pointer_t                ptr;
+int                       objtype;
+
+
+
+deallocates an object of objtype previously allocated using mem_allocobj.
+
+
+
+pointer_t mem_alloc(size,aligned)
+int                       size;
+boolean_t                aligned;
+
+
+
+allocates a memory area of arbitrary size; it returns 0 in case of failure.
+
+
+
+void mem_dealloc(ptr,size)
+pointer_t                ptr;
+int                       size;
+
+
+
+deallocates memory previously allocatedby mem_dealloc.
+
+
+
+                                       31
+
+
+14. Read/Write Locks
+
+
+
+The read/write locks module provides locks which can have multiple readers and *
+ *signals threads waiting
+for a lock when it becomes free.
+
+
+
+14.1. Interface
+
+
+
+typedef enum -PERM_READ, PERM_READWRITE"rw_perm_t;
+typedef enum -NOBLOCK = 0, BLOCK = 1" rw_block_t;
+typedef struct lock -..." *lock_t;
+
+
+lock_t lk_alloc()
+
+
+
+allocates a read/write lock.
+
+
+
+void lk_free(lock)
+
+
+
+frees a read/write lock.
+
+
+
+int lk_lock(lock, perm, block)
+lock_t                    lock;
+rw_perm_t                perm;
+rw_block_t               block;
+
+
+
+locks the lock for type perm. If block is true,then this calls blocks waiting u*
+ *ntil the lock can be
+obtained, otherwise the function returns0 if the lock cannot be obtained.
+
+
+
+void lk_unlock(lock)
+lock_t                    lock;
+
+
+
+unlocks the lock.
+
+
+
+15. Locked Queue Module
+
+
+
+The locked queue module provides functions to manipulate items on queues. When *
+ *a queue is accessed
+it is always locked before being manipulated.
+
+
+
+15.1. Interface
+
+
+
+typedef struct -..." *lock_queue_t;
+typedef struct queue_item -struct queue_item *next" *queue_item_t;
+
+
+
+                                       32
+
+
+lock_queue_t lq_alloc()
+
+
+
+allocates and initializes a new locked queue.
+
+
+
+void lq_init_queue(queue)
+lock_queue_t             queue;
+
+
+
+re-initializes the already allocated queue.
+
+
+
+void lq_prequeue(queue, item)
+lock_queue_t             queue;
+queue_item_t             item;
+
+
+
+inserts item at the head of queue.
+
+
+
+void lq_insert_in_queue(queue, test, item, args)
+lock_queue_t             queue;
+int                       (*test)();
+queue_item_t             item;
+int                       arg;
+
+
+
+inserts item in the #correct# position on queue.  The correct position is deter*
+ *mined by calling the
+user-supplied function test on item, arg and the members of queue until it retu*
+ *rns TRUE.
+
+
+
+boolean_t lq_remove_from_queue(queue, item)
+lock_queue_t             queue;
+queue_item_t             item;
+
+
+
+removes item from queue if item is present on the queue. Returns TRUE is item w*
+ *as deleted from
+queue, FALSE otherwise.
+
+
+
+boolean_t lq_cond_delete_from_queue(queue, test, item)
+lock_queue_t             queue;
+int                       (*test)();
+queue_item_t             item;
+int                       arg;
+
+
+
+performs the user-supplied function test on item, arg and on successive element*
+ *s of queue. If it
+returns TRUE, then the current element of the queue is deleted.
+
+
+
+boolean_t lq_on_queue(queue, item)
+lock_queue_t             queue;
+queue_item_t             item;
+
+
+
+                                       33
+
+
+checks to see if the item is on queue.
+
+
+
+queue_item_t lq_dequeue(queue)
+lock_queue_t             queue;
+
+
+
+if queue is not empty remove and returnthe queue item which is at the head of i*
+ *t.
+
+
+
+queue_item_t lq_blocking_dequeue(queue)
+lock_queue_t             queue;
+
+
+
+if queue is empty,a wait is done until it is non-empty.Removes and returns the *
+ *queue item which is at
+the head of queue.
+
+
+
+void lq_enqueue(queue, item);
+lock_queue_t             queue;
+queue_item_t             item;
+
+
+
+inserts item at the tail of queue.
+
+
+
+queue_item_t lq_find_in_queue(queue, fn,args)
+lock_queue_t             queue;
+int                       (*fn)();
+int                       arg;
+
+
+
+returns a queue_item_t which is found byapplying the user-supplied function fn *
+ *to successive
+elements of queue and arg until fn returns TRUE.
+
+
+
+void lq_map_queue(queue, fn, args);
+lock_queue_t             queue;
+int                       (*fn)();
+int                       arg;
+
+
+
+applies the user-supplied function fnto each successive item of queue and arg.
+
+
+   Inaddition to the above routines, a number of equivalent routines are provid*
+ *ed that do not acquire or
+release the queue lock when invoked,to be used in situations where global lock *
+ *management isneeded
+to avoid deadlock. Those routines are pre#xed with lqn_ instead of lq_.
+
+
+   Finally, the network server also usesdoubly-linked lists for some queues. us*
+ *ing the same macros used
+in the Mach kernel for that purpose.
+
+
+
+16. Timer Module
+
+
+
+The timer module accepts requests from other modules for events to be scheduled*
+ * at some time in the
+future. When the event's deadline expires the timer module calls the user-suppl*
+ *ied function associated
+with the timer.
+
+
+                                       34
+
+
+16.1. Interface
+
+
+
+boolean_t timer_init()
+
+
+
+initializes the timer module.
+
+
+
+struct timer -..." *timer_t;
+
+
+timer_t timer_alloc()
+
+
+
+returns a new timer.
+
+
+
+void timer_start(timer)
+timer_t                   timer;
+
+
+
+starts up timer.
+
+
+
+void timer_stop(timer)
+timer_t                   timer;
+
+
+
+stops timer.
+
+
+
+17. Miscellaneous
+
+
+
+17.1. Unique Identi#er Generator
+
+
+
+Simply generates locally unique identi#ers (UIDs). The identi#ers generated are*
+ * unique with high prob-
+ability.
+
+
+
+17.1.1.Interface
+
+
+
+void uid_init()
+
+
+
+initializes the UID module.
+
+
+
+long uid_get_new_uid()
+
+
+
+returns a new UID.
+
+
+
+                                       35
+
+
+17.2. Sbuf
+
+
+
+The sbuf module provides macros that manipulate sbufs.
+
+
+
+17.2.1.Interface
+
+
+
+void sbuf_printf(where, sb_ptr)
+FILE                      *where;
+sbuf_ptr_t               sb_ptr;
+
+
+
+is the only exported function of the sbuf module.  It prints out the contents o*
+ *f the sbuf pointed to by
+sb_ptr.
+
+
+
+17.3. Network Interfaces
+
+
+
+Under Mach the interface to the networkis an IPC interface with a #lter inside *
+ *the kernel determining
+which network packets are to be receivedby the network server. Currently,many t*
+ *ransport modules still
+use BSD Unix sockets to access network protocol implementations in the kernel.
+
+
+
+17.3.1.Interface
+
+
+
+int netipc_receive(pkt_ptr)
+netipc_ptr_t             pkt_ptr;
+
+
+
+waits to receive a packet from the kernel.  Checksthe packet's UDP checksum bef*
+ *ore returning to the
+caller.
+
+
+
+int netipc_send(pkt_ptr)
+netipc_ptr_t             pkt_ptr;
+
+
+
+calculates the UDP checksum for the packet and then sends it to the kernel for *
+ *transmission over the
+network.
+
+
+
+17.4. IPCMessage Receive
+
+
+
+17.5. Interface
+
+
+
+int netmsg_receive(msg_ptr)
+msg_header_t             *msg_ptr;
+
+
+
+does a non-blocking receive for a localIPC message.
+
+
+                                       36
+
+
+17.6. Debugging
+
+
+
+The network server keeps a log in memoryof various events happening during its *
+ *operation. This log,
+along with statistics on various operations, can be obtained via the logstat se*
+ *rvice exported by the network
+server. In addition, many operating parameters, including the level of debuggin*
+ *g information written to
+the log, can be set using this same service.
+
+
+
+17.6.1.Interface
+
+
+
+Macros and procedures called within the network server
+
+
+
+DEBUGn(condition,print_level,code,arg1,...,argn)
+
+
+
+is a macro to be used to write a recordcontaining the code and all the integer *
+ *args into the log. n is a
+number between 0 and 6,indicating how many integers must be copied into the log*
+ *.A log entry is only
+made if condition evaluates to TRUE. Inaddition, if print_level is greater or e*
+ *qual tothe global
+debug.print_level, a message is printedon stderr.
+
+
+
+DEBUG_STRING(cond,level,string)
+DEBUG_NPORT(cond,level,nport)
+DEBUG_NETADDR(cond,level,netaddr)
+DEBUG_KEY(cond,level,key)
+DEBUG_SBUF(cond,level,sbuf)
+
+
+
+are similar to the DEBUGn macros, but are used to enter a string, a network por*
+ *t identi#er, a network
+address, an encryption key or an sbuf into the log.
+
+
+   TheDEBUG macros can be made to expand to nothing viaa compile-time switch to*
+ * avoid overheads
+at execution time. Each of those macros hasan equivalent LOG macro that can be *
+ *enabled or disabled
+independently; those LOG macros are intended for events that should always been*
+ *tered in the log and
+are infrequent enough that the overheadinvolved is negligible.
+
+
+
+ERROR((msg,format,args...))
+
+
+
+is used to print out a message on stderran make an entry in the log. The argume*
+ *nt should be a valid set
+of arguments for sprintf, with the message string msg.
+
+
+
+void panic(error_msg)
+char                      *error_msg;
+
+
+
+is called if something catastrophic happens. Prints out the error_msg, dumps th*
+ *e log and terminates
+the network server.
+
+
+
+                                       37
+
+
+void ipaddr_to_string(output_string, input_address)
+char                      *output_string;
+netaddr_t                input_address;
+
+
+
+translates the input_address IP addressinto a printable representation in outpu*
+ *t_string.
+
+
+
+Procedures exported outside the network server:  The following procedures can b*
+ *e called remotely
+by sending requests on a port checked-inas NM_LOGSTAT in the network server.
+
+
+
+kern_return_t ls_sendlog(ServPort,old_log_ptr,old_log_size,
+                            cur_log_ptr,cur_log_size)
+port_t           ServPort;
+log_ptr_t        *old_log_ptr;
+unsigned int    *old_log_size;
+log_ptr_t        *cur_log_ptr;
+unsigned int    *cur_log_size;
+
+
+
+is used to obtain both network server logs in the response message. The old and*
+ * new logs correspond to
+the two alternating logs used to recordevents.
+
+
+
+kern_return_t ls_resetlog(ServPort)
+port_t           ServPort;
+
+
+
+resets the log to zero size.
+
+
+
+kern_return_t ls_writelog(ServPort)
+port_t           ServPort;
+
+
+
+causes the network server to write its log in a #le NMLOG in its current workin*
+ *g directory.
+
+
+
+kern_return_t ls_sendstat(ServPort,stat_ptr,stat_size)
+port_t           ServPort;
+stat_ptr_t       *stat_ptr;
+unsigned int    *stat_size;
+
+
+
+is used to obtain a record with the vital network server statistics in the resp*
+ *onse.
+
+
+
+kern_return_t ls_resetstat(ServPort)
+port_t           ServPort;
+
+
+
+resets all statistics counters to zero.
+
+
+                                       38
+
+
+kern_return_t ls_senddebug(ServPort,debug_ptr,debug_size)
+port_t           ServPort;
+debug_ptr_t     *debug_ptr;
+unsigned int    *debug_size;
+
+
+
+is used to obtain a record with all thedebugging #ags used to control the opera*
+ *tion of the DEBUGmacros.
+
+
+
+kern_return_t ls_setdebug(ServPort,debug_ptr,debug_size)
+port_t           ServPort;
+debug_ptr_t     *debug_ptr;
+unsigned int    *debug_size;
+
+
+
+is used to replace the record with all the debugging #ags used to control the o*
+ *peration of the DEBUG
+macros.
+
+
+
+kern_return_t ls_sendparam(ServPort,param_ptr,param_size)
+port_t           ServPort;
+param_ptr_t     *param_ptr;
+unsigned int    *param_size;
+
+
+
+is used to obtain a record with the network server control parameters.
+
+
+
+kern_return_t ls_setparam(ServPort,param_ptr,param_size)
+port_t           ServPort;
+param_ptr_t     *param_ptr;
+unsigned int    *param_size;
+
+
+
+is used to replace the record with the network server control parameters.
+
+
+
+kern_return_t ls_sendportstat(ServPort,port_stat_ptr,port_stat_size)
+port_t           ServPort;
+port_stat_ptr_t *port_stat_ptr;
+unsigned int    *port_stat_size;
+
+
+
+is used to obtain a record with the portrecord statistics.
+
+
+
+17.7. Camelot Support
+
+
+
+The Camelot Distributed TransactionFacility [3] requires special handling for I*
+ *PC messages used in
+Camelot transactions. This handling is performed in a special Camelot module, n*
+ *ot described, here, that
+behaves as an extra step in the translation process for incoming and outgoing I*
+ *PC messages.
+
+
+   Inaddition, Camelot also requires some specialized name servers, also implem*
+ *entedin the Camelot
+module.
+
+
+                                       39
+
+
+17.8. Kernel Netport Support
+
+
+
+Certain Mach kernels provide an experimental feature, called Netport or MACH_NP*
+ *with which Kernel
+port records may be #agged as corresponding to local representatives for remote*
+ * network ports. Under
+certain very restricted conditions, thekernel may, upon processing a message de*
+ *stined for one of these
+ports, send the message directly to the remote node instead of handing it to th*
+ *e network server.  This
+scheme results in improved performance by avoiding the overhead of invoking the*
+ * network servers on
+both ends of the communication. Correctness is assured by having the kernel abo*
+ *rt its transmission and
+re#ect the message back to the network server as soon as a situation arises tha*
+ *t is too complex for the
+Netport code to handle.
+
+
+   When enabled, all modules in the network server that modify network port rec*
+ *ords enter the correct
+information in the kernel port records to allow the Netport code to function.
+
+
+
+17.9. Initialization
+
+
+
+The network server initialization sequence takes care of detecting modules that*
+ * require kernel support not
+present on the current node, and of setting the working parameters accordingly.*
+ * These include:
+
+
+
+   fflAccess to a network interface. If there is no network,the network server *
+ *degenerates into a simple
+     local Name Server, as speci#ed by the conf_network parameter.
+
+
+   fflNetportsupport: controlled by the conf_netport parameter.
+
+
+   fflVMTPsupport. The transport_default parameter is set to the index of the b*
+ *est transport
+     protocolavailable.
+
+
+
+17.9.1.Interface
+
+
+
+boolean_t nm_init()
+
+
+
+initializes the network server by calling and checking the error returns for al*
+ *l the module initialization
+functions.
+
+
+
+A  Compiling a Network Server
+
+
+
+The network server #les are stored in 8subdirectories:
+
+
+
+camelotsource #les for the Camelot module.
+
+
+conftemplates for #les that control the particular con#guration of the network *
+ *server to build.
+
+
+doc network server design document and associated #les.
+
+
+liblibraries and object modules needed tolink the network server, as well as a *
+ *data #le used to translate
+     the debugging log.
+
+
+                                       40
+
+
+man manual entries for the main utilities.
+
+
+srcsources for the network server. src/libcontains the sources for the librarie*
+ *s.
+
+
+testssources for various test programs.
+
+
+utilssources for the utilities used in conjunction with the network server.
+
+
+
+   To compile a network server, one must create a build directory at the same l*
+ *evel as the 8 sources
+directories and copy into it the #les from the conf directory. Makefile must be*
+ * edited to set the various
+search paths for libraries and include #les.  config.h must be edited to set th*
+ *e various con#guration
+options. The default #les are suitable for a reasonable generic network server.
+
+
+   Thecon#guration options are:
+
+
+
+NET_LOG   enable the LOGn macros.
+
+
+NET_DEBUG   enable the DEBUGn macros.
+
+
+NET_TRACE   enable tracing of procedure calls, under controlof a command line s*
+ *witch.
+
+
+NET_PRINT  enable printing from the LOG and DEBUG macros.
+
+
+LOCK_THREADS    do not allow more than one thread to run at any one time. To us*
+ *e only for debugging.
+
+
+NM_STATISTICS   enable normal statistics gathering.
+
+
+PORTSTAT   enable port statistics gathering.
+
+
+NM_USE_KDS   use an external Key Distribution Server.
+
+
+USE_VMTP   include the VMTP module in the network server.
+
+
+USE_TCP  include the TCP module in the network server.
+
+
+CAMELOT   include the Camelot module in the network server.
+
+
+NETPORT   enable entering information in the kernel port records for use by the*
+ * Netport option.
+
+
+RPCMOD   enable the RPC optimization, and the request-response transport interf*
+ *ace. Should always be
+     on.
+
+
+
+   Both USE_VMTP and NETPORT require kernel support that is not normally presen*
+ *t.
+
+
+   Theutilities depend on the con#guration and are compiled in the network serv*
+ *er build directory. The
+test programs are independent of the con#guration and are compiled inside the t*
+ *ests directory.
+
+
+
+References
+
+
+
+[1]Cheriton, D. VMTP: ATransport Protocol for the Next Generation of Communicat*
+ *ion Systems. In:
+   Proceedings of the ACM SIGCOMM 86 Symposiumon Communications Architectures a*
+ *nd
+   Protocols. ACM, 1986, pp. 406#415.
+
+
+                                       41
+
+
+[2]Sansom, R. D., Julin, D. P., and Rashid, R. F. Extending a Capability Based *
+ *System intoa Network
+   Environment. In:  SIGCOMM '86 Symposium:  Communications Architectures & Pro*
+ *tocols,
+   ACM SIGCOMM. 1986. Also available as Technical Report CMU-CS-86-115.
+
+
+[3]Spector, A. Z., Bloch, J. J., Daniels, D. S., Draves, R. P., Duchamp, D., Ep*
+ *pinger, J. L., Menees,
+   S. G., and Thompson, D. S.  The Camelot Project.  Database Engineering, vol.*
+ * 9 (1986).  Also
+   available as Technical Report CMU-CS-86-166, Carnegie-Mellon University, Nov*
+ *ember 1986.
+
+
+
+                                       42

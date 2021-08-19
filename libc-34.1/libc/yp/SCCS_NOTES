@@ -1,0 +1,165 @@
+Makefile	1.2 09/21/87 15:26:43
+Added a 4.3 stype 'depend' target and made new dependencies.
+
+Makefile	1.1 09/11/87 15:21:43
+[marks] - get into sccs file
+
+_ypclnt_enum.c	1.4 09/11/87 18:15:24
+changed include of <rpcsvc/yp*> to "yp*" since they are in this directory
+
+_ypclnt_enum.c	1.3 08/06/87 11:24:44
+took out old sccs keywords line.
+
+_ypclnt_enum.c	1.2 08/06/87 11:11:46
+Add sccs keyword for 3.2/4.3NFSSRC
+
+_ypclnt_enum.c	1.1 08/06/87 11:11:33
+date and time created 87/08/06 11:11:33 by clara
+
+clnt_domatch.c	1.4 09/11/87 18:15:30
+changed include of <rpcsvc/yp*> to "yp*" since they are in this directory
+
+clnt_domatch.c	1.3 08/06/87 11:24:51
+took out old sccs keywords line.
+
+clnt_domatch.c	1.2 08/06/87 11:12:07
+Add sccs keyword for 3.2/4.3NFSSRC
+
+clnt_domatch.c	1.1 08/06/87 11:11:55
+date and time created 87/08/06 11:11:55 by clara
+
+yp_all.c	1.4 09/02/87 16:20:57
+Converted a call to clnt_perror() to clnt_syslog().
+
+yp_all.c	1.3 08/06/87 11:24:57
+took out old sccs keywords line.
+
+yp_all.c	1.2 08/06/87 11:12:27
+Add sccs keyword for 3.2/4.3NFSSRC
+
+yp_all.c	1.1 08/06/87 11:12:17
+date and time created 87/08/06 11:12:17 by clara
+
+yp_bind.c	1.4 08/06/87 11:28:12
+changed myaddress interface
+
+yp_bind.c	1.3 08/06/87 11:25:05
+took out old sccs keywords line.
+
+yp_bind.c	1.2 08/06/87 11:12:50
+Add sccs keyword for 3.2/4.3NFSSRC
+
+yp_bind.c	1.1 08/06/87 11:12:36
+date and time created 87/08/06 11:12:36 by clara
+
+yp_enum.c	1.3 08/06/87 11:25:14
+took out old sccs keywords line.
+
+yp_enum.c	1.2 08/06/87 11:13:16
+Add sccs keyword for 3.2/4.3NFSSRC
+
+yp_enum.c	1.1 08/06/87 11:13:03
+date and time created 87/08/06 11:13:03 by clara
+
+yp_master.c	1.3 08/06/87 11:25:22
+took out old sccs keywords line.
+
+yp_master.c	1.2 08/06/87 11:13:38
+Add sccs keyword for 3.2/4.3NFSSRC
+
+yp_master.c	1.1 08/06/87 11:13:27
+date and time created 87/08/06 11:13:27 by clara
+
+yp_match.c	1.3 08/06/87 11:25:29
+took out old sccs keywords line.
+
+yp_match.c	1.2 08/06/87 11:13:58
+Add sccs keyword for 3.2/4.3NFSSRC
+
+yp_match.c	1.1 08/06/87 11:13:47
+date and time created 87/08/06 11:13:47 by clara
+
+yp_order.c	1.3 08/06/87 11:25:36
+took out old sccs keywords line.
+
+yp_order.c	1.2 08/06/87 11:14:19
+Add sccs keyword for 3.2/4.3NFSSRC
+
+yp_order.c	1.1 08/06/87 11:14:08
+date and time created 87/08/06 11:14:08 by clara
+
+yp_prot.h	1.3 08/06/87 11:25:42
+took out old sccs keywords line.
+
+yp_prot.h	1.2 08/06/87 11:14:40
+Add sccs keyword for 3.2/4.3NFSSRC
+
+yp_prot.h	1.1 08/06/87 11:14:27
+date and time created 87/08/06 11:14:27 by clara
+
+ypclnt.h	1.3 08/06/87 11:25:50
+took out old sccs keywords line.
+
+ypclnt.h	1.2 08/06/87 11:15:03
+Add sccs keyword for 3.2/4.3NFSSRC
+
+ypclnt.h	1.1 08/06/87 11:14:51
+date and time created 87/08/06 11:14:51 by clara
+
+yperr_string.c	1.4 09/11/87 18:14:50
+changed include of <rpcsvc/yp*> to "yp*" since they are in this directory
+
+yperr_string.c	1.3 08/06/87 11:25:56
+took out old sccs keywords line.
+
+yperr_string.c	1.2 08/06/87 11:15:23
+Add sccs keyword for 3.2/4.3NFSSRC
+
+yperr_string.c	1.1 08/06/87 11:15:13
+date and time created 87/08/06 11:15:13 by clara
+
+ypmaint_xdr.c	1.3 08/06/87 11:26:02
+took out old sccs keywords line.
+
+ypmaint_xdr.c	1.2 08/06/87 11:15:43
+Add sccs keyword for 3.2/4.3NFSSRC
+
+ypmaint_xdr.c	1.1 08/06/87 11:15:32
+date and time created 87/08/06 11:15:32 by clara
+
+ypprot_err.c	1.3 08/06/87 11:26:08
+took out old sccs keywords line.
+
+ypprot_err.c	1.2 08/06/87 11:16:04
+Add sccs keyword for 3.2/4.3NFSSRC
+
+ypprot_err.c	1.1 08/06/87 11:15:52
+date and time created 87/08/06 11:15:52 by clara
+
+ypv1_prot.h	1.3 08/06/87 11:26:14
+took out old sccs keywords line.
+
+ypv1_prot.h	1.2 08/06/87 11:16:24
+Add sccs keyword for 3.2/4.3NFSSRC
+
+ypv1_prot.h	1.1 08/06/87 11:16:12
+date and time created 87/08/06 11:16:12 by clara
+
+ypv1_xdr.c	1.3 08/06/87 11:26:20
+took out old sccs keywords line.
+
+ypv1_xdr.c	1.2 08/06/87 11:16:44
+Add sccs keyword for 3.2/4.3NFSSRC
+
+ypv1_xdr.c	1.1 08/06/87 11:16:33
+date and time created 87/08/06 11:16:33 by clara
+
+ypxdr.c	1.3 08/06/87 11:26:26
+took out old sccs keywords line.
+
+ypxdr.c	1.2 08/06/87 11:17:03
+Add sccs keyword for 3.2/4.3NFSSRC
+
+ypxdr.c	1.1 08/06/87 11:16:52
+date and time created 87/08/06 11:16:52 by clara
+

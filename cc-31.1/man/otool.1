@@ -1,0 +1,114 @@
+.TH OTOOL 1 "September 19, 1990" "NeXT Computer, Inc."
+.SH NAME
+otool \- object file printing tool
+.SH SYNOPSIS
+.B otool
+[ option ] ... file ...
+.SH DESCRIPTION
+.I Otool
+prints specified parts of object files or libraries.  The file arguments may be
+of the form
+.I libx.a(foo.o)
+which specifies to print information only about that object file and not
+the entire library (typically this argument must be quoted,
+.I ``libx.a(foo.o)'',
+to get it past the shell). 
+.I Otool
+understands both Mach-O (Mach object) files and 4.3BSD a.out file formats.
+It can print the specified information in either its raw (numeric) form
+(without the
+.B \-v
+flag) or in a symbolic form, using macro names of constants, etc. (with the 
+.B \-v
+or
+.B \-V
+flag).
+.PP
+One of the following options must be specified:
+.TP
+.B \-a
+Print the archive header if the file is an archive.
+.TP
+.B \-S
+Print the contents of the `\_\^\_.SYMDEF' file if the file is an archive.
+.TP
+.B \-h
+Print the mach header (for Mach-O files) or the exec header (for 4.3BSD a.out
+files).
+.TP
+.B \-l
+Print the load commands (for Mach-O files).
+.TP
+.B \-L
+Print the names of the target shared libraries the object file uses and their
+minor version number.
+.TP
+.BI \-s " segname sectname"
+Print the contents of the section
+.RI ( segname,sectname ).
+If the -v flag is specified the section is printed as is type if that is not
+zero.
+.TP
+.B \-t
+Print the contents of the \_\^\_text section (for Mach-O files) or the text
+segment (for 4.3BSD a.out files).  With the
+.B \-v
+flag this disassembles the text.  And with
+.B \-V
+it also symbolically disassembles the operands.
+.TP
+.B \-d
+Print the contents of the \_\^\_data section (for Mach-O files) or the data
+segment (for 4.3BSD a.out files).
+.TP
+.B \-o
+Print the contents of the \_\^\_OBJC segment used by the Objective-C runtime
+system.
+.TP
+.B \-O
+Print the strings in the \_\^\_selector_strs and their offset's in that section.
+.TP
+.B \-r
+Print the relocation entries.
+.TP
+.B \-c
+Print the argument strings (argv[] and envp[]) from a core file.
+
+.PP
+Some of the following options may also be given:
+.TP
+.BI "\-p " name
+Used with the
+.B \-t
+and
+.B \-v
+or
+.B \-V
+options to start the disassembly from symbol
+.I name
+and continue to the end of the \_\^\_text section.
+.BI "\-T " "hex number"
+Used with the
+.B \-t
+and
+.B \-v
+or
+.B \-V
+options to indicate an 4.3BSD a.out OMAGIC file was really loaded at
+.I "hex number"
+rather than the default.  This is needed because there is no way to tell where
+an 4.3BSD a.out file was loaded from the file if it was not loaded at the
+default address.
+.TP
+.B \-v
+Print verbosely (symbolically) when possible.
+.TP
+.B \-V
+Print the disassembled operands symbolically (this implys the
+.B \-v
+option).  This is used with the
+.B \-t
+option.
+.TP
+.B \-X
+Don't print leading addresses when printing contents of sections.

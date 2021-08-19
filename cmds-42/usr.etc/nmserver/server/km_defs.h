@@ -1,0 +1,87 @@
+/* 
+ * Mach Operating System
+ * Copyright (c) 1987 Carnegie-Mellon University
+ * All rights reserved.  The CMU software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ */
+/*
+ * km_defs.h
+ *
+ * $Source: /os/osdev/LIBS/libs-7/etc/nmserver/server/RCS/km_defs.h,v $
+ *
+ * $Header: km_defs.h,v 1.1 88/09/30 15:44:00 osdev Exp $
+ *
+ */
+
+/*
+ * Internal definitions for the Key Management module.
+ */
+
+/*
+ * HISTORY:
+ *  6-Jul-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Added a timer to a key request record in order to repeat key
+ *	exchange requests if we get no response to them.
+ *
+ *  5-Jun-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Store host byte order key in key record for multperm encryption algorithm.
+ *
+ *  9-Jan-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Started.
+ *
+ */
+
+#ifndef	_KM_DEFS_
+#define	_KM_DEFS_
+
+#include "key_defs.h"
+#include "nm_defs.h"
+#include "timer.h"
+
+typedef struct {
+    netaddr_t	kr_host_id;
+    key_t	kr_key;
+    key_t	kr_mpkey;
+    key_t	kr_mpikey;
+} key_rec_t, *key_rec_ptr_t;
+
+#define KEY_REC_NULL	((key_rec_ptr_t)0)
+
+/*
+ * Definition of queue holding pending key exchange requests.
+ */
+typedef struct kmq_entry {
+    struct kmq_entry	*next;
+    struct timer	kmq_timer;
+    netaddr_t		kmq_host_id;
+    int			kmq_client_id;
+    int			(*kmq_client_retry)();
+} kmq_entry_t, *kmq_entry_ptr_t;
+
+
+#define KM_RETRY_INTERVAL	60
+
+
+/*
+ * External definitions for functions implemented by km_utils.c
+ */
+
+extern key_rec_ptr_t km_host_enter();
+/*
+netaddr_t	host_id;
+*/
+
+extern key_rec_ptr_t km_host_lookup();
+/*
+netaddr_t	host_id;
+*/
+
+extern void km_utils_init();
+/*
+*/
+
+extern void km_procs_init();
+/*
+*/
+
+#endif	_KM_DEFS_

@@ -1,0 +1,103 @@
+/* 
+ * Mach Operating System
+ * Copyright (c) 1987 Carnegie-Mellon University
+ * All rights reserved.  The CMU software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ */
+/*
+ * portrec.h
+ *
+ * $Source: /os/osdev/LIBS/libs-7/etc/nmserver/server/RCS/portrec.h,v $
+ *
+ * $Header: portrec.h,v 1.1 88/09/30 15:45:06 osdev Exp $
+ *
+ */
+
+/*
+ * External definitions for the Port Records module.
+ */
+
+/*
+ * HISTORY:
+ * 27-Jul-87  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Modified to use lock_queue macros.
+ *
+ *  5-Feb-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Added external definition of pr_np_puid_lookup.
+ *	Removed external definition of pr_create.
+ *
+ *  5-Nov-86  Robert Sansom (rds) at Carnegie-Mellon University
+ *	Started.
+ *
+ */
+
+#ifndef	_PORTREC_
+#define	_PORT_REC_
+
+#include <sys/boolean.h>
+
+#include "lock_queue.h"
+#include "lock_queue_macros.h"
+#include "port_defs.h"
+
+/*
+ * The null network port.
+ */
+extern network_port_t		null_network_port;
+
+
+/*
+ * Functions exported.
+ */
+
+extern boolean_t pr_init();
+/*
+*/
+
+extern void pr_destroy();
+/*
+port_rec_ptr_t		port_rec_ptr;
+*/
+
+extern port_rec_ptr_t pr_np_puid_lookup();
+/*
+np_uid_t		np_puid;
+*/
+
+extern port_rec_ptr_t pr_nportlookup();
+/*
+network_port_ptr_t	nport_ptr;
+*/
+
+extern port_rec_ptr_t pr_ntran();
+/*
+network_port_ptr_t	nport_ptr;
+*/
+
+extern port_rec_ptr_t pr_lportlookup();
+/*
+port_t			lport;
+*/
+
+extern port_rec_ptr_t pr_ltran();
+/*
+port_t			lport;
+*/
+
+extern boolean_t pr_nport_equal();
+/*
+network_port_ptr_t	nport_ptr_1, nport_ptr_2;
+*/
+
+extern void pr_nporttostring();
+/*
+char			*nport_str;
+network_port_ptr_t	nport_ptr;
+*/
+
+extern lock_queue_t pr_list();
+/*
+*/
+
+
+#endif	_PORT_REC_

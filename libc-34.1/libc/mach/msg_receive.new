@@ -1,0 +1,47 @@
+#
+/* HISTORY
+ * 25-Apr-87 Michael Young @ Carnegie-Mellon
+ *	Added new arguments to msg_receive_ and msg_rpc_ call
+ *	Fixed the test for interupts in msg_rpc_
+ */
+
+#include <sys/message.h>
+
+extern
+msg_return_t	msg_receive_();
+
+msg_return_t	msg_receive(header, option, timeout)
+	register
+	msg_header_t	*header;
+	msg_option_t	option;
+	int		timeout;
+{
+	register
+	msg_return_t	result;
+	
+	while ((result = msg_receive_(header, option, header->msg_local_port, header->msg_size, timeout)) == RCV_INTERRUPTED)
+		if (option & RCV_INTERRUPT)
+			break;
+	return(result);
+}
+
+extern
+msg_return_t	msg_rpc_();
+
+msg_return_t	msg_rpc(header, option, rcv_size, send_timeout, rcv_timeout)
+	msg_header_t	*header;
+	msg_option_t	option;
+	int		rcv_size;
+	int		send_timeout;
+	int		rcv_timeout;
+{
+	register
+	msg_return_t	result;
+	
+	while ((result = msg_rpc_(header, option, send_timeout, header->msg_local_port, rcv_size, rcv_timeout)) == SEND_INTERRUPTED)
+		if (option & SEND_INTERRUPT)
+			break;
+	while ((result == RCV_INTERRUPTED) && !(option & RCV_INTERRUPT))
+		result = msg_receive_(header, option, header->msg_local_port, rcv_size, rcv_timeout);
+	return(result);
+}

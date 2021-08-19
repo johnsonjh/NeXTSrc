@@ -1,0 +1,49 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    gk:1.1; strict;
+comment  @ * @;
+
+
+1.1
+date     88.09.30.15.42.15;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@NeXT, Inc.
+@
+
+
+
+1.1
+log
+@Initial NeXT version
+@
+text
+@/* 
+ * Mach Operating System
+ * Copyright (c) 1987 Carnegie-Mellon University
+ * All rights reserved.  The CMU software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ */
+/*
+ *
+ *
+ * Parameters:
+ *
+ * Results:
+ *
+ * Side effects:
+ *
+ * Design:
+ *
+ * Note:
+ *
+ */
+P ()
+BEGIN("")
+
+END
+@

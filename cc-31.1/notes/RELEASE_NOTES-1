@@ -1,0 +1,113 @@
+gdb:
+	- There are two new features not mentioned in the current documentation:
+		- When compiling with -gg (instead of -g) the compiler 
+		  automatically generates symbol table information which is
+		  dynamically loaded on demand by the debugger.  This 
+		  dramatically reduces debugger startup time.  Some new
+		  diagnostic commands (not of general interest) are:
+			diag lazy
+				This toggles an internal diagnostic flag 
+				which prints a message whenever symbol
+				table information is used from a particular
+				.o file.
+			info sym
+				This prints all object files which contain
+				the new format of symbol table info.  It
+				catagorizes them into a group of object
+				files whose symbols have been read and 
+				those whose symbols have not been read.
+		- The debugger now supports automatic printing of instance
+		  vars off of self if they can be found by the expression
+		  parser.
+cc:
+	- cc now knows how to compile .m files.  The following switches
+	  may be used in addition to the standard .c file switches when 
+	  compiling a .m file:
+		- -Z and -noI inhibits the default include paths for C_ and P_
+		  file searching.  The default directories are:
+			- /usr/next_cross/usr/include
+			- /usr/next_cross/usr/objects/appkit
+			- /usr/next_cross/usr/objects/objc
+		- -Bootstrap: Passes the -P and -noTags flags the objc.exe
+		- -noIappkit: Inhibits the appkit C_ and P_ include path.
+		- -noInitCast: Passes this flag through to objc.exe
+		- -noTags: Passes this flag through to objc.exe
+		- -K: Keeps the output of objc.exe in filename.c and inhibits
+		  further compilation.
+		- -Retain: Saves the outputof objc.exe in filename.c and 
+		  continues compilation.
+		- The CPP flag __STDC__ is not defined for .m files currently.
+		  It will be defined once objc.exe knows how to parse
+		  ANSI C.
+		- The flags __GNU__, __GNUC__, __OBJC__ are defined.
+	- The following flags may be used with either .c or .m files:
+		- -Z inhibits the standard include and library paths.
+		- __OPTIMIZE__ is defined through cpp if the -O flag was
+		  specified.
+		- __STDC__ is defined through cpp.
+		- -vt shows timing information for each of the passes run by
+		  the cc command.
+	- The following flags may be used with .s files:
+		- cpp is always run on the input.  -E and -ES inhibit further
+		  assembly.
+	- The -Ppath flag to cc forces "path" to be prepended to the filenames
+	  of the compiler passes invoked by cc.
+	- The cc command will append the version number of itself to the passes
+	  invoked.  cc-0.3.1 invokes cpp-0.3.1 and cc1-0.3.1.  "cc" will be
+	  a symbolic link to cc-v.v.v when it is installed.  Alternate versions
+	  of the compiler may be accessed via this mechanism.
+cpp:
+	- This version of cpp originated from the GNU 1.18 release.  
+	  Modifications in 1.19 and 1.20 have not yet been adopted.
+	- No VMS support.
+	- No non-ANSI "traditional" support.
+	- Recognizes Objective-C style comments "//"
+	- No #sccs support (System V).
+	- -MD turns on mach style make-depend switch which writes dependency 
+	  information to a file (e.g. cpp -MD filename.md).
+	- -MMD same as -MM, but using mach style make-depend switch.
+	- Added support for #import.  This works the same as #include, but
+	  won't include the same file twice.
+	- Currently, all output files are unlinked before opening for output.
+	- -fnostdinc is not supported.  -Z does the same thing.
+	- __STDC__ is not defined by the C preprocessor any more.  It is passed
+	  in by the driver (cc).
+cc1:
+	- cc1 is based on the GNU 1.20 release.
+	- Several bugs from the 1.20 release were fixed dealing with 8 bytes
+	  structs in the registers with optimization turned on.
+	- Several null indirection bugs were fixed when emitting symbol table
+	  information.
+	- A prototype decl with void as the arg spec was errneously flagged as
+	  an error.
+	- Support for #pragma was added.  The effect of anything specified in
+	  a #pragma is currently limited to the outmost level declaration
+	  (e.g. a function, a global data declaration).  The following pragmas
+	  are currently implemented.  The names may change.
+
+		#pragma CC_OPT_ON
+			Forces optimization on.
+		#pragma CC_OPT_OFF
+			Forces optimization off.
+		#pragma CC_OPT_RESTORE
+			Restores optimization to what was specified on
+			the command line (on if -O was specified, off if not).
+		#pragma CC_WRITABLE_STRINGS
+			Places strings in the data segment.
+		#pragma CC_NON_WRITABLE_STRINGS
+			Places strings in the text segment.
+
+	- A bug which caused the compiler to core dump when optimizing and
+	  using the new form of "asm" in a sufficiently complex context has
+	  been fixed.
+	- A bug which incorrectly aligned unions which immediately followed
+	  a bitfield with an odd number of bits in a struct has been fixed.
+	- Several problems with the new symbol table format were fixed.
+	- The switches -fsingle and -fswitch are ignored (they mean something
+	  to the Sun compiler but have no meaning to the GNU compiler).
+ld:
+	- We are now using the GNU ld.  It is for the most part compatible
+	  with the Sun ld.  There is a new opion you may want to try:
+		-M produces a very verbose load map.  If you are interested
+		in exactly where all the spaces goes in your a.out file you
+		should give this a try.

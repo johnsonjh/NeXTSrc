@@ -1,0 +1,20 @@
+################# make all for usr.bin/rcs ###################
+================= make all for src =================
+cc -O -g -fwritable-strings -bsd -DCOMPAT2 -DV4_2BSD  -DDIFF='"/bin/diff"' -DMERGE='"/usr/lib/merge"' -DCO='"/usr/bin/co"'  -DSNOOPFILE='"/usr/adm/rcs.log"' -DSNOOP='"/usr/lib/rcssnoop"' -c ci.c
+cc -O -g -fwritable-strings -bsd -DCOMPAT2 -DV4_2BSD  -DDIFF='"/bin/diff"' -DMERGE='"/usr/lib/merge"' -DCO='"/usr/bin/co"'  -DSNOOPFILE='"/usr/adm/rcs.log"' -DSNOOP='"/usr/lib/rcssnoop"' -c rcslex.c
+cc -O -g -fwritable-strings -bsd -DCOMPAT2 -DV4_2BSD  -DDIFF='"/bin/diff"' -DMERGE='"/usr/lib/merge"' -DCO='"/usr/bin/co"'  -DSNOOPFILE='"/usr/adm/rcs.log"' -DSNOOP='"/usr/lib/rcssnoop"' -c rcssyn.c
+cc -O -g -fwritable-strings -bsd -DCOMPAT2 -DV4_2BSD  -DDIFF='"/bin/diff"' -DMERGE='"/usr/lib/merge"' -DCO='"/usr/bin/co"'  -DSNOOPFILE='"/usr/adm/rcs.log"' -DSNOOP='"/usr/lib/rcssnoop"' -c rcsgen.c
+cc -O -g -fwritable-strings -bsd -DCOMPAT2 -DV4_2BSD  -DDIFF='"/bin/diff"' -DMERGE='"/usr/lib/merge"' -DCO='"/usr/bin/co"'  -DSNOOPFILE='"/usr/adm/rcs.log"' -DSNOOP='"/usr/lib/rcssnoop"' -c rcsedit.c
+cc -O -g -fwritable-strings -bsd -DCOMPAT2 -DV4_2BSD  -DDIFF='"/bin/diff"' -DMERGE='"/usr/lib/merge"' -DCO='"/usr/bin/co"'  -DSNOOPFILE='"/usr/adm/rcs.log"' -DSNOOP='"/usr/lib/rcssnoop"' -c rcsrev.c
+cc -O -g -fwritable-strings -bsd -DCOMPAT2 -DV4_2BSD  -DDIFF='"/bin/diff"' -DMERGE='"/usr/lib/merge"' -DCO='"/usr/bin/co"'  -DSNOOPFILE='"/usr/adm/rcs.log"' -DSNOOP='"/usr/lib/rcssnoop"' -c rcsutil.c
+rcsutil.c: In function run_back:
+rcsutil.c:456: warning: `run_back' was declared implicitly `extern' and later `static'
+cc -O -g -fwritable-strings -bsd -DCOMPAT2 -DV4_2BSD  -DDIFF='"/bin/diff"' -DMERGE='"/usr/lib/merge"' -DCO='"/usr/bin/co"'  -DSNOOPFILE='"/usr/adm/rcs.log"' -DSNOOP='"/usr/lib/rcssnoop"' -c rcsfnms.c
+rcsfnms.c: In function InitAdmin:
+rcsfnms.c:341: `STRICT_LOCKING' undeclared (first use this function)
+rcsfnms.c:341: (Each undeclared identifier is reported only once
+rcsfnms.c:341: for each function it appears in.)
+*** Exit 1
+Stop.
+*** Exit 1
+Stop.

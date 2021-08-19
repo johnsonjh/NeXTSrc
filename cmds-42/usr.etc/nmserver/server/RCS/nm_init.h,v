@@ -1,0 +1,59 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    gk:1.1; strict;
+comment  @ * @;
+
+
+1.1
+date     88.09.30.15.44.39;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@NeXT, Inc.
+@
+
+
+
+1.1
+log
+@Initial NeXT version
+@
+text
+@/* 
+ * Mach Operating System
+ * Copyright (c) 1987 Carnegie-Mellon University
+ * All rights reserved.  The CMU software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ */
+/*
+ * nm_init.h
+ *
+ * $Source: /afs/cs.cmu.edu/project/mach/member/dpj/netmsg/server/RCS/nm_init.h,v $
+ *
+ * $Header: nm_init.h,v 1.3 88/03/04 16:34:33 dpj Rel $
+ *
+ */
+
+/*
+ * Network Server Initialisation.
+ */
+
+/*
+ * HISTORY:
+ * 10-Feb-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Started.
+ *
+ */
+
+#ifndef	_NM_INIT_
+#define	_NM_INIT_
+
+#include <sys/boolean.h>
+
+extern boolean_t nm_init();
+
+#endif	_NM_INIT_
+@

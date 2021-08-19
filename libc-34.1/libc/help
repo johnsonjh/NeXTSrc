@@ -1,0 +1,9 @@
+rm -f libc_Z.a
+ar cr libc_Z.a `lorder \`cat t2\` | tsort` 
+ranlib libc_Z.a
+cc -c  ANSI_TEST.c -o tmp-ansi0
+nm -g tmp-ansi0 | sed -n -e '/^[ 0-9a-f]*[TUDCB] \(_[^_][^ ]*\).*$/s//\1/p' | sort -u > tmp-ansi1
+ld -r next/csu/gcrt0.o tmp-ansi0 libc_Z.a -o tmp-ansi2
+nm -g tmp-ansi2 | sed -n -e '/^[ 0-9a-f]*[TUDCB] \(_[^_][^ ]*\).*$/s//\1/p' | sort -u > tmp-ansi3
+rm -f IND_LIST
+sort -m tmp-ansi1 tmp-ansi3 | uniq -u | cat - FORCE_IND | sort -u > IND_LIST

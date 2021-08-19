@@ -1,0 +1,180 @@
+BADARGS	function.c	/^#define BADARGS(func)  \\$/
+DEBUGP2	implicit.c	/^#define DEBUGP2(msg, a1, a2) \\$/
+DEBUGPR	make.h	/^#define DEBUGPR(msg)							\\$/
+D_NAMLEN	glob.c	/^#define	D_NAMLEN(d) strlen((d)->d_name)$/
+ENUM_BITFIELD	make.h	/^#define	ENUM_BITFIELD(bits)	:bits$/
+HASH	make.h	/^#define	HASH(var, c) \\$/
+Marscan	arscan.c	/^main (argc, argv)$/
+Mglob	glob.c	/^main (argc, argv)$/
+Mmain	main.c	/^main (argc, argv, envp)$/
+TOUCH_ERROR	remake.c	/^#define TOUCH_ERROR(call) return (perror_with_name/
+WCOREDUMP	job.c	/^#define WCOREDUMP(x) ((x) & 0x80)$/
+WEXITSTATUS	job.c	/^#define WEXITSTATUS(x) (((x) >> 8) & 0xff)$/
+WIFEXITED	job.c	/^#define WIFEXITED(x) (WTERMSIG (x) == 0)$/
+WIFSIGNALED	job.c	/^#define WIFSIGNALED(x) (WTERMSIG (x) != 0)$/
+WTERMSIG	job.c	/^#define WTERMSIG(x) ((x) & 0x7f)$/
+alloca	glob.c	/^#define	alloca(n)	__builtin_alloca (n)$/
+allocated_variable_expand	expand.c	/^allocated_variable_expand (line)$/
+allocated_variable_expand_for_file	expand.c	/^allocated_variable_expand_for_file (line, file)$/
+alpha_compare	misc.c	/^alpha_compare (s1, s2)$/
+ar_member_date	ar.c	/^ar_member_date (name)$/
+ar_member_date_1	ar.c	/^ar_member_date_1 (desc, name, hdrpos, datapos, siz/
+ar_member_pos	arscan.c	/^ar_member_pos (desc, name, hdrpos, datapos, size, /
+ar_member_touch	arscan.c	/^ar_member_touch (arname, memname)$/
+ar_name	ar.c	/^ar_name (name)$/
+ar_name_equal	arscan.c	/^ar_name_equal (name, mem)$/
+ar_scan	arscan.c	/^ar_scan (archive, function, arg)$/
+ar_touch	ar.c	/^ar_touch (name)$/
+bcmp	arscan.c	/^#define bcmp(s1, s2, n) memcmp ((s1), (s2), (n))$/
+bcopy	glob.c	/^#define bcopy(s, d, n) ((void) memcpy ((d), (s), (/
+block_children	job.c	/^block_children ()$/
+build_vpath_lists	vpath.c	/^build_vpath_lists ()$/
+bzero	make.h	/^#define bzero(s, n)	memset ((s), 0, (n))$/
+check_dep	remake.c	/^check_dep (file, depth, this_mtime, must_make_ptr)/
+check_renamed	file.h	/^#define check_renamed(file) \\$/
+child_error	job.c	/^child_error (target_name, exit_code, exit_sig, cor/
+child_execute_job	job.c	/^child_execute_job (stdin_fd, stdout_fd, file, argv/
+child_handler	job.c	/^child_handler (sig)$/
+chop_commands	commands.c	/^chop_commands (cmds)$/
+collapse_continuations	misc.c	/^collapse_continuations (line)$/
+collapse_line	misc.c	/^collapse_line (line)$/
+concat	misc.c	/^concat (s1, s2, s3)$/
+conditional_line	read.c	/^conditional_line (line, filename, lineno)$/
+construct_command_argv	job.c	/^construct_command_argv (line, file)$/
+construct_include_path	read.c	/^construct_include_path (arg_dirs)$/
+construct_vpath_list	vpath.c	/^construct_vpath_list (pattern, dirpath)$/
+convert_to_pattern	rule.c	/^convert_to_pattern ()$/
+copy_dep_chain	misc.c	/^copy_dep_chain (d)$/
+count_implicit_rule_limits	rule.c	/^count_implicit_rule_limits ()$/
+create_pattern_rule	rule.c	/^create_pattern_rule (targets, target_percents,$/
+decode_env_switches	main.c	/^decode_env_switches (envar, len)$/
+decode_switches	main.c	/^decode_switches (argc, argv)$/
+define_automatic_variables	variable.c	/^define_automatic_variables ()$/
+define_makeflags	main.c	/^define_makeflags (pf)$/
+define_variable	variable.c	/^define_variable (name, length, value, origin, recu/
+define_variable_for_file	variable.c	/^define_variable_for_file (name, length, value, ori/
+define_variable_in_set	variable.c	/^define_variable_in_set (name, length, value, origi/
+delete_child_targets	commands.c	/^delete_child_targets (child)$/
+dep_name	misc.c	/^dep_name (dep)$/
+describe_member	arscan.c	/^describe_member (desc, name, hdrpos, datapos, size/
+die	main.c	/^die (status)$/
+dir_file_exists_p	dir.c	/^dir_file_exists_p (dirname, filename)$/
+dir_name	dir.c	/^dir_name (dir)$/
+do_define	read.c	/^do_define (name, namelen, origin, lineno, infile, /
+dup2	job.c	/^dup2 (old, new)$/
+end_of_token	misc.c	/^end_of_token (s)$/
+enter_file	file.c	/^enter_file (name)$/
+error	misc.c	/^error (s1, s2, s3, s4, s5, s6)$/
+exec_command	job.c	/^exec_command (argv, envp, path, shell)$/
+execute_file_commands	commands.c	/^execute_file_commands (file)$/
+expand_argument	expand.c	/^expand_argument (str, end)$/
+expand_function	function.c	/^expand_function (o, function, text, end)$/
+f_mtime	remake.c	/^f_mtime (file, search)$/
+fatal	misc.c	/^fatal (s1, s2, s3, s4, s5, s6)$/
+fatal_error_signal	commands.c	/^fatal_error_signal (sig)$/
+file_exists_p	dir.c	/^file_exists_p (name)$/
+file_impossible	dir.c	/^file_impossible (filename)$/
+file_impossible_p	dir.c	/^file_impossible_p (filename)$/
+file_mtime	file.h	/^#define file_mtime(f) file_mtime_1 ((f), 1)$/
+file_mtime_1	file.h	/^#define file_mtime_1(f, v) \\$/
+file_mtime_no_search	file.h	/^#define file_mtime_no_search(f) file_mtime_1 ((f),/
+find_directory	dir.c	/^find_directory (name)$/
+find_next_token	misc.c	/^find_next_token (ptr, lengthptr)$/
+find_percent	read.c	/^find_percent (pattern)$/
+find_semicolon	read.c	/^find_semicolon (string)$/
+flags	main.c	/^flags () {}$/
+free_child	job.c	/^free_child (child)$/
+freebuffer	read.c	/^#define freebuffer(lb) free ((lb)->buffer)$/
+freerule	rule.c	/^freerule (rule, lastrule)$/
+getdtablesize	job.c	/^#define getdtablesize() NOFILE$/
+getwd	make.h	/^#define	getwd(buf)	getcwd (buf, MAXPATHLEN - 2)$/
+glob_dir_to_array	glob.c	/^glob_dir_to_array (dir, array)$/
+glob_filename	glob.c	/^glob_filename (pathname)$/
+glob_match	glob.c	/^glob_match (pattern, text, dot_special)$/
+glob_match_after_star	glob.c	/^glob_match_after_star (pattern, text)$/
+glob_pattern_p	glob.c	/^glob_pattern_p (pattern)$/
+glob_vector	glob.c	/^glob_vector (pat, dir)$/
+handle_function	function.c	/^handle_function (op, stringp)$/
+if	implicit.c	/^  if (debug_flag) \\$/
+index	make.h	/^#define	index(s, c)	strchr((s), (c))$/
+init_siglist	job.c	/^init_siglist ()$/
+initbuffer	read.c	/^#define initbuffer(lb) (lb)->buffer = (char \*) xma/
+initialize_file_variables	variable.c	/^initialize_file_variables (file)$/
+initialize_variable_output	variable.c	/^initialize_variable_output ()$/
+install_default_implicit_rules	default.c	/^install_default_implicit_rules ()$/
+install_pattern_rule	rule.c	/^install_pattern_rule (p, terminal)$/
+library_file_mtime	remake.c	/^library_file_mtime (lib)$/
+lindex	misc.c	/^lindex (s, limit, c)$/
+load_average	load.c	/^load_average ()$/
+log_working_directory	main.c	/^log_working_directory (entering)$/
+lookup_file	file.c	/^lookup_file (name)$/
+lookup_variable	variable.c	/^lookup_variable (name, length)$/
+max	variable.c	/^#define	max(a, b) \\$/
+merge_variable_set_lists	variable.c	/^merge_variable_set_lists (setlist0, setlist1)$/
+merge_variable_sets	variable.c	/^merge_variable_sets (set0, set1)$/
+multi_glob	read.c	/^multi_glob (chain, size)$/
+name_mtime	remake.c	/^name_mtime (name)$/
+new_job	job.c	/^new_job (file)$/
+new_pattern_rule	rule.c	/^new_pattern_rule (rule, override)$/
+next_token	misc.c	/^next_token (s)$/
+notice_finished_file	remake.c	/^notice_finished_file (file)$/
+parse_file_seq	read.c	/^parse_file_seq (stringp, stopchar, size)$/
+patsubst_expand	function.c	/^patsubst_expand (o, text, pattern, replace, patter/
+pattern_matches	function.c	/^pattern_matches (pattern, percent, word)$/
+pattern_search	implicit.c	/^pattern_search (file, name, depth, recursions)$/
+perror_with_name	misc.c	/^perror_with_name (str, name)$/
+pfatal_with_name	misc.c	/^pfatal_with_name (name)$/
+pop_variable_scope	variable.c	/^pop_variable_scope ()$/
+print_commands	commands.c	/^print_commands (cmds)$/
+print_data_base	main.c	/^print_data_base ()$/
+print_dir_data_base	dir.c	/^print_dir_data_base ()$/
+print_file_data_base	file.c	/^print_file_data_base ()$/
+print_file_variables	variable.c	/^print_file_variables (file)$/
+print_rule_data_base	rule.c	/^print_rule_data_base ()$/
+print_spaces	misc.c	/^print_spaces (n)$/
+print_variable	variable.c	/^print_variable (v, prefix)$/
+print_variable_data_base	variable.c	/^print_variable_data_base ()$/
+print_variable_set	variable.c	/^print_variable_set (set, prefix)$/
+print_version	main.c	/^print_version ()$/
+print_vpath_data_base	vpath.c	/^print_vpath_data_base ()$/
+push_new_variable_scope	variable.c	/^push_new_variable_scope ()$/
+read_all_makefiles	read.c	/^read_all_makefiles (makefiles)$/
+read_makefile	read.c	/^read_makefile (filename, type)$/
+readline	read.c	/^readline (linebuffer, stream, filename)$/
+record_files	read.c	/^record_files (filenames, pattern, pattern_percent,/
+recursively_expand	expand.c	/^recursively_expand (v)$/
+remake_file	remake.c	/^remake_file (file)$/
+remove_intermediates	file.c	/^remove_intermediates (sig)$/
+rename_file	file.c	/^rename_file (file, name)$/
+restore_variable_output	variable.c	/^restore_variable_output (save)$/
+rindex	make.h	/^#define	rindex(s, c)	strrchr((s), (c))$/
+save_variable_output	variable.c	/^save_variable_output ()$/
+savestring	misc.c	/^savestring (str, length)$/
+search_path	job.c	/^search_path (file, path)$/
+selective_vpath_search	vpath.c	/^selective_vpath_search (path, file)$/
+set_default_suffixes	default.c	/^set_default_suffixes ()$/
+set_file_variables	commands.c	/^set_file_variables (file)$/
+sigmask	commands.c	/^#define	sigmask(sig)	(1 << ((sig) - 1))$/
+sindex	misc.c	/^sindex (big, blen, small, slen)$/
+snap_deps	file.c	/^snap_deps ()$/
+start_job	job.c	/^start_job (child)$/
+streq	make.h	/^#define streq(a, b) \\$/
+string_glob	function.c	/^string_glob (line)$/
+subst_expand	function.c	/^subst_expand (o, text, subst, replace, slen, rlen,/
+target_environment	variable.c	/^target_environment (file)$/
+touch_file	remake.c	/^touch_file (file)$/
+try_implicit_rule	implicit.c	/^try_implicit_rule (file, depth)$/
+try_variable_definition	variable.c	/^try_variable_definition (line, origin)$/
+unblock_children	job.c	/^unblock_children ()$/
+uniquize_deps	read.c	/^uniquize_deps (chain)$/
+update_file	remake.c	/^update_file (file, depth)$/
+update_file_1	remake.c	/^update_file_1 (file, depth)$/
+update_goal_chain	remake.c	/^update_goal_chain (goals, makefiles)$/
+variable_buffer_output	variable.c	/^variable_buffer_output (ptr, string, length)$/
+variable_expand	expand.c	/^variable_expand (line)$/
+variable_expand_for_file	expand.c	/^variable_expand_for_file (line, file)$/
+vpath_search	vpath.c	/^vpath_search (file)$/
+wait_for_children	job.c	/^wait_for_children (n, err)$/
+wait_to_start_job	load.c	/^wait_to_start_job ()$/
+xmalloc	misc.c	/^xmalloc (size)$/
+xrealloc	misc.c	/^xrealloc (ptr, size)$/

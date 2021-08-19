@@ -1,0 +1,82 @@
+/*
+	textps.psw
+  	Copyright 1988, NeXT, Inc.
+	Responsibility: Bryan Yamamoto
+  
+	This file contains postscript bindings for functions used by Text.m
+  
+	Modified:
+	01May87	cfm	file creation
+	261188	trey	nuked _NXHilite
+			made _NXHilightRect draw a gray box when printing,
+			then moved it to appkit.pswm since it needed View.h
+*/
+defineps _NXsuper(float y)
+	0. y rmoveto
+endps
+
+defineps _NXshowcaret(float x, y, height, vx, vy, vwidth, vheight) 
+	    flushgraphics
+	    true setinstance 
+	    vx vy vwidth vheight hideinstance
+	    0 setgray x y 0.00034 height rectfill
+	    false setinstance 
+endps
+	
+
+
+defineps _NXquickcaret(float x; float y; float height) 
+	true setinstance 
+	0 setgray x y 0.00034 height rectfill
+	false setinstance 
+endps
+
+
+
+defineps _NXhidecaret(float vx; float vy; float vwidth; float vheight) 
+	vx vy vwidth vheight hideinstance
+endps
+
+
+	
+defineps _NXQEraseRect(float x; float y; float width; float height; float backgroundColor)
+	backgroundColor setgray
+	x y width height rectfill
+endps
+
+
+defineps _NXFQEraseRect(float x; float y; float width; float height; float backgroundColor)
+	backgroundColor setgray
+	x y width height rectfill
+	flushgraphics
+endps
+
+
+defineps _NXLineStart(float ax; float ay; float x; float y; float width; float height; int ncs; char str[ncs]; float backgroundColor; float penColor)
+	backgroundColor setgray x y width height rectfill
+	penColor setgray
+	ax ay moveto (str) show
+endps
+
+
+defineps _NXshowat(float x; float y; int ncs; char str[ncs]; float penColor)
+	penColor setgray
+	x y moveto (str) show
+endps
+
+
+defineps _NXDiacritical(float x; float y; int ncs; char str[ncs]; float penColor)
+	penColor setgray
+	currentpoint x y rmoveto (str) show
+	moveto
+endps
+
+
+defineps _NXshow(int ncs; char str[ncs])
+	(str) show
+endps
+
+
+defineps _NXBackspace(float x)
+	x 0. rmoveto
+endps

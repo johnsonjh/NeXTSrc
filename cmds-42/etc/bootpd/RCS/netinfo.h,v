@@ -1,0 +1,57 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    ; strict;
+comment  @ * @;
+
+
+1.2
+date     89.06.13.15.01.01;  author osdev;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.06.11.17.47.18;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+1.2
+log
+@New changes from Peter King
+@
+text
+@/*
+ * netinfo.h - Header file for netinfo routines.
+ */
+#import	<sys/boolean.h>
+#import <netinet/in.h>
+#import <netinfo/ni.h>
+#import <netinfo/ni_util.h>
+
+boolean_t	promiscuous();
+int		ni_getnextipaddr(struct in_addr *inaddr);
+int		ni_getconfigipaddr(struct in_addr *inaddr);
+int		ni_getbootfile(char *bootfile, int len);
+boolean_t	ni_hostismine(char *hostname);
+ni_name		ni_getnetpasswd();
+boolean_t	ni_passwdok(char *passwd);
+int		ni_setenbyname(char *name, unsigned char *enaddr);
+int		ni_createhost(char *hostname, unsigned char *enaddr,
+			      struct in_addr inaddr, char *bootfile);
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d11 1
+@

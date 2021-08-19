@@ -1,0 +1,204 @@
+head     1.9;
+access   ;
+symbols  ;
+locks    osdev:1.9;
+comment  @# @;
+
+
+1.9
+date     89.06.26.11.51.51;  author osdev;  state Exp;
+branches ;
+next     1.8;
+
+1.8
+date     89.06.19.15.45.24;  author osdev;  state Exp;
+branches ;
+next     1.7;
+
+1.7
+date     89.06.19.14.03.26;  author osdev;  state Exp;
+branches ;
+next     1.6;
+
+1.6
+date     89.06.15.12.08.31;  author osdev;  state Exp;
+branches ;
+next     1.5;
+
+1.5
+date     89.06.13.23.27.51;  author osdev;  state Exp;
+branches ;
+next     1.4;
+
+1.4
+date     89.06.13.22.30.08;  author osdev;  state Exp;
+branches ;
+next     1.3;
+
+1.3
+date     89.06.13.22.28.22;  author osdev;  state Exp;
+branches ;
+next     1.2;
+
+1.2
+date     89.06.03.14.44.59;  author mmeyer;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.05.24.12.34.28;  author mmeyer;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@original version
+@
+
+
+1.9
+log
+@Added bm - A fast Boyer-Moore grep
+@
+text
+@DIR=	usr.bin
+
+SUBDIR=	ar11 at bc blit bm cal calendar cb checkeq col comm crypt dc     \
+	deroff diction diff3 egrep eqn fgrep hostinfo iostat less look   \
+	mesg neqn nohup nroff ptx ratfor rcs rev sleep spell spline      \
+	split struct sum tabs tbl tc tip tk troff tty units uucp         \
+	vm_stat wh xargs xsend ypcat ypmatch yppasswd ypwhich
+
+# sup tip graph plot prof rcs learn
+
+all clean depend tags: ALWAYS
+	@@echo '#################' make $@@ for $(DIR) '###################'
+	@@for i in ${SUBDIR}; \
+	do \
+		echo ================= make $@@ for $$i =================; \
+		(cd $$i; ${MAKE} $@@ || exit 1); \
+	done
+	@@echo '#################' make $@@ for $(DIR) done '###################'
+
+install: ALWAYS
+	@@echo '#################' make $@@ for $(DIR) '###################'
+	@@CWD=`pwd`; cd ${DSTROOT}; DSTROOT=`pwd`; cd $$CWD; \
+	for i in ${SUBDIR}; \
+	do \
+		echo ================= make $@@ for $$i =================; \
+		(cd $$i; ${MAKE} DSTROOT=$$DSTROOT $@@ || exit 1); \
+	done
+	@@echo '#################' make $@@ for $(DIR) done '###################'
+
+ALWAYS:
+@
+
+
+1.8
+log
+@Moved mig into SGCMDS project.
+@
+text
+@d3 1
+a3 1
+SUBDIR=	ar11 at bc blit cal calendar cb checkeq col comm crypt dc        \
+@
+
+
+1.7
+log
+@Moved md into the SGCMDS project.
+@
+text
+@d5 3
+a7 3
+	 mesg mig neqn nohup nroff ptx ratfor rcs rev sleep spell        \
+	spline split struct sum tabs tbl tc tip tk troff tty units       \
+	uucp vm_stat wh xargs xsend ypcat ypmatch yppasswd ypwhich
+@
+
+
+1.6
+log
+@Removed lex,m4 and vers_string for the SGCMDS project
+@
+text
+@d5 1
+a5 1
+	md mesg mig neqn nohup nroff ptx ratfor rcs rev sleep spell      \
+@
+
+
+1.5
+log
+@Took out stuff and moved into the SgCMDS project
+@
+text
+@d3 5
+a7 7
+SUBDIR=	ar11 at bc blit cal calendar cb checkeq col comm crypt      \
+	dc deroff diction diff3 egrep eqn fgrep hostinfo iostat         \
+	less lex look m4 md mesg mig neqn nohup nroff            \
+	ptx ratfor rcs rev sleep spell spline split        \
+	struct sum tabs tbl tc tip tk troff tty units    \
+	uucp vers_string vm_stat wh xargs xsend ypcat ypmatch           \
+	yppasswd ypwhich
+@
+
+
+1.4
+log
+@Second pass at SGCMDS reorg
+@
+text
+@d3 6
+a8 6
+SUBDIR=	ar11 at basename bc blit cal calendar cb checkeq col comm crypt      \
+	dc deroff diction diff3 egrep eqn fgrep find hostinfo iostat         \
+	join less lex look lorder m4 md mesg mig neqn nohup nroff            \
+	ptx ratfor rcs refer rev rpcgen sleep sort spell spline split        \
+	struct sum tabs tbl tc tip tk touch tr troff tsort tty uniq units    \
+	uucp vers_string vm_stat wh xargs xsend yacc ypcat ypmatch           \
+@
+
+
+1.3
+log
+@Reorg for SGCMDS project
+@
+text
+@d5 1
+a5 1
+	install join less lex look lorder m4 md mesg mig neqn nohup nroff    \
+@
+
+
+1.2
+log
+@Added RCS and cleaned up.
+@
+text
+@d3 7
+a9 6
+SUBDIR=	ar11 at basename bc cal calendar cb checkeq col comm crypt dc    \
+	deroff diction diff3 egrep eqn fgrep find install join less      \
+	lex look lorder m4 mesg neqn nohup nroff ptx ratfor rcs refer    \
+	rev rpcgen sleep sort spell spline split struct sum tabs tbl     \
+	tc tip tk touch tr troff tsort tty uniq units uucp vers_string   \
+	vers_string wh xargs xsend yacc ypcat ypmatch yppasswd ypwhich
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 5
+a7 5
+SUBDIR=	ar11 at basename bc cal calendar cb checkeq col comm crypt dc \
+	deroff diction diff3 egrep eqn fgrep find install join \
+	less lex look lorder m4 mesg neqn nohup nroff ptx ratfor refer \
+	rev rpcgen sleep sort spell spline split struct sum tabs tbl \
+	tc tip tk touch tr troff tsort tty uniq units uucp \
+@

@@ -1,0 +1,932 @@
+
+currentshared true setshared
+  % allocate all of these procs in shared VM and leave previous state on 
+  % stack for restore
+
+% global constants & vars
+    windowPackage1.0 /_NXOldMask 0 _NXCheckAndDef
+      % saved event mask during right button drag sequence
+    windowPackage1.0 /_WSsentMouseDown false _NXCheckAndDef
+      % did we send the last mouse down that went to a WS token to the WS?
+    windowPackage1.0 /_WSMouseDown 9 array _NXCheckAndDef
+      % mouse down pending dispatch to workspace.  We only send the event
+      % if drag events are also received for this window.  When the a mouse
+      % up comes along, if theres still an event in this array, then the
+      % mouse down was never sent, and so the up may be pitched.  If there
+      % is a null in the first slot, then the down was sent, so we send the up.
+    windowPackage1.0 /_sentMouseDown true _NXCheckAndDef
+      % tells whether we sent the initiating mouse down to the window
+    windowPackage1.0 /_dragNetWin known not {
+	0 0 0 0 Nonretained window
+	dup windowPackage1.0 /_dragNetWin 4 -1 roll put
+	dup -1 -1 bitshift exch setwindowlevel
+	dup 0 exch setowner
+	Lmousedraggedmask Lmouseupmask or exch seteventmask
+    } if
+      % kludge window we use during window dragging to catch all mouse dragged
+      % events in a known (global) coordinate system.  windowlevel is set to
+      % MAXINT.
+    windowPackage1.0 /_dragInitX 0.0 _NXCheckAndDef
+    windowPackage1.0 /_draginitY 0.0 _NXCheckAndDef
+    windowPackage1.0 /_dragWinXOffset 0.0 _NXCheckAndDef
+    windowPackage1.0 /_dragWinYOffset 0.0 _NXCheckAndDef
+    windowPackage1.0 /_dragWinNum 0 _NXCheckAndDef
+    windowPackage1.0 /_dragWCEnabled true _NXCheckAndDef
+      % global state during window dragging session.  InitX and InitY are the
+      % initial coords of the window before moving.  XOffset and YOffset are
+      % the coords of the original mouse down in screen coords.  Num is the
+      % window number of the win we're dragging.  _dragWCEnabled says
+      % whether the wait cursor was globally enabled when we started dragging.
+    windowPackage1.0 /_lmupLock lock _NXCheckAndDef
+      % lock that protects the processing of a mouse up.  This lock is used to
+      % make the operations of processing a mouse up and setting up for
+      % window dragging atomic with repect to each other.  This resolves the
+      % race between setting up for dragging and getting the mouse up that
+      % would end that dragging.
+    windowPackage1.0 /_lmupCount -1 _NXCheckAndDef
+      % the event number of the last left mouse up event we processed
+    windowPackage1.0 /_frontWin -1 _NXCheckAndDef
+      % the last window we brought forward by a user's click.  Used to
+      % synchronize other window ordering.
+    windowPackage1.0 /_frontWinEventTime -1 -1 bitshift -1 xor _NXCheckAndDef
+      % the time of the event that caused us to bring the window forward.
+      % Initialized to MININT.
+    windowPackage1.0 /_lastOpenFileEventTime 0 _NXCheckAndDef
+      % the time of the event that caused us to do the last openFile message.
+
+windowPackage1.0 begin
+
+/setEventMask {		%	<newMask> <num> setEventMask
+  % sets the window's event mask, forcing keys to be included	
+					% m wN
+    dup currentwindowdict 		% m wN d
+    /clientEventMask			% m wN d cEM
+    3 index put				% m wN
+    exch //keyMask //Sysdefinedmask or	% wN m extraMask
+    or exch seteventmask
+} _NXDefProc
+
+/currentEventMask {	%		  <num> currentEventMask <mask>
+  % returns event mask, regardless of our forcing keys into the mask
+    currentwindowdict /clientEventMask get
+} _NXDefProc
+
+/safeOrderFront {	%     <eventTime> <win> safeOrderFront
+  % Orders a window to the front of its tier.  If eventTime is less than the
+  % time of the last event that caused us to order a window, we put the
+  % window behind the last one we ordered.  If this fails (usually because
+  % "last one we ordered" got destroyed) we just order the window to the
+  % front.  If the window has a high tier, we just do the orderwindow.
+    dup currentwindowlevel 0 ne			% time win isNon0Level?
+    2 index 0 eq				% time win isNon0Level? isT0?
+    4 -1 roll /_frontWinEventTime pkget ge	% win isNon0Level? isT0? isT?
+    or or {					% win
+	Above 0 3 -1 roll orderwindow		%
+    }{
+	{
+	    Below /_frontWin pkget 3 -1 roll orderwindow
+	} stopped {
+						% Below oWin win
+	    Above 0 2 index orderwindow		% Below oWin win
+	    pop pop pop				%
+	} if
+    } ifelse    
+} _NXDefProc
+
+/safeOrderFrontDuringOpenFile {	%	  <win> safeOrderFront
+  % Safely orders a panel, using a special global as the time of the event
+  % that initiated the up-fronting of the panel.  Used to keep files
+  % openned via Speaker openfFile messages from blasting to the screen on
+  % top of the user's focus.
+    /_lastOpenFileEventTime pkget exch //safeOrderFront exec
+} _NXDefProc
+
+/setLastOpenFileTime {	%	    <eventTime> safeOrderFront
+  % Sets the time of the last event that caused us to do an openFile
+  % message.  Not done under lock protection since its only a hint anyways.
+    /_lastOpenFileEventTime exch //pkput exec
+} _NXDefProc
+
+/_sendWinMoved {	%	  <x> <y> <win> _sendWinMoved
+  % sends a window moved event to the window.  x,y is the new position.
+    //Kitdefined 4 1 roll			% Kdef x y win
+    0 0 3 -1 roll				% Kdef x y 0 0 win
+    //Winmoved 0 0				% E1-9
+    3 index currentwindowdict begin
+    /checkAndTransmit winexec			%
+    end
+} _NXDefProc
+
+/_prepareToDrag {	%	  <x> <y> <win> _prepareToDrag
+  % sets up a bunch of globals for dragging.  Puts the dragnet window on
+  % screen, by which we will catch all drag event in a known coord system.
+  % Sets default posting of mouseup and drags to Firstwindow, which ensures
+  % they will go to the drag net.  <win> is the number of the window that
+  % will be dragged, <x> and <y> are the coords of the mouse down.
+    //Above 0 //_dragNetWin orderwindow
+    false setflushexposures
+    //Lmousedragged //Firstwindow sethowpost
+    //Lmouseup //Firstwindow sethowpost			% x y win
+    dup /_dragWinNum exch //pkput exec			% x y win
+    currentwindowbounds pop pop
+    /_dragInitY exch //pkput exec
+    /_dragInitX exch //pkput exec
+    /_dragWinYOffset exch //pkput exec			% x y
+    /_dragWinXOffset exch //pkput exec
+    /_dragWCEnabled 0 currentwaitcursorenabled //pkput exec
+    false 0 setwaitcursorenabled
+} _NXDefProc
+
+/doDragWindow {		% <x> <y> <evNum> <win> doDragWindow
+    //_lmupLock {
+	exch /_lmupCount pkget gt {		% x y win
+	    //_prepareToDrag exec		%
+	}{
+	    dup currentwindowbounds pop pop	% x y win newx newy
+	    3 -1 roll //_sendWinMoved exec	% x y
+	    pop pop				%
+	} ifelse
+    } monitor
+} _NXDefProc
+
+/_reapContext {		%		 <ctxt> _reapContext
+  % cleans up when we discover a dead context
+    mark exch
+    dup //CDToken /currentContextData winexec	% mk ctxt tokWinNum
+    exch /freeContextData winexec		% mk tokWinNum
+    dup null ne {				% mk tokWinNum
+	{
+	    currentwindowdict
+	    /otherOwner null put		% mk
+	} stopped				% mk flag
+    } if
+    cleartomark
+} _NXDefProc
+
+/_doPostEvent {		%  <type> <x> <y> <time> 
+%			   <flags> <win> <subtype>
+%			   <m1> <m2> <how|ctxt>
+%					   <op> _doPostEvent <success>
+  % actually calls postevent or postevent by context, catching errors and
+  % returning true or false to indicate success.
+    nextdict /_journalRecording get {
+        7 -1 roll Journalflagmask or 7 1 roll
+    } if
+    stopped {
+					% E1-10
+	10 {pop} repeat
+	false				% ourRet
+    }{
+					% postEvRet
+	not {
+	    (event not posted\n) print
+	    (Frog) 1 playsound
+	} if
+	true				% ourRet
+    } ifelse
+}
+% modify event posting bottle neck to install out error proc if debugging
+_NXDebug {
+    dup length 1 add array cvx			% oproc nproc
+    dup 1					% oproc nproc nproc 1
+    4 -1 roll					% nproc nproc 1 oproc
+    putinterval					% nproc
+    dup 0 /_NXInstallDebugErrorHandler cvx put	% nproc
+} if
+_NXDefProc
+
+true	{ % will be NEWSERVER  when we deal with errors right
+/postByContext {	% <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2>
+%			      <ctxt> <beepFlag> postByContext
+  % sends an event back to a particular app.  If <ctxt> is 0, then we
+  % dont send any event, and if <beepFlag> is set we beep.  If sending the
+  % event fails, we reap the context (assuming its dead) and beep depending
+  % on <beepFlag>.
+    11 1 roll					% bpflag E1-9 ctxt
+    dup 0 eq {					% bpflag E1-9 ctxt
+	10 {pop} repeat				% bpflag
+	{
+	    /beep winexec
+	} if					%
+    }{
+	dup 12 1 roll				% ctxt bpflag E1-9 ctxt
+	/posteventbycontext cvx
+	//_doPostEvent exec {			% ctxt bpflag
+	    pop pop				%
+	}{
+	    {
+		/beep winexec
+	    } if				% ctxt
+	    //_reapContext exec			%
+	} ifelse
+    } ifelse
+} _NXDefProc
+}{
+/postByContext {	% <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2>
+%			      <ctxt> <beepFlag> postByContext
+  % sends an event back to a particular app.  If <ctxt> is 0, then we
+  % dont send any event, and if <beepFlag> is set we beep.  If sending the
+  % event fails, we reap the context (assuming its dead) and beep depending
+  % on <beepFlag>.
+    11 1 roll				% bpflag E1-9 ctxt
+    dup 0 eq {				% bpflag E1-9 ctxt
+	10 {pop} repeat			% bpflag
+	{
+	    /beep winexec
+	} if				%
+    }{
+	dup 12 1 roll			% ctxt bpflag E1-9 ctxt
+	5 -1 roll pop 4 1 roll		% ctxt bpflag E1-9
+	Bypscontext
+	//_doPostEvent exec not {	% ctxt bpflag
+	    {
+		/beep winexec
+	    } if			% ctxt
+	    //_reapContext exec		%
+	}{
+	    pop pop			%
+	} ifelse
+    } ifelse
+} _NXDefProc
+} ifelse
+
+/checkAndTransmit {	%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> checkAndTransmit
+  % checks the user event mask in the window's dictionary, and sends the event
+  % if requested.  The caller asserts that the window's dictionary is
+  % already open
+    8 index 1 exch bitshift clientEventMask and 0 ne
+    {
+	/transmitEvent winexec
+    }{
+	9 {pop} repeat
+    }
+    ifelse
+} _NXDefProc
+
+/_postToNilWindow {	%  <type> <x> <y> <time> 
+%			 <flags> <win> <subtype>
+%			   <m1> <m2> <beepFlag> _postToNilWindow
+  % posts the event to the active app with the window being nil
+  % This is used to post all the right mouse events when the right button
+  % is depressed in a window not belonging to the active app.
+
+  % convert coords in event to screen coords
+    8 index 					% A1-9 bf xpos
+    8 index					% A1-9 bf xpos ypos
+    6 index currentwindowbounds pop pop 	% A1-9 bf xpos ypos x y
+    3 -1 roll add				% A1-9 bf xpos x ypos
+    3  1 roll add				% A1-9 bf ypos xpos
+
+  % replace initial x y args on stack with new coords
+    11 -1 roll pop 10 1 roll			% A1-9 bf ypos
+    9 -1 roll pop 8 1 roll			% A1-9 bf
+
+  % replace window number with 0
+    5 -1 roll pop 0 5 1 roll			% A1-9 bf
+
+    activeApp exch /postByContext winexec
+} _NXDefProc
+
+/_handleCommand {	%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> _handleCommand
+  % filters command keys.  cmd up and down arrow are gobbled.  cmd-period
+  % generates a signal from PS to the app.
+    mark 10 1 roll
+    1 index -16 bitshift			% set
+    2 index 65535 and				% set ch
+    dup 46 eq					% set ch isDot
+    2 index 0 eq and				% set ch isDot
+    1 index 173 eq 				% set ch isDot isArrow
+    2 index 175 eq or				% set ch isDot isArrow
+    4 -1 roll 1 eq and				% ch isDot isArrow
+    7 index //Numericpadmask and 0 ne and	% ch isDot isArrow
+    or {					% ch 
+	3 index 65535 and 0 eq {		% !repeat?
+	    dup 173 eq {				% ch			
+		true 0 /getWindows winexec
+		mark exch {				% ch WLS mk WL
+		    mark exch
+		    dup currentwindowlevel 0 eq {	% ch WLS mk mk win
+			dup currentwindowdict		% ch WLS mk mk win wd
+			dup null ne {			% ch WLS mk mk win wd
+			    /icon get 1 ne {		% ch WLS mk mk win
+				Above exch 0 exch orderwindow
+				cleartomark
+				exit
+			    } if
+			} if		
+		    } if
+		    cleartomark
+		} /revForall winexec
+		cleartomark
+		/returnWindows winexec			% ch
+	    }{
+		dup 175 eq {				% ch
+		    true 0 /getWindows winexec
+		    mark exch {				% ch WLS mark WL
+			dup currentwindowlevel 0 eq {	% ch WLS mark win
+			    dup currentwindowdict	% ch WLS mark win wd
+			    dup null ne {		% ch WLS mark win wd
+				/icon get 1 ne {	% ch WLS mark win
+				    Below exch 0 exch
+				    systemdict /orderwindow get exec
+				    exit
+				} if
+			    } if		
+			} if
+		    } forall
+		    cleartomark
+		    /returnWindows winexec		% ch
+		}{
+		    pop
+		    activeApp true /postByContext winexec
+		    activeApp //CDPid /currentContextData winexec
+		    dup 0 ne				% pid
+		    {
+			2 unixsignal
+		    }{
+			pop
+		    } ifelse
+		} ifelse 
+	    } ifelse
+	}{
+	    pop
+	} ifelse
+    }{
+	pop
+	activeApp true /postByContext winexec
+    } ifelse
+    cleartomark
+} _NXDefProc
+
+/_frontWithClick {	%     <eventTime> <win> _frontWithClick
+  % Brings a window to the front in response to a mouse click.  If the
+  % window has a level of 0, we record its time and this win num for
+  % synchronizing other window ordering.
+    Above 0 2 index orderwindow			% evNum win
+    dup currentwindowlevel 0 eq {
+	/_frontWin exch //pkput exec		% evNum
+	/_frontWinEventTime exch //pkput exec	%
+    }{
+	pop pop					%
+    } ifelse
+} _NXDefProc
+
+/_testTitleBar {	%     <evX> <evY> <win> _testTitleBar <buttons> <title>
+  % tests if an event is in the title bar of a window.  Also tests to see
+  % if its in the window buttons.  Must be called with windowdict on the
+  % dict stack.
+
+  % convert event to coord system based at the lower left corner of title bar
+  % the extra "1 sub" is because PS uses the upper left corners of pixels
+  % to label event coords
+    currentwindowbounds 4 2 roll pop pop	% x y w h
+    topMargin sub 3 -1 roll exch sub 1 sub exch	% x y w
+
+  % test if its in title bar
+    1 index 0 ge {
+      % determine if in window button		% x y w
+	2 index leftMargin lt {
+	    pop					% x y
+	    dup 3 gt				% x y bool
+	    exch 19 lt				% x bool bool
+	    and exch				% rightYForButtons x
+	    3 gt and				% isInButton
+	}{
+	dup rightMargin sub 3 index le {	% x y w
+	    3 1 roll				% w x y
+	    dup 3 gt				% w x y bool
+	    exch 19 lt				% w x bool bool
+	    and 3 1 roll exch			% rightYForButtons x w
+	    4 sub lt and			% isInButton
+	}{
+	  % its between any buttons that exist
+	    pop pop pop false			% isInButtons 
+	} ifelse
+	} ifelse
+	true					% isInButtons isInTitle
+    }{
+	pop pop pop false false			% isInButtons isInTitle
+    } ifelse
+} _NXDefProc
+
+%
+% Event procs installed in windows' event procs vector
+%
+
+/transmitEvent {	%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> transmitEvent
+  % sends an event back to the app.  We put the window's local
+  % number in the window field and post by context.
+						% E1-9
+    3 index 0 ne {
+	3 index currentwindowdict
+	/localNum get 3 //stackSwap exec	% E1-9 gNum
+	currentowner true
+	/postByContext winexec			%
+    }{
+	9 {pop} repeat
+	/beep winexec
+	(transmitEvent can't post to a nil window\n) print
+    } ifelse
+} _NXDefProc
+
+/lmdownEvProc {		%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> lmdownEvProc
+  % handles mouseDown events.  Conditionally does activation and starting of
+  % the drag mechanism.  If the cmd key is down, sends to back; if alt key
+  % is down brings to front; in either case, doesnt activate.
+
+  % ensures we dont lose a mouse up
+    /_sentMouseDown true //pkput exec
+
+  % test if the click is in the title bar
+    3 index currentwindowdict begin			% E1-9
+    7 index 7 index 5 index //_testTitleBar exec {	% E1-9 inButtons
+      % if click is in a window button or not first click
+	2 index 1 gt or {
+	  % send event to title buttons
+	    /transmitEvent winexec			% 
+	}{
+							% E1-9
+	  % test if command key is down
+	    4 index //Commandmask and 0 ne {
+	      % send window to back, eat the event
+	        num currentwindowlevel 0 eq {
+		    Below 0 num systemdict /orderwindow get exec
+		} if
+		9 {pop} repeat				% 
+		/_sentMouseDown false //pkput exec
+	    }{
+	      % bring window to front
+		5 index num //_frontWithClick exec	% E1-9
+    
+	      % test if alt key is down, save other event state on stack
+		7 index 7 index 7 index			% E1-9 x y t
+		12 3 roll				% x y t E1-9
+		4 index //Alternatemask and 0 ne	% x y t E1-9 alt
+
+	      % if alt key is down or its an icon
+		icon 1 eq or {
+		  % eat the event
+		    9 {pop} repeat			% x y t
+		    /_sentMouseDown false //pkput exec
+		}{
+		  % activate if needed, transmit the event
+		    3 index currentowner activeApp ne {
+			num /activateByWindow winexec
+		    } if
+		    /transmitEvent winexec		% x y t
+		} ifelse
+
+	      % initiate dragging loop for either a single or multiple
+	      % windows.  time = -1 is a sign that we are called while
+	      % playing back a journal.  We don't want to _prepareToDrag
+	      % in this case.
+		-1 ne { 
+							% x y
+		    num //_prepareToDrag exec		% 
+		}{
+		    pop pop				% 
+		} ifelse
+	    } ifelse
+	} ifelse 
+    }{					% else not in title bar
+	pop
+      % bring window to front, activate if necessary
+	5 index num //_frontWithClick exec		% E1-9
+	3 index currentowner activeApp ne {
+	    num /activateByWindow winexec
+	} if						% E1-9
+
+      % transmit event
+	/transmitEvent winexec
+    } ifelse
+    end		% of window's dictionary
+} _NXDefProc
+
+/lmupEvProc	{	%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> lmupEvProc
+  % handles mouseUp events.  Stores the event number of this event in the
+  % global count.  If we arent in the process of dragging a window, then
+  % transmit the event.  If we are, then we were programmatically put in
+  % drag mode between the time the user clicked and we grabbed this lock.
+  % In this rare case, we just call the lmup handler for drag mode.  All this
+  % is done within a lock to protect the incrementing of _lmupCount and the
+  % other processing of the event.
+    //_lmupLock {
+	/_lmupCount 3 index //pkput exec
+	/_dragWinNum pkget 0 eq {
+	    /_sentMouseDown pkget {
+		/transmitEvent winexec			%
+	    }{
+		9 {pop} repeat				%
+	    } ifelse
+	}{
+	    /lmupWinDragEvProc winexec
+	} ifelse
+    } monitor
+} _NXDefProc
+
+/_postRightEvent {	%  <type> <x> <y> <time> 
+%			 <flags> <win> <subtype>
+%			   <m1> <m2> <beepFlag> _postRightEvent
+  % posts a right down, drag or up event to the active app. If the window
+  % belongs to the active app we can just transmit the event; else we must
+  % post it by context with respect to a nil window.  When transmitting to
+  % the nil window, <beepFlag> is passed along.
+    4 index currentowner activeApp eq
+    {
+	pop /transmitEvent winexec
+    }{
+	//_postToNilWindow exec
+    } ifelse
+} _NXDefProc
+
+/rmdownEvProc {		%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> rmdownEvProc
+  % process right mouse down.  Save current event mask and stuff in mask
+  % for further right mouse events.  Posts to the active app.
+    3 index currenteventmask				% E1-9 oldMask
+    /_NXOldMask 1 index //pkput exec			% E1-9 oldMask
+    //MenuEvent or 4 index seteventmask			% E1-9
+    true //_postRightEvent exec
+} _NXDefProc
+
+/rmupEvProc {		%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> rmupEvProc
+  % process right mouse down.  Reset event mask.  Posts to the active app.
+    /_NXOldMask pkget 4 index seteventmask
+    false //_postRightEvent exec
+} _NXDefProc
+
+/rmdragEvProc {		%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> rmdragEvProc
+  % process right mouse drag.  Posts to the active app.
+    false //_postRightEvent exec
+} _NXDefProc
+
+/mEnterEvProc {		%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> mEnterEvProc
+  % process mouse entered.  If the user data is -1, then the event is part of
+  % the appkit cursor rect scheme.  In this case we change the event type
+  % to cursor event and the flags field to mouse entered.
+    dup -1 eq {
+	//Cursorrect 8 //stackSwap exec pop
+	Mouseentered 4 //stackSwap exec pop
+    } if
+    /transmitEvent winexec
+} _NXDefProc
+
+/mExitEvProc {		%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> mExitEvProc
+  % process mouse exited.  If the user data is -1, then the event is part of
+  % the appkit cursor rect scheme.  In this case we change the event type
+  % to cursor event and the flags field to mouse exited.
+    dup -1 eq
+    {
+	//Cursorrect 8 //stackSwap exec pop
+	Mouseexited 4 //stackSwap exec pop
+    } if
+    /transmitEvent winexec
+} _NXDefProc
+
+/keyDownEvProc {	%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> keyDownEvProc
+  % process key down.  We post the event to the active context.  If there's
+  % no active app we beep (but only once for command keys, regardless of key
+  % repeats).  If its a command key, its dealt with by _handleCommand.  
+    4 index //Commandmask and 0 ne
+    {
+	2 index 65535 and 0 eq		% t x y time f w st m1 m2 !repeat?
+	10 1 roll			% !repeat? t x y time f w st m1 m2
+	/_handleCommand winexec		% !repeat?
+	activeApp 0 eq			% !repeat? noActiveApp?
+	and
+	{
+	    /beep winexec
+	} if
+    }{
+	activeApp 0 eq {
+	    /beep winexec
+	}{
+	    activeApp true /postByContext winexec
+	} ifelse
+    } ifelse
+} _NXDefProc
+
+/flagsChEvProc {	%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> flagsChEvProc
+  % process flags changed.  We post the event to the active app.
+    activeApp false /postByContext winexec
+} _NXDefProc
+
+/keyUpEvProc	%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> flagsChEvProc
+  % process key ups.  Same as flags changed.
+/flagsChEvProc load _NXDefProc
+
+/sysDefEvProc {		%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> sysDefEvProc
+  % handle sys defined events.  If its subtype 1, its a power off and we
+  % broadcast that to everyone.  If its subtype 2, some app died.  If it was
+  % the active app, the cursor is set to the arrow and the active app is
+  % cleared.  Then the context is reaped (data freed, etc).
+    2 index 1 eq  {					% A1-9
+	4 -1 roll pop 0 4 1 roll
+	//Broadcast /postevent cvx //_doPostEvent exec not {
+	    handleerror
+	} if
+    }{
+	2 index 0 eq {					% A1-9
+	    1 index activeApp eq {			% A1-9
+		appLock 
+		{
+		    nextdict /activeApp 0 put
+		    /setArrowCursor winexec
+		} monitor
+	    } if
+	    5 index 2 index /activateNextApp winexec
+	    1 index //_reapContext exec			% A1-9
+	} if						% A1-9
+	9 {pop} repeat					%
+    } ifelse
+} _NXDefProc
+
+/lmdownWSEvProc {		%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> lmdownWSEvProc
+  % mouse down proc for WorkSpace tiles.  If no app is launched for this
+  % token transmit the event, deactivating the active app if its a double
+  % click so he will be able to grab active status when he gets launched.
+  % Else, on the first click, stores away the event.  On the second click,
+  % sends app an unhide event.  On events with larger click, chuck the event.
+    3 index currentwindowdict /otherOwner get
+    dup null eq {				% MDEv1-9 othOwner
+						% MDEv1-9 null
+	activeApp ne 2 index 2 eq and {		% MDEv1-9
+	    /deactivateCurrContext winexec	% MDEv1-9
+	} if
+	/_WSsentMouseDown true //pkput exec
+	/transmitEvent winexec			%
+    }{
+	dup -1 eq {
+	    pop
+	    /_WSsentMouseDown true //pkput exec
+	    /transmitEvent winexec		%
+	}{
+	    2 index 1 eq {
+		pop Above 0 5 index orderwindow	% MDEv1-9
+		/_WSMouseDown pkget astore	%
+	    }{
+		2 index 2 eq {			% MDEv1-9 othOwner
+		    //Kitdefined 0 0 0 0 0
+		    //AppUnhide 0 0		% MDEv1-9 othOwner UnhideEv1-9
+		    9 index
+		    /posteventbycontext cvx
+		    //_doPostEvent exec {	% MDEv1-9 othOwner
+%  MAYBE do an activate here
+%		    /activateContext winexec
+%		    9 {pop} repeat		%
+			10 {pop} repeat		%
+		    }{
+			//_reapContext exec	% MDEv1-9
+			/_WSsentMouseDown true //pkput exec
+			/transmitEvent winexec	%
+		    } ifelse
+		}{
+		    10 {pop} repeat		%
+		} ifelse
+	    } ifelse
+	} ifelse
+    } ifelse
+} _NXDefProc
+
+/lmdragWSEvProc {		%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> lmdragWSEvProc
+  % mouse drag proc for WorkSpace tiles.  If there's a launched app for this
+  % token and there's a stored away mouse down, send the stored event and
+  % null out the storage.  In any case, transmit the mouse drag.
+    3 index currentwindowdict /otherOwner get	% A1-9 oO
+    null ne {
+	/_WSsentMouseDown pkget not {
+						% A1-9
+	    /_WSMouseDown pkget			% A1-9 WSmd
+	    dup aload pop			% A1-9 WSmd md1-9
+	    15 index 6 index sub 23 gt		% A1-9 WSmd md1-9 time?
+	    18 index 9 index sub abs 5 gt	% A1-9 WSmd md1-9 time? dx?
+	    18 index 9 index sub abs 5 gt	% A1-9 WSmd md1-9 time? dx? dy?
+	    or or {
+		/transmitEvent winexec pop	% A1-9
+		/_WSsentMouseDown true //pkput exec
+		/transmitEvent winexec		%
+	    }{
+		19 {pop} repeat			%
+	    } ifelse
+	}{
+						% A1-9
+	    /transmitEvent winexec
+	} ifelse
+    }{
+	/transmitEvent winexec
+    } ifelse
+} _NXDefProc
+
+/lmupWSEvProc {		%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> lmupWSEvProc
+  % mouse up proc for WorkSpace tiles.  We send the event to WS if we sent
+  % the last mouse down we got.    
+    /_WSsentMouseDown pkget
+    {
+	/transmitEvent winexec
+    }{
+	9 {pop} repeat
+    } ifelse
+    /_WSsentMouseDown false //pkput exec
+} _NXDefProc
+
+
+/lmdragWinDragEvProc {	%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> lmdragWinDragEvProc
+  %
+    6 {pop} repeat				% ty x y
+    /_dragWinYOffset pkget sub exch		% ty ny x
+    /_dragWinXOffset pkget sub exch		% ty nx ny
+    /_dragWinNum pkget				% ty nx ny win
+
+    nextdict /_journalRecording get {
+        3 1 roll				% ty win nx ny
+	2 index currentwindowbounds pop pop 	% ty win nx ny ox oy
+	2 index					% ty win nx ny ox oy ny
+	exch					% ty win nx ny ox ny oy
+	sub					% ty win nx ny ox dy
+	exch					% ty win nx ny dy ox
+	3 index					% ty win nx ny dy ox nx
+	exch					% ty win nx ny dy nx ox
+	sub					% ty win nx ny dy dx
+	exch					% ty win nx ny dx dy
+	Journalevent 3 1 roll 0 0 7 index //Windragged 0 0 
+						% ty win nx ny Je dx dy 0 0 win Wd 0 0 
+	/transmitEvent winexec			% ty win nx ny
+	3 -1 roll				% ty nx ny win
+    } if
+
+    dup currentwindowdict /otherWindows get	% ty nx ny win oWins
+    dup null eq {				% ty nx ny win oWins
+	pop movewindow pop			% 
+    }{
+	1 index currentwindowbounds pop pop	% ty nx ny win oWins ox oy
+	4 index exch sub exch			% ty nx ny win oWins dy ox
+	5 index exch sub exch			% ty nx ny win oWins dx dy
+	6 3 roll movewindow			% ty oWins dx dy
+	3 -1 roll				% ty dx dy oWins
+	dup length 1 sub 1 exch getinterval {
+	    dup currentwindowbounds pop pop	% ty dx dy win ox oy
+	    3 index add exch			% ty dx dy win ny ox
+	    4 index add exch			% ty dx dy win nx ny
+	    3 -1 roll movewindow		% ty dx dy
+	} forall pop pop pop			%	
+    } ifelse
+} _NXDefProc
+
+/lmupWinDragEvProc {	%  <type> <x> <y> <time> 
+%	      <flags> <win> <subtype> <m1> <m2> lmupWinDragEvProc
+  %
+    9 copy					% E1-9 E1-9
+    //lmdragWinDragEvProc exec			% E1-9
+    //Out 0 //_dragNetWin orderwindow		% E1-9
+    true setflushexposures
+    //Lmousedragged //Lastleft sethowpost	% E1-9
+    //Lmouseup //Lastleft sethowpost		% E1-9
+    /_sentMouseDown pkget {
+	/_dragWinNum pkget 3 //stackSwap exec pop	% E1-9
+	/_dragWinYOffset pkget 6 //stackSwap exec pop	% E1-9
+	/_dragWinXOffset pkget 7 //stackSwap exec pop	% E1-9 
+	/transmitEvent winexec			%
+    }{
+	9 {pop} repeat				%
+    } ifelse
+    
+    /_dragWinNum pkget				% win
+    dup currentwindowbounds pop pop 2 copy	% win x y x y
+    /_dragInitY pkget ne exch			% win x y neqY x
+    /_dragInitX pkget ne exch			% win x y neqY neqX
+    or {					% win x y
+	3 -1 roll //_sendWinMoved exec		%
+    }{
+	pop pop pop				%
+    } ifelse
+    /_dragWCEnabled //pkget exec 0 setwaitcursorenabled
+    /_dragWinNum 0 //pkput exec
+} _NXDefProc
+
+
+windowPackage1.0 /eventHandlers [
+  % procedures that handle each type of event during normal times
+	/transmitEvent load		% Nullevent		0
+	/lmdownEvProc load		% Lmousedown		1
+	/lmupEvProc load		% Lmouseup		2
+	/rmdownEvProc load		% Rmousedown		3
+	/rmupEvProc load		% Rmouseup		4
+	/transmitEvent load		% Mousemoved		5
+	/transmitEvent load		% Lmousedragged		6
+	/rmdragEvProc load		% Rmousedragged		7
+	/mEnterEvProc load		% Mouseentered		8
+	/mExitEvProc load		% Mouseexited		9
+	/keyDownEvProc load		% Keydown		10
+	/keyUpEvProc load		% Keyup			11
+	/flagsChEvProc load		% Flagschanged		12
+	/transmitEvent load		% Kitdefined		13
+	/sysDefEvProc load 		% Sysdefined		14
+	/transmitEvent load		% Appdefined		15
+] _NXCheckAndDef
+
+windowPackage1.0 /deskWinHandler [
+  % event dispatch table for big old deskwindow
+	null				% Nullevent		0
+	null				% Lmousedown		1
+	null				% Lmouseup		2
+	/rmdownEvProc load		% Rmousedown		3
+	/rmupEvProc load		% Rmouseup		4
+	null				% Mousemoved		5
+	null				% Lmousedragged		6
+	/rmdragEvProc load		% Rmousedragged		7
+	null				% Mouseentered		8
+	null				% Mouseexited		9
+	null				% Keydown		10
+	null				% Keyup			11
+	null				% Flagschanged		12
+	null				% Kitdefined		13
+	/sysDefEvProc load 		% Sysdefined		14
+	null				% Appdefined		15
+] _NXCheckAndDef
+
+windowPackage1.0 /workspaceHandler [
+  % event dispatch table used by some workspace windows (app tiles?)
+	null				% Nullevent		0
+	/lmdownWSEvProc load		% Lmousedown		1
+	/lmupWSEvProc load		% Lmouseup		2
+	/rmdownEvProc load		% Rmousedown		3
+	/rmupEvProc load		% Rmouseup		4
+	null				% Mousemoved		5
+	/lmdragWSEvProc load		% Lmousedragged		6
+	/rmdragEvProc load		% Rmousedragged		7
+	null				% Mouseentered		8
+	null				% Mouseexited		9
+	/keyDownEvProc load		% Keydown		10
+	/keyUpEvProc load		% Keyup			11
+	null				% Flagschanged		12
+	null				% Kitdefined		13
+	/sysDefEvProc load 		% Sysdefined		14
+	null				% Appdefined		15
+] _NXCheckAndDef
+
+windowPackage1.0 /_dragWindowHandler [
+  % event dispatch table used by kludge _dragNetWin
+	null				% Nullevent		0
+	null				% Lmousedown		1
+	/lmupWinDragEvProc load		% Lmouseup		2
+	null				% Rmousedown		3
+	null				% Rmouseup		4
+	null				% Mousemoved		5
+	/lmdragWinDragEvProc load	% Lmousedragged		6
+	null				% Rmousedragged		7
+	null				% Mouseentered		8
+	null				% Mouseexited		9
+	null				% Keydown		10
+	null				% Keyup			11
+	null				% Flagschanged		12
+	null				% Kitdefined		13
+	/sysDefEvProc load 		% Sysdefined		14
+	null				% Appdefined		15
+] _NXCheckAndDef
+
+windowPackage1.0 /specialTileHandler [
+  % event dispatch table used by kludge _dragNetWin
+	null				% Nullevent		0
+	/transmitEvent load		% Lmousedown		1
+	/transmitEvent load		% Lmouseup		2
+	/rmdownEvProc load		% Rmousedown		3
+	/rmupEvProc load		% Rmouseup		4
+	null				% Mousemoved		5
+	/transmitEvent load		% Lmousedragged		6
+	/rmdragEvProc load		% Rmousedragged		7
+	null				% Mouseentered		8
+	null				% Mouseexited		9
+	/keyDownEvProc load		% Keydown		10
+	/keyUpEvProc load		% Keyup			11
+	null				% Flagschanged		12
+	null				% Kitdefined		13
+	/sysDefEvProc load 		% Sysdefined		14
+	null				% Appdefined		15
+] _NXCheckAndDef
+
+% random initialization fragments
+    //Rmousedownmask //Sysdefinedmask or deskWin seteventmask
+    deskWinHandler deskWin seteventprocedures
+    _dragWindowHandler _dragNetWin seteventprocedures
+
+end			% close window dict
+setshared		% restore VM allocation mode

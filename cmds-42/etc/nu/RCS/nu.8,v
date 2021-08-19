@@ -1,0 +1,561 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    osdev:1.2; strict;
+comment  @@;
+
+
+1.2
+date     89.06.11.17.36.11;  author osdev;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.06.11.17.35.39;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+1.2
+log
+@lee's mods.
+@
+text
+@.TH NU 8
+.SU
+.SH NAME "June 9, 1989"
+nu \- manage user login accounts (create, modify, destroy UNIX accounts)
+.SH SYNOPSIS
+.nf
+.B /etc/nu -a
+.B /etc/nu -m
+.B /etc/nu -d
+.B /etc/nu -k \fIuser1\fR \fIuser2\fR ...
+.fi
+.SH DESCRIPTION
+.I Nu
+is a program to help a UNIX system manager create, modify, delete, and destroy
+accounts on that machine. While everything accomplished by \fInu\fR
+can be done manually by editing files and issuing shell commands, \fInu\fR
+will steer you through getting all the details right, checking for typos, etc.
+.PP
+When \fInu\fR is run with the \fB-a\fR option, it adds new accounts. The program
+prompts you for the login id, password, name, and other information about
+each new user, and then goes off and creates the account, creates its
+directories, initializes their contents, and makes an entry in a log file.
+.PP
+When \fInu\fR is run with the \fB-m\fR option, it modifies existing accounts. It asks for account names and instructions for the changes that you
+want to make to those accounts, until you tell it that you are done making
+changes. At that time it updates the account records and records them
+into the \fIusers\fR database in netinfo. 
+.PP
+When \fInu\fR is run with the \fB-d\fR option, it deletes accounts while still
+leaving a \fIusers\fR entry in netinfo for the deleted account. This will prevent that
+uid from being reused, and will enable you to make sense out of accounting
+data after deleting an account. The program repeatedly asks you for the names
+of accounts to be deleted, and how much deleting you really want to do to
+them.
+.PP
+When \fInu\fR is run with the \fB-k\fR option and a list of login id's, it
+deletes from the system almost all information pertaining to those login id's.
+Specifically, it removes the entry from the \fIusers\fR database in netinfo, deletes the login
+directory and all of its contents, and deletes the mailbox. It does not
+currently remove that user from any mailing lists in \fB/usr/lib/aliases\fR.
+The \fB-k\fR option is not interactive: the complete list of accounts to be
+deleted is provided on the command line after the \fB-k\fR.
+.SH CONFIGURATION
+When 
+.I nu
+is started up, it reads configuration commands from the file \fB/etc/nu.cf\fR. This
+file specifies the details of how new accounts are to be created on your
+machine.  Typically you will need to change only the GroupHome declarations
+in that  file, which declare the file systems that hold the login directories
+for  members of different groups. However, you can change anything that you
+find there if your system management policies require it.
+.PP
+When \fInu\fR wants to create a new directory, it runs a shell script named
+in \fB/etc/nu.cf\fR. Similarly, when it wants to initialize the files in a
+newly-created directory, it runs another shell script whose name it
+determines from \fB/etc/nu.cf\fR. By way of configuration and customization, you
+can edit those shell scripts to conform to local practices. When you do that
+editing, please remember that \fInu\fR runs as root and that the shell
+scripts contain statements like ``rm \-rf *''; it goes without saying that
+you must be quite cautious. There is a debug mode available, in which
+\fInu\fR will try not to hurt anything, but whenever you are running as root
+you should be unusually careful. \fINu\fR can be run by non-root users if its
+debug mode is enabled by a ``Debug=1'' statement in \fB/etc/nu.cf\fR.
+.PP
+.SH CONFIGURATION FILE FORMAT
+The configuration file \fB/etc/nu.cf\fR is a text file containing a series of
+statements, one statement per line. A semicolon that is not inside a quoted
+string causes the rest of that line to be treated as a comment. Each line in
+the file that is nonblank after stripping comments is treated as an
+assignment statement. Each statement assigns a value to one variable. With
+the exception of the variable "GroupHome", which is special, all of the
+variables act like ordinary shell variables, which is to say that they can
+take either integer values or string values. All integers are decimal; all
+strings must be delimited with double-quotes ("). There is no quoting or
+doubling convention for putting a doublequote character inside a string.
+.PP
+Here are the configuration variables and what they mean. Case is significant.
+.HP 5
+.B NetInfoDomain
+.br
+This is the domain in which \fInu\fR will make its changes.  Currently the program only checks the specified domain for consistency.  \fINu\fR should
+only be run on the machine serving the domain specified.  Attempting to modify
+a remote domain is bound to fail. 
+.HP 5
+.B CreateDir
+.br
+This string  variable identifies the shell script that is run whenever
+\fInu\fR needs to create a new directory. That shell script must be
+executable. It is called
+with 6 arguments: 1, the integer uid; 2, the integer groupid; 3, the name
+of the user's actual home directory; 4, the name of a symbolic link that
+should be set up to point to that home directory; 5, an integer that is
+nonzero iff it is ok to clobber an existing directory of the same name as
+argument 4; and 6, an integer that is nonzero iff nu is running in debug
+mode. The standard value for CreateDir is \fB/etc/nulib/nu1.sh\fR.
+.HP 5
+.B CreateFiles
+.br
+This string variable identifies the shell script that is run whenever
+\fInu\fR needs
+to initialize a directory (newly-created or otherwise) with some standard
+files. For example, \fB/usr/skel/.[a-z]*\fR are often copied into a new login
+directory. This shell script must be executable. It is called with 5
+arguments: 1, the name of the login directory to be initialized; 2, the
+integer uid of the user; 3, the integer groupid of the user; 4, an integer
+that is nonzero iff an MH-format mailbox is to be set up with some initial
+contents; and 5, an integer that is nonzero iff \fInu\fR is running in debug
+mode. The standard value for CreateFiles is \fB/etc/nulib/nu2.sh\fR.
+.HP 5
+.B Debug
+.br
+This integer variable is set nonzero to cause \fInu\fR to run in debug mode.
+Debug mode is intended to help you get the bugs out of your shell scripts
+before you go foolishly running them as root. If Debug is nonzero, then you
+do not need to be logged on as root to run \fInu\fR. The standard value for
+Debug is 0.
+.HP 5
+.B DefaultAccount
+.br
+This string variable contains the default account to use when setting
+up new users. This is only effective if accounting is enabled. See the
+description for the variable WantAccounting.
+.HP 5
+.B DefaultGroup
+.br
+This integer variable is set to the group number of the default user group.
+The default is used if the person running \fInu\fR types a carriage return in
+response to the question asking for a group id for the new user. \fInu\fR
+requires that a valid GroupHome assignment exist for the default group number.
+The standard value for DefaultGroup is any group number from \fB/etc/group\fR.
+.HP 5
+.B DefaultHome
+.br
+This string variable is set to the file system or top-level directory that
+will be used to hold the login directory for accounts in groups 
+not explicitly set up to have their login directories somewhere else.
+When you are creating a new account, \fInu\fR asks you what group number you
+would like the account in. If that group number is mentioned in a GroupHome
+declaration (see below), then the home directory for the group is the one
+named in that GroupHome declaration. If the group number is not mentioned in
+a GroupHome declaration, then login accounts created in that group will have
+their login directories put into DefaultHome. The standard value for
+DefaultGroup is \fB/mnt\fR.
+.HP 5
+.B DefaultShell
+.br
+This string variable is set to the name of the shell file to use by default.
+The standard value for DefaultShell is \fB/bin/csh\fR.
+.HP 5
+.B DeleteAccts
+.br
+This string variable identifies the shell script that is run whenever
+\fInu\fR needs to delete a user's account that was created in some earlier
+session with \fInu\fR. Deleting accounts involves changing the password so
+that the user cannot log in,
+deleting all of his files and directories, and deleting his
+mailbox. This shell script must be executable. It is called with 5 arguments:
+1, the login id of the account to be deleted; 2, the login directory for that
+account; 3, the name given in the netinfo users directory for the login
+directory (which might possibly be a symbolic link to item 2, above, and
+therefore needs to be named separately); 4, the name of the log file in 
+which account changes are being logged, 
+and 5, an integer that is nonzero iff \fInu\fR is running in debug mode. The
+standard value for DeleteAccts is \fB/etc/nulib/nu4.sh\fR.
+.HP 5
+.B DestroyAccts
+.br
+This string variable identifies the shell script that is run whenever
+\fInu\fR needs to destroy a user's account that was created in some earlier
+session with \fInu\fR. Destroying accounts involves removing the user from the
+password file, deleting all of his files and directories, and deleting his
+mailbox. For a (slightly) less drastic account removal action, see
+``DeleteAccts'', above.
+This shell script must be executable. It is called with 5 arguments:
+1, the login id of the account to be deleted; 2, the login directory for that
+account; 3, the name given in in the netinfo users directory for the login directory (which
+might possibly be a symbolic link to item 2, above, and therefore needs to be
+named separately); 4, the name of the log file in which account changes are
+being logged, 
+and 5, an integer that is nonzero iff \fInu\fR is running in debug mode. The
+standard value for DestroyAccts is \fB/etc/nulib/nu3.sh\fR.
+.HP 5
+.B GroupHome
+.br
+This pseudo-variable is the only name defined in the configuration file that
+has any trickery attached to it. GroupHome is not really a variable; rather,
+it is a name by which the configuration code can load entries into a
+directory location table. In particular, if you provide two GroupHome
+declarations, they are both processed, while if you provide two of any other
+declaration, only the latest one has any effect. A typical set of GroupHome
+declarations might look something like this:
+.nf
+   GroupHome= 10 "/usr"
+   GroupHome= 20 "/mnt"
+   GroupHome= 25 "/usr/cis"
+   GroupHome= 31 "/usr/guest"
+.fi
+The GroupHome declarations serve as default login directory location
+information for new accounts. You can put any account anywhere you want; the
+GroupHome information is used to make the defaults come out in the right
+places, so that the process of creating a new account consists mostly of
+hitting the return key to accept the defaults. The sample declarations above
+cause group 10 to default to \fB/usr\fR, i.e. \fB/usr/smith\fR or \fB/usr/jones\fR, and group
+31 to default to \fB/usr/guest\fR, i.e. \fB/usr/guest/smith\fR or \fB/usr/guest/jones\fR.
+If the login group is not mentioned in a GroupHome declaration, then the
+DefaultHome variable is used. A GroupHome declaration is required for the
+default group (see variable DefaultGroup); all others are optional.
+.HP 5
+.B Logfile
+.br
+This string variable names the file in which all \fInu\fR transactions are
+logged. The standard value of Logfile is \fB/usr/adm/nu.log\fR.
+.HP 5
+.B MaxNameLength
+.br
+This integer variable gives the maximum number of characters permitted in a
+login name. For unmodified 4BSD systems it should be set to 8.
+.HP 5
+.B SymbolicLinkDir
+.br
+This string variable gives the name of a directory that can be filled with
+symbolic links to real login directories. The value of SymbolicLinkDir is
+ignored unless the variable WantSymbolicLinks is nonzero. See its
+description, below, for more information. Standard values for SymbolicLinkDir
+are \fB/user\fR or \fB/udir\fR.
+.HP 5
+.B WantAccounting
+.br
+The integer variable WantAccounting determines whether \fInu\fR should prompt
+for accounting information when users are added to the system. Specifying a
+1 requests that accounting information should be asked for.
+.HP 5
+.B WantMHsetup
+.br
+This integer variable should be set to 1 if you would like \fInu\fR to take
+care of initializing mailbox contents. Initializing an MH mailbox turns out
+to be a pleasant way to provide new users with information about the system,
+and to give them a tutorial on the use of MH. \fINu\fR just passes the value
+of WantMHsetup through to the shell script named in CreateFiles, which is
+responsible for doing the actual initialization. Standard value is 1.
+.HP 5
+.B WantSymbolicLinks
+.br
+This integer variable controls whether login directory names or symbolic
+links to them are put in the actual netinfo users database. If WantSymbolicLinks is
+nonzero, then all created accounts are given uniform login directory names in
+some directory that exists only for the purpose of holding symbolic links,
+e.g. \fB/user/smith\fR and \fB/user/jones\fR; the file \fB/user/smith\fR or \fB/user/jones\fR is then
+made to be a symbolic link to the real login directory. This is preferable to
+the ~smith or ~jones scheme for finding login directories because the ~
+notation is not handled by the kernel, but must be handled individually by
+all programs that open files. If the variable WantSymbolicLinks is 0, then
+accounts will be created such that the true directory name is stored in
+the netinfo users database.
+
+.SH EXPERT OPTIONS
+.br
+In order to allow scripts and programs to take advantage of \fInu\fR, four expert options are available.  These options are analogs of the interactive options which are represented by the lowercase letters a, m, k and d.  If you are using \fInu\fR from a shell, you should most likely stick with the interactive options.  They will prompt you for confirmation, and will help you to select reasonable values to use.  Use the expert options with caution, they will not prompt for confirmation.   The four options are A, M, K, and D.  In addition to the option, each has a number of arguments.   All arguments must be present in the command, and there are no default values. The arguments are as follows:
+.HP 5
+.br
+-A  name realname uid gid home shell pwd reuse mh domain
+.HP 5
+.br
+-M  currentuid name pwd uid gid realname home shell domain
+.HP 5
+.br
+-K  name domain
+.HP 5
+.br
+-D  uid domain	
+.br
+.HP 5
+.B currentuid
+.br
+currentuid in the -M option is the current uid, it will be replaced by the uid specified later in the line.
+.HP 5
+.B gid
+.br
+gid is the UNIX group identification number.  It defines the default group of the user.
+.HP 5
+.B domain
+.br
+domain overrides the NetInfoDomain specified in the \fInu.cf\fR file.
+.HP 5
+.B home
+.br
+home is the user's home directory.
+.HP 5
+.B mh
+.br
+mh tells \fInu\fR that this user should be set up mail as a MH format.  This option should normally be N except for expert UNIX users who are already familiar with MH.
+.HP 5
+.B name
+.br
+name corresponds to the name prompted for in LoginWindow. It must be unique for each user.
+.HP 5
+.B pwd
+.br
+pwd is the text representation of the users passwd.  It is identical to what the LoginWindow expects when the user logs in.   It will be modified before it is stored.  If you wish to have spaces in your password, you must enclose it in double quotes.
+.HP 5
+.B realname
+.br
+realname is the full name of the user.  If you wish to have spaces in the name, it must be enclosed in double quotes.
+.HP 5
+.B reuse
+.br
+reuse tells \fInu\fR to reuse the home directory if it already exists.
+.HP 5
+.B shell
+.br
+shell is the users default shell when a Terminal or Shell is launched.
+.HP 5
+.B uid
+.br
+uid is the UNIX user identification number.  Like the name, it also must be unique for each user.
+.SH SYSTEM ISSUES
+\fINu\fR traps INTR characters (e.g. ^C) and refuses to die if you
+try to stop it in the middle of a critical section. Critical sections are
+primarily the updates the netinfo database. A list of all changes is recorded in a
+log file, usually \fB/usr/adm/nu.log\fR.
+
+.SH FILES
+.ta \w'/usr/adm/nu.passwd    'u
+/etc/nu.cf	Configuration file
+.br
+/etc/nulib/*.sh	Shell scripts to perform the work
+.br
+others	nu.cf and nulib/*.sh reference other
+.br
+	files.
+.DT
+.SH "SEE ALSO"
+adduser(8), group(5), passwd(5), vipw(8)
+.SH AUTHOR
+Brian Reid, Erik Hedberg, Fred Yankowski
+.SH BUGS
+The extensive use of shell scripts for doing sensitive things like purging
+accounts means that somebody can make \fInu\fR fail in horrible ways without
+having access to the source code. With increased flexibility comes increased
+responsibility.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d3 2
+a4 2
+.SH NAME
+nu \- manage user login accounts (create, modify, destroy Unix accounts)
+d10 1
+a10 1
+.B /etc/nu -k user1 user2 ...
+d14 1
+a14 1
+is a program to help a Unix system manager create, modify, delete, and destroy
+d17 1
+a17 2
+will steer you through getting all the details right, worrying about file
+locking, checking for typos, etc.
+d19 1
+a19 1
+When \fInu\fR is run with the ``a'' option, it adds new accounts. The program
+d24 1
+a24 2
+When \fInu\fR is run with the ``m'' option, it modifies existing accounts. It
+repeatedly asks for account names and instructions for the changes that you
+d26 2
+a27 2
+changes. At that time it sorts the updated account records and merges them
+all at once into /etc/passwd. 
+d29 2
+a30 2
+When \fInu\fR is run with the ``d'' option, it deletes accounts while still
+leaving an /etc/passwd entry for the deleted account. This will prevent that
+d36 1
+a36 1
+When \fInu\fR is run with the ``k'' option and a list of login id's, it
+d38 1
+a38 1
+Specifically, it removes the entry from /etc/passwd, deletes the login
+d40 3
+a42 3
+currently remove that user from any mailing lists in /usr/lib/aliases.
+The ``k'' option is not interactive: the complete list of accounts to be
+deleted is provided on the command line after the ``\-k''.
+d46 1
+a46 1
+is started up, it reads configuration commands from the file /etc/nu.cf. This
+d54 1
+a54 1
+in /etc/nu.cf. Similarly, when it wants to initialize the files in a
+d56 1
+a56 1
+determines from /etc/nu.cf. By way of configuration and customization, you
+d63 1
+a63 1
+debug mode is enabled by a ``Debug=1'' statement in /etc/nu.cf.
+d66 1
+a66 1
+The configuration file /etc/nu.cf is a text file containing a series of
+d79 1
+a79 1
+.B AccountFile
+d81 3
+a83 3
+If accounting is enabled on your system, this string variable will be used
+as the file that contains all known account names. See account(5) for more
+information about the account file format. The default value is /etc/account.
+a84 13
+.B Backupacct
+.br
+The Backupacct string variable contains a file name to use when a backup
+copy of the account file is needed. The account file name is in the variable
+AccountFile. The default is /usr/adm/nu.account.
+.HP 5
+.B Backupfile
+.br
+This string variable gives the pathname that \fInu\fR will use to make a
+backup copy of /etc/passwd, to protect itself from disaster in case something
+happens while it is writing /etc/passwd. Typical value of Backupfile is
+"/usr/adm/nu.passwd".
+.HP 5
+d95 1
+a95 1
+mode. The standard value for CreateDir is "/etc/nulib/nu1.sh".
+d102 1
+a102 1
+files. For example, /usr/skel/.[a-z]* are often copied into a new login
+d108 1
+a108 1
+mode. The standard value for CreateFiles is "/etc/nulib/nu2.sh".
+d130 1
+a130 1
+The standard value for DefaultGroup is any group number from /etc/group.
+d143 1
+a143 1
+DefaultGroup is "/mnt".
+d148 1
+a148 1
+The standard value for DefaultShell is "/bin/csh".
+d159 4
+a162 4
+account; 3, the name given in /etc/passwd for the login directory (which
+might possibly be a symbolic link to item 2, above, and therefore needs to be
+named separately); 4, the name of the log file in which account changes are
+being logged, 
+d164 1
+a164 1
+standard value for DeleteAccts is "/etc/nulib/nu4.sh".
+d176 1
+a176 1
+account; 3, the name given in /etc/passwd for the login directory (which
+d181 1
+a181 1
+standard value for DestroyAccts is "/etc/nulib/nu3.sh".
+a182 9
+.B Dummyfile
+.br
+This string variable holds the name of the hard link that is created as part
+of the locking process on /etc/passwd; see \fIvipw(8)\fR. The correct value
+for Dummyfile is "/etc/vipw.lock". The only reason that it is specified in
+the configuration file and not hardwired into the code of \fInu\fR is that in
+debugging you do not want to muck with the real lock (and might in fact not
+even have permissions to lock it).
+.HP 5
+d203 2
+a204 2
+cause group 10 to default to /usr, i.e. /usr/smith or /usr/jones, and group
+31 to default to /usr/guest, i.e. /usr/guest/smith or /usr/guest/jones.
+a208 6
+.B Linkfile
+.br
+See also ``Dummyfile''. This string variable gives the name of the file to
+which links are made for the purpose of locking the password file. Any value
+besides "/etc/ptmp" is suspect.
+.HP 5
+d212 1
+a212 1
+logged. The standard value of Logfile is "/usr/adm/nu.log".
+a218 6
+.B PasswdFile
+.br
+This string variable gives the name of the file into which \fInu\fR will
+write its new account entries. Unless you are debugging, its value should be
+"/etc/passwd". 
+.HP 5
+d225 1
+a225 1
+are "/user" or "/udir".
+a226 8
+.B Tempfile
+.br
+This string variable names the file that \fInu\fR will use for building a
+scratch copy of /etc/passwd during the account modification process.
+The value doesn't really matter much; it is created at the beginning of an
+\fInu\fR execution and destroyed before exit. A typical value for Tempfile is
+"/usr/adm/nu.temp".
+.HP 5
+d245 1
+a245 1
+links to them are put in the actual /etc/passwd file. If WantSymbolicLinks is
+d248 1
+a248 1
+e.g. /user/smith and /user/jones; the file /user/smith or /user/jones is then
+d254 1
+a254 1
+/etc/passwd.
+d256 60
+d317 1
+a317 2
+\fINu\fR obeys the standard locking protocol for /etc/passwd; see
+\fIvipw(8)\fR. It traps INTR characters (e.g. ^C) and refuses to die if you
+d319 2
+a320 2
+primarily the updates of /etc/passwd. A list of all changes is recorded in a
+log file, usually /usr/adm/nu.log.
+a323 8
+/etc/passwd	system password file
+.br
+/etc/group	system group file
+.br
+/etc/ptmp	lock file
+.br
+/etc/vipw.lock	dummy file linked to by /etc/ptmp
+.br
+d333 1
+a333 1
+adduser(8), getgrent(3), getpwent(3), group(5), passwd(5), vipw(8)
+@

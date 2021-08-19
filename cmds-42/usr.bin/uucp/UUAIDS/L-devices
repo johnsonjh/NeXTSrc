@@ -1,0 +1,65 @@
+# L-devices:
+# Consult UUAIDS/L-devices.samples for more examples and discussion as
+# well as UUAIDS/L.sys.samples
+#
+#
+# If you do not plan to dial into your cube, then you can use the following
+# settings.  You may delete those lines which have baudrates that your modem
+# does not support.
+#
+# Note: For those modems that you may wish to use that uucp knows how to
+# manipulate properly, you may use the ACU (automatic call unit) settings.
+# Please read UUAIDS/L-devices.samples for a discussion on which modems are
+# supported.
+#
+ACU ttya unused 300  direct
+ACU ttya unused 1200 direct
+ACU ttya unused 2400 direct
+ACU ttya unused 9600 direct
+ACU ttyb unused 300  direct
+ACU ttyb unused 1200 direct
+ACU ttyb unused 2400 direct
+ACU ttyb unused 9600 direct
+#
+#
+# Note: For those off beat modems that uucp does not know how to 
+# manipulate directly. This means that a dialing script in L.sys will
+# take care of the chore of dialing.
+#
+DIR ttya unused 300  direct
+DIR ttya unused 1200 direct
+DIR ttya unused 2400 direct
+DIR ttya unused 9600 direct
+DIR ttyb unused 300  direct
+DIR ttyb unused 1200 direct
+DIR ttyb unused 2400 direct
+DIR ttyb unused 9600 direct
+#
+#
+#
+#
+# For those who want to be able to dialin to their cubes as well as dialout,
+# please consult the Digital Libraries for the wiring diagram for proper modem
+# cable.  You may use the following settings provided that you have this special
+# modem cable. Note that most modem cables which have a 25 pin D connector on
+# one end and a 8 pin Mini-Din connector on the other DO NOT have the Carrier
+# Detect line (pin 8 on the 25 pin D connect) connected to Clear To Send line
+# (pin 2 on the 8 pin Mini-Din connector). This prevents the modem from being
+# able to tell your Cube if the modem is busy or not. Therfore, for the
+# following settings, you must insure you have this special modem cable.
+#
+# For those modems that uucp knows about:
+#
+ACU cua unused 300  direct
+ACU cua unused 1200 direct
+ACU cua unused 2400 direct
+ACU cua unused 9600 direct
+#
+# For those unusual modems which have dialing scripts in L.sys which know how 
+# to dial them.
+#
+DIR cua unused 300  direct
+DIR cua unused 1200 direct
+DIR cua unused 2400 direct
+DIR cua unused 9600 direct
+

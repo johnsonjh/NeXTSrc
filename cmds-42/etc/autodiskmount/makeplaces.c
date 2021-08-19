@@ -1,0 +1,330 @@
+#include <sys/param.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include  "math.h"
+#include <sys/time.h>
+#include <sys/dir.h>
+#include <errno.h>
+#include <stdio.h>
+#import <sys/fcntl.h>
+
+#define MAXITEMSBUFF 8 * 8096
+
+char itemsBuff[MAXITEMSBUFF];
+int curPos;
+dev_t dirDev;
+ino_t dirIno;
+
+#define NX_DESKVERSION 0x7FC9
+
+#define MODEBITS 07777
+#define SLINK_MASK 0x8
+#define ISLNK(st)  (((st).st_mode&S_IFMT) == S_IFLNK)
+
+typedef struct _NXDirEntry {
+    long	    dirno;      /* fileno in directory (not the same as ino
+				 * in case of soft links)
+				 */
+    unsigned short  flags;      /* currently, just SLINK */
+    unsigned short  mode;	/* mode bits */
+    dev_t           dev;
+    ino_t           ino;
+    char            name[2];	/* file name (variable sized) */
+}               NXDirEntry;
+
+
+typedef struct _NXPoint {
+    float x;
+    float y;
+} NXPoint;
+
+typedef struct _NXSize {
+    float width;
+    float height;
+} NXSize;
+
+typedef struct _NXRect {	/* rectangle */
+    NXPoint         origin;
+    NXSize          size;
+} NXRect;
+    
+/*	structure of .places file header */
+
+typedef struct {
+    short           x;		/* folder rectangle */
+    short           y;
+    short           w;
+    short           h;
+    short           dim;	/* display mode */
+    short           version;    /* version number */
+}               placehead;
+
+/*	followed by a variable number of per file info */
+
+typedef struct {
+    short           x;	    /* position */
+    short           y;
+    short           z;
+    dev_t           dev;
+    short           len;    /* name length */
+    unsigned short  mode;   /* mode bits, use only file type! */
+    unsigned short  flags;  /* flags, currently just has SLINK */
+    ino_t           ino;
+    long	    dirno;  /* directory file number */
+    char            name[2];/* file name (var sized) */
+} placeper ;
+
+extern int singleDiskSystem;
+
+/* these routines are used for reading or writing .places under lock
+ * this is not a really robust locking scheme due to it's being
+ * advisory, combined with what can happen when you lose a lock.
+ */
+ 
+/* the following routines & variables are used to read/write .places file
+   with locking & buffering. we do our own buffering so as to control
+   interaction with locking over network.  */
+   
+static char *placeBP;	    /* points to locally allocated buffer */
+static char *placeEP;	    /* points to byte after end of buffer */
+static char *placeCP;      /* points to first unused byte */
+static int  placeFd = -1;  /* file descriptor */
+#define PLBSIZE MAXBSIZE
+
+static int 
+openForWrite(bp, fname, flags, mode)
+    char           *bp;
+    char 	   *fname;
+    int flags;
+    int mode;
+{
+    int err;
+        
+    if ((placeFd = open(fname, flags,mode)) == -1)	
+	return(-1);
+    
+    placeBP = bp;
+    placeEP = bp + PLBSIZE;
+    placeCP = bp;
+    return(0);
+}
+
+static
+int closePL() {
+    if (placeFd >= 0)
+        (void) close(placeFd);
+    placeFd = -1;
+    return 0;
+}
+
+
+static int 
+flushPL() {
+    int nwrite;
+    
+    nwrite = (int) placeCP - (int) placeBP;
+    if (nwrite) {
+	if (nwrite != write(placeFd,placeBP,nwrite)) {
+	    return(-1);
+	}
+    }
+    placeCP = placeBP;
+    return(0);
+}
+
+static int 
+writePL(pb,nwrite)
+char *pb;
+int nwrite;
+{
+    int nc;
+    int err;
+    
+    while(nwrite) {
+        if (placeEP == placeCP && flushPL() < 0)
+	    return(-1);
+	nc = placeEP - placeCP;
+        if (nc > nwrite)
+	    nc = nwrite;
+	bcopy(pb,placeCP,nc);
+	pb += nc;
+	placeCP += nc;
+	nwrite -= nc;
+    }
+    return(0);
+}
+
+static int
+truncatePL(pos)
+long pos;
+{
+    placeCP = placeBP;
+    return(ftruncate(placeFd,pos));
+}
+
+
+static
+int 
+dotsTheOne(s)
+char * s;
+{
+if (s[0] == '.' && ((s[1] == '.' && !s[2]) || !s[1]))
+    return(s[1] ? 1 : -1);
+return(0);        
+}
+
+
+void
+writePlaces()
+{
+    char placename[64];
+    placehead plhead;
+    placeper plper;
+    register int    nwrite;
+    int nread;
+    int left,bottom,width,height;
+    NXDirEntry *pd;
+    char buff[PLBSIZE];
+    NXRect wbs;
+    int pos;
+          
+    sprintf(placename,"/tmp/od.%d.%d",dirDev,dirIno);
+    nwrite = umask(0);
+    if (openForWrite(buff,placename, O_RDWR | O_CREAT,0666) == -1) {	
+	(void) umask(nwrite);
+	goto errExit;
+    }
+    (void) umask(nwrite);
+    
+
+    (void) lseek(placeFd,0,0);
+    if (truncatePL(0) <  0)
+	goto errExit;
+
+    plhead.x = -1;
+    plhead.y = -1;
+    plhead.version = NX_DESKVERSION;
+	
+    if (writePL(&plhead, sizeof(plhead)))
+	goto errExit;
+
+    pos = 0;
+    while (pos < curPos) {
+	pd = (NXDirEntry *) &itemsBuff[pos];
+	plper.x = 0;
+	plper.y = 0;
+	plper.z = -1;
+	plper.ino = pd->ino;
+	plper.dev = pd->dev;
+	plper.mode = pd->mode;
+	plper.dirno = pd->dirno;
+	plper.len = strlen(pd->name)+1;
+	pos += ((sizeof(NXDirEntry) + plper.len + 1) / 4) * 4;
+	plper.flags = pd->flags & SLINK_MASK;
+	if (writePL(&plper, sizeof(plper) - 2) || 
+	    writePL(pd->name,plper.len)) {
+	     /* error #10024, truncate file */ ;
+ 	     (void) truncatePL(0);
+	     goto errExit;     
+	}
+    } /* while */
+    if (flushPL() < 0) {
+	/* error #10024, truncate file */ ;
+	(void) truncatePL(0);
+    };
+errExit:
+    (void) closePL();
+}
+
+static int
+statPad(NXDirEntry * pd)
+{
+    struct stat stbuff;
+    int islnk;
+    
+    if (lstat(pd->name, &stbuff) < 0)
+        return -1;
+    islnk = ISLNK(stbuff);
+    pd->flags = ((pd->flags & ~SLINK_MASK) | (islnk ? SLINK_MASK : 0));
+    if (!islnk || stat(pd->name, &stbuff) >= 0) {
+	pd->mode = stbuff.st_mode;
+	pd->ino = stbuff.st_ino;
+	pd->dev = stbuff.st_dev;
+    }
+
+}
+
+int
+getFiles(dirName)
+char *dirName;
+{
+    placehead plhead;
+    char            plbuff[PLBSIZE];
+    int nread;
+    register NXDirEntry * pd;
+    int size;
+    register struct direct *dp;
+    register DIR   *dirp;
+    struct stat sb;
+    int retValue;
+    
+    retValue = -1;
+    
+    if (chdir(dirName) < 0)
+        goto exitPoint;
+    if (!(dirp = opendir(".")))
+	goto exitPoint;
+    if (stat(".",&sb) < 0)
+        goto exitPoint1;
+
+    dirDev = sb.st_dev;
+    dirIno = sb.st_ino;
+    
+    for (dp = readdir(dirp); dp != NULL; dp = readdir(dirp)) {
+	if (dotsTheOne(dp->d_name) >= 0) {
+	    size = sizeof(NXDirEntry) + dp->d_namlen - 1;
+	    size = ((size + 3) / 4) * 4;
+	    if (curPos + size > MAXITEMSBUFF) {
+	        closedir(dirp);
+		curPos = 0;
+		return -1;
+	    }
+	    pd = (NXDirEntry *) &itemsBuff[curPos];
+	    curPos += size;
+	    pd->mode = S_IFREG;
+	    pd->ino = 0;
+	    pd->dev = 0;
+	    pd->dirno = dp->d_fileno; /* lower 16 bits */
+	    (void) strcpy(pd->name, dp->d_name);
+	    statPad(pd);
+	}
+    }
+    retValue = 0;
+
+exitPoint1:
+    closedir(dirp);
+exitPoint:
+    chdir("/");
+    return retValue;
+}
+
+initItems(firstCall)
+int firstCall;
+{
+    int i;
+    
+    curPos = 0;
+    
+    if (singleDiskSystem && firstCall) {
+    
+    /*  touch pages for items */
+    
+	for (i = 0; i < MAXITEMSBUFF; i += 1024)
+	    itemsBuff[i] = 0;
+	
+	getFiles("/");
+	curPos = 0;
+	
+    }
+}
+

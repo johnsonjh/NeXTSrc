@@ -1,0 +1,170 @@
+#
+######################################################################
+# HISTORY
+# 22-May-86  Jonathan J. Chew (jjc) at Carnegie-Mellon University
+#	Eased porting by placing the CMU CS C library routines needed by
+#	sup in files in a compatibility subdirectory so the whole CMU CS
+#	C library needn't be brought over to make sup.
+#
+# 05-Jan-86  Glenn Marcy (gm0w) at Carnegie-Mellon University
+#	Added stree.o to supnamesrv files.
+#
+# 29-Dec-85  Glenn Marcy (gm0w) at Carnegie-Mellon University
+#	Added msg* files.
+#
+######################################################################
+
+DESTDIR=
+BDIR=	${DESTDIR}/usr/cs/bin
+EDIR=	${DESTDIR}/usr/cs/etc
+
+CFLAGS= -Icompat-cmucs -DDEFDIR=\"/usr/cs\" -DDEFUSER=\"anon\"
+LINT=	lint -n -u -DCMU -DCMUCS
+
+MBOTH=	msggoaway.o msgsignon.o
+MNAME=	msgname.o
+MFILE=	msgsetup.o msgcrypt.o msglogin.o msgrefuse.o msglist.o msgneed.o msgdeny.o msgxfer.o
+SUPM=	${MBOTH} ${MNAME} ${MFILE}
+SUPNM=	${MBOTH} ${MNAME}
+SUPFM=	${MBOTH} ${MFILE}
+SUPS=	scm.o scmio.o stree.o
+SUPCOMPAT= errmsg.o filecopy.o ffilecopy.o movefile.o nxtarg.o path.o quit.o \
+	runvp.o salloc.o skipto.o
+SUPNMCOMPAT= dfork.o errmsg.o nxtarg.o quit.o salloc.o skipto.o
+SUPFMCOMPAT= atoo.o atot.o errmsg.o expand.o fold.o getacent.o gtime.o \
+	nxtarg.o okaccess.o oklogin.o okpassword.o parsedate.o quit.o \
+	salloc.o skipto.o
+SUPSCOMPAT= atoo.o expand.o nxtarg.o quit.o salloc.o skipto.o
+ALL=	sup supnamesrv supfilesrv supscan
+IALL=	sup.install supnamesrv.install supfilesrv.install supscan.install
+LALL=	sup.lint supnamesrv.lint supfilesrv.lint supscan.lint
+
+all:	${ALL}
+	@echo "\`sup' system is up to date."
+
+install: ${IALL}
+
+lint:	${LALL}
+
+sup:	sup.o supvers.o ${SUPS} ${SUPM} ${SUPCOMPAT}
+	${CC} ${CFLAGS} -o sup sup.o supvers.o ${SUPS} ${SUPM} ${SUPCOMPAT}
+
+sup.install: sup
+	install -s sup ${BDIR}
+
+sup.lint:
+	${LINT} ${CFLAGS} sup.c scm.c scmio.c stree.c
+
+supnamesrv: supnamesrv.o ${SUPS} ${SUPNM} ${SUPNMCOMPAT}
+	${CC} ${CFLAGS} -o supnamesrv supnamesrv.o ${SUPS} ${SUPNM} \
+	${SUPNMCOMPAT}
+
+supnamesrv.install: supnamesrv
+	install -s supnamesrv ${EDIR}
+
+supnamesrv.lint:
+	${LINT} ${CFLAGS} supnamesrv.c scm.c scmio.c stree.c
+
+supfilesrv: supfilesrv.o ${SUPS} scan.o ${SUPFM} ${SUPFMCOMPAT}
+	${CC} ${CFLAGS} -o supfilesrv supfilesrv.o ${SUPS} \
+	scan.o ${SUPFM} ${SUPFMCOMPAT}
+
+supfilesrv.install: supfilesrv
+	install -s supfilesrv ${EDIR}
+
+supfilesrv.lint:
+	${LINT} ${CFLAGS} supfilesrv.c scm.c scmio.c stree.c scan.c
+
+supscan: supscan.o stree.o scan.o ${SUPSCOMPAT}
+	${CC} ${CFLAGS} -o supscan supscan.o stree.o scan.o ${SUPSCOMPAT}
+
+supscan.install: supscan
+	install -s supscan ${BDIR}
+
+supscan.lint:
+	${LINT} ${CFLAGS} supscan.c stree.c scan.c
+
+${SUPM}: sup.h supmsg.h
+scm.o:	sup.h
+scmio.o: sup.h supmsg.h
+stree.o: sup.h
+scan.o:	sup.h
+sup.o:	sup.h supmsg.h
+supnamesrv.o: sup.h supmsg.h
+supfilesrv.o: sup.h supmsg.h
+supscan.o: sup.h
+
+#
+# Files needed for compatibility with CMU CS
+#
+atoo.o: compat-cmucs/atoo.c
+	${CC} ${CFLAGS} -c compat-cmucs/atoo.c
+
+atot.o: compat-cmucs/atot.c
+	${CC} ${CFLAGS} -c compat-cmucs/atot.c
+
+dfork.o: compat-cmucs/dfork.c
+	${CC} ${CFLAGS} -c compat-cmucs/dfork.c
+
+errmsg.o: compat-cmucs/errmsg.c
+	${CC} ${CFLAGS} -c compat-cmucs/errmsg.c
+
+expand.o: compat-cmucs/expand.c
+	${CC} ${CFLAGS} -c compat-cmucs/expand.c
+
+filecopy.o: compat-cmucs/filecopy.c
+	${CC} ${CFLAGS} -c compat-cmucs/filecopy.c
+
+ffilecopy.o: compat-cmucs/ffilecopy.c
+	${CC} ${CFLAGS} -c compat-cmucs/ffilecopy.c
+
+fold.o: compat-cmucs/fold.c
+	${CC} ${CFLAGS} -c compat-cmucs/fold.c
+
+getacent.o: compat-cmucs/getacent.c
+	${CC} ${CFLAGS} -c compat-cmucs/getacent.c
+
+gtime.o: compat-cmucs/gtime.c
+	${CC} ${CFLAGS} -c compat-cmucs/gtime.c
+
+movefile.o: compat-cmucs/movefile.c
+	${CC} ${CFLAGS} -c compat-cmucs/movefile.c
+
+nxtarg.o: compat-cmucs/nxtarg.c
+	${CC} ${CFLAGS} -c compat-cmucs/nxtarg.c
+
+okaccess.o: compat-cmucs/okaccess.c
+	${CC} ${CFLAGS} -c compat-cmucs/okaccess.c
+
+oklogin.o: compat-cmucs/oklogin.c
+	${CC} ${CFLAGS} -c compat-cmucs/oklogin.c
+
+okpassword.o: compat-cmucs/okpassword.c
+	${CC} ${CFLAGS} -c compat-cmucs/okpassword.c
+
+path.o: compat-cmucs/path.c
+	${CC} ${CFLAGS} -c compat-cmucs/path.c
+
+parsedate.o: compat-cmucs/parsedate.c
+	${CC} ${CFLAGS} -c compat-cmucs/parsedate.c
+
+parsedate.c: compat-cmucs/parsedate.y
+	${YACC} compat-cmucs/parsedate.y
+	mv y.tab.c parsedate.c
+	ed - parsedate.c <compat-cmucs/parsedate.scr
+
+quit.o: compat-cmucs/quit.c
+	${CC} ${CFLAGS} -c compat-cmucs/quit.c
+
+runvp.o: compat-cmucs/runvp.c
+	${CC} ${CFLAGS} -c compat-cmucs/runvp.c
+
+salloc.o: compat-cmucs/salloc.c
+	${CC} ${CFLAGS} -c compat-cmucs/salloc.c
+
+skipto.o: compat-cmucs/skipto.c
+	${CC} ${CFLAGS} -c compat-cmucs/skipto.c
+
+
+clean:
+	rm -f *.o ${ALL}

@@ -1,0 +1,127 @@
+  Release 5: 0.8 final release.  Mostly the same as release 4, with the 
+following minor changes:
+
+-------------------------------------------------------------------------------
+ld
+
+- Fixed overlapping checking which didn't include bss_size.
+- Added overlap checking of all segments except the unix thread stack.
+- Cleaned up the error handling routines to take a variable number of arguments.
+- Added the -ident option.
+- Fixed a bug that didn't get the 2..n sections of segments created from files
+  offset right as well as not writing out the section data.  The bottom of the
+  second loop in write_seg_create() was missing: slp = slp->next; .
+
+-------------------------------------------------------------------------------
+otool/atom
+
+- Fixed a bug in otool to print out unknown thread states correctly and not
+  just print "\n"'s forever.
+- Fixed a bug in atom that didn't handle stripped a.out files and not complain
+  about not being able reading the string table.
+- Fixed a bug in atom that didn't remove the output file before exiting non-
+  zero in error cases.
+- Added the printing of LC_IDENT load commands.
+- Added support to print out the NeXT_THREAD_STATE_USER_REG flavor of thread
+  state.
+
+-------------------------------------------------------------------------------
+mkshlib
+
+- Fixed the problem of a symbol that is both a private_externs and the alias
+  of an aliased symbol (-aoriginal:alias) which did not get removed from
+  objects that referenced them.
+
+-------------------------------------------------------------------------------
+gprof
+
+- Now knows how correctly list objective-C selectors in the profiling output.
+
+-------------------------------------------------------------------------------
+cc
+
+- Fixed an obscure symbol table problem which caused bad symbol table 
+  information to be emitted if there was a function declaration followed by
+  a forward declaration of the same function.
+
+- Added support for -Ttext and -Tdata in the cc driver.
+
+- Added support for the -lineMax:NNN arg for objective-C in the cc driver.
+
+- Modified the format of the -vt switch in the driver to be less verbose,
+  just print the timing info of each pass.  -vvt now is verbose and timing
+  info.
+
+- cpp now predefines __MACH__.
+
+-------------------------------------------------------------------------------
+gdb
+
+- Several problems dealing with corefiles that contained multiple threads
+  were fixed.
+
+- A new thread flavor found in core files is now supported.
+
+- Out of bound memory references are now detected and an error message is 
+  printed.  Previously the value zero was always printed.
+
+- An error in the lex routine was fixed which didn't always parse floating
+  point constants that start with a decimal point correctly.
+
+- A new command "really-run" was added that does a run without asking for
+  verification.
+
+- A bug which caused the vm_cache not to get flushed when a previous error
+  had been detected is now fixed.
+
+- GDB now supports a "format" command which does the following:
+
+format
+	Prints the current format options.
+format maximum-string NNN
+	Sets the maximum number of characters printed in a character string
+	to the decimal number NNN (by default 200).
+format struct-indent N
+	If N == 1, structures are indented when printed with a CR/NL after
+	every field in the struct.  This is now the default.  If N == 0,
+	structure fields are printed contiguously with commas seperating 
+	each field.
+format union-print N
+	if N == 1, all fields of a union are printed when the union is printed.
+	if N == 0, only the names of the variants are printed.  The user must
+	specify the variants of the union (s)he is interested in to see it
+	printed in its entirety.
+format maximum-line NNN
+	Maximum number of lines to be printed before a "--- hit CR for more --"
+	message is printed and a pause for a newline is done.  This should 
+	be the number of lines on the screen minus a few (user preference).
+	The value 0 is special in that the output never pauses (useful if
+	run under shellapp).
+
+- A new verion of gdb (kgdb) now supports kernel debugging.  It works with the
+  latest release of the compiler (cc-4 or greater).
+
+- The path /usr/lib/.gdbinit specifies an additional "system wide" .gdbinit
+  file.  This changed from /usr/next_cross/usr/lib/.gdbinit.
+
+- A new "really-quit" command was added to quit without asking for 
+  confirmation.
+
+- A bug which prevented enums from being printed correctly has been fixed.
+
+-------------------------------------------------------------------------------
+libobjc.a (the library):
+
+- methods that return structures > 64 bits now work.
+
+-------------------------------------------------------------------------------
+objcc.exe (the compiler):
+
+- the maximum length of a line was raised from 512 to 4096 bytes.
+  if this is still not enough, the Objective-C compiler accepts a switch
+  named "-lineMax:<n>". This instructs the compiler to use <n> as the maximum 
+  length of a line.
+
+- the ellipsis ("...") operator is now passed through when used within a
+  function prototype. 
+

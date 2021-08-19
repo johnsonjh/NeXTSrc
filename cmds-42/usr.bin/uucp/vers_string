@@ -1,0 +1,6 @@
+#! /bin/sh
+cat << EOF
+char SGS_VERS[160] = "@(#)PROGRAM:uuXXX  PROJECT:Unknown  DEVELOPER:cthixton  BUILT:Tue Apr 4 18:34:07 PDT 1989\n";
+char VERS_NUM[10] = "";
+EOF
+exit 0

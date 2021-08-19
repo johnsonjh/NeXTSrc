@@ -1,0 +1,34 @@
+cc -O -g -bsd -DNeXT_MOD -c disk.c
+disk.c:154: `DL_VERSION' undeclared, outside of functions
+disk.c: In function init:
+disk.c:407: invalid use of undefined type `struct bad_block'
+disk.c:408: `NBAD_BLK' undeclared (first use this function)
+disk.c:408: (Each undeclared identifier is reported only once
+disk.c:408: for each function it appears in.)
+disk.c:409: invalid use of undefined type `struct bad_block'
+disk.c: In function write_label:
+disk.c:615: storage size of `o_bad_block' isn't known
+disk.c:630: invalid use of undefined type `struct bad_block'
+disk.c:631: `o_bad_block' undeclared (first use this function)
+disk.c:632: `NBAD_BLK' undeclared (first use this function)
+disk.c: In function bad:
+disk.c:711: invalid use of undefined type `struct bad_block'
+disk.c:712: `NBAD_BLK' undeclared (first use this function)
+disk.c:722: invalid use of undefined type `struct bad_block'
+disk.c:774: `SB_BAD' undeclared (first use this function)
+disk.c:791: invalid use of undefined type `struct bad_block'
+disk.c: In function bitmap:
+disk.c:853: `SB_UNTESTED' undeclared (first use this function)
+disk.c:854: `SB_BAD' undeclared (first use this function)
+disk.c:855: `SB_ERASED' undeclared (first use this function)
+disk.c:856: `SB_WRITTEN' undeclared (first use this function)
+disk.c: In function tvers:
+disk.c:1877: `DL_V3' undeclared (first use this function)
+disk.c: In function print:
+disk.c:2078: warning: argument passing between incompatible pointer types
+disk.c:2102: warning: argument passing of integer from pointer lacks a cast
+disk.c:2102: too many arguments to function
+disk.h: At top level:
+disk.h:50: storage size of static var `bad_block' isn't known
+*** Exit 1
+Stop.

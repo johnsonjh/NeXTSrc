@@ -1,0 +1,65 @@
+################# make all for usr.ucb/sendmail ###################
+================= make all for aux =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS mconnect.c mailstats.c praliases.c vacation.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS -c mconnect.c
+vers_string -c mconnect > mconnect_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS -c mconnect_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS -o mconnect.NEW mconnect.o mconnect_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS -c mailstats.c
+vers_string -c mailstats > mailstats_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS -c mailstats_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS -o mailstats.NEW mailstats.o mailstats_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS -c praliases.c
+vers_string -c praliases > praliases_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS -c praliases_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS -o praliases.NEW praliases.o praliases_vers.o -lsys_s -ldbm
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS -c vacation.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS -c ../src/convtime.c
+vers_string -c vacation > vacation_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS -c vacation_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I../src -DVMUNIX -DNeXT_NFS -o vacation.NEW vacation.o convtime.o vacation_vers.o -lsys_s -ldbm
+================= make all for cf =================
+m4 mailhost.mc > mailhost.cf
+cp mailhost.cf sendmail.mailhost.cf.NEW
+m4 subsidiary.mc > subsidiary.cf
+cp subsidiary.cf sendmail.subsidiary.cf.NEW
+m4 sharedsubsidiary.mc > sharedsubsidiary.cf
+cp sharedsubsidiary.cf sendmail.sharedsubsidiary.cf.NEW
+================= make all for lib =================
+================= make all for src =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO conf.c deliver.c main.c parseaddr.c err.c alias.c savemail.c  sysexits.c util.c bmove.c arpadate.c version.c collect.c  macro.c headers.c readcf.c stab.c recipient.c stats.c daemon.c  usersmtp.c srvrsmtp.c queue.c clock.c trace.c envelope.c  convtime.c remote.c domain.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c conf.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c deliver.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c main.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c parseaddr.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c err.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c alias.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c savemail.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c sysexits.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c util.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c bmove.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c arpadate.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c version.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c collect.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c macro.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c headers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c readcf.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c stab.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c recipient.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c stats.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c daemon.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c usersmtp.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c srvrsmtp.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c queue.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c clock.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c trace.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c envelope.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c convtime.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c remote.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c domain.c
+vers_string -c sendmail > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DNETINFO -o sendmail.NEW conf.o deliver.o main.o parseaddr.o err.o alias.o savemail.o  sysexits.o util.o bmove.o arpadate.o version.o collect.o  macro.o headers.o readcf.o stab.o recipient.o stats.o daemon.o  usersmtp.o srvrsmtp.o queue.o clock.o trace.o envelope.o  convtime.o remote.o domain.o   vers.o -lsys_s -ldbm
+################# make all for usr.ucb/sendmail done ###################

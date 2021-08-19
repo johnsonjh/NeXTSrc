@@ -1,0 +1,38 @@
+
+currentshared true setshared
+  % allocate all of these procs in shared VM and leave previous state on 
+  % stack for restore
+
+windowPackage1.0 begin
+
+/setCursor {	%     <x> <y> <mx> <my> <actNum> setCursor
+  % sets the cursor, with sync count.  If some other activation has happened
+  % since the event that caused this setCursor, this setCursor is a NOP.
+    appLock
+    {
+    	{
+	    curActivation eq 
+	    {
+		setcursor
+	    }{
+		pop pop pop pop
+	    } ifelse
+	} stopped
+	{handleerror} if
+    } monitor
+} _NXDefProc
+
+/setArrowCursor {	%			 setArrowCursor
+  % sets the arrow cursor
+    gsave
+    {
+	sharedCursors windowdeviceround
+	0 48 1 -1 setcursor
+    } stopped
+    {handleerror} if
+    grestore
+} _NXDefProc
+
+end			% close window dict
+setshared		% restore VM allocation mode
+

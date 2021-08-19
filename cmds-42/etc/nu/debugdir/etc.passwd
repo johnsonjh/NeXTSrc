@@ -1,0 +1,11 @@
+root:IJ.B9bslvidHw:0:1:Operator:/:/bin/csh
+nobody:*:-2:-2::/:
+daemon:*:1:1::/:
+sync::1:1::/:/bin/sync
+sys:*:2:2::/:/bin/csh
+bin:*:3:3::/bin:
+uucp:*:4:4::/usr/spool/uucppublic:
+news:*:6:6::/usr/spool/news:/bin/csh
+btaylor:SiR7XKkly6o.M:181:11:Bradley Taylor:/os/btaylor:/usr/local/bin/ncsh
++::
+foo:iKQV7TsLe5kGk:20:20:Foo Bar:debugdir/user/foo:/bin/csh

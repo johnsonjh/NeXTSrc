@@ -1,0 +1,148 @@
+head     1.4;
+access   ;
+symbols  ;
+locks    osdev:1.4;
+comment  @# @;
+
+
+1.4
+date     89.07.24.11.27.39;  author osdev;  state Exp;
+branches ;
+next     1.3;
+
+1.3
+date     89.06.14.21.55.19;  author osdev;  state Exp;
+branches ;
+next     1.2;
+
+1.2
+date     89.06.01.09.41.10;  author mmeyer;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.06.01.09.40.31;  author mmeyer;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@original version
+@
+
+
+1.4
+log
+@Added findswap; removed slattach
+@
+text
+@DIR=	etc
+CONFDIR= ${DSTROOT}/private/etc
+DSTDIRS= ${CONFDIR}
+
+SUBDIR=	ac accton arp autodiskmount biod bootpd builddisk                   \
+	catman clri comsat cron dcheck disk dmesg dump dumpfs               \
+	edquota findswap fsck fsirand ftpd gettable getty halt htable       \
+	icheck ifconfig inetd init kgmon mkfs mkhosts mklost+found          \
+	mknod mkpasswd mkplaces mkproto mount named ncheck newclient        \
+	newfs nfsd nppower nu ping portmap quot quotacheck quotaon          \
+	reboot renice repquota restore rexecd rlogind rmt route routed      \
+	rpc.statd rshd rwhod sa scsimodes shutdown snd_register    	    \
+	syslogd talkd telnetd tftpd timed tunefs tzone umount               \
+	update vipw vmmprint vmoprint ypbind zprint
+
+# TRIAGE die: XNSrouted swapon mkSingleUser rpc.lockd implog
+
+SYMLINKS= catman chown \
+	disk dump rdump edquota \
+	fsirand halt ifconfig inetd \
+	init mkfs mkhosts mklost+found mknod mkpasswd mkplaces mkproto \
+	mount newclient newfs nu ping quot \
+	quotacheck quotaon reboot renice repquota restore rrestore rexecd \
+	rlogind rmt route rshd rwhod \
+	shutdown slattach umount update vipw
+
+all clean depend tags: ALWAYS
+	@@echo '#################' make $@@ for $(DIR) '###################'
+	@@for i in ${SUBDIR}; \
+	do \
+		echo ================= make $@@ for $$i =================; \
+		(cd $$i; ${MAKE} $@@ || exit 1); \
+	done
+	@@echo '#################' make $@@ for $(DIR) done '###################'
+
+install: DSTROOT ${DSTDIRS} ALWAYS
+	@@echo '#################' make $@@ for $(DIR) '###################'
+	@@CWD=`pwd`; cd ${DSTROOT}; DSTROOT=`pwd`; cd $$CWD; \
+	for i in ${SUBDIR}; \
+	do \
+		echo ================= make $@@ for $$i =================; \
+		(cd $$i; ${MAKE} DSTROOT=$$DSTROOT $@@ || exit 1); \
+	done
+	@@CWD=`pwd`; cd ${DSTROOT}; DSTROOT=`pwd`; cd $$CWD; \
+	for i in ${SYMLINKS}; \
+	do \
+		rm -f ${DSTROOT}/private/etc/$$i; \
+		echo "ln -s ../../usr/etc/$$i ${DSTROOT}/private/etc/$$i" ; \
+		ln -s ../../usr/etc/$$i ${DSTROOT}/private/etc/$$i ; \
+	done
+	@@echo '#################' make $@@ for $(DIR) done '###################'
+
+DSTROOT:
+	@@if [ -n "$($@@)" ]; \
+	then \
+		exit 0; \
+	else \
+		echo Must define $@@; \
+		exit 1; \
+	fi
+
+$(DSTDIRS):
+	mkdirs $@@
+
+ALWAYS:
+@
+
+
+1.3
+log
+@Removed automount
+@
+text
+@d7 1
+a7 1
+	edquota fsck fsirand ftpd gettable getty halt htable                \
+d12 1
+a12 1
+	rpc.statd rshd rwhod sa scsimodes shutdown slattach snd_register    \
+@
+
+
+1.2
+log
+@added fsck
+@
+text
+@d5 10
+a14 9
+SUBDIR=	ac accton automount biod bootpd builddisk catman chown clri comsat \
+	cron dcheck disk dump dumpfs edquota fsck fingerd \
+	fsirand ftpd gettable getty halt htable icheck ifconfig inetd \
+	init mkfs mkhosts mklost+found mknod mkpasswd mkplaces mkproto \
+	mount named ncheck newclient newfs nfsd nu ping portmap quot \
+	quotacheck quotaon reboot renice repquota restore rexecd \
+	rlogind rmt route routed rpc.statd rshd rwhod sa \
+	scsimodes shutdown slattach syslogd talkd telnetd tftpd timed \
+	tunefs tzone umount update vipw  ypbind
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d6 1
+a6 1
+	cron dcheck disk dump dumpfs edquota fingerd \
+@

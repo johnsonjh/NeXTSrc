@@ -1,0 +1,98 @@
+#
+# makefile for libcs
+#
+DSTDIR= 
+LIBDIR= $(DSTDIR)/usr/lib
+DEFS=
+CFLAGS= -O ${DEFS} -fwritable-strings -DNeXT_MOD -bsd
+TAGSFILE=tags
+INSTALL=install
+MV=	mv -f
+
+CFILES=	abspath.c atoh.c atoo.c atot.c boolarg.c bsearch.c chrarg.c ci.c \
+	del.c dfork.c doublearg.c editor.c errmsg.c expand.c fdate.c \
+	ffilecopy.c fgetpass.c filecopy.c floatarg.c fold.c fwantread.c \
+	fwantwrite.c getbool.c getchr.c getdouble.c getfloat.c gethex.c \
+	gethostattr.c getint.c getlong.c getname.c getoct.c getpwwho.c \
+	getsearch.c getshort.c getstab.c getstr.c gtime.c hexarg.c \
+	intarg.c longarg.c movefile.c nxtarg.c octarg.c openp.c \
+	parsedate.c path.c prstab.c putenv.c quit.c run.c salloc.c \
+	searcharg.c searchp.c setpath.c shortarg.c sindex.c skipto.c \
+	srchscore.c stabarg.c stablk.c stabsearch.c stlmatch.c strarg.c \
+	ulstrcmp.c ulstrncmp.c vmnlist.c wantread.c wantwrite.c \
+	cmuttyname.c tenex.c
+YFILES= parsedate.y
+SRCS=	${YFILES} ${CFILES}
+OBJS=	abspath.o atoh.o atoo.o atot.o boolarg.o bsearch.o chrarg.o ci.o \
+	del.o dfork.o doublearg.o editor.o errmsg.o expand.o fdate.o \
+	ffilecopy.o fgetpass.o filecopy.o floatarg.o fold.o fwantread.o \
+	fwantwrite.o getbool.o getchr.o getdouble.o getfloat.o gethex.o \
+	gethostattr.o getint.o getlong.o getname.o getoct.o getpwwho.o \
+	getsearch.o getshort.o getstab.o getstr.o gtime.o hexarg.o \
+	intarg.o longarg.o movefile.o nxtarg.o octarg.o openp.o \
+	parsedate.o path.o prstab.o putenv.o quit.o run.o salloc.o \
+	searcharg.o searchp.o setpath.o shortarg.o sindex.o skipto.o \
+	srchscore.o stabarg.o stablk.o stabsearch.o stlmatch.o strarg.o \
+	ulstrcmp.o ulstrncmp.o vmnlist.o wantread.o wantwrite.o \
+	cmuttyname.o tenex.o
+
+all:	libcs.a libcs_p.a
+
+.c.o:
+	${CC} -p ${CFLAGS} -c $<
+	-ld -X -r $@ -o profiled/$@
+	${CC} ${CFLAGS} -c $<
+	-ld -x -r $@ -o xxx.o
+	rm -f $@
+	${MV} xxx.o $@
+
+libcs.a libcs_p.a: .depend_done ${OBJS}
+	@echo "building libcs_p.a"
+	@cd profiled; ar cru ../libcs_p.a ${OBJS}
+	@echo "building libcs.a"
+	@ar cru libcs.a ${OBJS}
+	@ranlib libcs.a
+
+install: all DSTROOT ${DSTROOT}${LIBDIR}
+	${INSTALL} -r libcs.a ${DSTROOT}${LIBDIR}/libcs.a
+	${INSTALL} -r libcs_p.a ${DSTROOT}${LIBDIR}/libcs_p.a
+
+${DSTROOT}${LIBDIR}:
+	mkdirs $@
+
+DSTROOT:
+	@if [ -n "${$@}" ]; \
+	then \
+		exit 0; \
+	else \
+		echo Must define $@; \
+		exit 1; \
+	fi
+
+parsedate.c: parsedate.y
+	yacc parsedate.y
+	${MV} y.tab.c parsedate.c
+	ed - parsedate.c <parsedate.scr
+
+tags:
+	cwd=`pwd`; \
+	for i in ${SRCS}; do \
+		ctags -a -f ${TAGSFILE} $$cwd/$$i; \
+	done
+
+clean:
+	rm -f *.o profiled/*.o a.out core libcs.a libcs_p.a parsedate.c \
+	    y.tab.c tags
+	rm -f Makedep .depend_done
+	touch Makedep
+
+depend .depend_done: ${YFILES:.y=.c}
+	rm -f Makedep .depend_done
+	cc -M ${CFLAGS} ${CFILES} ${YFILES:.y=.c} | awk ' { if ($$1 != prev) \
+	    { if (rec != "") print rec; rec = $$0; prev = $$1; } \
+	    else { if (length(rec $$2) > 78) { print rec; rec = $$0; } \
+	    else rec = rec " " $$2 } } \
+	    END { print rec } ' > Makedep
+	-touch .depend_done
+
+-include Makedep

@@ -1,0 +1,17 @@
+#init.c#/
+./
+../
+.places
+Makedep
+Makefile
+RCS/
+errs
+init.NEW*
+init.c
+init.c.debug
+init.c.orig
+init.c.syslog
+init.c~
+init.o
+vers.c
+vers.o

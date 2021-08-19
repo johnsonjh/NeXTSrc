@@ -1,0 +1,166 @@
+
+gdb:
+	- Gdb internals have been changed to use mach messaging.
+	- Mach threads are now supported.  New commands are:
+		thread-list
+			Abbreviated "tl".
+			Lists all threads which exist in the debugee.
+		thread_list
+			Abbreviated "ts".
+			Selects a thread (e.g. "ts 2" to select thread #2).
+		tsuspend
+			Suspend execution of a particular thread.
+		tresume
+			Resume execution of a particular thread.
+	- Attach/detach now work under mach.
+		attach pid
+			Attaches the debugger to the specified UNIX pid.
+		detach
+			Detaches the debugger from the attached process
+			and resumes execution.
+	- Mach core files are now supported.
+		After starting up the debugger on the executable that created
+		the corefile type "core core" to have the debugger read the
+		core file.  From that point on normal debugger commands will
+		work on the core image.  "thread list" and "thread select" 
+		may be used to alter which thread within the core image you
+		are examining.  The following command is also of interest:
+
+		info files
+			Lists the regions and threads contained within the
+			core file.  WARNING: by default core files are not
+			generated under mach.  You must execute the following
+			command under csh to enable them:
+
+				limit core 3M
+
+			This allows core files of up to 3 megabytes to be 
+			created.  The maximum corefile size is up to you
+			but due to the way core files are created under mach
+			even a trivial app will create a core file of well
+			over a megabyte.
+
+cc/cc1/cpp/as:
+	- We are now running the GCC version 1.25.  There are new manual pages
+	  available from the GNU project.  There have been many bugs fixed, but
+	  no new features worth mentioning.
+
+bison:
+	- Bison is now part of the release.  This is a tool which is required
+	  by the compiler and debugger to build themselves.  It is a compiler
+	  compiler (parse table generator).  It is not of general interest.
+	  Those that need to generate parse tables should use the standard
+	  unix "yacc" utility instead of bison due to potential licensing
+	  problems.
+
+ld:
+	- The -lappkit* flags are no longer expanded by ld.  You must change
+	  -lappkit to -lappkit -lpsconnect -lutilities -lobjc -lm.
+
+	- ld now supports mach-o files and shared libraries.
+
+	  The default is to still produce the same thing as ld-1.  To create
+	  object files in mach-o format use -Mach (cc-3 understands this, in
+	  the past this flag was -m, it has changed to -Mach).  Currently there
+	  is NO debugger support for executables in mach-o format.  The format
+	  is described in <sys/loader.h>, it has lots of comments so please
+	  read them if you are interested in the format and then see Kevin
+	  Enderby if any futher help is needed.  The default booted mach can
+	  execute them.
+
+	  You can add segments to mach-o files with (Chris and Bill take note):
+
+		-segcreate <segment name> <section name> <file name>
+
+	  where the contents of <file name> go into the segment (cc-3 also
+	  understands this set of flags).  This will also work with the a.out to
+	  mach converter (atom).  These segments are mapped into the address
+	  space of the executable and the contents can be read (and written) by
+	  the executable.  NOTE if you write it it DOES NOT go back into the
+	  executable.  It is just like initialized data (copy on write).  It is
+	  intended to be used for the icons, the archive and the like.  To get
+	  to these segments from your code you use:
+
+		#include <sys/loader.h>
+		const struct load_command *
+		getsegbyname(char *name);
+
+	  You pass it the name of the segment you want the pointer to the
+	  segment structure for and it will return it (or zero if it doesn't
+	  exist).  The structure is read only.  See <sys/loader.h> for the
+	  currently taken names.  See me if you want one.  See the example
+	  ~enderby/ld_tools/testseg.c on how to use it, or see Kevin Enderby.
+	  NOTE this is not yet installed yet in libc.a the source is in
+	  ~enderby/ld_tools/getsegbyname.c if you need it in the mean time.
+
+	  Other NEW link editor flags (that are useful to others):
+
+		-Ttext <hex number>
+		    or just
+		-T <hex number>
+			Sets the start of text (don't use with ZMAGIC a.out
+			files the kernel assumes fixed addresses).  This will
+			work fine with mach-o (but don't use address 0 because
+			the kernel will refuse to map anything there).
+		-Tdata <hex number>
+			Sets the start of data (same things apply as above).
+			Yes the name of this flag !@#$'s but it came from
+			GNU and I needed the functionality for shared libs.
+
+		Leo take note:
+		-a<original symbol name>:<alias symbol name>
+			This changes <original symbol name> to <alias symbol
+			name> in the input .o's in the final a.out.  So names
+			like _oswrite can be changed to _write (hint, hint).
+
+	  About shared libraries:  This loader is ready and will create and
+	  link shared libraries.  Other things are not in place yet so we are
+	  waiting for the major peices (the debugger, machx to become mach)
+	  before droping in a slight change to crt0.o.  When the major peices
+	  are ready they will be dropped in.  We are also waiting for the 0.7
+	  versions of the appkit and psconnect libraries and apps to be
+	  converted to them.  At which time I will create shared version of them
+	  in a day or two.  We (Brad) is working on a combined and shared
+	  libmach, libthreads and libc.  There are shared libraries for a
+	  -32 version of the appkit, a -10 version of psconnect, a -3 version
+	  of utilities and a -3 version of objc.  NOTE these are NOT installed.
+	  They are old versions and have know incompatablities.  See Kevin
+	  Enderby if you really want to link and run with these (but we would
+	  rather you wait until we have a 0.7 set together).
+
+mkshlib:
+	- A new utilitiy used to generate shared libraries.  This is only
+	  used by those involed in building a shared library.  Users of shared
+	  libraries will NEVER use this.  If you need to build a shared library
+	  see Kevin Enderby.  This is again in a ready to use state waiting on
+	  other peices (see above on About shared libraries in the ld notes).
+
+misc:
+	- The following programs are now part of the compiler project, but are
+	  not stamped the same way that the other compiler suite utilities are:
+
+		ar: 
+			No changes.
+		atom: a.out to mach-o file converter.
+			This converts existing a.out executables to mach
+			executables.  It also adds segments from file like ld.
+			You can't use getsegbyname() in an a.out file and
+			then convert it to a mach-o file.  You must use ld with
+			the -Mach flag.
+		file:
+			Now knows about mach-o files.
+		nm: 
+			Now knows about mach-o files.
+		otool:
+			New utility. NOTE no 'e' (not otoole).
+			This tool looks at object files, a.out, mach-o and
+			archives.  It is real good about bad object files and
+			tries it's hardest (doesn't freak out) if the object
+			file is bogus.  NOTE the disassembler is not finished
+			as is the whole program.  Send requests to Kevin
+			Enderby.  See the Usage line (just type otool) for
+			what it can do.
+		size:
+			Now knows about mach-o files.
+		strip:
+			Now knows about mach-o files.

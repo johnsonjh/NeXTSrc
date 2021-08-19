@@ -1,0 +1,19 @@
+*** rcsbase.h	Mon Jun 25 23:09:25 1990
+--- rcsbase.h.orig	Thu Dec  7 10:31:41 1989
+***************
+*** 348,361 ****
+  #define VOID
+  #endif
+  
+- #ifdef	NeXT
+- #ifdef	__STRICT_BSD__
+- #define SIGNAL_TYPE int
+- #else
+- #define SIGNAL_TYPE void
+- #endif	__STRICT_BSD__
+- #endif	NeXT
+- 
+  /* common routines */
+  extern char *talloc();
+  extern int serror();
+--- 348,353 ----

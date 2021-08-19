@@ -1,0 +1,67 @@
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -DDEBUG -o rpc.lockd.NEW prot_freeall.o prot_main.o prot_lock.o prot_pklm.o             prot_pnlm.o prot_msg.o prot_proc.o prot_libr.o prot_alloc.o    prot_priv.o prot_share.o tcp.o udp.o xdr_nlm.o xdr_klm.o       xdr_sm.o sm_monitor.o svc_udp.o hash.o   vers.o -lsys_s -lrpcsvc
+ld: warning: table of contents for archive: /lib/libsys_s.a is out of date; rerun ranlib(1)
+Undefined symbols:
+ .file_definition_raise.o
+ .file_definition_memmove.o
+ .file_definition_auth_none.o
+ .file_definition_lock.o
+ .file_definition_ni_data.o
+ .file_definition_inet_addr.o
+ .file_definition_ftell.o
+ .file_definition_inet_ntoa.o
+ .file_definition_atof.o
+ .file_definition_filbuf.o
+ .file_definition_errlst.o
+ .file_definition_fseek.o
+ .file_definition_cerror.o
+ .file_definition_yp_data.o
+ .file_definition_sprintf.o
+ .file_definition_write.o
+ .file_definition_connect.o
+ .file_definition_ndbm.o
+ .file_definition_fread.o
+ .file_definition_memset.o
+ .file_definition_getpagesize.o
+ .file_definition_fputs.o
+ .file_definition_lu_utils.o
+ .file_definition_listen.o
+ .file_definition_lookupUser.o
+ .file_definition_mach_user.o
+ .file_definition_getdomainname.o
+ .file_definition_fputc.o
+ .file_definition_errno.o
+ .file_definition_strcat.o
+ .file_definition_authunix_prot.o
+ .file_definition_getdtablesize.o
+ .file_definition__exit.o
+ .file_definition_strchr.o
+ .file_definition_fstat.o
+ .file_definition_mach_data.o
+ .file_definition_ctype_.o
+ .file_definition_memcmp.o
+ .file_definition_gettimeofday.o
+ .file_definition_sleep.o
+ .file_definition_sigvec.o
+ .file_definition_strncpy.o
+ .file_definition_get_myaddress.o
+ .file_definition_fcntl.o
+ .file_definition_ntohl.o
+ .shared_library_information_libsys_s.B.shlib
+ .file_definition_isatty.o
+ .file_definition_setitimer.o
+ .file_definition_fgets.o
+ .file_definition__lu_types_xdr.o
+ .file_definition_htonl.o
+ .file_definition_syslog.o
+ .file_definition_rew.o
+ .file_definition_ungetc.o
+ .file_definition_xdr_rec.o
+ .file_definition__dbltopdfp.o
+ .file_definition_read.o
+ .file_definition_mach_init.o
+ .file_definition_select.o
+ .file_definition_accept.o
+ .file_definition_htons.o
+
+*** Exit 1
+Stop.

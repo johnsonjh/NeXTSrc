@@ -1,0 +1,65 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    osdev:1.1; strict;
+comment  @# @;
+
+
+1.1
+date     89.06.21.18.00.33;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@original version
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a9600|Hardwire on ttya at 9600 baud:\
+	:dv=/dev/ttya:br#9600:el=^C^S^Q^U^D:ie=%$:oe=^D:
+b9600|Hardwire on ttyb at 9600 baud:\
+	:dv=/dev/ttyb:br#9600:el=^C^S^Q^U^D:ie=%$:oe=^D:
+#
+# General dialer definitions used below
+#
+dial1200|1200 Baud Hayes attributes:\
+	:dv=/dev/cua:br#1200:at=hayes:du:
+dial300|300 Hayes attributes:\
+	:dv=/dev/cua:br#300:at=hayes:du:
+#
+# UNIX system definitions
+#
+UNIX-1200|1200 Baud dial-out to another UNIX system:\
+	:el=^U^C^R^O^D^S^Q@@:ie=#%$:oe=^D:tc=dial1200:
+UNIX-300|300 Baud dial-out to another UNIX system:\
+	:el=^U^C^R^O^D^S^Q@@:ie=#%$:oe=^D:tc=dial300:
+#
+tip0|tip1200:tc=UNIX-1200:
+tip300:tc=UNIX-300:
+cu0|cu300:tc=UNIX-300:
+cu1200:tc=UNIX-1200:
+dialer:dv=/dev/cul0:br#1200:
+#--------------------------------------------------------------------
+#The attributes are:
+#
+#dv	device to use for the tty
+#el	EOL marks (default is NULL)
+#du	make a call flag (dial up)
+#pn	phone numbers (@@ =>'s search phones file; possibly taken from
+#			      PHONES environment variable)
+#at	ACU type (vadic, ventel, hayes, courier)
+#ie	input EOF marks	(default is NULL)
+#oe	output EOF string (default is NULL)
+#cu	call unit (default is dv)
+#br	baud rate (defaults to 300)
+#fs	frame size (default is BUFSIZ) -- used in buffering writes
+#	  on receive operations
+#tc	to continue a capability
+@

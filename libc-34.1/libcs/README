@@ -1,0 +1,108 @@
+The files in this directory constitute the exportable CMU Computer Science
+department additions to the C runtime library.  They are part of the CMU
+CS runtime library by default, but may be exported separately as LIBCS.
+
+Descriptions of user-callable routines are as follows:
+
+execute process and wait for exit:
+	run		run ala execl
+	runv		run ala execv
+	runp		run from path ala execlp
+	runvp		run from path ala execvp
+
+path utilities:
+	abspath		determine absolute pathname from path
+	path		break path into file and/or directory components
+
+ascii translation:
+	atoh		ascii to hexadecimal
+	atoo		ascii to octal
+	atot		ascii to time_t
+
+string utilities:
+	folddown	fold string to lowercase
+	foldup		fold string to uppercase
+	salloc		allocate dynamic copy of string
+	sindex		find index of substring
+	skipover	skip characters in cset
+	skipto		skip characters not in cset
+	ulstrcmp	case-insensitive version of strcmp
+	ulstrncmp	case-insensitive version of strncmp
+
+string table utilities:
+	prstab		print string table to stdout
+	fprstab		print string table to file
+	srchscore	perform approximate string matching
+	stablk		string table lookup
+	stabsearch	search for best match within string table
+	stlmatch	match leftmost part of string
+
+argument parsing:
+	nxtarg		strip off arguments from a string
+	boolarg		parse boolean argument
+	chrarg		parse character argument
+	doublearg	parse double argument
+	floatarg	parse float argument
+	hexarg		parse hexadecimal integer argument
+	intarg		parse decimal integer argument
+	longarg		parse decimal long integer argument
+	octarg		parse octal integer argument
+	searcharg	parse "best" string table argument
+	shortarg	parse decimal short integer argument
+	stabarg		parse string table argument
+	strarg		parse string argument
+
+interactive parsing:
+	getbool		prompt user a yes/no question
+	getchr		prompt user to select a character
+	getdouble	prompt user for double
+	getfloat	prompt user for float
+	gethex		prompt user for hexadecimal integer
+	getint		prompt user for decimal integer
+	getlong		prompt user for decimal long integer
+	getoct		prompt user for octal integer
+	getsearch	prompt user for "best" string table entry
+	getshort	prompt user for decimal short integer
+	getstab		prompt user for string table entry
+	getstr		prompt user for string
+
+date and time conversion:
+	fdate		return formated date string
+	gtime		return time_t from struct tm
+	parsedate	parse date string
+
+kernel support:
+	vmnlist		quick kernel nlist routine
+
+path searching:
+	searchp		search path for file
+	fopenp		search path and fopen file
+	openp		search path and open file
+	fwantread	attempt to fopen file along path for input
+	fwantwrite	attempt to fopen file along path for output
+	wantread	attempt to open file along path for input
+	wantwrite	attempt to open file along path for output
+
+password file matching:
+	getpwwho	lookup user using liberal matching
+	getpwambig	return ambiguous matches from getpwwho
+
+file moving/copying:
+	movefile	change name of file
+	ffilecopy	very fast buffered file copy
+	filecopy	very fast file copy
+
+random utilities:
+	bsearch		binary search ala qsort
+	ci		command interface
+	del		interrupt handler
+	dfork		"double" fork
+	editor		invoke preferred editor for user
+	errmsg		return error message string
+	expand		expand wildcard filename pattern
+	fgetpass	read password from file or terminal
+	gethostattr	get attributes of current host
+	getname		get name from user-id
+	putenv		add variable to environment
+	quit		exit program with error message
+	setpath		"smart" path modification interface

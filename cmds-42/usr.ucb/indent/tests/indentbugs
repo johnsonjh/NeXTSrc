@@ -1,0 +1,141 @@
+indentbugs
+
+
+
+1/18/87 from Jack Newlin
+Lines after ++y; are indented when they should not be.
+
+while (y < ylast) {
+    if (color.gray != MAXCOLOR) {
+	sGryRow = eGry;
+	eGry = sGryRow + grayN;
+    }
+    ++y;
+    if (leftSlope) {
+	xl = IntPart(lx);
+	lx += ldx;
+    }
+}
+
+1/20/87 from Bill T
+Bill,
+
+Note the following problems in indentnext.  The static variables immediately
+below the message group specification are not aligned.  The case statement
+doesn't align properly. Note what happens after the third case.
+
+= (Bshell, Kit, Primitive)
+    static char     cmdline[256];
+static char     word[256];
+
+
+ProcessStdin(fd)
+    int             fd;		/* we assume fd = stdin */
+{
+    msRect          r;
+    int             success;
+    int             flag;
+    void            HilightRect();
+    extern DocPtr   activeDoc;
+
+ /* this goes away soon */
+    struct {
+	@defs (Application)
+    }              *peeper;
+
+    if (gets(cmdline)) {
+	sscanf(cmdline, "%s", word);
+	switch (word[0]) {
+	case 'p':
+	    printf("someone typed a p.\n");
+	    break;
+	case 'q':
+	    done = TRUE;
+	    gCleanUpSpam();
+	    if (done) {
+		peeper = TheApp;
+		peeper->running = FALSE;
+	    /* [TheApp running:FALSE]; */
+	    /*
+	     * Post an event so the application will realize running has
+	     * been set false 
+	     */
+		PSpostevent(NW_KDEVENT, 0.0, 0.0, 0, 0, WINDOW_DATA(thePort)->serverID,
+			    0, 0, NW_TRANSMIT, &success);
+		if (!success)
+		    printf("somebody fucked up on postevent. \n");
+	    }
+	    break;
+	case 'h':
+	    sscanf(cmdline, "%s %hd %hd %hd %hd %d", word, &r.topLeft.h,
+		   &r.topLeft.v, &r.botRight.h, &r.botRight.v, &flag);
+	    HilightRect(&r, flag);
+	    break;
+	case 'n':
+	    PSnewinstance(WINDOW_DATA(thePort)->serverID);
+	    break;
+	case 's':
+	    gSaveTheDoc(activeDoc);
+	    break;
+	case 'u':
+	    gUndoChange();
+	    break;
+	case 'z':
+	    gPasteText();
+	    break;
+	case 'x':
+	    gCutText();
+	    break;
+	case 'v':
+	    gCopyText();
+	    break;
+	case 'a':
+	    gSelectAll();
+	    break;
+	case 'w':
+	    activeDoc->docInfo.spaceVis = ~activeDoc->docInfo.spaceVis;
+	    break;
+	case 'f':
+	    DoFontChange();
+	    break;
+	case 'r':
+	    DoRulerChange();
+	    break;
+	}
+	NWFlush();
+    }
+    return 0;
+}
+
+5/20/87
+indentnext bugs
+
+	make variable declarations name field line up on indent level (4x)
+		This can be done by setting something in the indent.pro
+	fix to deal with multiline objcc method declarations gracefully
+		i.e. not all lined up at left margin.
+
+6/1/87
+bug from Bill T.
+indentnext doesn't indent the following correctly.
+
+- setSubMenu:(id)subMenu
+    For:(int)tag
+{
+ /*
+  * Set the menu passed in subMenu as the subMenu for the menu command
+  * with tag tag.  SubMenus are automatically shown and hidden as the user
+  * drags into and out of a menu command 
+  */
+
+    int             i;
+
+    if (!subMenus)
+	subMenus = [IntDict new];
+    [subMenus addIfAbsentMatching:[IntAssoc ikey:tag value:subMenu]];
+    for (i = [list numCmds] - 1; i >= 0; i--)
+	if ((int)[list tagAt:i] == tag)
+	    break;
+    [list setLeadChar:MENUSYMBOL At:i];
+    return self;
+}

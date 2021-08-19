@@ -1,0 +1,129 @@
+For libsys-38 (Mike Minnick's mods)
+For libsys-39 (Steve Naroff's mods)
+- Added following entry points.
+	_objc_setClassHandler           1056
+
+- Added following entry points.
+	.empty_slot 			1468 ## was _snddriver_set_dsp_buffers_per_soundout_buffer
+	_snddriver_set_sndout_bufsize	1476
+	_snddriver_set_sndout_bufcount	1477
+	_snddriver_stream_ndma		1478
+
+For libsys-36 (Mike Minnick's mods)
+- Added following entry points.
+	_snddriver_reset_dsp_owner	1473
+	_snddriver_reset_sndin_owner	1474
+	_snddriver_reset_sndout_owner	1475
+
+For libsys-35 (Morris Meyer's mods)
+- Added the following symbols to spec_sys for the Internationalized ctype(3)
+  interface (for Rick McGowan).
+	_NXIsAlNum,_NXIsAlpha,_NXIsAscii,_NXIsCntrl,_NXIsDigit,_NXIsGraph
+	_NXIsLower,_NXIsPrint,_NXIsPunct,_NXIsSpace,_NXIsUpper,_NXIsXDigit
+	_NXToAscii,_NXToLower,_NXToUpper,__NXToLower,__NXToUpper
+- Added all .o's to spec_sys for above routines.
+- Added __NX_CTypeTable_ and __NX_ULTable_ private externs
+- Added docompare.csh, a shell script that will forcable run cmpshlib after
+	the shlib is built, providing that there is a previous version of
+	the shlib around.
+
+
+For libsys-33 (Morris Meyer's mods)
+
+For libsys-32 (Morris Meyer's  mods)
+- Added the following symbols to pointers.c and shlib.h to make the new
+  zone malloc package overrideable.
+	NXAddRegion, NXMallocCheck, NXRemoveRegion, malloc_multithreaded
+	vfree, _NXMallocDumpFrees, _NXMallocDumpZones, 
+	_malloc_fork_prepare, _malloc_fork_parent, _malloc_fork_child	
+- Removed the libbtree interface
+- Added the following symbol for Trey.
+	_NXGetTypedStreamZone		1096
+- Added the following symbol for Bryan.
+	_NXReadObjectFromBufferWithZone	1097
+
+For libsys-32 (Mike Minnick's mods)
+- Added the following symbols to spec_sys for FCC approved change.	
+	_snddriver_set_ramp		1470
+ 	_snddriver_dsp_read_data	1471
+ 	_snddriver_dsp_read_messages	1472
+
+For libsys-32 (John Anderson's mods)
+- Added the following symbols to spec_sys for the defaults move 
+  (libNeXT -> libsys).	
+ 	_NXRegisterDefaults		1521
+ 	_NXGetDefaultValue		1522
+ 	_NXSetDefault			1523
+ 	_NXWriteDefault			1524
+ 	_NXWriteDefaults		1525
+ 	_NXRemoveDefault		1526
+ 	_NXReadDefault			1527
+ 	_NXUpdateDefaults		1528
+ 	_NXUpdateDefault		1529
+ 	_NXSetDefaultsUser		1530
+ 	_NXFilePathSearch		1531
+ 	_NXGetTempFilename		1532
+ 
+
+For libsys-30 (Morris Meyer's mods)
+- Added libbtree to Makefile
+- Added software floating point (temporary).
+- Added NXStringTable.o to spec_sys
+- Added btree entry points to spec_sys and spec_sys_mdb
+
+For the libsys-27 (Morris Meyer's mods)
+- Added the overrides: target to the Makefile.  Any overridable object files
+  that want to get added need to have a line in the file "overrides" that
+  looks like:
+  	.file_definition_libsys_s.B.shlib_OBJECT_FILE.o
+
+For the libsys-26 (Kevin Enderby's modifications)
+- Added the -seglinkedit and "-segprot __LINKEDIT rwx r" options to the mkshlib
+  line in the Makefile.
+- Removed the object gnulib3.o from libsys.  This includes removing a branch
+  table slot for ___main and removing the undefined symbols ___CTOR_LIST__
+  and ___DTOR_LIST__ from the spec_sys file, shlib.h and pointers.c .
+- Added the following private externs for librld (cc-22 release):
+	_pass1
+	_delete_from_undefined_list
+	_free_undefined_list
+	_new_archive
+	_clean_archives
+
+For the libsys-24 (Kevin Enderby's modifications)
+- Fixed the macros in shlib.h to have parameters so things like free will
+  compile the objective-C project.
+- Changed the Makefile to use libc/SHLIB_OBJS/IND_LIST from libc/IND_LIST.
+- Added the librld stuff in cc-20 (cc-18.9 on land)
+- Added the changes for objc-19
+- Made the symbol catch_exception_raise overridable. It gets initialized for
+  to object libc/shlib_objs/exc_server.o
+- Fixed the #init's for ___CTOR_LIST__ and ___DTOR_LIST__ to only be done when
+  libc/shlib_obj/gnulib3.o gets linked.
+- Removed the #minor_version from the spec_sys file and added:
+	-minor_version `vers_string -n`
+  to the Makefile on the mkshlib line.
+- Changed the spec_sys file to reflect the change of ownership from:
+	libstreams/shlib_obj/except.o
+  to the new owner:
+	libobjc/shlib_obj/except.o
+
+For the libsys-10
+- Added the stuff to build libsys_p.a.
+- Made exit(3) overrideable so it can be linked with gcrt0.o.
+- Added the *_vers.o object from each of the projects to the spec_file.
+
+For the libsys-3 (0.91) release (compiled with the cc-10 compiler):
+- Updated to the new objective-C runtime.  Only the libobjc project has been
+  changed (now objc-10 version).
+- The links created for the lib<project> with the make installsrc now no
+  longer have the project version on them.  There will be a symbolic link
+  maintained for the project to the current version.
+- Made one change to line 294 of libc/next/csu/gmon.c changing the asm()
+  argument of "a" to "=a".  This will get it to compile with the cc-10 compiler
+  but might be a bug in the compiler.
+
+For the libsys-1 (0.83) release:
+- Created libsys for the first time.  It includes libc, libm, libobjc, libsound,
+  libstreams and libdb.  It replaces the shared version of all of those
+  libraries.

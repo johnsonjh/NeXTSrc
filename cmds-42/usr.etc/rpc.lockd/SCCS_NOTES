@@ -1,0 +1,76 @@
+Makefile	1.2 08/07/87 09:44:21
+removed dependencies
+
+Makefile	1.1 08/05/87 12:54:40
+date and time created 87/08/05 12:54:40 by clara
+
+hash.c	1.1 08/05/87 12:54:47
+date and time created 87/08/05 12:54:47 by clara
+
+priv_prot.h	1.1 08/05/87 12:54:52
+date and time created 87/08/05 12:54:52 by clara
+
+prot_alloc.c	1.1 08/05/87 12:54:56
+date and time created 87/08/05 12:54:56 by clara
+
+prot_libr.c	1.1 08/05/87 12:55:01
+date and time created 87/08/05 12:55:01 by clara
+
+prot_lock.c	1.1 08/05/87 12:55:07
+date and time created 87/08/05 12:55:07 by clara
+
+prot_lock.h	1.1 08/05/87 12:55:14
+date and time created 87/08/05 12:55:14 by clara
+
+prot_main.c	1.1 08/05/87 12:55:18
+date and time created 87/08/05 12:55:18 by clara
+
+prot_msg.c	1.1 08/05/87 12:55:25
+date and time created 87/08/05 12:55:25 by clara
+
+prot_pklm.c	1.1 08/05/87 12:55:30
+date and time created 87/08/05 12:55:30 by clara
+
+prot_pnlm.c	1.1 08/05/87 12:55:35
+date and time created 87/08/05 12:55:35 by clara
+
+prot_priv.c	1.1 08/05/87 12:55:40
+date and time created 87/08/05 12:55:40 by clara
+
+prot_proc.c	1.1 08/05/87 12:55:45
+date and time created 87/08/05 12:55:45 by clara
+
+prot_time.h	1.1 08/05/87 12:55:51
+date and time created 87/08/05 12:55:51 by clara
+
+sm_monitor.c	1.3 09/22/87 11:24:45
+restored sccs keyword line
+
+sm_monitor.c	1.2 08/24/87 17:38:01
+Added Chuck McManis's style of doing warning when can't contact
+the status monitor.
+
+sm_monitor.c	1.1 08/05/87 12:55:56
+date and time created 87/08/05 12:55:56 by clara
+
+sm_res.h	1.1 08/05/87 12:56:01
+date and time created 87/08/05 12:56:01 by clara
+
+svc_udp.c	1.1 08/05/87 12:56:05
+date and time created 87/08/05 12:56:05 by clara
+
+tcp.c	1.1 08/05/87 12:56:11
+date and time created 87/08/05 12:56:11 by clara
+
+udp.c	1.1 08/05/87 12:56:17
+date and time created 87/08/05 12:56:17 by clara
+
+xdr_klm.c	1.1 08/05/87 12:56:22
+date and time created 87/08/05 12:56:22 by clara
+
+xdr_nlm.c	1.1 08/05/87 12:56:27
+date and time created 87/08/05 12:56:27 by clara
+
+xdr_sm.c	1.1 08/05/87 12:56:32
+date and time created 87/08/05 12:56:32 by clara
+

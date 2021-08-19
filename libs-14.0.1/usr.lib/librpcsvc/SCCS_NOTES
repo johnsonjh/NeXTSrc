@@ -1,0 +1,294 @@
+Makefile	1.3 04/28/88 13:27:51
+Fixed makefile to work with Berkeley's install.
+
+Makefile	1.2 04/06/88 15:44:00
+Modified to copy sm_inter.h to rpcsvc where it is expected to be.
+
+Makefile	1.1 04/06/88 15:28:47
+date and time created 88/04/06 15:28:47 by corbin
+
+bootparam.h	1.3 05/08/88 16:27:29
+Added SUN's SID to file.
+
+bootparam.h	1.2 04/06/88 15:47:48
+Removed include of sys/time.h which is included by rpc/types.h
+
+bootparam.h	1.1 04/06/88 15:32:21
+date and time created 88/04/06 15:32:21 by corbin
+
+bootparam_prot.x	1.2 05/08/88 16:38:06
+Added SUN's SID to file.
+
+bootparam_prot.x	1.1 04/11/88 18:29:09
+date and time created 88/04/11 18:29:09 by corbin
+
+bootparam_xdr.c	1.3 05/08/88 16:26:57
+Added SUN's SID to file.
+
+bootparam_xdr.c	1.2 05/05/88 14:26:59
+Changed include statements to reflect Berkeley semantics.
+
+bootparam_xdr.c	1.1 04/11/88 18:28:55
+date and time created 88/04/11 18:28:55 by corbin
+
+ether.h	1.2 05/08/88 16:27:31
+Added SUN's SID to file.
+
+ether.h	1.1 04/11/88 18:28:39
+date and time created 88/04/11 18:28:39 by corbin
+
+ether.x	1.2 05/08/88 16:38:09
+Added SUN's SID to file.
+
+ether.x	1.1 04/11/88 18:29:10
+date and time created 88/04/11 18:29:10 by corbin
+
+etherxdr.c	1.3 05/08/88 16:27:00
+Added SUN's SID to file.
+
+etherxdr.c	1.2 04/06/88 15:45:19
+Removed include of sys/time.h which is included indirectly by rpc/rpc.h
+
+etherxdr.c	1.1 04/06/88 15:33:39
+date and time created 88/04/06 15:33:39 by corbin
+
+klm_prot.c	1.1 08/12/88 14:36:17
+date and time created 88/08/12 14:36:17 by cathe
+
+klm_prot.h	1.2 07/11/88 16:59:19
+Added sccs comments.
+
+klm_prot.h	1.1 07/07/88 15:12:52
+date and time created 88/07/07 15:12:52 by cathe
+
+klm_prot.x	1.3 05/26/88 16:47:39
+moved 'program' section to be compatible with the 4.0 rpcgen since this program is online documentation only there is no risk. This makes the resulting C files compileable if you choose to do so.
+
+klm_prot.x	1.2 05/08/88 16:38:12
+Added SUN's SID to file.
+
+klm_prot.x	1.1 04/11/88 18:29:11
+date and time created 88/04/11 18:29:11 by corbin
+
+mount.h	1.2 05/08/88 16:27:34
+Added SUN's SID to file.
+
+mount.h	1.1 04/11/88 18:28:42
+date and time created 88/04/11 18:28:42 by corbin
+
+mount.x	1.2 05/08/88 16:38:14
+Added SUN's SID to file.
+
+mount.x	1.1 04/11/88 18:29:13
+date and time created 88/04/11 18:29:13 by corbin
+
+mountxdr.c	1.4 05/08/88 16:27:03
+Added SUN's SID to file.
+
+mountxdr.c	1.3 05/05/88 14:54:10
+Changed include statements to reflect Berkeley semantics.
+
+mountxdr.c	1.2 04/06/88 15:46:37
+Removed include of sys/time.h which is included indirectly by rpc/rpc.h
+
+mountxdr.c	1.1 04/06/88 15:34:09
+date and time created 88/04/06 15:34:09 by corbin
+
+nfs_prot.x	1.2 05/08/88 16:38:17
+Added SUN's SID to file.
+
+nfs_prot.x	1.1 04/11/88 18:29:15
+date and time created 88/04/11 18:29:15 by corbin
+
+nlm_prot.c	1.1 08/12/88 14:36:19
+date and time created 88/08/12 14:36:19 by cathe
+
+nlm_prot.h	1.2 07/11/88 16:59:21
+Added sccs comments.
+
+nlm_prot.h	1.1 07/07/88 15:13:16
+date and time created 88/07/07 15:13:16 by cathe
+
+nlm_prot.x	1.2 05/08/88 16:38:20
+Added SUN's SID to file.
+
+nlm_prot.x	1.1 04/11/88 18:29:17
+date and time created 88/04/11 18:29:17 by corbin
+
+publickey.c	1.2 05/08/88 16:27:05
+Added SUN's SID to file.
+
+publickey.c	1.1 04/11/88 18:28:57
+date and time created 88/04/11 18:28:57 by corbin
+
+pwdnm.h	1.2 05/08/88 16:27:36
+Added SUN's SID to file.
+
+pwdnm.h	1.1 04/11/88 18:28:44
+date and time created 88/04/11 18:28:44 by corbin
+
+rex.h	1.2 05/08/88 16:27:39
+Added SUN's SID to file.
+
+rex.h	1.1 04/11/88 18:28:45
+date and time created 88/04/11 18:28:45 by corbin
+
+rex.x	1.2 05/08/88 16:38:22
+Added SUN's SID to file.
+
+rex.x	1.1 04/11/88 18:29:19
+date and time created 88/04/11 18:29:19 by corbin
+
+rex_xdr.c	1.2 05/08/88 16:27:08
+Added SUN's SID to file.
+
+rex_xdr.c	1.1 04/11/88 18:28:58
+date and time created 88/04/11 18:28:58 by corbin
+
+rnusers.x	1.2 05/08/88 16:38:25
+Added SUN's SID to file.
+
+rnusers.x	1.1 04/11/88 18:29:20
+date and time created 88/04/11 18:29:20 by corbin
+
+rquota.h	1.2 05/08/88 16:27:42
+Added SUN's SID to file.
+
+rquota.h	1.1 04/11/88 18:28:47
+date and time created 88/04/11 18:28:47 by corbin
+
+rquota.x	1.2 05/08/88 16:38:28
+Added SUN's SID to file.
+
+rquota.x	1.1 04/11/88 18:29:21
+date and time created 88/04/11 18:29:21 by corbin
+
+rquotaxdr.c	1.2 05/08/88 16:27:10
+Added SUN's SID to file.
+
+rquotaxdr.c	1.1 04/11/88 18:28:59
+date and time created 88/04/11 18:28:59 by corbin
+
+rstat.h	1.2 05/08/88 16:27:45
+Added SUN's SID to file.
+
+rstat.h	1.1 04/11/88 18:28:48
+date and time created 88/04/11 18:28:48 by corbin
+
+rstat.x	1.2 05/08/88 16:38:30
+Added SUN's SID to file.
+
+rstat.x	1.1 04/11/88 18:29:23
+date and time created 88/04/11 18:29:23 by corbin
+
+rstatxdr.c	1.2 05/08/88 16:27:12
+Added SUN's SID to file.
+
+rstatxdr.c	1.1 04/11/88 18:29:01
+date and time created 88/04/11 18:29:01 by corbin
+
+rusers.h	1.2 05/08/88 16:27:47
+Added SUN's SID to file.
+
+rusers.h	1.1 04/11/88 18:28:49
+date and time created 88/04/11 18:28:49 by corbin
+
+rusersxdr.c	1.2 05/08/88 16:27:15
+Added SUN's SID to file.
+
+rusersxdr.c	1.1 04/11/88 18:29:02
+date and time created 88/04/11 18:29:02 by corbin
+
+rwall.h	1.2 05/08/88 16:27:51
+Added SUN's SID to file.
+
+rwall.h	1.1 04/11/88 18:28:51
+date and time created 88/04/11 18:28:51 by corbin
+
+rwallxdr.c	1.2 05/08/88 16:27:17
+Added SUN's SID to file.
+
+rwallxdr.c	1.1 04/11/88 18:29:03
+date and time created 88/04/11 18:29:03 by corbin
+
+sm_inter.c	1.1 08/12/88 14:36:21
+date and time created 88/08/12 14:36:21 by cathe
+
+sm_inter.h	1.2 07/11/88 16:59:20
+Added sccs comments.
+
+sm_inter.h	1.1 07/07/88 15:13:40
+date and time created 88/07/07 15:13:40 by cathe
+
+sm_inter.x	1.3 05/26/88 16:51:59
+moved 'program' section to be compatible with the 4.0 rpcgen since this program is online documentation only there is no risk. This makes the resulting C files compileable if you choose to do so.
+
+sm_inter.x	1.2 05/08/88 16:38:32
+Added SUN's SID to file.
+
+sm_inter.x	1.1 04/11/88 18:29:24
+date and time created 88/04/11 18:29:24 by corbin
+
+spray.h	1.2 05/08/88 16:27:53
+Added SUN's SID to file.
+
+spray.h	1.1 04/11/88 18:28:52
+date and time created 88/04/11 18:28:52 by corbin
+
+spray.x	1.2 05/08/88 16:38:34
+Added SUN's SID to file.
+
+spray.x	1.1 04/11/88 18:29:25
+date and time created 88/04/11 18:29:25 by corbin
+
+sprayxdr.c	1.3 05/08/88 16:27:19
+Added SUN's SID to file.
+
+sprayxdr.c	1.2 04/06/88 15:46:58
+Removed include of sys/time.h which is included indirectly by rpc/rpc.h
+
+sprayxdr.c	1.1 04/06/88 15:33:02
+date and time created 88/04/06 15:33:02 by corbin
+
+util.c	1.2 05/08/88 16:27:22
+Added SUN's SID to file.
+
+util.c	1.1 04/11/88 18:29:05
+date and time created 88/04/11 18:29:05 by corbin
+
+xcrypt.c	1.4 07/26/88 19:13:29
+ To cut down the number of copies of des_crypt.h that are lying around,  I removed the des subdirectory of usr/include and modified all routines that refered to it.
+
+xcrypt.c	1.3 05/08/88 16:27:24
+Added SUN's SID to file.
+
+xcrypt.c	1.2 04/28/88 11:31:14
+des_crypt.h has been moved to the des directory.
+
+xcrypt.c	1.1 04/11/88 18:29:06
+date and time created 88/04/11 18:29:06 by corbin
+
+yp.x	1.2 05/08/88 16:38:37
+Added SUN's SID to file.
+
+yp.x	1.1 04/11/88 18:29:27
+date and time created 88/04/11 18:29:27 by corbin
+
+yppasswd.h	1.2 05/08/88 16:27:55
+Added SUN's SID to file.
+
+yppasswd.h	1.1 04/11/88 18:28:54
+date and time created 88/04/11 18:28:54 by corbin
+
+yppasswd.x	1.2 05/08/88 16:38:39
+Added SUN's SID to file.
+
+yppasswd.x	1.1 04/11/88 18:29:28
+date and time created 88/04/11 18:29:28 by corbin
+
+yppasswdxdr.c	1.2 05/08/88 16:27:26
+Added SUN's SID to file.
+
+yppasswdxdr.c	1.1 04/11/88 18:29:07
+date and time created 88/04/11 18:29:07 by corbin
+

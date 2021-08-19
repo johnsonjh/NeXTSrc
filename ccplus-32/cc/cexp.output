@@ -1,0 +1,1837 @@
+
+
+Terminals which are not used:
+
+   ERROR
+
+
+Conflict in state 10 between rule 4 and token '?' resolved as reduce.
+Conflict in state 10 between rule 4 and token OR resolved as reduce.
+Conflict in state 10 between rule 4 and token AND resolved as reduce.
+Conflict in state 10 between rule 4 and token '|' resolved as reduce.
+Conflict in state 10 between rule 4 and token '^' resolved as reduce.
+Conflict in state 10 between rule 4 and token '&' resolved as reduce.
+Conflict in state 10 between rule 4 and token EQUAL resolved as reduce.
+Conflict in state 10 between rule 4 and token NOTEQUAL resolved as reduce.
+Conflict in state 10 between rule 4 and token '<' resolved as reduce.
+Conflict in state 10 between rule 4 and token '>' resolved as reduce.
+Conflict in state 10 between rule 4 and token LEQ resolved as reduce.
+Conflict in state 10 between rule 4 and token GEQ resolved as reduce.
+Conflict in state 10 between rule 4 and token LSH resolved as reduce.
+Conflict in state 10 between rule 4 and token RSH resolved as reduce.
+Conflict in state 10 between rule 4 and token '+' resolved as reduce.
+Conflict in state 10 between rule 4 and token '-' resolved as reduce.
+Conflict in state 10 between rule 4 and token '*' resolved as reduce.
+Conflict in state 10 between rule 4 and token '/' resolved as reduce.
+Conflict in state 10 between rule 4 and token '%' resolved as reduce.
+Conflict in state 11 between rule 5 and token '?' resolved as reduce.
+Conflict in state 11 between rule 5 and token OR resolved as reduce.
+Conflict in state 11 between rule 5 and token AND resolved as reduce.
+Conflict in state 11 between rule 5 and token '|' resolved as reduce.
+Conflict in state 11 between rule 5 and token '^' resolved as reduce.
+Conflict in state 11 between rule 5 and token '&' resolved as reduce.
+Conflict in state 11 between rule 5 and token EQUAL resolved as reduce.
+Conflict in state 11 between rule 5 and token NOTEQUAL resolved as reduce.
+Conflict in state 11 between rule 5 and token '<' resolved as reduce.
+Conflict in state 11 between rule 5 and token '>' resolved as reduce.
+Conflict in state 11 between rule 5 and token LEQ resolved as reduce.
+Conflict in state 11 between rule 5 and token GEQ resolved as reduce.
+Conflict in state 11 between rule 5 and token LSH resolved as reduce.
+Conflict in state 11 between rule 5 and token RSH resolved as reduce.
+Conflict in state 11 between rule 5 and token '+' resolved as reduce.
+Conflict in state 11 between rule 5 and token '-' resolved as reduce.
+Conflict in state 11 between rule 5 and token '*' resolved as reduce.
+Conflict in state 11 between rule 5 and token '/' resolved as reduce.
+Conflict in state 11 between rule 5 and token '%' resolved as reduce.
+Conflict in state 12 between rule 6 and token '?' resolved as reduce.
+Conflict in state 12 between rule 6 and token OR resolved as reduce.
+Conflict in state 12 between rule 6 and token AND resolved as reduce.
+Conflict in state 12 between rule 6 and token '|' resolved as reduce.
+Conflict in state 12 between rule 6 and token '^' resolved as reduce.
+Conflict in state 12 between rule 6 and token '&' resolved as reduce.
+Conflict in state 12 between rule 6 and token EQUAL resolved as reduce.
+Conflict in state 12 between rule 6 and token NOTEQUAL resolved as reduce.
+Conflict in state 12 between rule 6 and token '<' resolved as reduce.
+Conflict in state 12 between rule 6 and token '>' resolved as reduce.
+Conflict in state 12 between rule 6 and token LEQ resolved as reduce.
+Conflict in state 12 between rule 6 and token GEQ resolved as reduce.
+Conflict in state 12 between rule 6 and token LSH resolved as reduce.
+Conflict in state 12 between rule 6 and token RSH resolved as reduce.
+Conflict in state 12 between rule 6 and token '+' resolved as reduce.
+Conflict in state 12 between rule 6 and token '-' resolved as reduce.
+Conflict in state 12 between rule 6 and token '*' resolved as reduce.
+Conflict in state 12 between rule 6 and token '/' resolved as reduce.
+Conflict in state 12 between rule 6 and token '%' resolved as reduce.
+Conflict in state 37 between rule 25 and token '?' resolved as reduce.
+Conflict in state 37 between rule 25 and token OR resolved as reduce.
+Conflict in state 37 between rule 25 and token AND resolved as shift.
+Conflict in state 37 between rule 25 and token '|' resolved as shift.
+Conflict in state 37 between rule 25 and token '^' resolved as shift.
+Conflict in state 37 between rule 25 and token '&' resolved as shift.
+Conflict in state 37 between rule 25 and token EQUAL resolved as shift.
+Conflict in state 37 between rule 25 and token NOTEQUAL resolved as shift.
+Conflict in state 37 between rule 25 and token '<' resolved as shift.
+Conflict in state 37 between rule 25 and token '>' resolved as shift.
+Conflict in state 37 between rule 25 and token LEQ resolved as shift.
+Conflict in state 37 between rule 25 and token GEQ resolved as shift.
+Conflict in state 37 between rule 25 and token LSH resolved as shift.
+Conflict in state 37 between rule 25 and token RSH resolved as shift.
+Conflict in state 37 between rule 25 and token '+' resolved as shift.
+Conflict in state 37 between rule 25 and token '-' resolved as shift.
+Conflict in state 37 between rule 25 and token '*' resolved as shift.
+Conflict in state 37 between rule 25 and token '/' resolved as shift.
+Conflict in state 37 between rule 25 and token '%' resolved as shift.
+Conflict in state 38 between rule 24 and token '?' resolved as reduce.
+Conflict in state 38 between rule 24 and token OR resolved as reduce.
+Conflict in state 38 between rule 24 and token AND resolved as reduce.
+Conflict in state 38 between rule 24 and token '|' resolved as shift.
+Conflict in state 38 between rule 24 and token '^' resolved as shift.
+Conflict in state 38 between rule 24 and token '&' resolved as shift.
+Conflict in state 38 between rule 24 and token EQUAL resolved as shift.
+Conflict in state 38 between rule 24 and token NOTEQUAL resolved as shift.
+Conflict in state 38 between rule 24 and token '<' resolved as shift.
+Conflict in state 38 between rule 24 and token '>' resolved as shift.
+Conflict in state 38 between rule 24 and token LEQ resolved as shift.
+Conflict in state 38 between rule 24 and token GEQ resolved as shift.
+Conflict in state 38 between rule 24 and token LSH resolved as shift.
+Conflict in state 38 between rule 24 and token RSH resolved as shift.
+Conflict in state 38 between rule 24 and token '+' resolved as shift.
+Conflict in state 38 between rule 24 and token '-' resolved as shift.
+Conflict in state 38 between rule 24 and token '*' resolved as shift.
+Conflict in state 38 between rule 24 and token '/' resolved as shift.
+Conflict in state 38 between rule 24 and token '%' resolved as shift.
+Conflict in state 39 between rule 23 and token '?' resolved as reduce.
+Conflict in state 39 between rule 23 and token OR resolved as reduce.
+Conflict in state 39 between rule 23 and token AND resolved as reduce.
+Conflict in state 39 between rule 23 and token '|' resolved as reduce.
+Conflict in state 39 between rule 23 and token '^' resolved as shift.
+Conflict in state 39 between rule 23 and token '&' resolved as shift.
+Conflict in state 39 between rule 23 and token EQUAL resolved as shift.
+Conflict in state 39 between rule 23 and token NOTEQUAL resolved as shift.
+Conflict in state 39 between rule 23 and token '<' resolved as shift.
+Conflict in state 39 between rule 23 and token '>' resolved as shift.
+Conflict in state 39 between rule 23 and token LEQ resolved as shift.
+Conflict in state 39 between rule 23 and token GEQ resolved as shift.
+Conflict in state 39 between rule 23 and token LSH resolved as shift.
+Conflict in state 39 between rule 23 and token RSH resolved as shift.
+Conflict in state 39 between rule 23 and token '+' resolved as shift.
+Conflict in state 39 between rule 23 and token '-' resolved as shift.
+Conflict in state 39 between rule 23 and token '*' resolved as shift.
+Conflict in state 39 between rule 23 and token '/' resolved as shift.
+Conflict in state 39 between rule 23 and token '%' resolved as shift.
+Conflict in state 40 between rule 22 and token '?' resolved as reduce.
+Conflict in state 40 between rule 22 and token OR resolved as reduce.
+Conflict in state 40 between rule 22 and token AND resolved as reduce.
+Conflict in state 40 between rule 22 and token '|' resolved as reduce.
+Conflict in state 40 between rule 22 and token '^' resolved as reduce.
+Conflict in state 40 between rule 22 and token '&' resolved as shift.
+Conflict in state 40 between rule 22 and token EQUAL resolved as shift.
+Conflict in state 40 between rule 22 and token NOTEQUAL resolved as shift.
+Conflict in state 40 between rule 22 and token '<' resolved as shift.
+Conflict in state 40 between rule 22 and token '>' resolved as shift.
+Conflict in state 40 between rule 22 and token LEQ resolved as shift.
+Conflict in state 40 between rule 22 and token GEQ resolved as shift.
+Conflict in state 40 between rule 22 and token LSH resolved as shift.
+Conflict in state 40 between rule 22 and token RSH resolved as shift.
+Conflict in state 40 between rule 22 and token '+' resolved as shift.
+Conflict in state 40 between rule 22 and token '-' resolved as shift.
+Conflict in state 40 between rule 22 and token '*' resolved as shift.
+Conflict in state 40 between rule 22 and token '/' resolved as shift.
+Conflict in state 40 between rule 22 and token '%' resolved as shift.
+Conflict in state 41 between rule 21 and token '?' resolved as reduce.
+Conflict in state 41 between rule 21 and token OR resolved as reduce.
+Conflict in state 41 between rule 21 and token AND resolved as reduce.
+Conflict in state 41 between rule 21 and token '|' resolved as reduce.
+Conflict in state 41 between rule 21 and token '^' resolved as reduce.
+Conflict in state 41 between rule 21 and token '&' resolved as reduce.
+Conflict in state 41 between rule 21 and token EQUAL resolved as shift.
+Conflict in state 41 between rule 21 and token NOTEQUAL resolved as shift.
+Conflict in state 41 between rule 21 and token '<' resolved as shift.
+Conflict in state 41 between rule 21 and token '>' resolved as shift.
+Conflict in state 41 between rule 21 and token LEQ resolved as shift.
+Conflict in state 41 between rule 21 and token GEQ resolved as shift.
+Conflict in state 41 between rule 21 and token LSH resolved as shift.
+Conflict in state 41 between rule 21 and token RSH resolved as shift.
+Conflict in state 41 between rule 21 and token '+' resolved as shift.
+Conflict in state 41 between rule 21 and token '-' resolved as shift.
+Conflict in state 41 between rule 21 and token '*' resolved as shift.
+Conflict in state 41 between rule 21 and token '/' resolved as shift.
+Conflict in state 41 between rule 21 and token '%' resolved as shift.
+Conflict in state 42 between rule 15 and token '?' resolved as reduce.
+Conflict in state 42 between rule 15 and token OR resolved as reduce.
+Conflict in state 42 between rule 15 and token AND resolved as reduce.
+Conflict in state 42 between rule 15 and token '|' resolved as reduce.
+Conflict in state 42 between rule 15 and token '^' resolved as reduce.
+Conflict in state 42 between rule 15 and token '&' resolved as reduce.
+Conflict in state 42 between rule 15 and token EQUAL resolved as reduce.
+Conflict in state 42 between rule 15 and token NOTEQUAL resolved as reduce.
+Conflict in state 42 between rule 15 and token '<' resolved as shift.
+Conflict in state 42 between rule 15 and token '>' resolved as shift.
+Conflict in state 42 between rule 15 and token LEQ resolved as shift.
+Conflict in state 42 between rule 15 and token GEQ resolved as shift.
+Conflict in state 42 between rule 15 and token LSH resolved as shift.
+Conflict in state 42 between rule 15 and token RSH resolved as shift.
+Conflict in state 42 between rule 15 and token '+' resolved as shift.
+Conflict in state 42 between rule 15 and token '-' resolved as shift.
+Conflict in state 42 between rule 15 and token '*' resolved as shift.
+Conflict in state 42 between rule 15 and token '/' resolved as shift.
+Conflict in state 42 between rule 15 and token '%' resolved as shift.
+Conflict in state 43 between rule 16 and token '?' resolved as reduce.
+Conflict in state 43 between rule 16 and token OR resolved as reduce.
+Conflict in state 43 between rule 16 and token AND resolved as reduce.
+Conflict in state 43 between rule 16 and token '|' resolved as reduce.
+Conflict in state 43 between rule 16 and token '^' resolved as reduce.
+Conflict in state 43 between rule 16 and token '&' resolved as reduce.
+Conflict in state 43 between rule 16 and token EQUAL resolved as reduce.
+Conflict in state 43 between rule 16 and token NOTEQUAL resolved as reduce.
+Conflict in state 43 between rule 16 and token '<' resolved as shift.
+Conflict in state 43 between rule 16 and token '>' resolved as shift.
+Conflict in state 43 between rule 16 and token LEQ resolved as shift.
+Conflict in state 43 between rule 16 and token GEQ resolved as shift.
+Conflict in state 43 between rule 16 and token LSH resolved as shift.
+Conflict in state 43 between rule 16 and token RSH resolved as shift.
+Conflict in state 43 between rule 16 and token '+' resolved as shift.
+Conflict in state 43 between rule 16 and token '-' resolved as shift.
+Conflict in state 43 between rule 16 and token '*' resolved as shift.
+Conflict in state 43 between rule 16 and token '/' resolved as shift.
+Conflict in state 43 between rule 16 and token '%' resolved as shift.
+Conflict in state 44 between rule 19 and token '?' resolved as reduce.
+Conflict in state 44 between rule 19 and token OR resolved as reduce.
+Conflict in state 44 between rule 19 and token AND resolved as reduce.
+Conflict in state 44 between rule 19 and token '|' resolved as reduce.
+Conflict in state 44 between rule 19 and token '^' resolved as reduce.
+Conflict in state 44 between rule 19 and token '&' resolved as reduce.
+Conflict in state 44 between rule 19 and token EQUAL resolved as reduce.
+Conflict in state 44 between rule 19 and token NOTEQUAL resolved as reduce.
+Conflict in state 44 between rule 19 and token '<' resolved as reduce.
+Conflict in state 44 between rule 19 and token '>' resolved as reduce.
+Conflict in state 44 between rule 19 and token LEQ resolved as reduce.
+Conflict in state 44 between rule 19 and token GEQ resolved as reduce.
+Conflict in state 44 between rule 19 and token LSH resolved as shift.
+Conflict in state 44 between rule 19 and token RSH resolved as shift.
+Conflict in state 44 between rule 19 and token '+' resolved as shift.
+Conflict in state 44 between rule 19 and token '-' resolved as shift.
+Conflict in state 44 between rule 19 and token '*' resolved as shift.
+Conflict in state 44 between rule 19 and token '/' resolved as shift.
+Conflict in state 44 between rule 19 and token '%' resolved as shift.
+Conflict in state 45 between rule 20 and token '?' resolved as reduce.
+Conflict in state 45 between rule 20 and token OR resolved as reduce.
+Conflict in state 45 between rule 20 and token AND resolved as reduce.
+Conflict in state 45 between rule 20 and token '|' resolved as reduce.
+Conflict in state 45 between rule 20 and token '^' resolved as reduce.
+Conflict in state 45 between rule 20 and token '&' resolved as reduce.
+Conflict in state 45 between rule 20 and token EQUAL resolved as reduce.
+Conflict in state 45 between rule 20 and token NOTEQUAL resolved as reduce.
+Conflict in state 45 between rule 20 and token '<' resolved as reduce.
+Conflict in state 45 between rule 20 and token '>' resolved as reduce.
+Conflict in state 45 between rule 20 and token LEQ resolved as reduce.
+Conflict in state 45 between rule 20 and token GEQ resolved as reduce.
+Conflict in state 45 between rule 20 and token LSH resolved as shift.
+Conflict in state 45 between rule 20 and token RSH resolved as shift.
+Conflict in state 45 between rule 20 and token '+' resolved as shift.
+Conflict in state 45 between rule 20 and token '-' resolved as shift.
+Conflict in state 45 between rule 20 and token '*' resolved as shift.
+Conflict in state 45 between rule 20 and token '/' resolved as shift.
+Conflict in state 45 between rule 20 and token '%' resolved as shift.
+Conflict in state 46 between rule 17 and token '?' resolved as reduce.
+Conflict in state 46 between rule 17 and token OR resolved as reduce.
+Conflict in state 46 between rule 17 and token AND resolved as reduce.
+Conflict in state 46 between rule 17 and token '|' resolved as reduce.
+Conflict in state 46 between rule 17 and token '^' resolved as reduce.
+Conflict in state 46 between rule 17 and token '&' resolved as reduce.
+Conflict in state 46 between rule 17 and token EQUAL resolved as reduce.
+Conflict in state 46 between rule 17 and token NOTEQUAL resolved as reduce.
+Conflict in state 46 between rule 17 and token '<' resolved as reduce.
+Conflict in state 46 between rule 17 and token '>' resolved as reduce.
+Conflict in state 46 between rule 17 and token LEQ resolved as reduce.
+Conflict in state 46 between rule 17 and token GEQ resolved as reduce.
+Conflict in state 46 between rule 17 and token LSH resolved as shift.
+Conflict in state 46 between rule 17 and token RSH resolved as shift.
+Conflict in state 46 between rule 17 and token '+' resolved as shift.
+Conflict in state 46 between rule 17 and token '-' resolved as shift.
+Conflict in state 46 between rule 17 and token '*' resolved as shift.
+Conflict in state 46 between rule 17 and token '/' resolved as shift.
+Conflict in state 46 between rule 17 and token '%' resolved as shift.
+Conflict in state 47 between rule 18 and token '?' resolved as reduce.
+Conflict in state 47 between rule 18 and token OR resolved as reduce.
+Conflict in state 47 between rule 18 and token AND resolved as reduce.
+Conflict in state 47 between rule 18 and token '|' resolved as reduce.
+Conflict in state 47 between rule 18 and token '^' resolved as reduce.
+Conflict in state 47 between rule 18 and token '&' resolved as reduce.
+Conflict in state 47 between rule 18 and token EQUAL resolved as reduce.
+Conflict in state 47 between rule 18 and token NOTEQUAL resolved as reduce.
+Conflict in state 47 between rule 18 and token '<' resolved as reduce.
+Conflict in state 47 between rule 18 and token '>' resolved as reduce.
+Conflict in state 47 between rule 18 and token LEQ resolved as reduce.
+Conflict in state 47 between rule 18 and token GEQ resolved as reduce.
+Conflict in state 47 between rule 18 and token LSH resolved as shift.
+Conflict in state 47 between rule 18 and token RSH resolved as shift.
+Conflict in state 47 between rule 18 and token '+' resolved as shift.
+Conflict in state 47 between rule 18 and token '-' resolved as shift.
+Conflict in state 47 between rule 18 and token '*' resolved as shift.
+Conflict in state 47 between rule 18 and token '/' resolved as shift.
+Conflict in state 47 between rule 18 and token '%' resolved as shift.
+Conflict in state 48 between rule 13 and token '?' resolved as reduce.
+Conflict in state 48 between rule 13 and token OR resolved as reduce.
+Conflict in state 48 between rule 13 and token AND resolved as reduce.
+Conflict in state 48 between rule 13 and token '|' resolved as reduce.
+Conflict in state 48 between rule 13 and token '^' resolved as reduce.
+Conflict in state 48 between rule 13 and token '&' resolved as reduce.
+Conflict in state 48 between rule 13 and token EQUAL resolved as reduce.
+Conflict in state 48 between rule 13 and token NOTEQUAL resolved as reduce.
+Conflict in state 48 between rule 13 and token '<' resolved as reduce.
+Conflict in state 48 between rule 13 and token '>' resolved as reduce.
+Conflict in state 48 between rule 13 and token LEQ resolved as reduce.
+Conflict in state 48 between rule 13 and token GEQ resolved as reduce.
+Conflict in state 48 between rule 13 and token LSH resolved as reduce.
+Conflict in state 48 between rule 13 and token RSH resolved as reduce.
+Conflict in state 48 between rule 13 and token '+' resolved as shift.
+Conflict in state 48 between rule 13 and token '-' resolved as shift.
+Conflict in state 48 between rule 13 and token '*' resolved as shift.
+Conflict in state 48 between rule 13 and token '/' resolved as shift.
+Conflict in state 48 between rule 13 and token '%' resolved as shift.
+Conflict in state 49 between rule 14 and token '?' resolved as reduce.
+Conflict in state 49 between rule 14 and token OR resolved as reduce.
+Conflict in state 49 between rule 14 and token AND resolved as reduce.
+Conflict in state 49 between rule 14 and token '|' resolved as reduce.
+Conflict in state 49 between rule 14 and token '^' resolved as reduce.
+Conflict in state 49 between rule 14 and token '&' resolved as reduce.
+Conflict in state 49 between rule 14 and token EQUAL resolved as reduce.
+Conflict in state 49 between rule 14 and token NOTEQUAL resolved as reduce.
+Conflict in state 49 between rule 14 and token '<' resolved as reduce.
+Conflict in state 49 between rule 14 and token '>' resolved as reduce.
+Conflict in state 49 between rule 14 and token LEQ resolved as reduce.
+Conflict in state 49 between rule 14 and token GEQ resolved as reduce.
+Conflict in state 49 between rule 14 and token LSH resolved as reduce.
+Conflict in state 49 between rule 14 and token RSH resolved as reduce.
+Conflict in state 49 between rule 14 and token '+' resolved as shift.
+Conflict in state 49 between rule 14 and token '-' resolved as shift.
+Conflict in state 49 between rule 14 and token '*' resolved as shift.
+Conflict in state 49 between rule 14 and token '/' resolved as shift.
+Conflict in state 49 between rule 14 and token '%' resolved as shift.
+Conflict in state 50 between rule 11 and token '?' resolved as reduce.
+Conflict in state 50 between rule 11 and token OR resolved as reduce.
+Conflict in state 50 between rule 11 and token AND resolved as reduce.
+Conflict in state 50 between rule 11 and token '|' resolved as reduce.
+Conflict in state 50 between rule 11 and token '^' resolved as reduce.
+Conflict in state 50 between rule 11 and token '&' resolved as reduce.
+Conflict in state 50 between rule 11 and token EQUAL resolved as reduce.
+Conflict in state 50 between rule 11 and token NOTEQUAL resolved as reduce.
+Conflict in state 50 between rule 11 and token '<' resolved as reduce.
+Conflict in state 50 between rule 11 and token '>' resolved as reduce.
+Conflict in state 50 between rule 11 and token LEQ resolved as reduce.
+Conflict in state 50 between rule 11 and token GEQ resolved as reduce.
+Conflict in state 50 between rule 11 and token LSH resolved as reduce.
+Conflict in state 50 between rule 11 and token RSH resolved as reduce.
+Conflict in state 50 between rule 11 and token '+' resolved as reduce.
+Conflict in state 50 between rule 11 and token '-' resolved as reduce.
+Conflict in state 50 between rule 11 and token '*' resolved as shift.
+Conflict in state 50 between rule 11 and token '/' resolved as shift.
+Conflict in state 50 between rule 11 and token '%' resolved as shift.
+Conflict in state 51 between rule 12 and token '?' resolved as reduce.
+Conflict in state 51 between rule 12 and token OR resolved as reduce.
+Conflict in state 51 between rule 12 and token AND resolved as reduce.
+Conflict in state 51 between rule 12 and token '|' resolved as reduce.
+Conflict in state 51 between rule 12 and token '^' resolved as reduce.
+Conflict in state 51 between rule 12 and token '&' resolved as reduce.
+Conflict in state 51 between rule 12 and token EQUAL resolved as reduce.
+Conflict in state 51 between rule 12 and token NOTEQUAL resolved as reduce.
+Conflict in state 51 between rule 12 and token '<' resolved as reduce.
+Conflict in state 51 between rule 12 and token '>' resolved as reduce.
+Conflict in state 51 between rule 12 and token LEQ resolved as reduce.
+Conflict in state 51 between rule 12 and token GEQ resolved as reduce.
+Conflict in state 51 between rule 12 and token LSH resolved as reduce.
+Conflict in state 51 between rule 12 and token RSH resolved as reduce.
+Conflict in state 51 between rule 12 and token '+' resolved as reduce.
+Conflict in state 51 between rule 12 and token '-' resolved as reduce.
+Conflict in state 51 between rule 12 and token '*' resolved as shift.
+Conflict in state 51 between rule 12 and token '/' resolved as shift.
+Conflict in state 51 between rule 12 and token '%' resolved as shift.
+Conflict in state 52 between rule 8 and token '?' resolved as reduce.
+Conflict in state 52 between rule 8 and token OR resolved as reduce.
+Conflict in state 52 between rule 8 and token AND resolved as reduce.
+Conflict in state 52 between rule 8 and token '|' resolved as reduce.
+Conflict in state 52 between rule 8 and token '^' resolved as reduce.
+Conflict in state 52 between rule 8 and token '&' resolved as reduce.
+Conflict in state 52 between rule 8 and token EQUAL resolved as reduce.
+Conflict in state 52 between rule 8 and token NOTEQUAL resolved as reduce.
+Conflict in state 52 between rule 8 and token '<' resolved as reduce.
+Conflict in state 52 between rule 8 and token '>' resolved as reduce.
+Conflict in state 52 between rule 8 and token LEQ resolved as reduce.
+Conflict in state 52 between rule 8 and token GEQ resolved as reduce.
+Conflict in state 52 between rule 8 and token LSH resolved as reduce.
+Conflict in state 52 between rule 8 and token RSH resolved as reduce.
+Conflict in state 52 between rule 8 and token '+' resolved as reduce.
+Conflict in state 52 between rule 8 and token '-' resolved as reduce.
+Conflict in state 52 between rule 8 and token '*' resolved as reduce.
+Conflict in state 52 between rule 8 and token '/' resolved as reduce.
+Conflict in state 52 between rule 8 and token '%' resolved as reduce.
+Conflict in state 53 between rule 9 and token '?' resolved as reduce.
+Conflict in state 53 between rule 9 and token OR resolved as reduce.
+Conflict in state 53 between rule 9 and token AND resolved as reduce.
+Conflict in state 53 between rule 9 and token '|' resolved as reduce.
+Conflict in state 53 between rule 9 and token '^' resolved as reduce.
+Conflict in state 53 between rule 9 and token '&' resolved as reduce.
+Conflict in state 53 between rule 9 and token EQUAL resolved as reduce.
+Conflict in state 53 between rule 9 and token NOTEQUAL resolved as reduce.
+Conflict in state 53 between rule 9 and token '<' resolved as reduce.
+Conflict in state 53 between rule 9 and token '>' resolved as reduce.
+Conflict in state 53 between rule 9 and token LEQ resolved as reduce.
+Conflict in state 53 between rule 9 and token GEQ resolved as reduce.
+Conflict in state 53 between rule 9 and token LSH resolved as reduce.
+Conflict in state 53 between rule 9 and token RSH resolved as reduce.
+Conflict in state 53 between rule 9 and token '+' resolved as reduce.
+Conflict in state 53 between rule 9 and token '-' resolved as reduce.
+Conflict in state 53 between rule 9 and token '*' resolved as reduce.
+Conflict in state 53 between rule 9 and token '/' resolved as reduce.
+Conflict in state 53 between rule 9 and token '%' resolved as reduce.
+Conflict in state 54 between rule 10 and token '?' resolved as reduce.
+Conflict in state 54 between rule 10 and token OR resolved as reduce.
+Conflict in state 54 between rule 10 and token AND resolved as reduce.
+Conflict in state 54 between rule 10 and token '|' resolved as reduce.
+Conflict in state 54 between rule 10 and token '^' resolved as reduce.
+Conflict in state 54 between rule 10 and token '&' resolved as reduce.
+Conflict in state 54 between rule 10 and token EQUAL resolved as reduce.
+Conflict in state 54 between rule 10 and token NOTEQUAL resolved as reduce.
+Conflict in state 54 between rule 10 and token '<' resolved as reduce.
+Conflict in state 54 between rule 10 and token '>' resolved as reduce.
+Conflict in state 54 between rule 10 and token LEQ resolved as reduce.
+Conflict in state 54 between rule 10 and token GEQ resolved as reduce.
+Conflict in state 54 between rule 10 and token LSH resolved as reduce.
+Conflict in state 54 between rule 10 and token RSH resolved as reduce.
+Conflict in state 54 between rule 10 and token '+' resolved as reduce.
+Conflict in state 54 between rule 10 and token '-' resolved as reduce.
+Conflict in state 54 between rule 10 and token '*' resolved as reduce.
+Conflict in state 54 between rule 10 and token '/' resolved as reduce.
+Conflict in state 54 between rule 10 and token '%' resolved as reduce.
+Conflict in state 56 between rule 26 and token '?' resolved as shift.
+Conflict in state 56 between rule 26 and token OR resolved as shift.
+Conflict in state 56 between rule 26 and token AND resolved as shift.
+Conflict in state 56 between rule 26 and token '|' resolved as shift.
+Conflict in state 56 between rule 26 and token '^' resolved as shift.
+Conflict in state 56 between rule 26 and token '&' resolved as shift.
+Conflict in state 56 between rule 26 and token EQUAL resolved as shift.
+Conflict in state 56 between rule 26 and token NOTEQUAL resolved as shift.
+Conflict in state 56 between rule 26 and token '<' resolved as shift.
+Conflict in state 56 between rule 26 and token '>' resolved as shift.
+Conflict in state 56 between rule 26 and token LEQ resolved as shift.
+Conflict in state 56 between rule 26 and token GEQ resolved as shift.
+Conflict in state 56 between rule 26 and token LSH resolved as shift.
+Conflict in state 56 between rule 26 and token RSH resolved as shift.
+Conflict in state 56 between rule 26 and token '+' resolved as shift.
+Conflict in state 56 between rule 26 and token '-' resolved as shift.
+Conflict in state 56 between rule 26 and token '*' resolved as shift.
+Conflict in state 56 between rule 26 and token '/' resolved as shift.
+Conflict in state 56 between rule 26 and token '%' resolved as shift.
+
+
+token types:
+ type -1 is $
+ type 33 is '!'
+ type 37 is '%'
+ type 38 is '&'
+ type 40 is '('
+ type 41 is ')'
+ type 42 is '*'
+ type 43 is '+'
+ type 44 is ','
+ type 45 is '-'
+ type 47 is '/'
+ type 58 is ':'
+ type 60 is '<'
+ type 62 is '>'
+ type 63 is '?'
+ type 94 is '^'
+ type 124 is '|'
+ type 126 is '~'
+ type 256 is error
+ type 258 is INT
+ type 259 is CHAR
+ type 260 is NAME
+ type 261 is ERROR
+ type 262 is OR
+ type 263 is AND
+ type 264 is EQUAL
+ type 265 is NOTEQUAL
+ type 266 is LEQ
+ type 267 is GEQ
+ type 268 is LSH
+ type 269 is RSH
+ type 270 is UNARY
+
+
+state 0
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp1	shift  8
+    start	shift  57
+    exp 	shift  9
+
+
+
+state 1
+
+    exp  ->  INT .   (27)
+
+    $default	reduce  27  (exp)
+
+
+
+state 2
+
+    exp  ->  CHAR .   (28)
+
+    $default	reduce  28  (exp)
+
+
+
+state 3
+
+    exp  ->  NAME .   (29)
+
+    $default	reduce  29  (exp)
+
+
+
+state 4
+
+    exp  ->  '-' . exp   (4)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  10
+
+
+
+state 5
+
+    exp  ->  '!' . exp   (5)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  11
+
+
+
+state 6
+
+    exp  ->  '~' . exp   (6)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  12
+
+
+
+state 7
+
+    exp  ->  '(' . exp1 ')'   (7)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp1	shift  13
+    exp 	shift  9
+
+
+
+state 8
+
+    start  ->  exp1 .   (1)
+    exp1  ->  exp1 . ',' exp   (3)
+
+    ',' 	shift  14
+
+    $default	reduce  1  (start)
+
+
+
+state 9
+
+    exp1  ->  exp .   (2)
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    '?' 	shift  15
+    OR  	shift  16
+    AND 	shift  17
+    '|' 	shift  18
+    '^' 	shift  19
+    '&' 	shift  20
+    EQUAL	shift  21
+    NOTEQUAL	shift  22
+    '<' 	shift  23
+    '>' 	shift  24
+    LEQ 	shift  25
+    GEQ 	shift  26
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  2  (exp1)
+
+
+
+state 10
+
+    exp  ->  '-' exp .   (4)
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+
+    $default	reduce  4  (exp)
+
+
+
+state 11
+
+    exp  ->  '!' exp .   (5)
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+
+    $default	reduce  5  (exp)
+
+
+
+state 12
+
+    exp  ->  '~' exp .   (6)
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+
+    $default	reduce  6  (exp)
+
+
+
+state 13
+
+    exp1  ->  exp1 . ',' exp   (3)
+    exp  ->  '(' exp1 . ')'   (7)
+
+    ',' 	shift  14
+    ')' 	shift  34
+
+
+
+state 14
+
+    exp1  ->  exp1 ',' . exp   (3)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  35
+
+
+
+state 15
+
+    exp  ->  exp '?' . exp ':' exp   (26)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  36
+
+
+
+state 16
+
+    exp  ->  exp OR . exp   (25)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  37
+
+
+
+state 17
+
+    exp  ->  exp AND . exp   (24)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  38
+
+
+
+state 18
+
+    exp  ->  exp '|' . exp   (23)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  39
+
+
+
+state 19
+
+    exp  ->  exp '^' . exp   (22)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  40
+
+
+
+state 20
+
+    exp  ->  exp '&' . exp   (21)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  41
+
+
+
+state 21
+
+    exp  ->  exp EQUAL . exp   (15)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  42
+
+
+
+state 22
+
+    exp  ->  exp NOTEQUAL . exp   (16)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  43
+
+
+
+state 23
+
+    exp  ->  exp '<' . exp   (19)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  44
+
+
+
+state 24
+
+    exp  ->  exp '>' . exp   (20)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  45
+
+
+
+state 25
+
+    exp  ->  exp LEQ . exp   (17)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  46
+
+
+
+state 26
+
+    exp  ->  exp GEQ . exp   (18)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  47
+
+
+
+state 27
+
+    exp  ->  exp LSH . exp   (13)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  48
+
+
+
+state 28
+
+    exp  ->  exp RSH . exp   (14)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  49
+
+
+
+state 29
+
+    exp  ->  exp '+' . exp   (11)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  50
+
+
+
+state 30
+
+    exp  ->  exp '-' . exp   (12)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  51
+
+
+
+state 31
+
+    exp  ->  exp '*' . exp   (8)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  52
+
+
+
+state 32
+
+    exp  ->  exp '/' . exp   (9)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  53
+
+
+
+state 33
+
+    exp  ->  exp '%' . exp   (10)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  54
+
+
+
+state 34
+
+    exp  ->  '(' exp1 ')' .   (7)
+
+    $default	reduce  7  (exp)
+
+
+
+state 35
+
+    exp1  ->  exp1 ',' exp .   (3)
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    '?' 	shift  15
+    OR  	shift  16
+    AND 	shift  17
+    '|' 	shift  18
+    '^' 	shift  19
+    '&' 	shift  20
+    EQUAL	shift  21
+    NOTEQUAL	shift  22
+    '<' 	shift  23
+    '>' 	shift  24
+    LEQ 	shift  25
+    GEQ 	shift  26
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  3  (exp1)
+
+
+
+state 36
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+    exp  ->  exp '?' exp . ':' exp   (26)
+
+    '?' 	shift  15
+    ':' 	shift  55
+    OR  	shift  16
+    AND 	shift  17
+    '|' 	shift  18
+    '^' 	shift  19
+    '&' 	shift  20
+    EQUAL	shift  21
+    NOTEQUAL	shift  22
+    '<' 	shift  23
+    '>' 	shift  24
+    LEQ 	shift  25
+    GEQ 	shift  26
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+
+
+state 37
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp OR exp .   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    AND 	shift  17
+    '|' 	shift  18
+    '^' 	shift  19
+    '&' 	shift  20
+    EQUAL	shift  21
+    NOTEQUAL	shift  22
+    '<' 	shift  23
+    '>' 	shift  24
+    LEQ 	shift  25
+    GEQ 	shift  26
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  25  (exp)
+
+
+
+state 38
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp AND exp .   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    '|' 	shift  18
+    '^' 	shift  19
+    '&' 	shift  20
+    EQUAL	shift  21
+    NOTEQUAL	shift  22
+    '<' 	shift  23
+    '>' 	shift  24
+    LEQ 	shift  25
+    GEQ 	shift  26
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  24  (exp)
+
+
+
+state 39
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp '|' exp .   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    '^' 	shift  19
+    '&' 	shift  20
+    EQUAL	shift  21
+    NOTEQUAL	shift  22
+    '<' 	shift  23
+    '>' 	shift  24
+    LEQ 	shift  25
+    GEQ 	shift  26
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  23  (exp)
+
+
+
+state 40
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp '^' exp .   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    '&' 	shift  20
+    EQUAL	shift  21
+    NOTEQUAL	shift  22
+    '<' 	shift  23
+    '>' 	shift  24
+    LEQ 	shift  25
+    GEQ 	shift  26
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  22  (exp)
+
+
+
+state 41
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp '&' exp .   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    EQUAL	shift  21
+    NOTEQUAL	shift  22
+    '<' 	shift  23
+    '>' 	shift  24
+    LEQ 	shift  25
+    GEQ 	shift  26
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  21  (exp)
+
+
+
+state 42
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp EQUAL exp .   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    '<' 	shift  23
+    '>' 	shift  24
+    LEQ 	shift  25
+    GEQ 	shift  26
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  15  (exp)
+
+
+
+state 43
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp NOTEQUAL exp .   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    '<' 	shift  23
+    '>' 	shift  24
+    LEQ 	shift  25
+    GEQ 	shift  26
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  16  (exp)
+
+
+
+state 44
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp '<' exp .   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  19  (exp)
+
+
+
+state 45
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp '>' exp .   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  20  (exp)
+
+
+
+state 46
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp LEQ exp .   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  17  (exp)
+
+
+
+state 47
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp GEQ exp .   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  18  (exp)
+
+
+
+state 48
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp LSH exp .   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  13  (exp)
+
+
+
+state 49
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp RSH exp .   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  14  (exp)
+
+
+
+state 50
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp '+' exp .   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  11  (exp)
+
+
+
+state 51
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp '-' exp .   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  12  (exp)
+
+
+
+state 52
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp '*' exp .   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+
+    $default	reduce  8  (exp)
+
+
+
+state 53
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp '/' exp .   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+
+    $default	reduce  9  (exp)
+
+
+
+state 54
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp '%' exp .   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+
+
+    $default	reduce  10  (exp)
+
+
+
+state 55
+
+    exp  ->  exp '?' exp ':' . exp   (26)
+
+    INT 	shift  1
+    CHAR	shift  2
+    NAME	shift  3
+    '-' 	shift  4
+    '!' 	shift  5
+    '~' 	shift  6
+    '(' 	shift  7
+    exp 	shift  56
+
+
+
+state 56
+
+    exp  ->  exp . '*' exp   (8)
+    exp  ->  exp . '/' exp   (9)
+    exp  ->  exp . '%' exp   (10)
+    exp  ->  exp . '+' exp   (11)
+    exp  ->  exp . '-' exp   (12)
+    exp  ->  exp . LSH exp   (13)
+    exp  ->  exp . RSH exp   (14)
+    exp  ->  exp . EQUAL exp   (15)
+    exp  ->  exp . NOTEQUAL exp   (16)
+    exp  ->  exp . LEQ exp   (17)
+    exp  ->  exp . GEQ exp   (18)
+    exp  ->  exp . '<' exp   (19)
+    exp  ->  exp . '>' exp   (20)
+    exp  ->  exp . '&' exp   (21)
+    exp  ->  exp . '^' exp   (22)
+    exp  ->  exp . '|' exp   (23)
+    exp  ->  exp . AND exp   (24)
+    exp  ->  exp . OR exp   (25)
+    exp  ->  exp . '?' exp ':' exp   (26)
+    exp  ->  exp '?' exp ':' exp .   (26)
+
+    '?' 	shift  15
+    OR  	shift  16
+    AND 	shift  17
+    '|' 	shift  18
+    '^' 	shift  19
+    '&' 	shift  20
+    EQUAL	shift  21
+    NOTEQUAL	shift  22
+    '<' 	shift  23
+    '>' 	shift  24
+    LEQ 	shift  25
+    GEQ 	shift  26
+    LSH 	shift  27
+    RSH 	shift  28
+    '+' 	shift  29
+    '-' 	shift  30
+    '*' 	shift  31
+    '/' 	shift  32
+    '%' 	shift  33
+
+    $default	reduce  26  (exp)
+
+
+
+state 57
+
+    $   	shift  58
+
+
+
+state 58
+
+    $   	shift  59
+
+
+
+state 59
+
+    NO ACTIONS

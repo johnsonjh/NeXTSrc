@@ -1,0 +1,621 @@
+.TH LD 1 "September 19, 1990" "NeXT Computer, Inc."
+.SH NAME
+ld \- Mach object file link editor
+.SH SYNOPSIS
+.B ld
+[ option ] ... file ...
+.SH DESCRIPTION
+.I Ld
+combines several Mach-O (Mach object) files into one by combining like sections
+in like segments from all the object files, resolves external references, and
+searches libraries.  In the simplest case several object
+.I files
+are given, and
+.I ld
+combines them, producing an object file which can be either executed or
+become the input for a further
+.I ld
+run.  (In the latter case, the
+.B \-r
+option must be given to preserve the relocation information.)  The output of
+.I ld
+is left on
+.BR a.out .
+This file is made executable only if no errors occurred during the link editing
+and there are no undefined symbols.
+.SH "OUTPUT FILE LAYOUT"
+.PP
+The object files are loaded in the order they are specified on the command line.
+The segments and the
+sections in those segments will appear in the output file in the order they are
+encountered in the object files linked.  All zero fill sections will appear
+after all non-zero fill sections in their segments.
+.PP
+Sections created from files with the
+.B \-sectcreate
+option will appear in the output file last.  Section names for sections created
+from files are not allowed to overlap with a section name in the same segment
+as a section coming from an object file.  Sections created from files may be in
+a segment which has sections from object files and if so will be loaded at the
+end of the non-zero fill sections for that segment.
+.PP
+If the option
+.B \-seglinkedit
+is specified the segment it creates is the last segment in the output file.
+.PP
+Addresses of each segment can be specified by name using
+.B \-segaddr.
+As well as just specifying the address of the first segment using
+.B \-seg1addr.
+For segments that do not have an
+address specified for them they will be assigned an address in order they appear
+in the output file.  The addresses of segments being assigned will be assigned
+based on the ending address of the previous segment.  If the address of the
+first segment has not been specified by name then it's assigned address will be
+the specified (via
+.B \-seg1addr )
+or default first segment address.  The default first segment address is zero
+for all formats except the demand paged executable format
+.SM (MH_EXECUTE)
+in which case the default first address is the value of the segment alignment.
+.PP
+For demand paged executable format
+.SM (MH_EXECUTE)
+output files
+if none of the segments addresses' covers address zero through
+the value of the segment alignment then a segment, named
+.SM "``_\|_PAGEZERO'',"
+with no access protection will be created to cover those addresses.  This is
+done to cause memory exceptions on dereferencing pointers with zero values.
+.PP
+The entry point of the output file is the beginning of
+the first section in the first segment. (unless the
+.B \-e
+option is specified).
+.SH LIBRARIES
+.PP
+If any argument is a library, it is searched exactly once at the point it is
+encountered in the argument list.  Only those members defining an unresolved
+external reference, as defined by the table of contents of the library, are
+loaded.  All libraries must be processed by
+.IR ranlib (1)
+to produce a table of contents for the library.
+.PP
+Virtually all libraries do not have multiple members that defined the same
+symbol and the order of the library is not important.  In which case the table
+of contents can be produced in order sorted by symbol name via the
+.B \-s
+option to
+.IR ranlib (1)
+and the resulting link editing will be faster.  In this case the first member
+of the library will be a file named
+.SM "``\_\^\_.SYMDEF SORTED'',"
+which is understood to be a sorted table of contents.
+.PP
+If the library does have multiple members that defined the same symbol then
+table of contents can't be sorted and is produced, by
+.IR ranlib (1),
+in the order the members
+appear in the library.  Then the link editor searches the table of contents
+iteratively in that order loading members until no further references are
+satisfied.  In this unsorted case the first member of the library will be a
+file named
+.SM "``\_\^\_.SYMDEF'',"
+which is understood to be a table of contents in
+the order of the archive members.  In this case the order of the members of the
+library is important.
+.SH "LINK EDITOR DEFINED SYMBOLS"
+.PP
+There is a group of link editor defined symbols for the
+.SM MH_EXECUTE
+and
+.SM MH_PRELOAD
+file types but none for the other file types.  Link editor symbols are reserved
+and is an error to be defined in an object file as seen on input.  Only the link
+editor symbols that are referenced, undefined in the input files, are defined
+by the link editor and appear in the symbol table of the output file.
+.PP
+The link editor defined symbol `\_\^\_mh_execute_header'
+(`\_mh_execute_header' in C) is reserved when the output file format is
+.SM MH_EXECUTE.
+This symbol is the address of the mach header in a Mach-O executable file type
+.SM (MH_EXECUTE). 
+It does not appear in
+any other Mach-O file type.  It can be used to get to the addresses and sizes
+of all the segments and sections in the executable and any shared libraries it
+uses.  This can be done by parsing the headers and load commands (see
+.IR Mach-O (5)).
+.PP
+For the
+.SM MH_PRELOAD
+file type link editor defined symbols exist for the
+beginning and ending of each segment, and each section in each segment.
+These names are provided for use in a Mach-O preloaded file
+since it does not have its headers loaded as part of the first segment.
+The names of the symbols for a segment's beginning and end
+have the form:
+.SM \_\^\_SEGNAME\_\^\_begin
+and
+.SM \_\^\_SEGNAME\_\^\_end
+where
+.SM \_\^\_SEGNAME
+is the name of the segment.  The names for the symbols for a section's beginning
+and end will have the form:
+.SM \_\^\_SEGNAME\_\^\_sectname\_\^\_begin
+and
+.SM \_\^\_SEGNAME\_\^\_sectname\_\^\_end
+where
+.SM \_\^\_sectname
+is the name of the section and
+.SM \_\^\_SEGNAME
+is the segment it is in.
+These symbols' types are those of the section they are referring to.
+This is true even for symbols whose values are ends of a section and
+that value is next address after that section and not really in that
+section.  This results in these symbols having types referring to sections
+whose values are not in that section.
+.SH OPTIONS
+.PP
+.I Ld
+understands several options.  File names and 
+options that refer to libraries,
+.BR \-l ,
+and options that create symbols,
+.B \-u
+and
+.B \-i
+are position dependent in that they define the load order and effect what gets
+loaded from libraries.
+
+The most common option is:
+.TP 
+.BI  \-o " name"
+The
+.I name
+argument after
+.B \-o
+is used as the name of the
+.I ld
+output file, instead of
+.BR a.out .
+
+.PP
+The flags related to libraries are:
+.TP 
+.BI \-l x
+This
+option is an abbreviation for the library name
+.RI `lib x .a',
+where
+.I x
+is a string.
+.I Ld
+searches for libraries first in any directories
+specified with
+.B \-L
+options, then in the standard directories `/lib', `/usr/lib', and
+`/usr/local/lib'.
+A library is searched when its name is encountered,
+so the placement of a
+.B  \-l
+is significant.  The string
+.I x
+can be of the form
+.IR x.o
+and then that file is searched for in the same places but does not have a
+.I lib
+or a
+.I .a
+added before and after the string.
+.TP
+.BI \-L dir
+Add
+.I dir
+to the list of directories in which libraries are searched for.
+Directories specified with 
+.B \-L
+are searched before the standard directories.
+.TP
+.B \-Z
+Do not search the standard directories when searching for libraries.
+
+.PP
+The following options specify the output file format (the file type):
+.TP
+.B "\-execute"
+Produce a Mach-O demand paged executable format file.  The headers are placed
+in the first segment and all segments are padded to the segment alignment.
+This has a file type of
+.SM MH_EXECUTE.
+This is the default.  If no segment address
+is specified at address zero then a segment with no protection (no read, write,
+or execute permission) is created at address zero with the size the segment
+alignment.  This segment is named
+.SM ``_\|_PAGEZERO''.
+This option was previously
+.B "\-Mach"
+and will continue to be recognized.
+.TP
+.B "\-object"
+Produce a Mach-O file in the the relocatable object file format that is
+intended for execution.  This differs from using the
+.B \-r
+option in that it defines common symbols, does not allow undefined symbols and
+does not preserve relocation entries.  This has a file type of
+.SM MH_OBJECT.
+In this format all sections are placed in one unnamed segment with all
+protections (read, write, execute) allowed on that segment.  This is intended
+for extremely small programs that would otherwise be large due to segment
+padding.  In this format, and all
+.SM non-MH_EXECUTE
+formats, the link editor
+defined symbol ``\_\^\_mh_execute_header'' is not defined since the headers are
+not part of the segment.
+.TP
+.B "\-preload"
+Produce a Mach-O preloaded executable format file.  The headers are not placed
+in any segment.  All sections are placed in there proper segments and they are
+padded to the segment alignment.  This has a file type of
+.SM MH_PRELOAD.
+This option was previously
+.B "\-p"
+and will continue to be recognized.
+.TP
+.B "\-fvmlib"
+Produce a Mach-O fixed VM shared library format file.  The headers are placed
+in the first segment but the first section in that segment will be placed on
+the next segment alignment boundary in that segment.  All sections are placed
+in there proper segments and they are padded to the segment alignment.
+This has a file type of
+.SM MH_FVMLIB.
+
+.PP
+The flags that effect the contents of the output file:
+.TP
+.B  \-r
+Save the relocation information in the output file
+so that it can be the subject of another
+.I ld
+run.  The resulting file type is a Mach-O relocatable file
+.SM (MH_OBJECT)
+if not otherwise specified.
+This flag also prevents final definitions from being
+given to common symbols,
+and suppresses the `undefined symbol' diagnostics.
+.TP 
+.B  \-d
+Force definition of common storage even if the
+.B \-r
+flag is present.  This also forces link editor defined symbols to be defined.
+
+.PP
+The flags to support segment specifications are:
+.TP
+.BI "\-segalign" " value"
+Specifies the segment alignment.
+.I value
+is a hexadecimal number that must be an integral power of 2.
+The default is the target pagesize (2000 hex currently).
+.TP
+.BI "\-seg1addr" " addr"
+Specifies the starting address of the first segment in the output file.
+Where
+.I addr
+is a hexadecimal number and must be a multiple of the segment alignment.
+.TP
+.BI "\-segaddr" " name addr"
+Specifies the starting address of the named segment,
+.I name,
+to be
+.I addr.
+Where
+.I addr
+is a hexadecimal number and must be a multiple of the segment alignment.
+.TP
+.BI "\-segprot" " name max init"
+Specifies the maximum and initial virtual memory protection of the named
+segment,
+.I name,
+to be
+.I max
+and
+.I init
+respectfully.  The values for
+.I max
+and
+.I init
+are any combination of the characters `r' (for read), `w' (for write),
+`x' (for execute) and '\-' (no access).  The default is `rwx' for the maximum
+and initial protection for all segments except for the
+.SM "``_\|_TEXT''"
+segment, if it exists, who's initial protection is `rx' (not writable).
+.TP
+.B "\-seglinkedit"
+Create the link edit segment, named
+.SM "``_\|_LINKEDIT''"
+(this is the default).
+This segment contains all the link edit information (relocation information,
+symbol table, string table, etc) in the object file.  If the segment protection
+for this segment is not specified then the initial protection is not writable.
+This can only be specified for the
+.SM MH_EXECUTE
+and
+.SM MH_FVMLIB
+output file types.  To get at the contents of this section the mach header
+and load commands must be parsed from the link editor defined symbol
+`\_\^\_mh_execute_header' (see
+.IR Mach-O (5)).
+.TP
+.B "\-noseglinkedit"
+Don't create the link edit segment (see
+.B \-seglinkedit
+above).
+
+.PP
+The flags to support section specifications are:
+.TP
+.BI "\-sectcreate" " segname sectname file"
+The section named,
+.I sectname,
+in the segment named,
+.I segname,
+is created from the contents of the file,
+.I file.
+This section name can not be the same as a section name in an input object file
+in the same segment.  This option was previously
+.B "\-segcreate"
+and will continue to be recognized.
+.TP
+.BI "\-sectalign" " segname sectname value"
+The section named,
+.I sectname,
+in the segment named,
+.I segname,
+will have it's alignment set to
+.I value,
+where
+.I value
+is a hexadecimal number that must be an integral power of 2.
+This can be used to set the alignment of a section created from a file or to
+increase the alignment of a section from an object file or to set the maximum
+alignment of the
+.SM (_\|_DATA,_\|_common)
+section where common symbols are defined
+by the link editor.  Setting the alignment of a literal section causes the
+individual literals to be aligned on that boundary.  The default section
+alignment if not specified by a section header in an object file or on the
+command line will be 10 (hex) or 16 byte alignment.
+.TP
+.BI "\-sectorder" " segname sectname orderfile"
+The section named,
+.I sectname,
+in the segment named,
+.I segname,
+will have the input file's sections broken up into blocks associated with
+symbols in the section and then the output section will be created by ordering
+the blocks as specified by the lines in the
+.I orderfile.
+These blocks are aligned to the output file's section alignment for this
+section.  Any section can be ordered in the output file.  The
+.I orderfile
+for non-literal sections
+contain lines of object name and symbol name pairs (exactly one per line
+separated by a single ':').  If the object file is
+in an archive then the archive name followed by a single ':' must precede the
+object file name.  The object file names and archive names should be exactly the
+names as seen by the link editor, but if not the link editor attemps to match
+up the names the best it can.
+For non-literal sections sections the easiest way to generate an order file is
+with the ``\f3-jonls \f2segname sectname\f1'' options to
+.IR nm (1).
+The format of the
+.I orderfile
+for literal sections is specific for each type of literal section.  For 'C'
+string literal sections the order file format is one literal 'C' string per line
+(with ANSI 'C' escape sequences allowed in the 'C' string).  For 4 byte literal
+sections the order file format is one 32 bit hex number with a leading 0x per
+line with the rest of the line treated as a comment.  For 8 byte literal
+sections the order file is two 32 bit hex numbers per line separated by white
+space each with a leading 0x, with the rest of the line treated as a comment.
+For literal pointer sections the format of the order file are lines representing
+the pointers one per line.  A literal pointer is represented by the segment name
+and section name the literal it is pointing at is in and the literal. Each
+of these three are separated by a ':' with no extra white space.
+For all the literal sections each line in the the order file is simply entered
+into the literal section and will appear in the output file in the order of the
+order file.  There is no check to see if the literal is in the loaded objects.
+For literal sections the easiest way to generate an order file is with
+the ``\f3-X -v -s \f2segname sectname\f1'' options to
+.IR otool (1).
+For detailed information see the ``Link
+Optimization'' section of the 2.0 release notes.
+.TP
+.B \-sectorder_detail
+When using the
+.B \-sectorder
+option object file symbol name pairs found in the loaded objects not listed in
+the
+.I orderfile
+appear last in the output file's section ordered by object file (as they appear
+on the command line) and then by symbol in that object file ordered by
+increasing symbol value.  By default the link editor prints a summary of number
+of symbol names in the loaded objects not in the
+.I orderfile
+and the number of symbol names listed in the
+.I orderfile
+not in the loaded objects if both values 
+are not zero.  To produce a detailed list of these symbols the
+.B \-sectorder_detail
+flag can be specified.  Object file symbol name pairs listed multiple times
+always generate a warning and the first occurrence is used.
+.TP
+.BI "\-sectobjectsymbols" " segname sectname"
+This causes the link editor to generate local symbols in the section named,
+.I sectname,
+in the segment named,
+.I segname.
+Each object file that has one of these sections will have a local symbol created
+with the name of the object file, or the member name of the archive. The value
+of the the symbol will be where the first address that object file's section was
+loaded at.  The symbol has the type N_SECT and it's section number is the
+section number of the
+.I (segname,sectname)
+section in the output file.
+This symbol will placed in the symbol table just before all other local symbols
+for the object file.  This is typicly used where the section is
+.SM (\_\^\_TEXT,\_\^\_text)
+to help the debugger debug object files coming from old compilers or non-NeXT
+compilers.
+
+.PP
+The following flags are related to symbols.  All symbol names of these arguments
+are external symbols which have an `_' prepended to the C,
+.SM FORTRAN
+or Pascal variable name.
+.TP
+.BI \-y sym
+Indicate each file in which
+.I sym
+appears, its type and whether the file defines or references it.  This option is
+one argument not two like most of the other symbol related arguments.  Many such
+options may be given to trace many symbols.
+The tracing of symbols is
+automaticly done for multiply defined symbols.
+.TP
+.B \-whyload
+Indicate why each member of an archive is loaded.  That is which currently
+undefined symbol is being resolved and requiring that archive member to be
+loaded.  This in combination with the above
+.BI \-y sym
+flag can help determine why a link edit is failing due to multiply defined
+symbols.
+.B
+.TP 
+.BI  \-u " sym"
+Take the following argument,
+.I sym,
+as a symbol and enter
+it as undefined in the symbol table.  This is useful
+for loading wholly from a library, since initially the symbol
+table is empty and an unresolved reference is needed
+to force the loading of the first object file.
+.TP
+.BI \-e " sym"
+The following argument,
+.I sym,
+is taken to be the symbol name of the entry point of
+the resulting file; the address of the first section in the first segment is
+the default entry point.
+.TP
+.BI \-i definition:indirect
+Create an indirect symbol for the symbol name
+.I definition
+which is defined to be the same as the symbol name
+.I indirect
+(which is taken to be undefined).  When a definition of the symbol named
+.I indirect
+is linked then both symbols take on the defined type and value.
+.TP
+.BI  \-U " sym"
+Take the following argument,
+.I sym,
+as a symbol that is allowed to be undefined even without
+.B \-r
+and produce an executable file if only such symbols are undefined.
+
+.PP
+The following flags are related to stripping link edit information.  These
+options are listed in decreasing level of stripping.
+This information can also be removed by
+.IR strip (1)
+using the same options (no option to
+.IR strip (1)
+for the same effect as the
+.B \-s
+option here).
+.TP 
+.B  \-s
+Completely strip the output, that is, remove the symbol table
+and relocation information.
+.TP 
+.B  \-x
+Strip the non-global symbols; only save external symbols.
+.TP
+.B \-S
+Strip debugging symbols; only save local and global symbols.
+.TP 
+.B  \-X
+Strip local symbols whose names begin with `L'; save all other symbols.
+The compiler and assembler currently strip these internally-generated labels by
+default and they don't tend to appear in object files seen by the link editor.
+.TP 
+.B  \-b
+Strip the base file's (the argument to -A) symbols from the output file.
+
+.PP
+The remaining infrequently used options are:
+.TP
+.B \-w
+Inhibit all warning messages.
+.TP
+.B \-M
+Produce a load map, listing all the segments and sections give the address of
+and size of where each input file's section appears in the output file.
+.TP
+.B \-whatsloaded
+Print a single line with the object file name for each object file that is
+loaded.  Names of objects in archives have the form libfoo.a(bar.o) .
+.TP
+.BI "\-headerpad" " value"
+Specifies the minimum amount of space to be left after the headers for the
+MH_EXECUTE format.
+.I value
+is a hexadecimal number.
+The default is to take the leftover amount of the first segment, caused by
+rounding it's size to the segment alignment, not covered by headers or
+non-zerofill sections and use that as the padded amount.
+.TP
+.B \-t
+Trace the progress of the link editor;  print the name of each file that is
+loaded as it is processed in the first and second pass of the link editor.
+.TP
+.BI \-A " basefile"
+This option specifies incremental loading, i.e.
+linking is to be done in a manner so that the resulting object
+may be read into an already executing program, the
+.I basefile.
+It is strongly suggested that this option NOT be used and that the rld package
+described in
+.IR rld (3)
+be use instead, as it it much easier to use.
+The next argument,
+.I basefile,
+is the name of a file whose symbol table will be
+taken as a basis on which to define additional symbols.
+Only newly linked material will be entered into the
+.BR a.out
+file, but the new symbol table will reflect
+every symbol defined in the base file and the newly linked files.
+Option(s) to specify the addresses of the segments are typicly needed since
+the default addresses tend to overlap with the
+.I basefile.
+The default format of the object file is MH_OBJECT if not specified.
+
+.PP
+The first release of the Mach-O link editor in the 2.0 software release by NeXT,
+Inc. also recognizes, ignores or translates the previous link editor's flags.
+In all cases a warning is issued when these flags are seen.  Future releases may
+subsequently not recognize these flags and they should not be relied upon or
+used.
+
+.SH FILES
+.ta \w'/usr/local/lib/lib*.a\ \ 'u
+/lib/lib*.a	libraries
+.br
+/usr/lib/lib*.a	more libraries
+.br
+/usr/local/lib/lib*.a	still more libraries
+.br
+a.out	output file
+.SH "SEE ALSO"
+as(1), ar(1), cc(1), ranlib(1), atom(1), nm(1), otool(1), rld(3), Mach-O(5)

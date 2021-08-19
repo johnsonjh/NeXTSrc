@@ -1,0 +1,4 @@
+cmds-28 09-May-90
+	usr.etc/checkswap/checkswap.c: open of SCSi device now specifies 
+	O_NDELAY to avoid "please insert disk" panel for SCSI drives with
+	no disk currently inserted.

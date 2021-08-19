@@ -1,0 +1,181 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    gk:1.1; strict;
+comment  @ * @;
+
+
+1.1
+date     88.09.30.15.45.50;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@NeXT, Inc.
+@
+
+
+
+1.1
+log
+@Initial NeXT version
+@
+text
+@/* 
+ * Mach Operating System
+ * Copyright (c) 1987 Carnegie-Mellon University
+ * All rights reserved.  The CMU software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ */
+/*
+ * trace.h 
+ *
+ * $Source: /afs/cs.cmu.edu/project/mach/member/dpj/netmsg/server/RCS/trace.h,v $
+ *
+ * $Header: trace.h,v 1.4 88/03/04 16:39:02 dpj Rel $
+ */
+
+/*
+ * General purpose tracing macros - particularly useful when using cthreads.
+ */
+
+/*
+ * HISTORY:
+ * 27-Apr-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Allow tracing_on to be defined as a macro.
+ *	Added locking for printf's.
+ *
+ * 19-Mar-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Copied from network server tracing macros.
+ *
+ */
+
+#ifndef _TRACE_
+#define _TRACE_
+
+#ifdef DEBUGOFF
+
+#define BEGIN(_ROUTINE_NAME_)	{
+#define END			}
+#define RET			return
+#define RETURN(_VALUE_)		return(_VALUE_)
+
+#else DEBUGOFF
+
+#include <stdio.h>
+
+extern int	trace_recursion_level;
+#ifndef	tracing_on
+extern int	tracing_on;
+#endif	tracing_on
+
+#ifdef	LOCKTRACING
+
+#ifndef	trace_lock
+#include <cthreads.h>
+extern mutex_t	trace_lock
+#endif	trace_lock
+
+#define BEGIN(_ROUTINE_NAME_)						\
+{									\
+	char *_routine_name = _ROUTINE_NAME_;				\
+	trace_recursion_level++;					\
+	if (tracing_on) {						\
+		int i;							\
+		mutex_lock(trace_lock);					\
+	    	for (i=1; i<=trace_recursion_level; i++)		\
+			fprintf(stdout, " ");				\
+	        fprintf(stdout, "Enter %s\n", _routine_name);		\
+		(void)fflush(stdout);					\
+		mutex_unlock(trace_lock);				\
+	}								\
+	{
+
+
+#define END								\
+	}								\
+}
+
+#define RET								\
+{									\
+	if (tracing_on) {						\
+		int i;							\
+		mutex_lock(trace_lock);					\
+		for (i=1; i<=trace_recursion_level; i++)		\
+			fprintf(stdout, " ");				\
+		fprintf(stdout, "Exit  %s\n", _routine_name);		\
+		(void)fflush(stdout);					\
+		mutex_unlock(trace_lock);				\
+	}								\
+	trace_recursion_level--;					\
+	return;								\
+}
+
+#define RETURN(_value_)							\
+{									\
+	if (tracing_on) {						\
+		int i;							\
+		mutex_lock(trace_lock);					\
+		for (i=1; i<=trace_recursion_level; i++)		\
+			fprintf(stdout, " ");				\
+		fprintf(stdout, "Exit  %s\n", _routine_name);		\
+		(void)fflush(stdout);					\
+		mutex_unlock(trace_lock);				\
+	}								\
+	trace_recursion_level--;					\
+	return(_value_);						\
+}
+
+#else	LOCKTRACING
+
+#define BEGIN(_ROUTINE_NAME_)						\
+{									\
+	char *_routine_name = _ROUTINE_NAME_;				\
+	trace_recursion_level++;					\
+	if (tracing_on) {						\
+		int i;							\
+	    	for (i=1; i<=trace_recursion_level; i++)		\
+			fprintf(stdout, " ");				\
+	        fprintf(stdout, "Enter %s\n", _routine_name);		\
+		(void)fflush(stdout);					\
+	}								\
+	{
+
+
+#define END								\
+	}								\
+}
+
+#define RET								\
+{									\
+	if (tracing_on) {						\
+		int i;							\
+		for (i=1; i<=trace_recursion_level; i++)		\
+			fprintf(stdout, " ");				\
+		fprintf(stdout, "Exit  %s\n", _routine_name);		\
+		(void)fflush(stdout);					\
+	}								\
+	trace_recursion_level--;					\
+	return;								\
+}
+
+#define RETURN(_value_)							\
+{									\
+	if (tracing_on) {						\
+		int i;							\
+		for (i=1; i<=trace_recursion_level; i++)		\
+			fprintf(stdout, " ");				\
+		fprintf(stdout, "Exit  %s\n", _routine_name);		\
+		(void)fflush(stdout);					\
+	}								\
+	trace_recursion_level--;					\
+	return(_value_);						\
+}
+
+#endif	LOCKTRACING
+#endif	DEBUGOFF
+
+
+#endif	_TRACE_
+@

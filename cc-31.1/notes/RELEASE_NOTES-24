@@ -1,0 +1,102 @@
+Release notes for the -24 compiler release (link editor, shlibs and tools)
+by Kevin Enderby
+
+Changes related to cc-24:
+
+Addtional notes for the release notes "Link Editor, Shared Libraries,and Tools":
+"Major Changes" section:
+    The ability to do "scattered loading" with ld(1) is now possible
+	The ld(1) option "-sectorder <segname> <sectname> <orderfile> has been
+	added to allow a section to be loaded in the order specified.  This has
+	serious limitations (DOES NOT WORK IN ALL CASES) because of the way the
+	current relocation entries work.  THIS SHOULD NOT BE DONE ON ANY SECTION
+	EXCEPT the (__OBJC,__symbol_table) section which it is known to work on.
+	The (__OBJC,__symbol_table) section for each of the shared libraries
+	should be ordered so that the same static symbols from all the object
+	files are grouped together and are in the following order:
+
+	    __OBJC_CLASS_{ClassName}
+	    __OBJC_METACLASS_{ClassName}
+	    __OBJC_CLASS_METHODS_{ClassName}_{CategoryName}
+	    __OBJC_INSTANCE_METHODS_{ClassName}_{CategoryName}
+
+	    __OBJC_CLASS_METHODS_{ClassName}
+	    __OBJC_INSTANCE_METHODS_{ClassName}
+	    __OBJC_SELECTOR_REFERENCES_{ClassName}
+
+	    __OBJC_SYMBOLS_{ClassName}
+	    __OBJC_CATEGORY_{ClassName}_{CategoryName}
+	    __OBJC_CLASS_VARIABLE_{ClassName}
+	    __OBJC_INSTANCE_VARIABLES_{ClassName}
+
+	This order reflects how the objective-C runtime uses these structures.
+	The first group is always written on, the second group is not written
+	on for the largest shlib (or the executable) typicly libNeXT, and the
+	last group is never written on and not used for messaging.
+
+	To generate this order file I suggest the use of nm(1) and sort(1) and
+	a file that contains the names of the objects as linked by the shlib.
+	The best way to get a list of the objects is to edit the spec_* file of
+	the shlib and copy the #objects directive lines.  Then edit this file
+	to remove all comments and white space so it looks something like:
+
+	    libappkit/shlib_obj/appkit_globals.o
+	    libdpsclient/shlib_obj/globals.o
+	    libsoundkit/shlib_obj/soundkit_globals.o
+	    pointers.o
+	    libappkit/shlib_obj/ActionCell.o
+	    ...
+
+	With no leading or trailing white space on the lines.  Then if this file
+	is named "objects" the following line will produce an approximate order
+	file if run from the shlib directory:
+	    nm -jos __OBJC __symbol_table `cat objects` | 
+							sort -t: +1 > objc_order
+
+	This resulting file, "objc_order", will be fairly easy to cut and paste
+	to get the symbols in the order listed above.
+
+	Finally to use this file with mkshlib(l) the following option would
+	have to be added to the mkshlib(l) lines in you Makefile:
+
+	    mkshlib ... \
+		-sectorder __OBJC __symbol_table objc_order \
+		-sectorder_detail
+
+	The option -sectorder_detail will cause ld(1) to print a detailed list
+	of those symbol listed in the file that are not in the loaded objects
+	and vice a versa.
+
+Addtional notes for the release notes "Link Editor, Shared Libraries,and Tools":
+"Minor Changes" section:
+    The addition of the -w flag to ld(1) to inhibit warnings
+	This is intended for use with IB and Makefiles it generates for custom
+	pallets project types to avoid a warning message when ld(1) is used only
+	with -sectcreate options and no object files.  This should be set in the
+	Makefile's LDFLAGS and both the LDFLAGS and the CFLAGS should be present
+	in the command line for building the pallet.  This way -Wall in the
+	CFLAGS macro can still be used for compliations.
+
+    The addition of the -A flag and removal of the -a flag to strip
+	This is intended for use when installing IB to reduce the size of the
+	release image.  IB currently uses the -x level of stripping which leaves
+	many unneeded symbols and strings in the image wasting disk space.  This
+	will be used via the install(1) -sA option that calls strip(1) with the
+	-A option.
+
+    The addition of one argument to the function argument of rld_address_func
+	The new prototype for the function rld_address_func is:
+	    extern void rld_address_func(
+		unsigned long (*func)(unsigned long size,
+				      unsigned long headers_size));
+	which includes the new argument headers_size.  This argument has the
+	value of the size of the headers the resulting object will have which
+	is included in the size argument.  This is intended for use by the kern
+	loader which can subtract the headers_size from the size to determine
+	the exact size of the memory it needs to allocate in the kernel for the
+	resulting object since the kernel does not need the resulting object's
+	header.
+
+    The installation of rld.h in /usr/include
+	All the functions described on rld(3) have their proper prototype in
+	/usr/include/rld.h .

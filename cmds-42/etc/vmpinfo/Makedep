@@ -1,0 +1,14 @@
+vmpinfo.o: vmpinfo.c /usr/include/nlist.h /usr/include/stdio.h
+vmpinfo.o: /usr/include/stddef.h /usr/include/stdarg.h
+vmpinfo.o: /usr/include/vm/vm_page.h /usr/include/sys/boolean.h
+vmpinfo.o: /usr/include/machine/boolean.h /usr/include/sys/queue.h
+vmpinfo.o: /usr/include/sys/lock.h /usr/include/sys/features.h
+vmpinfo.o: /usr/include/sys/boolean.h /usr/include/machine/vm_types.h
+vmpinfo.o: /usr/include/vm/vm_param.h /usr/include/machine/vm_param.h
+vmpinfo.o: /usr/include/sys/types.h /usr/include/machine/vm_types.h
+vmpinfo.o: /usr/include/vm/vm_object.h /usr/include/sys/features.h
+vmpinfo.o: /usr/include/sys/queue.h /usr/include/sys/lock.h
+vmpinfo.o: /usr/include/sys/boolean.h /usr/include/vm/vm_pager.h
+vmpinfo.o: /usr/include/sys/features.h /usr/include/sys/port.h
+vmpinfo.o: /usr/include/sys/port.h /usr/include/vm/vm_prot.h
+vmpinfo.o: /usr/include/sys/lock.h /usr/include/sys/sched_prim.h

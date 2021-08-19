@@ -1,0 +1,72 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    mmeyer:1.1;
+comment  @ * @;
+
+
+1.1
+date     89.06.01.10.06.39;  author mmeyer;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/*
+	automountmessage.h
+	Copyright 1988, NeXT, Inc.
+	Responsibility: Chris Franklin
+*/
+
+#import <sys/port.h>
+#import <sys/message.h>
+
+/* names of workspace ports for requests and for ack'ing machlaunch
+ */
+#define AUTOMOUNTER "automount"
+
+/* reserved message numbers sent by WM to automount */
+
+#define WM_CONFIRMINIT 25555
+#define WM_ABORTINIT 25556
+#define WM_AUTOMOUNT 25557
+#define WM_EJECT 25558
+#define WM_UNMOUNT 25559
+#define WM_LOGOUT 25560
+#define WM_NEWLABEL 25561
+#define WM_ALERTDONE 25562
+#define WM_HUH 25563
+#define WM_MOUNT 25564
+#define WM_INIT 25565
+
+/* reserved message numbers sent by automount in reply to WM */
+
+#define AM_INIT 25570
+#define AM_ALERT 25571
+#define AM_DONE 25572
+
+
+#define AM_MAXMESSAGE	(2048-sizeof(msg_header_t)-\
+			 sizeof(msg_type_t)-sizeof(int)-\
+			 sizeof(msg_type_t)-8)
+			 
+typedef struct _AMMessage {	/* a message via mach */
+    msg_header_t header;	/* every message has one of these */
+    msg_type_t sequenceType;	/* sequence number type */
+    int sequence;		/* sequence number */
+    msg_type_t textType;	/* text of message */
+    char text[AM_MAXMESSAGE];
+} AMMessage;
+
+@

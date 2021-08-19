@@ -1,0 +1,52 @@
+PROJECT STRATEGY  -- or: Why in the world are things grouped like this??
+
+The libs project is made up of:
+	libraries
+	include files
+	services
+
+The rational for grouping things like this is --
+
+Libraries are an independent project because they are referenced and
+modified by many other projects: compilers, kernel, commands; but
+they are not properly owned by any of them.  Not binding the libraries
+to any other project makes for more flexible release timing and helps
+arbitrate access to them.
+
+Most include files are kept here because, by and large, include files
+describe interfaces to libraries and services; it makes sense to
+keep them together.
+
+Some include files that must be installed in /usr/include have been
+moved to the libs/include directory within this project.  In general,
+these are include files that either have multiple libraries or commands
+referencing them such that there is no obvious set of sources with which
+they belong (cframe.h), or they have always been maintained in
+/usr/include rather than with the source they belong to (stdio.h),
+or include files that have no "owning" source (a.out.h), or the Berkeley
+release maintained them in /usr/src/include and we haven't changed it (ar.h).
+During development, access to these include files in preference to the
+current release copies may be accomplished by a well placed -I to the
+compiler (hopefully done with the SGS and cross tools).
+
+There's no religion that says they can't be moved to a more appropriate
+place, (and they probably should be moved), but while they live in
+libs/include they should always be included with <>.
+
+In other cases, include files destined for /usr/include are
+maintained with the sources that "own" them.  In this case, be sure
+that they are not multiply installed (by some other source that "thinks"
+it owns them), that they are included with "" (so the local copy is used),
+that they are installed by the "install" target, and that nothing in
+a system build previous to the build of the owning project requires
+them.
+
+
+Mach.etc is here to for services that are accessed via MIG rpc.  Client
+side stubs have to be built in to libmach and there's no easy way to
+obtain them without maintaining the services themselves in this directory.
+
+The few include files that come from command sources should probably
+be moved here, too.  This needs to be discussed.
+
+Mike

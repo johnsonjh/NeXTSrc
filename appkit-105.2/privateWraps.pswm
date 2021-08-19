@@ -1,0 +1,743 @@
+/*
+	privateWraps.pswm
+  	Copyright 1988, NeXT, Inc.
+	Responsibility: Trey Matteson
+  
+	This file contains postscript bindings for functions used by AppKit
+*/
+
+
+#import "appkitPrivate.h"
+#import "Application_Private.h"
+#import "nextstd.h"
+#import "View.h"
+#import <streams/streams.h>
+#import <ctype.h>
+#import <string.h>
+#import <dpsclient/dpsclient.h>
+#import <dpsclient/wraps.h>
+
+static void linkPackage(const char *packName);
+
+#define WINDOW_PACKAGE_VERSION		1
+#define WINDOW_PACKAGE		"/usr/lib/NextStep/windowPackage.ps"
+
+/* Check if package is already loaded.  We never load a package with a
+   lesser version number over a newer one.
+ */
+defineps static dictKnown(char *dict; int versionNum | boolean *isKnown)
+    nextdict /dict known
+    { 
+	dict /version get
+	versionNum ge
+    }
+    {
+	false
+    } ifelse
+    isKnown
+endps
+
+ 
+/* makeDictLink checks if /fromdict exists in usrdict.  If not it creates a link in usrdict to /todict in nextdict.  */
+defineps static makeDictLink(char *todict; char *fromdict)
+    userdict /fromdict known not
+    {
+    	userdict /fromdict nextdict /todict get put
+    } if
+endps
+
+
+int _NXLoadPackage(const char *packName)
+{
+    int	success;
+
+    /* See if PostScript knows about it already */
+    dictKnown((char *)packName, WINDOW_PACKAGE_VERSION, &success);
+    if (success) {
+	linkPackage(packName);
+	return(0);
+    }
+
+    if (!_NXSendFileToPS(WINDOW_PACKAGE)) {
+	/* Now see if PostScript knows about it already */
+	dictKnown((char *)packName, WINDOW_PACKAGE_VERSION, &success);
+	if (success) {
+	    linkPackage(packName);
+	    return(0);
+	}
+    }
+    return(-1);
+}
+
+
+int _NXSendFileToPS(const char *fileName)
+{
+    NXStream *st;
+    char *addr;
+    int len, maxlen;
+
+    st = NXMapFile(fileName, NX_READONLY);
+    if (st) {
+	NXGetMemoryBuffer(st, &addr, &len, &maxlen);
+	DPSWriteData(DPSGetCurrentContext(), addr, len);
+	NXCloseMemory(st, NX_FREEBUFFER);
+	return 0;
+    } else
+	return -1;
+}
+
+
+/*  This routine takes a package name, strips off the version number,
+    and makes a "link" in userdict to the real package.  For example,
+    if packname is "joePackage3.4.56", this routine would make put
+    a name "joePackage" in userdict that pointed to "joePackage3.4.56"
+    in nextdict.
+*/
+static void linkPackage(const char *packName)
+{
+    register char *c;
+    char linkName[MAXPATHLEN];
+
+    strcpy(linkName, packName);
+  /* starting at the end, back up over periods and digits */
+    for (c = linkName+strlen(linkName); --c != linkName;)
+	if(*c != '.' && !isdigit(*c))
+	    break;
+    if( c != linkName ) {
+	*(c+1) = '\0';
+	makeDictLink( (char *)packName, linkName );
+    } else
+	NXLogError("linkPackage:bad package name\n" );
+}
+
+defineps static setDefaultDepthLimit (int depthLimit)
+    depthLimit currentdefaultdepthlimit lt {
+	depthLimit setdefaultdepthlimit
+    } if
+endps
+
+void _NXSetDepthLimitFromDepthName (const char *name)
+{
+    NXWindowDepthType depth = NX_DefaultDepth;
+    if (name) {
+	if (strcmp(name, "TwelveBitRGB") == 0) {
+	    depth = NX_TwelveBitRGBDepth;
+	} else if (strcmp(name, "TwentyFourBitRGB") == 0) {
+	    depth = NX_TwentyFourBitRGBDepth;
+	} else if (strcmp(name, "EightBitGray") == 0) {
+	    depth = NX_EightBitGrayDepth;
+	} else if (strcmp(name, "TwoBitGray") == 0) {
+	    depth = NX_TwoBitGrayDepth;
+	} else  {
+	    NXLogError ("Bad depth limit %s\n", name);
+	}
+	if (depth != NX_DefaultDepth) {
+	    setDefaultDepthLimit (depth);
+	}
+    }
+}
+
+defineps _NXGetDepthLimitOfCurrentWindow ( | int *depth)
+    currentwindow currentwindowdepthlimit depth
+endps
+
+/* window 0 is the screen */
+defineps _NXScreenSize( | float *w, *h)
+    0 currentwindowbounds h w pop pop
+endps
+
+
+/* Window support */
+
+defineps static newGState(userobject win)
+    gsave
+	initgraphics
+	win windowdeviceround
+	gstate currentgstate
+    grestore
+endps    
+
+defineps static newGStateWithClip(userobject win; float x; float y; float w; float h)
+    gsave
+	initgraphics
+	win windowdeviceround
+	x y w h rectclip
+	gstate currentgstate
+    grestore
+endps    
+
+void _NXInitGState(int window, int *gState)
+{
+    newGState(window);
+    *gState = DPSDefineUserObject(0);
+}
+
+void _NXInitGStateWithClip(int window, int *gState, NXRect *clipRect)
+{
+    newGStateWithClip(window, NX_X(clipRect), NX_Y(clipRect),
+			NX_WIDTH(clipRect), NX_HEIGHT(clipRect));
+    *gState = DPSDefineUserObject(0);
+}
+
+defineps _NXNullifyGState(int gState)
+    gsave nulldevice gState execuserobject currentgstate pop grestore
+endps
+
+defineps _NXFlushGraphics(userobject gs)
+    gsave
+	gs setgstate
+	flushgraphics
+    grestore
+endps
+
+
+/* Font support */
+
+defineps _NXSelectFontNS(char *name; float size)
+	/name findfont size scalefont
+endps
+defineps _NXSelectFontNSM(char *name; float size; float m[6])
+	/name findfont size scalefont m makefont
+endps
+
+
+defineps _NXScroll(float sx, sy, width, height, dx, dy, dhx, dhy)
+    currenthalftonephase				% phx phy
+    exch dhx add cvi					% phy phx
+    exch dhy add cvi					% phx phy
+    sethalftonephase
+    sx sy width height null dx dy Copy composite
+endps
+
+
+defineps _NXDiscardCursorRect(int x; userobject gs)
+    {
+	x gs cleartrackingrect
+    } stopped
+pop
+endps
+
+
+defineps _NXSetCursorRect(float x; float y; float w; float h;
+    int i; userobject gs)
+    {
+	x y w h false false false -1 i gs settrackingrect
+    } stopped
+    pop
+endps
+
+defineps static setMedGrayPattern ()
+    NX_MediumGrayPattern setpattern
+endps
+
+void _NXSetGrayUsingPattern (float gray)
+{
+    if (NXDrawingStatus == NX_DRAWING && gray == 0.5) {
+	setMedGrayPattern ();
+    } else {
+	PSsetgray (gray);
+    }
+}
+	
+    
+/* Wraps for journaling */
+
+defineps _NXDragJnlWindow(userobject window; float dx; float dy | float *newX; float *newY)
+
+% First adjust the mouse.
+    14 currentmouse
+    dy add exch dx add exch
+    gsave 
+        14 windowdeviceround
+        setmouse
+        revealcursor
+    grestore
+    
+% Now move the window(s).
+    window currentwindowdict begin
+   	otherWindows null eq
+	{
+	    window currentwindowbounds pop pop
+	    dy add exch dx add exch
+	    2 copy newY newX
+	    window movewindow
+	}
+	{
+	    otherWindows {
+		dup currentwindowbounds pop pop
+	        dy add exch dx add exch
+		dup window eq {
+	            2 copy newY newX
+		} if
+		3 -1 roll movewindow
+	    } forall
+	} ifelse
+
+    end 	%of window's dictionary
+endps
+
+
+defineps _NXGetServerTime(| int *time)
+    Kitdefined 0 0 0 0 NXtimeWindow 0 0 0 Explicit postevent pop
+    nextdict /NXserverTime get time
+endps
+
+
+defineps _NXInitGetServerTime()
+    % See if we have initialized the timeWindow
+    nextdict /NXtimeWindow known not {
+   
+
+        % First create the NXtimeWindow
+        nextdict /NXtimeWindow 0 0 0 0 Nonretained window put
+	% Make it owned by no one so it won't die with this context
+	0 NXtimeWindow setowner
+	
+	% Define the procedure that will dig the time out of the event and
+	% stick it in the NXserverTime variable.  We can just def it to
+	% an local label, since the only thing that matters is that it get
+	% stuck in NXtimewindow's event procedures.
+	% =============================================================
+	%	 <type> <x> <y> <time> <flags>
+	%		<win> <subtype> <m1> <m2> setServerTime
+	% =============================================================
+	nextdict	% We stick this setServerTime proc in nextdict rather than
+			% userdict because of a bug we are trying to work around. 
+			% What happens is NXserverTime is undefined when we make a
+			% call to _NXGetServerTime.  Leo suspects the garbage collector
+			% is chomping it.  To recreate the bug, remove the nextdict
+			% and change the put below to a def.
+	/setServerTime
+	{
+    	    mark 10 1 roll
+	    nextdict /NXserverTime 7 index  put
+	    cleartomark
+	}
+	% That's the procedure.  Now copy it to a shared-vm copy of itself.
+	currentshared exch
+	true setshared
+	dup length array copy cvx
+	exch setshared
+	% ...and define the shared copy.
+	put		% Change to def to recreate bug described above.
+	
+	% Now set the eventProcs of the NXtimeWindow such that Kitdefined
+	% events are dispatched using setServerTime
+	currentshared true setshared
+	16 array
+	exch setshared
+
+	dup Kitdefined /setServerTime load put
+	NXtimeWindow seteventprocedures
+	
+	% Lastly, make that window accept Kitdefined events
+	Kitdefinedmask NXtimeWindow seteventmask
+    } if
+endps
+
+
+defineps _NXlmdToPackages(int type; float x; float y; long time; int flags;  userobject window; 
+                   short subtype; long miscL0; long miscL1)
+    type x y time flags window subtype miscL0 miscL1 /lmdownEvProc winexec
+endps
+
+
+defineps _NXPrepareToOverride()
+    currentshared true setshared
+endps
+
+
+defineps _NXFinishOverride()
+    setshared
+endps
+
+
+defineps _NXUndoButtonDownOverride()
+    nextdict /stilldown undef
+    nextdict /buttondown undef
+endps
+
+
+defineps _NXOverrideButtonDown()
+    nextdict begin % ??? Try getting rid of this begin
+    % First override buttondown
+    nextdict /buttondown known not
+    {   % If buttondown not already overridden then check if NXjrnbuttondown is defined
+	nextdict /NXjrnbuttondown known not
+	{   % If jrnbuttondown has not been defined then define it
+	    /NXjrnbuttondown
+	    { 
+		nextdict /_jrnMDownEvtNum get 0 ne
+	    } def
+	} if
+	% Create a buttondown in nextdict using the jrnbuttondown proc
+	/buttondown 
+	    /NXjrnbuttondown load
+	def
+    } if
+    
+    % Now override stilldown
+    nextdict /stilldown known not
+    {   % If stilldown not already overridden then check if NXjrnstilldown is defined
+	nextdict /NXjrnstilldown known not
+	{   % If jrnstilldown has not been defined then define it
+	    /NXjrnstilldown
+	    { 
+		nextdict /_jrnMDownEvtNum get eq
+	    } def
+	} if
+	% Create a stilldown in nextdict using the jrnstilldown proc
+	/stilldown 
+	    /NXjrnstilldown load
+	def
+    } if
+    end %nextdict
+endps
+
+
+defineps _NXSetJrnMDownEvtNum(int eventNum)
+    nextdict /_jrnMDownEvtNum eventNum put
+endps
+
+
+defineps _NXSetLastEventSentTime(long time)
+    time setlasteventsenttime
+endps
+
+
+defineps _NXScreenMouse(|float *x; float *y)
+    0 currentmouse y x
+endps
+
+
+/* moves the mouse to where an event occurred */
+defineps _NXSetMouse(userobject window; float x; float y)
+    gsave 
+        window windowdeviceround
+        x y setmouse
+        revealcursor
+    grestore
+endps
+
+
+defineps _NXSetJournalRecording(boolean recording)
+    nextdict /_journalRecording recording put
+endps
+
+defineps _NXGetScreenInfo (int screenNum |
+			    float *x; float *y; float *width; float *height;
+			    int *depth)
+    screenNum =string framebuffer depth height width y x pop pop pop pop
+endps
+
+defineps _NXPSStartCopyingCustom(char* id; float w, h, x, y, tx, ty, sx, sy)
+    /id save def /showpage {} def
+    x y translate
+    sx sy scale
+    tx ty translate
+endps
+
+defineps _NXPSStartDrawingCustom(char* id; float w, h, tx, ty, sx, sy)
+    /id save def /showpage {} def
+    1 setgray 0 setalpha
+    0 0 w h rectfill
+    1 setalpha
+    sx sy scale
+    tx ty translate
+endps
+
+defineps _NXPSEndCustom(char* id; float tx, ty, sx, sy)
+    clear
+    id restore
+endps
+
+defineps _NXstringxyshow(char *text; int n; char coords[n])
+    (text) (coords) xyshow
+endps
+
+
+defineps _NXPSscreenlist(int context; int count | int windows[count])
+    count array context screenlist {
+	windows
+    } forall
+endps
+
+defineps _NXPSgetwindowbelow(userobject inwindow |
+			  int *outwindow; float *outx; float *outy;
+			  boolean *found)
+    inwindow currentwindowbounds 
+    2 div 2 index add exch 2 div 3 index add exch
+    -1 inwindow findwindow found outwindow outy outx pop pop
+    14 0 0 0 0 inwindow 0 0 0 10 postevent pop
+endps
+
+
+defineps _NXMagnifyColors(|int *colorwindow; int *numcolors; int *bitsperpixel)
+gsave
+% CREATE THE WINDOW FOR THE MAGNIFYING GLASS
+userdict /_NXImageWindow known not {
+    /_NXImageWindow 0 0 48 48 Buffered window def
+    200 _NXImageWindow setwindowlevel
+    _NXImageWindow windowdeviceround
+    NX_TwentyFourBitRGB _NXImageWindow setwindowdepthlimit
+    0 .12 .1 setrgbcolor 0 0 1 1 rectfill
+    gsave
+    48 48 scale
+    48 48 2
+    [48 0 0 48 neg 0 48]
+    {<
+    0000000000000000000000000000000100100000000000000000004000004000
+    0000000000000100000000000000000000001000000000000000000000004000
+    0000000000000000000100000000000000000000000000000000000000000000
+    0004000000000000000000000000000000000000000000000000000000000000
+    4000000000100000000000001000000000000000000000001000000000000000
+    0000000010000000000000000000000000000000000000000000000010000000
+    0000000000000000000000000010000000000000100000000000000000000000
+    4000000000000000000000001000000000040000000000045000000000010000
+    0000000140000000000400000000000450000000000040000000004150000000
+    0001100000000005400000000000400000000091400000000000104000004064
+    4000000000000401001004190000000000000110000115064000000000000014
+    44455001E40000000000000055500001B900000000000000000000006E400000
+    00000000000000001B900000000000000000000006E400000000000000000000
+    01B900000000000000000000006E40000000000000000000001B900000000000
+    000000000006E40000000000000000000001B900000000000000000000006BC0
+    000000000000000000001D000000000000000000000000000000000000000000
+    0000014000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    >}{<
+    0000000BFFF0000000000000000000FF0C3FC0000000000000000BC00C00F800
+    0000000000003F000C000F00000000000000F0000C0003C0000000000003C000
+    0C0000F000000000000F00000C00003800000000000C00000C00000E00000000
+    003C00000C00000B00000000003000000C0000038000000000B000000C000003
+    C000000000F000000C000000F000000000C0000000000000F000000000C00000
+    00000000F800000000FFFFFF003FFFFFF800000000C0000000000000F8000000
+    00C0000000000000F800000000F000000C000000F800000000B000000C000003
+    FA000000003000000C000003FA000000003C00000C00000FFA000000000F0000
+    0C00000FEA000000000F00000C00003FDA0000000003C0000C0000FFDA000000
+    0003F0000C0003FF6A0000000000FC000C000FFD6800000000003FC00C00FFFF
+    6800000000002FFF0C3FFFFFE800000000000BFFFFFFFFFFF000000000000ABF
+    FFFFF03FFC000000000002A5FFF8002FFF000000000000AA000002ABFFC00000
+    0000002AA0002AAAFFF000000000000AAAAAAAAABFFC000000000000AAAAAA0A
+    AFFF00000000000002AA8002ABFFC0000000000000000000AAFFF00000000000
+    000000002ABFFC0000000000000000000AAFFF00000000000000000002ABFFC0
+    000000000000000000AAFFC00000000000000000002ABFC00000000000000000
+    000AAFC000000000000000000002AA0000000000000000000000AA8000000000
+    0000000000002AA0000000000000000000000AA00000000000000000000002A0
+    >}true 1 alphaimage
+    grestore
+    /_NXImageGS gstate def 
+}if
+
+userdict /_NXCoverWindow known not {
+    /_NXCoverWindow 0 0 48 48 Nonretained window def
+    200 _NXCoverWindow setwindowlevel
+    false _NXCoverWindow setautofill
+    }if
+
+userdict /_NXDraggingWindow known not {
+    /_NXDraggingWindow 0 0 48 48 Buffered window def
+    _NXDraggingWindow windowdeviceround
+    Lmousedownmask Lmouseupmask Lmousedraggedmask or or
+    Rmousedownmask Rmouseupmask Rmousedraggedmask or or or
+     _NXDraggingWindow seteventmask
+    NX_TwentyFourBitRGB _NXDraggingWindow setwindowdepthlimit
+    0 .12 .1 setrgbcolor 0 0 1 1 rectfill
+    200 _NXDraggingWindow setwindowlevel
+    }if
+/incolor {_NXDraggingWindow currentdeviceinfo 3 1 roll pop pop} def
+
+
+/pops {{pop} repeat} def
+/w 6 def /h 6 def 
+/mtx matrix def
+0 0 0 0 mtx sizeimage /ncolors exch def pop pop /bps exch def pop pop
+/str w bps 4 mul mul 7 add 8 idiv h mul string def
+
+/ow { systemdict /orderwindow get exec } def
+clear
+
+/draggingIconProc {
+    0 currentmouse /ly exch def /lx exch def /lt realtime def
+    /lx lx 24 sub def
+    /ly ly 24 sub def
+        
+    1053 32 add 768 32 add Above 0 findwindow
+    { /bWin exch def pop pop }
+    { rangecheck }
+    ifelse
+    gsave _NXDraggingWindow windowdeviceround 
+    lx ly _NXDraggingWindow movewindow
+    lx ly _NXCoverWindow movewindow
+    Below bWin _NXDraggingWindow fillwindow
+    0 0 48 48 _NXImageGS 0 0 Sover composite
+    hidecursor
+    Below bWin _NXDraggingWindow ow
+    {
+	buttondown { exit } if
+	0 currentmouse 2 copy ly sub dup mul
+	exch lx sub dup mul add 0 gt % this 0 value is space Threshold
+	
+	{   % realtime goes at about 1500/sec
+	    realtime dup lt sub 1 gt % this 1 value is time Threshold
+	    {
+		/lt exch def
+		/ly exch def /lx exch def
+		/lx lx 24 sub def
+		/ly ly 24 sub def
+		Above _NXDraggingWindow _NXCoverWindow ow
+		Out 0 _NXDraggingWindow ow
+		lx ly _NXDraggingWindow movewindow
+		Below _NXCoverWindow _NXDraggingWindow fillwindow
+		
+		
+		incolor {
+		    15 30 6 6 {pop} str true readimage
+		    gsave 5 20 translate
+		    newpath 13 13 13 0 360 arc clip 1 1 translate 5 5 scale w h scale w h bps
+		    [w 0 0 h neg 0 h] str false ncolors alphaimage grestore
+		  
+		}
+		{
+		    15 30 6 6 {pop} str false readimage
+		    gsave 5 20 translate 
+		    newpath 13 13 13 0 360 arc clip 1 1 translate 5 5 scale w h scale w h bps
+		    [w 0 0 h neg 0 h] str false ncolors colorimage grestore
+		}ifelse
+		
+		0 0 48 48 _NXImageGS 0 0 Sover composite
+		Below _NXCoverWindow _NXDraggingWindow ow
+		Out 0 _NXCoverWindow ow
+		lx ly _NXCoverWindow movewindow
+	    }
+	    { pop pop pop }
+	    ifelse
+	}
+	{ pop pop }
+	ifelse
+    } loop
+    grestore
+    {buttondown not {exit}if}loop
+    Out 0 _NXDraggingWindow ow
+    showcursor
+    lx ly
+    _NXDraggingWindow colorwindow ncolors numcolors bps bitsperpixel
+
+      
+} def
+
+%0 0 1120 832 Nonretained window /overallWindow exch def
+%199 overallWindow setwindowlevel
+%false overallWindow setautofill
+%Above 0 overallWindow orderwindow
+
+draggingIconProc
+%overallWindow termwindow
+_NXDraggingWindow windowdeviceround
+gstate
+grestore
+0 0 48 48 5 -1 roll 0 0 Copy composite
+
+endps
+
+
+defineps _NXGetWindowAndOrigin(|int *win; float *x; float *y)
+    currentwindow win
+    gsave
+    0 0 moveto
+    initmatrix
+    currentpoint
+    y x
+    grestore
+endps
+
+
+/*
+
+Modifications (starting at 0.8):
+
+12/05/88 trey	Nuked _NXConcat and _NXSendName.
+12/07/88 trey	Made _NXHighlightRect draw opaque gray when printing.
+
+0.91
+----
+ 5/19/89 trey	minimized static data
+ 6/11/89 trey	removed _NXOrderBelow in favor of _NXToInLevel
+
+0.94
+----
+ 7/11/89 trey	NXLoadPackage made private
+
+0.96
+----
+ 7/20/89 pah	whenever mouseWindow is set, localMouse must also be set
+ 7/24/89 wrp	removed last lineto and replaced with closepath in _NXRectPath
+ 		 under Leo's advice.  Also modified NXRectClipList.  This fixes
+		 a bug in NIB with clipping.
+
+77
+--
+ 1/30/90 trey	nuked BaseGState and _NXInitBaseGState.  They were cruft.
+ 2/03/90 trey	nuked _NXSetMouseWindow and _NXClearMouseWindow
+ 2/06/90 trey	nuked _NXSetProcessID _createIconGState(int wnum)
+ 2/06/90 trey	nuked _createIconGState, _NXWsmIconGStateCreate
+		added _NXInitOtherOwner
+ 2/14/90 trey	added args to _NXSetCursor for Cursor's -set optimization
+ 		name changes for new packages
+ 3/9/90 trey	nuked _NXUpFront, _NXOrderIfActive
+		added _NXSafeOrderFront
+
+79
+--
+ 3/19/90 cmf    added _NXPSStartCopyingCustom, _NXPSStartDrawingCustom,
+ 		 and_NXPSEndCustom for fax EPS background
+ 3/21/90 trey	changed _NXTermGState to _NXNullifyGState, no longer undefs
+		 the gsate user object
+		 
+80
+--
+  4/4/90 wot	Combined _NXStartJournalRecording and _NXStopJournalRecording
+  		 into _NXSetJournalRecorder.
+
+82
+--
+ 4/16/90 aozer	Added _NXGetScreenInfo to get framebuffer info
+
+83
+--
+ 4/27/90 trey	nuked _NXRectPath, _NXEraseRect, _NXInitMatrixClip,
+		 _NXDoHighlight
+
+85
+--
+ 5/22/90 trey	nuked _NXToInLevel, _NXSetContextBusy
+ 5/31/90 trey	moved packages stuff from here to windowPackages.pswm
+
+86
+--
+ 6/04/90 trey	nuked _NXLoadPackage, wrote simple package loader
+
+89
+--
+ 7/16/90 aozer	Changed NXGetScreenInfo() to use new framebuffer API
+		(Actually left a hybrid that will run on both for now)
+ 7/19/90 aozer	Added _NXSetGrayUsingPattern() to allow UI objects to
+		set grays using patterns (if possible). Uses stopped for now
+		to make sure it'll work in both worlds --- fix this!
+ 7/20/90 aozer	Added _NXSetDepthLimitFromDepthName().
+
+91
+--
+ 8/7/90 aozer	Removed some temporary wraps now that everyone has the
+		new server.
+ 8/15/90 bryan	added _NXGetWindowAndOrigin for icon dragging.
+
+93
+--
+ 8/29/90 aozer	Added _NXInitGStateWithClip for protecting the app icon
+
+95
+--
+ 10/2/90 aozer	Changed workspaceWindow -> 0 in magnify drag loop.
+
+*/
+

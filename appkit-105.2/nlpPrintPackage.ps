@@ -1,0 +1,39 @@
+%!PS-Adobe-2.0
+%%Title: Printing Package for Next Printers
+%%EndComments
+%Version: 2.0
+%Copyright: 1988, NeXT, Inc.
+
+/__NXdef{1 index where{pop pop pop}{def}ifelse}bind def
+/__NXbdef{1 index where{pop pop pop}{bind def}ifelse}bind def
+/_NXCombineArrays{
+	counttomark dup 2 add index dup length 3 -1 roll {
+		2 index length sub dup 4 1 roll 1 index exch 4 -1 roll putinterval exch
+	}repeat pop pop pop
+}__NXbdef
+/flushgraphics{}def
+/setwindowtype{pop pop}def
+/currentwindowtype{pop 0}def
+/setalpha{pop}def
+/currentalpha{1.0}def
+/hidecursor{}def
+/obscurecursor{}def
+/revealcursor{}def
+/setcursor{4 {pop}repeat}bind def
+/showcursor{}def
+/_NXProcArray 5 array __NXdef
+/_NXChannels 0 __NXdef
+/_NXTotalBytes 0 __NXdef
+/_NXDoImageOp{
+	1 index{dup}{1}ifelse /_NXChannels exch store
+	_NXChannels 2 add 2 roll _NXProcArray 0 _NXChannels getinterval astore pop
+	5 index 4 index mul 2 index{1 sub 8 idiv 1 add mul}{mul 1 sub 8 idiv 1 add}ifelse
+	4 index mul /_NXTotalBytes exch store pop exch pop
+	gsave matrix invertmatrix concat 0.5 setgray 0 0 4 2 roll rectfill grestore
+	{	0 1 _NXChannels 1 sub{
+			_NXProcArray exch get exec
+			length _NXTotalBytes exch sub /_NXTotalBytes exch store}for
+		_NXTotalBytes 0 le{exit}if
+	}loop /_NXProcArray 5 array def
+}__NXbdef
+/alphaimage{1 add _NXDoImageOp}def

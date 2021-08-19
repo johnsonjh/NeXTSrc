@@ -1,0 +1,348 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    mmeyer:1.1; strict;
+comment  @ * @;
+
+
+1.1
+date     89.05.11.15.15.49;  author mmeyer;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@original revision
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#define	TeST	0
+#define	SUN	0
+
+#include <stdio.h>
+#include <signal.h>
+#include <setjmp.h>
+#include <sys/types.h>
+#include <sys/file.h>
+#include <sys/mman.h>
+#include <sys/ioctl.h>
+#include <nextdev/video.h>
+#if	SUN
+#include <pixrect/pixrect_hs.h>
+#endif	SUN
+
+#define	FIX(f)	((f) * 8192.)
+#define	SFT	13
+#define	MASK(x)	((x) & 0x7fff)
+#define	SIGN(x)	((x) & 0x8000)
+#define	SCALE	4
+
+#if	SUN
+#define	ERASE	0
+#else	SUN
+#define	ERASE	0
+#endif	SUN
+
+extern int errno;
+float mag=1., tx=0., ty=0., a= -.4224, twist=1., f, aa=0., ta=0.,
+	ah=1.0, al= -1.0, th=1.5, tl= -1.5;
+#define	NSL	1024
+int nsl=0, hilite=0, iter, eqn=0;
+typedef struct {
+	int	s_x, s_y, s_a, s_twist;
+	short	s_iter;
+	short	s_color;
+} sl;
+sl seedlist[NSL];
+
+#define ri(l, h) \
+	((random()/(2147483647/((h)-(l)+1)))+(l))
+
+#define rf(l, h) \
+	((((float)random())/(((float)2147483647)/((h)-(l)+1)))+(l))
+
+jmp_buf jb;
+
+catch() {
+	longjmp (jb, 1);
+}
+
+#if	SUN
+struct pixrect *pr;
+#endif	SUN
+
+int fd, bm = 0;
+
+main() {
+	int i, p, sft, x, y;
+	char l[256];
+	register sl *sp;
+
+#if	TeST
+#else	TeST
+#if	SUN
+	if ((pr = pr_open ("/dev/fb")) == 0)
+		bomb ("/dev/fb");
+#else	SUN
+	if ((fd = open ("/dev/vid0", O_RDWR)) < 0)
+		bomb ("/dev/vid0");
+	if (ioctl (fd, DKIOCGADDR, &bm) < 0)
+		bomb ("get addr");
+	printf ("bitmap is at 0x%x\n", bm);
+#endif	SUN
+#endif	TeST
+	signal (SIGINT, catch);
+
+	setjmp (jb);
+	while (1) {
+		
+		printf ("> ");
+		gets (l);
+		if (sscanf (l, "a %f", &a) == 1)
+			printf ("a %f\n", a);
+		else
+		if (sscanf (l, "aa %f", &aa) == 1)
+			printf ("aa %f\n", aa);
+		else
+		if (sscanf (l, "ah %f", &ah) == 1)
+			printf ("ah %f\n", ah);
+		else
+		if (sscanf (l, "al %f", &al) == 1)
+			printf ("al %f\n", al);
+		else
+		if (sscanf (l, "t %f", &twist) == 1)
+			printf ("twist %f\n", twist);
+		else
+		if (sscanf (l, "ta %f", &ta) == 1)
+			printf ("ta %f\n", ta);
+		else
+		if (sscanf (l, "th %f", &th) == 1)
+			printf ("th %f\n", th);
+		else
+		if (sscanf (l, "tl %f", &tl) == 1)
+			printf ("tl %f\n", tl);
+		else
+		if (sscanf (l, "r %d %d", &nsl, &iter) == 2) {
+			printf ("fam %d iter %d\n", nsl, iter);
+		} else
+		if (sscanf (l, "e %d", &eqn) == 1)
+			printf ("eqn %d\n", eqn);
+		else
+		if (l[0] == '?')
+printf ("fam %d iter %d eqn %d\na %f(%f) [%f,%f] t %f(%f) [%f,%f]\n",
+	nsl, iter, eqn, a, aa, al, ah, twist, ta, tl, th);
+		else
+		if (l[0] == '!') {
+#if	TeST
+#else	TeST
+			clear();
+#endif	TeST
+			for (x = y = 0; x < 832; x++, y++) {
+				i = bm + ((x>>4)<<2) + y*288;
+#if	TeST
+#else	TeST
+				p = *(u_int*)i;
+#endif	TeST
+				sft = (30 - ((x%16) << 1));
+				p &= ~((u_int)3 << sft);
+#if	TeST
+				printf ("%3d: %5d %2d %08x\n", x, i, sft,
+					~((u_int)3 << sft));
+#else	TeST
+				*(u_int*)i = p;
+#endif	TeST
+			}
+		} else
+		if (l[0] == 'q') {
+			exit();
+		} else {
+			printf ("go..\n");
+			for (i = 0, sp = seedlist; i < nsl; i++, sp++) {
+				sp->s_iter = ri (1, iter);
+				sp->s_x = FIX(rf (-1., 1.));
+				sp->s_y = FIX(rf (-1., 1.));
+				sp->s_a = FIX(a);
+				sp->s_twist = FIX(twist);
+				sp->s_color = 3;	/* ri (1, 3) */
+			}
+			clear();
+			fflush (stdout);
+			redraw();
+		}
+	}
+}
+
+clear()
+{
+	register int i;
+
+#if	TeST
+#else	TeST
+#if	SUN
+#else	SUN
+	for (i = 0; i < 72*832; i++)
+		*(int*)(bm+i*4) = 0;
+#endif	SUN
+#endif	TeST
+}
+
+redraw() {
+	register int i, j, p, buttons;
+	register sl *sp;
+	char m[3];
+
+	for (i=nsl,sp=seedlist; sp<&seedlist[nsl]; i--,sp++) {
+		plot (sp->s_iter, sp->s_x, sp->s_y, sp->s_a, sp->s_twist,
+			sp->s_color);
+	}
+	while (1) {
+	for (i=nsl,sp=seedlist; sp<&seedlist[nsl]; i--,sp++) {
+#if	0
+		if (read (mouse, m, 3) == 3) {
+			buttons = (~m[0])&7;
+			if (buttons == 4)
+				twist += 0.0001;
+			if (buttons == 1)
+				twist -= 0.0001;
+			if (buttons == 2)
+				twist = 1.0;
+			if (buttons == 6)
+				a += 0.01;
+			if (buttons == 3)
+				a -= 0.01;
+			if (buttons == 5)
+				a = -.4224;
+			if (buttons == 7)
+				return;
+			if (buttons != 0) {
+				printf ("%5d: twist %4f alpha %4f\r",
+					j, twist, a);
+				fflush (stdout);
+			}
+		}
+#endif
+		plot (sp->s_iter, sp->s_x, sp->s_y, sp->s_a, sp->s_twist,
+			ERASE);
+		sp->s_iter = ri (1, iter);
+		sp->s_x = FIX(rf (-1., 1.));
+		sp->s_y = FIX(rf (-1., 1.));
+		sp->s_a = FIX(a);
+		sp->s_twist = FIX(twist);
+		plot (sp->s_iter, sp->s_x, sp->s_y, sp->s_a, sp->s_twist,
+			sp->s_color);
+		a += aa;
+		if (a > ah)
+			aa = -aa;
+		if (a < al)
+			aa = -aa;
+		twist += ta;
+		if (twist > th)
+			ta = -ta;
+		if (twist < tl)
+			ta = -ta;
+	}
+	}
+}
+
+int Color;
+
+plot (iter, xp, yp, ap, twistp, color)
+{
+	register int px;	/* d7 */
+	register u_int *byte;	/* a5 */
+	register int py;
+	register int x=xp, y=yp, nx, ny;
+	int i, sft;
+	u_int p;
+	int a=ap, twist=twistp;
+
+	Color = color;
+	for (i = 0; i < iter; i++) {
+		asm ("| xy *= twist");
+		x = (x * twist) >> SFT;
+		y = (y * twist) >> SFT;
+		asm ("| eqn");
+		switch (eqn) {
+
+		case 0:
+		/* x' = x*x - y  y' = x + a */
+		nx = ((x * x) >> SFT) - y;
+		ny = a + x;
+		break;
+
+		case 1:
+		/* x' = a - x*x  y' = a + y*y */
+		nx = a - ((x * x) >> SFT);	/* spiral w/ a=.6 */
+		ny = a + ((y * y) >> SFT);
+		break;
+
+		case 2:
+		/* x' = a + y*y  y' = a + x*x */
+		nx = a + ((y * y) >> SFT);
+		ny = a + ((x * x) >> SFT);
+
+		case 3:
+		/* x' = a + x*x  y' = a + y*y */
+		nx = a + ((x * x) >> SFT);
+		ny = a + ((y * y) >> SFT);
+
+		case 4:
+		/* x' = a + x*x  y' = a + y*y */
+		nx = a + ((x * x) >> SFT);
+		ny = a + y;
+
+		}
+		asm ("| conv");
+		if (SIGN(x))
+			px = -(MASK(-x) >> SCALE);
+		else
+			px = MASK(x) >> SCALE;
+		if (SIGN(y))
+			py = -(MASK(-y) >> SCALE);
+		else
+			py = MASK(y) >> SCALE;
+		asm ("| plot");
+#if	TeST
+		printf ("0x%x 0x%x %d %d %d\n", x, y, px, py, color);
+#else	TeST
+		px += 560;
+		py += 416;
+		if (px >= 0 && px < 1120 && py >= 0 && py < 832) {
+#if	SUN
+			pr_put (pr, px, py, color);
+#else	SUN
+#if	1
+			byte = (u_int*)(bm + py*288);
+			px <<= 1;
+			/* asm ("bfins color,byte,px,2"); */
+			asm ("movl _Color,d0");
+			asm ("bfins d0,a5@@{d7:#2}");
+#else
+			byte = (u_int*)(bm + ((px>>4)<<2) + py*288);
+			p = *byte;
+			sft = (30 - ((px%16) << 1));
+			p &= ~((u_int)3 << sft);
+			p |= (u_int)color << sft;
+			*(u_int*)byte = p;
+#endif
+#endif	SUN
+		}
+#endif	TeST
+		x = nx;
+		y = ny;
+	}
+}
+
+bomb (s)
+char *s;
+{
+	perror (s);
+	exit (-1);
+}
+@

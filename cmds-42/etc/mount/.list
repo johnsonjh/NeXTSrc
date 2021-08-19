@@ -1,0 +1,15 @@
+./
+../
+.depend_done
+Makedep
+Makefile
+Makefile.save
+Makefile~
+mount.NEW*
+mount.c
+mount.c.nonfs
+mount.c~
+mount.o
+new_mount*
+vers.c
+vers.o

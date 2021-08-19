@@ -1,0 +1,9 @@
+NAME = rpcsvc
+CFILES = etherxdr.c klm_prot.c mountxdr.c nlm_prot.c rex_xdr.c rquotaxdr.c \
+	rstatxdr.c rusersxdr.c rwallxdr.c sm_inter.c sprayxdr.c util.c \
+	yppasswdxdr.c
+CFLAGS =  -O
+DEBUGFLAGS = -gg
+PROFFLAGS = -pg
+IFLAGS = -q -c
+

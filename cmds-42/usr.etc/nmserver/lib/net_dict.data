@@ -1,0 +1,449 @@
+1 Error: %s
+2 Message: %s
+3 NPort:    %x.%x-%x.%x
+4   Receiver: %d.%d.%d.%d
+5   Owner:    %d.%d.%d.%d
+6 Netaddr:  %d.%d.%d.%d
+7 Sbuf at %x: end = %x, segs = %x, free = %d & size = %d.
+8   Sbuf segment at %x: data = %x, size = %d.
+9 Key/Token: %x.%x.%x.%x
+
+1001 po_notify_main: received notify message, msg_id = %d, port = %d.
+1002 po_notify_port_death: we are not receiver - correcting.
+1003 po_notify_port_death: we are not owner - correcting.
+1004 po_ro_xfer_cleanup: reason = %d.
+1005 po_ro_xfer_cleanup: this host was neither the owner or the receiver.
+1006 po_handle_ro_xfer_reply: xfer failed, calling po_ro_xfer_cleanup.
+1007 po_handle_ro_xfer_reply: this host was neither the owner or the receiver.
+1008 po_handle_ro_xfer_request: do not have record of network port.
+1009 po_handle_ro_xfer_request: received receive rights but not owner.
+1010 po_handle_ro_xfer_request: received ownership rights but not receiver.
+1011 po_handle_ro_xfer_request: received bogus rights (%d).
+1012 po_handle_ro_xfer_request: RO keys do not match.
+1013 po_xfer_ownership: we are not owner - correcting.
+1014 po_xfer_ownership: we are receiver - destroying port.
+1015 po_xfer_receive: we are not receiver - correcting.
+1016 po_xfer_receive: we are owner - destroying port.
+1017 po_translate_port_rights.pr_ltran fails, lport = %d.
+
+1020 timer_stop: timer 0x%x removed from queue.
+1021 timer_stop: timer 0x%x not on queue.
+1022 timer_alloc: timer = 0x%x.
+1023 timer_kill: queueing suicide request for timer thread.
+1024 awake_timer.msg_send timed out.
+1025 timer_start: timer 0x%x placed on queue.
+1026 timer_run: doing action for timer 0x%x.
+1027 timer_run: about to wait for %d milliseconds, timer_time now = %d.
+1028 timer_restart: timer 0x%x placed on queue - deadline = %d, interval = %d.
+
+1030 netipc_send: msg_simple = %d, msg_size = %d, msg_id = %d, msg_type = %d.
+1031 netipc_send.msg_send, mr = %d. 
+1032 netipc_receive.udp_checksum fails.
+1033 netipc_receive: msg_size = %d.
+1034 netipc_receive.netmsg_receive, mr = %d. 
+1040 netmsg_receive:received message on port %d.
+
+1050 srr_hash_enter: hash table full.
+1051 srr_hash_enter: record already exists."));
+1052 srr_abort.srr_hash_lookup fails, host = %d.
+1053 srr_retry.srr_dequeue returns SRR_NULL_Q.
+1054 srr_handle_request: ignoring an obsolete request.
+1055 srr_main: CRYPT_REMOTE_FAILURE.
+
+1060 pr_destroy.lq_cond_delete_from_queue: could not remove local item from queue.
+1061 pr_destroy.lq_cond_delete_from_queue: could not remove network item from queue.
+
+1070 deltat_send_next_packet: null packet.
+1071 deltat_send_next_packet: incorrect status (%d).
+1072 deltat_hash_enter, hash table %1 full.
+1073 deltat_hash_enter: record already exists.
+1074 deltat_destroy_recv_event:  event_ptr = %d.
+1075 deltat_destroy_send_event:  event_ptr = %d.
+1076 deltat_make_recv_event: new_event_ptr = %d.
+1077 deltat_make_send_event: new_event_ptr = %d.
+1079 deltat_handle_abort_pkt.deltat_event_lookup returns null event.
+1080 deltat_handle_ack_pkt.deltat_event_lookup returns null event.
+1081 deltat_handle_ack_pkt: event completed.
+1082 deltat_handle_crypt_failure_pkt.deltat_event_lookup returns null event.
+1083 deltat_handle_data_pkt: ignoring old data packet.
+1084 deltat_handle_data_pkt: received out-of-sequence packet.
+1085 UNUSED
+1086 UNUSED
+1087 UNUSED
+1088 UNUSED
+1089 deltat_process_recv_queue called.
+1090 deltat_process_recv_queue: destroying in-progress recv event, event_ptr = %d.
+1091 deltat_process_recv_queue: deltat_cleanup not yet called, event_ptr = %d.
+1092 deltat_process_recv_queue: calling deltat_destroy_recv_event, event_ptr = %d.
+1093 deltat_main: CRYPT_REMOTE_FAILURE.
+1094 deltat_main unknown packet type %d.
+1095 deltat_main: CRYPT_FAILURE.
+1096 deltat_send_next_packet: pkt_uid = %d.%d, pkt_seq_no = %d.
+1097 deltat_handle_ack_packet: pkt_uid = %d.%d, pkt_seq_no = %d.
+1098 deltat_handle_data_packet: data_size = %d, pkt_uid = %d.%d, pkt_seq_no = %d.
+1099 deltat_send_ack_packet: pkt_uid = %d.%d, pkt_seq_no = %d.
+
+1100 datagram_send fails, size of data (%d) is too large.
+1101 datagram_main.disp_inmsg_simple fails, kr = %d.
+
+1105 mem_initobj: new object type, rec=0x%x, obj_size=%d, bucket_size=0x%x, mask=0x%x -
+1106 mem_initobj:      object name: %s.
+1107 mem_allocobj_proc: allocated a bucket at 0x%x, cur_buckets=%d, first=0x%x, last=0x%x, freehead=0x%x, ret=0x%x.
+1108 mem_deallocobj_proc: deallocated bucket at 0x%x, cur_buckets=%d, first=0x%x, last=0x%x.
+1109 mem_deallocobj_proc: re-queued bucket at 0x%x, num=%d, cur_buckets=%d, first=0x%x, last=0x%x, freehead=0x%x.
+1110 MEM_ALLOCOBJ: allocating new object, rec=0x%x, first=0x%x, num=%d, freehead=0x%x, freehead->next=0x%x.
+1111 MEM_ALLOCOBJ: de-queued the last bucket.
+1112 MEM_ALLOCOBJ: de-queued a bucket, first=0x%x, last=0x%x, freehead=0x%x.
+1113 MEM_ALLOCOBJ: allocated object at address 0x%x, first bucket=0x%x, cur_buckets=%d -
+1114 MEM_*:     object name: %s.
+1115 MEM_DEALLOCOBJ: deallocating object at 0x%x, bucket=0x%x, num=%d, cur_buckets=%d, first=0x%x, _ob->freehead=0x%x.
+1116 MEM_DEALLOCOBJ: deallocated object at 0x%x, bucket=0x%x, num=%d, first=0x%x, _ob->freehead=0x%x.
+1117 MEM_ALLOC: allocated area of size %d, address 0x%x.
+1118 MEM_DEALLOC: deallocating area of size %d, address 0x%x.
+1119 MEM_DEALLOC: deallocated area of size %d, address 0x%x.
+
+1120 netname_look_up: host_name= %s.
+1121 netname_init: got name service port (%d) from service_checkin.
+1122 netname_init: checked in new name service port (%d) with old name server.
+1123 netname_main: running.
+1124 nn_remove_entries: port_id = %d.
+1125 netname_look_up: port_name= %s.
+
+1130 po_port_deallocate: we are both owner and receiver for %d.
+1131 po_port_deallocate: lport (%d) does not match msg_remote_port (%d).
+
+1140 disp_indata fails, dispatch value = %d.
+1141 disp_inprobe fails, dispatch value = %d.
+1142 disp_indata_simple fails, dispatch value = %d.
+1143 disp_rr_simple fails, dispatch value = %d.
+
+1150 km_host_enter: hash table full.
+1151 km_host_enter: record already exists.
+1152 km_init: kds process id = %d.
+1153 km_kds_connect: kds_port = %x.
+1154 km_init: km_service_port = %x.
+1155 km_use_key_for_host: new key () for host ().
+
+1160 pc_cleanup: client_id = %d, completion_code = %d.
+1161 pc_cleanup.lq_find_in_queue fails, client_id = %d.
+1162 pc_handle_checkup_request: data size = %d, but num_entries = %d.
+1163 pc_handle_checkup_request: received port checkup request from (), num_entries = %d.
+1164 pc_handle_checkup_request: set status of network port () to %x.
+1165 pc_handle_checkup_reply.lq_find_in_queue fails, client_id = %d.
+1166 pc_handle_checkup_reply: client_id %d: reply is from () but request was to ().
+1167 pc_handle_checkup_reply: data size = %d, but num_entries = %d.
+1168 pc_handle_checkup_reply: received port checkup reply from (), client_id = %d, num_entries = %d.
+1169 pc_handle_checkup_reply.pr_np_puid_lookup fails, network port = ().
+1170 pc_handle_checkup_reply: status of network port () is %x.
+
+1180 pc_handle_startup_hint: received hint from ().
+
+1190 po_handle_token_reply: received token () for network port ().
+1191 po_handle_token_reply.pr_nportlookup of () fails.
+1192 po_handle_token_reply: have receive or ownership rights to network port ().
+1193 po_handle_token_request.pr_nportlookup of () fails.
+1194 po_handle_token_request: do not have receive or ownership rights to ().
+1195 po_handle_token_request: created token () for network port ().
+1196 po_request_token: requesting token for network port ().
+1197 po_handle_ro_xfer_hint: received hint for network port ().
+1198 po_handle_ro_xfer_hint: already hold all rights to network port ().
+1199 po_handle_ro_xfer_hint: incorrect RO key (), () for network port ().
+1200 po_handle_ro_xfer_hint: incorrect RO key (), () for network port ().
+1201 po_send_ro_xfer_hint: destination neither receiver nor owner.
+1202 po_token_cleanup: requesting key exchange for %x.
+
+1210 pc_add_host: making new request record for (), requests outstanding = %d.
+1211 pc_add_request: request generated for local port %d, to be sent to host ().
+1212 pc_gen_request: checking local port %d, network port (), aliveness = %d.
+1213 pc_gen_request: destroying local port %d.
+1214 pc_send_request: sending request to (), num_entries = %d.
+1215 pc_do_checkups called.
+
+1220 ps_do_port_search: already receiver and owner for ().
+1221 ps_do_port_search: searching for network port ().
+1222 ps_do_port_search: querying owner.
+1223 ps_do_port_search: querying receiver.
+1224 ps_cleanup.pr_lportlookup of %d fails.
+1225 ps_cleanup: calling ps_handle_reply for local port %d.
+1226 ps_handle_reply: unknown status %d.
+1227 ps_handle_reply.pr_np_puid_lookup of PUID %x.%x fails.
+1228 ps_handle_reply: status = %d for network port ().
+1229 ps_handle_reply: port search terminated successfully.
+1230 ps_handle_reply: port search terminated - destroying port.
+1231 ps_handle_reply: port search terminated after broadcast - destroying port.
+1232 ps_handle_reply: port search terminated after broadcast - assuming all rights.
+1233 ps_handle_reply: resorting to broadcast search.
+1234 ps_handle_reply: querying new owner.
+1235 ps_handle_reply: querying new receiver.
+1236 ps_send_query: sending query to () for network port ().
+1237 ps_handle_query: received query for PUID %x.%x.
+1238 ps_handle_query: ignore = %d, status = %d.
+1239 ps_retry.ps_lportlookup of %d fails.
+1240 ps_auth_cleanup: reason = %d.
+1241 ps_auth_cleanup.pr_lportlookup of %d fails.
+1242 ps_authenticate_port: local port = %d, destination = (), network port = ().
+1243 ps_handle_auth_reply.pr_lportlookup of %d fails.
+1244 ps_handle_auth_reply: authentication of %d successful - terminating port search.
+1245 ps_handle_auth_reply: authentication of %d unsuccessful - continuing port search.
+1246 ps_handle_auth_request.pr_np_puid_lookup of PUID %x.%x fails.
+1247 ps_handle_auth_request: received authentication request for network port ().
+1248 ps_handle_auth_request: do not have receive or ownership rights to network port ().
+1249 ps_handle_auth_request: SID (%x.%x) in token does not match that in network port ().
+1250 ps_handle_auth_request: random number in token is inconsistent (%x - %x).
+1251 ps_handle_auth_request: authentication request successful.
+1252 ps_auth_cleanup: request key exchange for %x.
+1253 ps_auth_km_retry.pr_lportlookup of %d fails.
+
+1260 my_host_id = ().
+
+2000 ipc_in.ipc_inprobe called: trid=%d from=0x%x trmod=%d crypt_level=%d broadcast=%d.
+2001 ipc_in.ipc_inmsg called: trid=%d from=0x%x trmod=%d ipcid=%d crypt_level=%d broadcast=%d.
+2002 ipc_inmsg: message rejected: network port () not here (port record = %d).
+2003 ipc_inmsg: message rejected: bad sequence number (encryption) : %d.
+2004 ipc_inmsg: message rejected: port blocked.
+2005 ipc_inmsg: message can be accepted.
+2006 ipc_inmsg.vm_allocate: allocated object of size %d, address %d for assembly.
+2007 ipc_inmsg: delivering the message (msg_id = %d), msg_send returns %d.
+2008 ipc_inmsg returning: success.
+2009 ipc_in.ipc_in_cancel called: ipcid=%d reason=%d.
+2010 ipc_out.ipc_outmsg called: ior_ptr=%d dest_port_ptr=%d crypt_level=%d.
+2011 ipc_outmsg: translating the message.
+2012 ipc_out.ipc_out_gc called: ior_ptr=%d.
+2013 ipc_out.ipc_out_cleanup called: clid=%d completion=%d.
+2014 ipc_out.ipc_out_main: received message on port %d, msg_id = %d.
+2015 ipc_out_main: dest_port_ptr = %d.
+2016 ipc_out_main: ior_ptr = %d.
+2017 ipc_out_main: cannot transmit the message - portrec_info=0x%x.
+2018 ipc_out_main: cannot transmit the message - encryption problem.
+2019 ipc_out_main: transmitting the message.
+2020 ipc_out.ipc_freeze called: dest_port_ptr=%d.
+2021 ipc_out.ipc_port_dead called: local port = %d.
+2022 ipc_out.ipc_retry called: dest_port_ptr=%d.
+2023 ipc_out.ipc_re_send awakened: ior_ptr=%d dest_port_ptr=%d.
+2024 ipc_re_send: cannot transmit the message - encryption problem.
+2025 ipc_re_send: transmitting the message.
+2026 ipc_re_send: cannot transmit the message - portrec_info=0x%x.
+2027 ipc_out.ipc_out_init: ipc_sequence_number = %d.
+2028 ipc_out.ipc_out_backlog called: dest_port_ptr=%d.
+2029 ipc_in.ipc_in_scan_swap: inline = %d, deallocate = %d, longform = %d, type_name = %d, len = %d, type_number = %d.
+2030 ipc_in.ipc_in_scan: inline = %d, deallocate = %d, longform = %d, type_name = %d, len = %d, type_number = %d.
+
+2040 ipc_in_unblock.pr_np_puid_lookup fails.
+2041 ipc_in_unblock: receiver and source do not match.
+2042 ipc_out_main: reply port record for this RPC: 0x%x.
+2043 ipc_inmsg: destination port record for this RPC reply: 0x%x.
+2044 ipc_inmsg: locked the destination port record for RPC reply.
+2045 ipc_inmsg: calling ipc_out_cleanup after successful reply, ior=0x%x.
+2046 ipc_out_cleanup: trying to lock the destination portrec (0x%x).
+2047 ipc_out_cleanup: got the lock on the destination portrec (0x%x).
+2048 ipc_out_cleanup: transmitting a backlogged message ior=0x%x.
+2049 ipc_out_cleanup: unlocking the destination portrec (0x%x).
+2050 ipc_out_cleanup: calling ipc_out_gc(0x%x).
+2051 ipc_inmsg: dp_ptr=0x%x rp_ptr=0x%x.
+
+2100 vmtp1_send: sending a message, record=0x%x, socket=%d, size=%d, client 0x%x 0x%x
+2101 vmtp1_send:   replying
+2102 vmtp1_send:   request to server 0x%x 0x%x
+2103 vmtp1_recvrp: select() returned %d, mask=0x%x
+2104 vmtp1_recvrp: invoke(%d,RESP) returned %d
+2105 vmtp1_recvrp: disp_indata() returned %d
+2106 vmtp1_recvrq: recvreq() returned %d
+2107 vmtp1_recvrq: disp_indata() returned %d
+2108 vmtp1_recvrq: sending error code %d
+2109 vmtp1_cleanup: rec=0x%x, socket=%d
+2110 vmtp1_allocate_client: new socket %d client 0x%x 0x%x
+2111 vmtp1_recvrp: calling select, mask=0x%x
+2112 vmtp1_recvrp: vm_code=0x%x vm_ipccode=%d vm_segsize=%d
+2113 vmtp1_recvrp: msg OK
+
+2200 vmtp2_sendrequest: sending, record=0x%x, socket=%d, size=%d, server 0x%x 0x%x
+2201 vmtp2_sendrequest: vm_ipccode=%d
+2202 vmtp2_sendreply: sending, record=0x%x, socket=%d, size=%d, client 0x%x 0x%x
+2203 vmtp2_recvrp: select() returned %d, mask=0x%x
+2204 vmtp2_recvrp: invoke(%d,RESP) returned %d
+2205 vmtp2_sendreply: vm_ipccode=%d
+2206 vmtp2_recvrq: recvreq() returned %d, vm_code=0x%x vm_ipccode=%d
+2207 vmtp2_recvrq: disp_in_request() returned %d
+2208 vmtp2_recvrq: sending error code %d
+2209 UNUSED.
+2210 vmtp2_allocate_client: new socket %d client 0x%x 0x%x
+2211 vmtp2_recvrp: calling select, mask=0x%x
+2212 vmtp2_recvrp: vm_code=0x%x vm_ipccode=%d vm_segsize=%d
+2213 vmtp2_recvrp: msg OK
+
+2500 ipc_out_transmit: transport_sendrequest returned %d.
+2501 ipc_in_request: trmod=%d trid=0x%x data_ptr=0x%x from=0x%x crypt_level=%d.
+2502 ipc_in_request: message rejected: network port () not here.
+2503 ipc_in_request: message rejected: bad sequence number (encryption) : %d.
+2504 ipc_in_request: message rejected: port blocked.
+2505 ipc_in_request: message can be accepted.
+2506 ipc_inmsg: assembly area type=%d, len=%d, buff=0x%x.
+2507 ipc_in_request: delivering the message (msg_id = %d), msg_send returns %d.
+2508 ipc_in_request: returning %d.
+2509 ipc_out_request: no reply port.
+2510 ipc_outmsg: called; ipc_ptr=0x%x msg_ptr=0x%x destination=0x%x crypt_level=%d.
+2511 ipc_outmsg: message not simple, scanning.
+2512 ipc_out_gc: called; ipc_ptr=0x%x, reply_port_ptr=0x%x.
+2513 ipc_out_request: queueing the ipc_rec on the server port, retry_level=%d.
+2514 ipc_out_main: received message on port 0x%x, msg_id = %d.
+2515 ipc_out_main: dest_port_ptr=0x%x.
+2516 ipc_out_request: called; ipc_ptr=0x%x.
+2517 ipc_out_request: cannot transmit the msg - info=0x%x, transit_count=%d.
+2518 ipc_out_request: cannot transmit the message - encryption problem.
+2519 ipc_out_transmit: transmitting the message.
+2520 ipc_freeze: called; dest_port_ptr=0x%x, info=0x%x.
+2521 ipc_port_dead: called; port_rec_ptr=0x%x.
+2522 UNUSED ipc_retry: called; dest_port_ptr=0x%x.
+2523 ipc_re_send: awakened.
+2524 ipc_re_send: cannot transmit the message - encryption problem.
+2525 ipc_re_send: will not transmit the request; error_status=%d.
+2526 ipc_re_send: cannot transmit the msg - info=0x%x, transit_count=%d.
+2527 ipc_init: ipc_sequence_number = %d.
+2528 ipc_in_request: server_port_ptr=0x%x, info=0x%x.
+2529 ipc_in_scan_swap: inline=%d, dealloc=%d, lform=%d, typ_name=%d, len=%d, typ_num=%d.
+2530 ipc_in_scan: inline=%d, dealloc=%d, lform=%d, typ_name=%d, len=%d, typ_num=%d.
+2531 ipc_out_request: reply_port_ptr=0x%x.
+2532 ipc_out_request: reply port already has a reply_ipcrec=0x%x, type=%d, status=%d.
+2533 ipc_out_request: doing a RPC.
+2534 ipc_out_request: doing a simple IPC.
+2535 ipc_out_request: will not transmit the request; error_status=%d.
+2536 ipc_out_reply: called; ipc_ptr=0x%x.
+2537 ipc_out_reply: no server port.
+2538 ipc_out_reply: server_port_ptr=0x%x.
+2539 ipc_out_reply: transmitting the reply, trmod=%d, trid=0x%x.
+2540 ipc_in_unblock.pr_np_puid_lookup fails.
+2541 ipc_in_unblock: receiver and source do not match.
+2542 ipc_in_reply: deallocating ipc_ptr->in.
+2543 ipc_in_reply: retry_level=%d(ipc_rec) / %d(port), waiting_count=%d, transit_count=%d.
+2544 UNUSED ipc_in_reply: at cleanup, rights=%d.
+2545 ipc_in_reply: re-enabling the server port.
+2546 ipc_out_reply: deallocating ipc_ptr->in and ipc_ptr->out.
+2547 ipc_in_reply: called; ipc_ptr=0x%x, code=%d, data_ptr=0x%x.
+2548 ipc_in_reply: reply_port_ptr=0x%x, reply_ipcrec=0x%x.
+2549 ipc_in_reply: no reply port.
+2550 ipc_in_reply: server_port_ptr=0x%x (controlling port).
+2551 ipc_in_reply: delivering the msg, local_port_ptr=0x%x.
+2552 ipc_in_request: ipc_ptr=0x%x.
+2553 ipc_in_request: reply_port_ptr=0x%x.
+2554 ipc_in_request: reply_ipcrec=0x%x.
+2555 ipc_in_request: incoming request is a RPC.
+2556 ipc_in_request: deallocating ipc_ptr->in; reply_port_ptr=0x%x.
+2557 ipc_redo_request: called; ipc_ptr=0x%x.
+2558 ipc_retry_internal: queueing ipc_ptr=0x%x.
+2559 ipc_re_send: retrying ipc_ptr=0x%x, server_port_ptr=0x%x, info=0x%x.
+2560 ipc_inmsg: called; ipc_ptr=0x%x, data=0x%x, nmh_ptr=0x%x, from=0x%x, crypt_level=%d.
+2561 ipc_inmsg: exiting; msg_simple=%d, msg_type=0x%x, msg_id=%d, msg_size=%d.
+2562 ipc_server_abort: port_rec_ptr=0x%x, ipc_ptr=0x%x.
+2563 ipc_client_abort: port_rec_ptr=0x%x, ipc_ptr=0x%x.
+2564 ipc_client_abort: abort_ptr=0x%x, ipc_seq_no=%d.
+2565 ipc_port_moved: called; port_rec_ptr=0x%x.
+2566 ipc_in_abortreq: trmod=%d, trid=0x%x, from=0x%x, np_puid=0x%x/0x%x, ipc_seq_no=%d.
+2567 ipc_in_abortreq: port_rec_ptr=0x%x.
+2568 ipc_in_abortreply: abort_ptr=0x%x code=%d data_ptr=0x%x.
+2569 ipc_in_reply: delivering the message (msg_id = %d), msg_send returns %d.
+2570 ipc_in_reply: retry/completion: retry=%d, completion_rights=%d, retry_action=%d.
+2571 ipc_in_reply: immediate retry due to increased retry_level.
+2572 ipc_in_reply: immediate retry for retry_action=RETRY_NONE.
+2573 ipc_in_reply: just wait, retry_action=RETRY_WAIT.
+2574 ipc_in_reply: start a port search, retry_action=RETRY_PORT_SEARCH.
+2575 ipc_in_reply: start a key exchange, retry_action=RETRY_KEY_EXCHANGE.
+2576 ipc_in_reply: no retry for current msg, port busy (info=0x%x, transit_count=%d).
+2577 ipc_in_reply: no retry for next msg, port busy (info=0x%x, transit_count=%d).
+2578 ipc_in_reply: resetting the retry_level.
+2579 ipc_in_reply: decrementing transit_count.
+2580 ipc_in_reply: immediate retry for next waiting message.
+2581 ipc_retry_internal: exiting (port=0x%x) waiting_count=%d, transit_count=%d.
+2582 ipc_retry: called; dest_port_ptr=0x%x, info=0x%x, waiting_count=%d, transit_count=%d.
+2583 ipc_out_main: LOGCHECK: cur=0x%x, end=0x%x.
+
+2600 disp_in_request: about to dispatch, disp_type=%d, src_format=%d.
+
+2700 network_init: found %d interfaces:
+2701 network_init: %s.
+2702 network_init: broadcast_address=0x%x.
+
+2800 tcp_xmit_data: cp=0x%x, ctlcode=%d, trid=0x%x, code=%d, data=0x%x, crypt=%d.
+2801 tcp_xmit_data:  writev(), iov_count=%d, ret=%d, errno=%d.
+2802 tcp_xmit_data:  sending sbuf segment, size=%d, ret=%d, errno=%d.
+2803 tcp_xmit_control: cp=0x%x, ctlcode=%d, trid=0x%x, code=%d, ret=%d, errno=%d.
+2804 tcp_init: TCP module initialized.
+2805 tcp_init_conn: created a new connection record 0x%x, handler thread = %d.
+2806 tcp_listener: ready to accept connections on socket %d.
+2807 tcp_listener: entering accept().
+2808 tcp_listener: returning from accept().
+2809 tcp_listener: new connection on socket %d, cp=0x%x, peer=0x%x,%d.
+2810 tcp_listener: %d open connections, waiting before accepting new ones.
+2811 tcp_conn_handler: waiting to be activated.
+2812 tcp_conn_handler: woke up, cp=0x%x, state=%d, dest=0x%x.
+2813 tcp_conn_handler: starting receive loop for cp=0x%x, sock=%d, peer=0x%x.
+2814 tcp_conn_handler: ending receive loop for cp=0x%x, sock=%d, peer=0x%x.
+2815 tcp_conn_handler_open: connect() failed for dest=0x%x, errno=%d.
+2816 tcp_conn_handler_open: connection opened for cp=0x%x, sock=%d, peer=0x%x.
+2817 tcp_conn_handler_open: processing transaction record at 0x%x, state=%d.
+2818 tcp_conn_handler_active: top of the recv loop, dest=0x%x, ctlbufp=0x%x, bufp=0x%x, buf_count=%d, buf_free=%d.
+2819 tcp_conn_handler_active: recv() in small buffer failed, dest=0x%x, errno=%d.
+2820 tcp_conn_handler_active: recv() in small buffer returned %d, dest=0x%x.
+2821 tcp_conn_handler_active: processing message, dest=0x%x, data_size=%d, seg_size=%d, ctlbufp=0x%x, bufp=0x%x, buf_count=%d.
+2822 tcp_conn_handler_active: allocated a big buffer, dest=0x%x, bigbufp=0x%x, bigbuf_size=%d.
+2823 tcp_conn_handler_active: entering recv in big buffer, dest=0x%x, bufp=0x%x, bigbuf_count=%d.
+2824 tcp_conn_handler_active: recv() in big buffer failed, dest=0x%x, errno=%d.
+2825 tcp_conn_handler_active: recv() in big buffer returned %d, dest=0x%x.
+2826 tcp_conn_handler_active: control code = %d.
+2827 tcp_conn_handler_active: sending an immediate reply to 0x%x, trid=0x%x, code=%d.
+2828 tcp_conn_handler_active: delivering a reply, tp=0x%x.
+2829 tcp_conn_handler_active: sending a CLOSEREP to 0x%x.
+2830 tcp_conn_handler_active: cannot close connection to 0x%x, cp->count=%d.
+2831 tcp_conn_handler_active: received a CLOSEREP from 0x%x, exiting.
+2832 tcp_conn_handler_active: deallocating bigbuf at 0x%x.
+2833 tcp_conn_handler_active: deallocating bigbuf at 0x%x.
+2834 tcp_conn_handler_close: aborting transaction, tp=0x%x, tp->state=%d, client_id=0x%x.
+2835 tcp_conn_handler_close: free the connection record, conn_num=%d.
+2836 tcp_conn_handler_close: waking up the listener.
+2837 tcp_sendrequest: request for 0x%x, client_id=0x%x, conn_num=%d, conn_closing=%d.
+2838 tcp_close_conn: cannot close anything - conn_num=%d, conn_closing=%d.
+2839 tcp_close_conn: closing cp=0x%x, dest=0x%x, conn_num=%d, conn_closing=%d.
+2840 tcp_sendrequest: no open connection / opening cp=0x%x, dest=0x%x.
+2841 tcp_sendrequest: no open connection / too many opening - TR_OVERLOAD.
+2842 tcp_sendrequest: found open connection cp=0x%x, dest=0x%x.
+2843 tcp_sendrequest: using the connection, cp=0x%x, cp->state=%d, tp=0x%x, trid=0x%x.
+2844 tcp_sendrequest: transmission failed to 0x%x, errno=%d.
+2845 tcp_sendreply: trid=0x%x, cp=0x%x, cp->dest=0x%x, cp->state=%d.
+2846 tcp_sendrequest: transmission failed to 0x%x, errno=%d.
+2847 tcp_sendreply: inconsistent trid (0x%x), the client must have died.
+2848 * UNUSED * tcp_handler_active: new ctl: ctl=%d, trid=%d, code=%d, size=%d, crypt=%d.
+
+3000 nn_network_look_up: called, host_id=0x%x.
+3001 nn_network_look_up: looking for %s.
+3002 nn_network_look_up: returning %d.
+3003 nn_look_up: broadcasting for the name.
+3004 nn_look_up: name found locally, port=0x%x, entry=0x%x.
+3005 nn_network_look_up: sending a request req=0x%x.
+3006 nn_network_look_up: woke up!
+3007 nn_handle_reply: called, client_id=0x%x
+3008 nn_handle_reply: got negative reply: null_network port.
+3009 nn_handle_reply: signalling condition 0x%x, head=0x%x.
+3010 nn_handle_reply: back from signalling condition 0x%x, head=0x%x.
+3011 nn_network_look_up: waiting on condition 0x%x, head=0x%x.
+3012 nn_network_look_up: back from wait on condition 0x%x, head=0x%x.
+3013 nn_cleanup: returning %d for request 0x%x.
+3014 nn_cleanup: signalling condition 0x%x, head=0x%x.
+3015 nn_cleanup: back from signalling condition 0x%x, head=0x%x.
+3016 _netname_check_in (COMPAT) : calling old netmsgserver, name = %s.
+3017 _netname_check_in (COMPAT) :   returned from old netmsgserver, kr=%d.
+3018 _netname_check_out (COMPAT) : calling old netmsgserver, name = %s.
+3019 _netname_check_out (COMPAT) :   returned from old netmsgserver, kr=%d.
+3020 _netname_look_up (COMPAT) : calling old netmsgserver, name = %s.
+3021 _netname_look_up (COMPAT) :   returned from old netmsgserver, rc=%d.
+3022 netname_init (COMPAT): calling mach_ports_lookup.
+3023 netname_init (COMPAT):   mach_ports_lookup returned %d.
+3024 _netname_check_in: checking in port name %s.
+3025 _netname_check_in: success, port=0x%x, entry=0x%x.
+3026 _netname_check_in: re-checked-in port 0x%x, entry=0x%x.
+3027 _netname_check_in: invalid signature for port 0x%x, entry=0x%x -
+3028 nn_look_up: name not found locally.
+3029 nn_look_up: invalid host.
+3030 nn_look_up: doing a network lookup.
+3031 nn_look_up: cannot do a network lookup: no network.
+
+3100 pr_ntran: about to lock the port record.
+3101 pr_ntran: locked the port record.

@@ -1,0 +1,149 @@
+cd build; make default
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/nmserver.c
+md -u Makedep -d nmserver.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/dispatcher.c
+md -u Makedep -d dispatcher.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/lock_queue.c
+md -u Makedep -d lock_queue.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/mem.c
+md -u Makedep -d mem.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/nm_extra.c
+md -u Makedep -d nm_extra.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/rwlock.c
+md -u Makedep -d rwlock.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/sbuf.c
+md -u Makedep -d sbuf.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/timer.c
+md -u Makedep -d timer.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/uid.c
+md -u Makedep -d uid.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/crypt.c
+md -u Makedep -d crypt.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/crypt_multperm.c
+md -u Makedep -d crypt_multperm.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/crypt_newdes.c
+md -u Makedep -d crypt_newdes.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/crypt_xor.c
+md -u Makedep -d crypt_xor.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/multperm.c
+md -u Makedep -d multperm.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/ipc.c
+md -u Makedep -d ipc.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/ipc_block.c
+md -u Makedep -d ipc_block.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/ipc_msg.c
+md -u Makedep -d ipc_msg.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/ipc_rpc.c
+md -u Makedep -d ipc_rpc.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/ipc_exception.c
+md -u Makedep -d ipc_exception.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/ipc_swap.c
+md -u Makedep -d ipc_swap.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/keyman.c
+md -u Makedep -d keyman.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/km_procs.c
+md -u Makedep -d km_procs.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/km_utils.c
+md -u Makedep -d km_utils.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/netname.c
+md -u Makedep -d netname.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/nn_handler.c
+md -u Makedep -d nn_handler.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/nn_procs.c
+md -u Makedep -d nn_procs.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/portrec.c
+md -u Makedep -d portrec.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/portcheck.c
+md -u Makedep -d portcheck.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/pc_handler.c
+md -u Makedep -d pc_handler.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/pc_startup.c
+md -u Makedep -d pc_startup.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/portsearch.c
+md -u Makedep -d portsearch.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/ps_auth.c
+md -u Makedep -d ps_auth.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/portops.c
+md -u Makedep -d portops.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/po_message.c
+md -u Makedep -d po_message.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/po_notify.c
+md -u Makedep -d po_notify.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/po_utils.c
+md -u Makedep -d po_utils.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/datagram.c
+md -u Makedep -d datagram.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/deltat.c
+md -u Makedep -d deltat.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/deltat_handler.c
+md -u Makedep -d deltat_handler.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/deltat_send.c
+md -u Makedep -d deltat_send.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/deltat_utils.c
+md -u Makedep -d deltat_utils.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/srr.c
+md -u Makedep -d srr.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/srr_handler.c
+md -u Makedep -d srr_handler.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/srr_utils.c
+md -u Makedep -d srr_utils.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/netipc.c
+md -u Makedep -d netipc.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/network.c
+md -u Makedep -d network.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/transport.c
+md -u Makedep -d transport.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/nm_init.c
+md -u Makedep -d nm_init.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/logstat.c
+md -u Makedep -d logstat.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/ls_rec.c
+md -u Makedep -d ls_rec.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/vmtp2.c
+md -u Makedep -d vmtp2.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/nm_enable.c
+md -u Makedep -d nm_enable.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/crypt_des.c
+md -u Makedep -d crypt_des.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/des.c
+md -u Makedep -d des.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/tcp.c
+../server/tcp.c: In function tcp_init:
+../server/tcp.c:1513: warning: argument passing between incompatible pointer types
+../server/tcp.c:1521: warning: assignment between incompatible pointer types
+md -u Makedep -d tcp.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../server/cam_stuff.c
+md -u Makedep -d cam_stuff.d
+mig -MD -I. -I../server  -DMIG -DNMSERVER ../server/km.defs  -server km_server.c  -user km_user.c
+cc -O -g -pg -MD -I. -I../server  -bsd -c km_server.c
+md -u Makedep -d km_server.d
+mig -MD -I. -I../server  -DMIG -DNMSERVER  /usr/include/servers/netname.defs  -server netname_server.c  -user netname_user.c
+cc -O -g -pg -MD -I. -I../server  -bsd -c netname_server.c
+md -u Makedep -d netname_server.d
+mig -MD -I. -I../server  -DMIG -DNMSERVER ../server/logstat.defs  -server logstat_server.c  -user logstat_user.c
+cc -O -g -pg -MD -I. -I../server  -bsd -c logstat_server.c
+md -u Makedep -d logstat_server.d
+cc  -o nmserver nmserver.o dispatcher.o lock_queue.o mem.o nm_extra.o rwlock.o sbuf.o timer.o uid.o  crypt.o crypt_multperm.o crypt_newdes.o crypt_xor.o multperm.o  ipc.o ipc_block.o ipc_msg.o ipc_rpc.o ipc_exception.o ipc_swap.o  keyman.o km_procs.o km_utils.o  netname.o nn_handler.o nn_procs.o  portrec.o portcheck.o pc_handler.o pc_startup.o portsearch.o ps_auth.o  portops.o po_message.o po_notify.o po_utils.o  datagram.o deltat.o deltat_handler.o deltat_send.o deltat_utils.o  srr.o srr_handler.o srr_utils.o netipc.o network.o transport.o  nm_init.o logstat.o ls_rec.o vmtp2.o nm_enable.o crypt_des.o des.o  tcp.o cam_stuff.o km_server.o netname_server.o logstat_server.o -lcs -lsys_s
+cd build; make utilprog
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../utils/nmcontrol.c
+../utils/nmcontrol.c: In function genericportstat:
+../utils/nmcontrol.c:739: warning: argument passing between incompatible pointer types
+md -u Makedep -d nmcontrol.d
+cc -O -g -pg -MD -I. -I../server  -bsd -c logstat_user.c
+ld  -o nmcontrol /lib/crt0.o nmcontrol.o logstat_user.o ls_rec.o -lcs -lsys_s
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../utils/nmxlog.c
+md -u Makedep -d nmxlog.d
+ld  -o nmxlog /lib/crt0.o nmxlog.o -lcs -lsys_s
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../utils/nmtest.c
+../utils/nmtest.c: In function initialize:
+../utils/nmtest.c:727: warning: argument passing between incompatible pointer types
+md -u Makedep -d nmtest.d
+ld  -o nmtest /lib/crt0.o nmtest.o -lcs -lsys_s
+cc -O -g -pg -MD -I. -I../server  -bsd -c ../utils/nmtime.c
+../utils/nmtime.c: In function genericwrite:
+../utils/nmtime.c:510: warning: argument passing between incompatible pointer types
+../utils/nmtime.c:546: warning: argument passing of integer from pointer lacks a cast
+../utils/nmtime.c: In function echostart:
+../utils/nmtime.c:629: warning: argument passing of integer from pointer lacks a cast
+md -u Makedep -d nmtime.d
+ld  -o nmtime /lib/crt0.o nmtime.o -lcs -lsys_s

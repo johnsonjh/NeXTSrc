@@ -1,0 +1,24 @@
+CHANGES FOR CMDS-28
+bin/Makefile		Remove tar to move to SGCMDS project
+etc/telnetd/*		New update from Dave Borman of Cray
+etc/autodiskmount/*	New adm from JKS
+usr.ucb/Mail/config.c	Fix for Mail mangling the return address of a reply
+usr.ucb/tset/tset.c	Bugfix
+usr.ucb/indent/*	Bugfixes for old style assignment
+usr.ucb/which		Which now handles app wrappers correctly
+
+CHANGES FOR CMDS-27
+
+
+bin/diff/diffreg.c	NULL pointer deref
+bin/tar/tar.c		Diction nit fix
+etc/ftpd/ftpcmd.y	Fix for turning on debug in ftpd.  It syslog's your password when
+					you login.
+etc/mount/mount.c	Fix to exit with errno when user hits 'n' to an autoinsert panel.
+etc/fbshow/fbshow.c	Mike Paquette's changes.
+usr.bin/xargs/xargs.c	NULL pointer deref
+usr.etc/Makefile	Rename rexd to rpc.rexd
+usr.etc/autonfsmount/auto_look.c	Bugfix from Brad Taylor
+usr.ucb/tset/tset.c	Fix for bug #4844
+usr.ucb/telnet/*	New update from Dave Borman of Cray
+usr.ucb/Makefile	Removed /usr/ucb/grep

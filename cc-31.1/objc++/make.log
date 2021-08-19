@@ -1,0 +1,87 @@
+mkdirs obj
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include  -c gcc.c -o obj/gcc.o  -DSTANDARD_STARTFILE_PREFIX=\"/lib/\"  -DSTANDARD_EXEC_PREFIX=\"/lib/\"
+DSTANDARD_SYS_PREFIX=\"/bin/\"
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c version.c -o obj/version.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c obstack.c -o obj/obstack.o
+vers_string -c cc++ > cc++_vers.c
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cc++_vers.c -o obj/cc++_vers.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O  -o objcc++ obj/gcc.o obj/version.o obj/obstack.o obj/cc++_vers.o -lsys_s
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c insn/insn-emit.c -o obj/insn-emit.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c insn/insn-extract.c -o obj/insn-extract.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c insn/insn-output.c -o obj/insn-output.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c insn/insn-peep.c -o obj/insn-peep.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c insn/insn-recog.c -o obj/insn-recog.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c objcplus-tab.c -o obj/objcplus-tab.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c objc-actions.c -o obj/objc-actions.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cplus-decl.c -o obj/cplus-decl.o
+cplus-decl.c:64: warning: NULL redefined
+cplus-decl.c: In function init_decl_processing:
+cplus-decl.c:2620: warning: argument passing between incompatible pointer types
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cplus-decl2.c -o obj/cplus-decl2.o
+cplus-decl2.c:37: warning: NULL redefined
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c objcplus-typeck.c -o obj/objcplus-typeck.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cplus-type2.c -o obj/cplus-type2.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cplus-tree.c -o obj/cplus-tree.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c objcplus-lex.c -o obj/objcplus-lex.o
+objcplus-lex.c: In function yylex:
+objcplus-lex.c:2707: warning: assignment of pointer from integer lacks a cast
+objcplus-lex.c:2765: warning: assignment of pointer from integer lacks a cast
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cplus-class.c -o obj/cplus-class.o
+cplus-class.c:39: warning: NULL redefined
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cplus-init.c -o obj/cplus-init.o
+cplus-init.c:34: warning: NULL redefined
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cplus-except.c -o obj/cplus-except.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cplus-method.c -o obj/cplus-method.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cplus-cvt.c -o obj/cplus-cvt.o
+cplus-cvt.c:32: warning: NULL redefined
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cplus-search.c -o obj/cplus-search.o
+cplus-search.c:37: warning: NULL redefined
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cplus-ptree.c -o obj/cplus-ptree.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cplus-expr.c -o obj/cplus-expr.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c toplev.c -o obj/toplev.o
+toplev.c: In function main:
+toplev.c:2071: warning: assignment between incompatible pointer types
+toplev.c:2355: warning: type mismatch with previous external decl
+tree.h:50: warning: previous external decl of `tree_code_name'
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c tree.c -o obj/tree.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c print-tree.c -o obj/print-tree.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c stor-layout.c -o obj/stor-layout.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c fold-const.c -o obj/fold-const.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c rtl.c -o obj/rtl.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c rtlanal.c -o obj/rtlanal.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c expr.c -o obj/expr.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c stmt.c -o obj/stmt.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c expmed.c -o obj/expmed.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c explow.c -o obj/explow.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c optabs.c -o obj/optabs.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c varasm.c -o obj/varasm.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c symout.c -o obj/symout.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c dbxout.c -o obj/dbxout.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c sdbout.c -o obj/sdbout.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c emit-rtl.c -o obj/emit-rtl.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c integrate.c -o obj/integrate.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c jump.c -o obj/jump.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cse.c -o obj/cse.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c loop.c -o obj/loop.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c flow.c -o obj/flow.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c stupid.c -o obj/stupid.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c combine.c -o obj/combine.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c regclass.c -o obj/regclass.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c local-alloc.c -o obj/local-alloc.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c global-alloc.c -o obj/global-alloc.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c reload.c -o obj/reload.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c reload1.c -o obj/reload1.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c caller-save.c -o obj/caller-save.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c final.c -o obj/final.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c recog.c -o obj/recog.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c case.c -o obj/case.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c lastfile.c -o obj/lastfile.o
+vers_string -c cc1++ > cc1++_vers.c
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cc1++_vers.c -o obj/cc1++_vers.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O  -o objcc1++ obj/insn-emit.o obj/insn-extract.o obj/insn-output.o obj/insn-peep.o obj/insn-recog.o obj/objcplus-tab.o obj/objc-actions.o obj/cplus-decl.o obj/cplus-decl2.o obj/objcplus-typeck.o obj/cplus-type2.o  obj/cplus-tree.o obj/objcplus-lex.o obj/cplus-class.o obj/cplus-init.o obj/cplus-except.o  obj/cplus-method.o obj/cplus-cvt.o obj/cplus-search.o obj/cplus-ptree.o obj/cplus-expr.o  obj/toplev.o obj/tree.o obj/print-tree.o obj/stor-layout.o obj/fold-const.o  obj/rtl.o obj/rtlanal.o obj/expr.o obj/stmt.o obj/expmed.o obj/explow.o obj/optabs.o obj/varasm.o  obj/symout.o obj/dbxout.o obj/sdbout.o obj/emit-rtl.o  obj/integrate.o obj/jump.o obj/cse.o obj/loop.o obj/flow.o obj/stupid.o obj/combine.o  obj/regclass.o obj/local-alloc.o obj/global-alloc.o obj/reload.o obj/reload1.o obj/caller-save.o  obj/final.o obj/recog.o obj/case.o obj/lastfile.o  obj/version.o obj/obstack.o obj/cc1++_vers.o -lsys_s
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c collect.c -o obj/collect.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O  -o collect obj/collect.o -lsys_s
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c gnulib3.c -o gnulib3.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c g++filt.c -o obj/g++filt.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O -I. -Iconfig -Iinsn -I../include -c cplus-dem.c -o obj/cplus-dem.o
+../cc/cc -B../cc/ -DNeXT_OBJC -DNeXT_CPLUS -g -O  -o g++filt obj/g++filt.o obj/cplus-dem.o -lsys_s

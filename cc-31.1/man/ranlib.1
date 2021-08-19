@@ -1,0 +1,123 @@
+.\"	@(#)ranlib.1	6.2 (Berkeley) 5/3/85
+.\"
+.TH RANLIB 1 "March 13, 1990"
+.AT 3
+.SH NAME
+ranlib \- add or update the table of contents of archive libraries
+.SH SYNOPSIS
+.B ranlib
+[
+.B \-s
+]
+[
+.B \-a
+]
+[
+.B \-c
+]
+[
+.B \-t
+] archive ...
+.SH DESCRIPTION
+.I Ranlib
+adds or updates the table of contents to each
+.I archive
+so it can be linked by the link editor.
+The table of contents is a file at the beginning of the archive that indicates
+which symbols are defined in which library members.
+.I Ranlib
+rewrites the archive, so that sufficient temporary file space must
+be available in the file system which contains the current directory.
+.PP
+The name for a table of contents begins with
+.SM ``\_\^\_.SYMDEF''.
+Currently there are two types of table of contents produced by
+.I ranlib
+and understood by the link editor,
+.IR ld (1).
+.TP
+.B \-s
+Produced the preferred type of table of contents which results in faster link
+editing when linking with the archive.  The order of the table of contents is
+sorted by symbol name.  The library member name of this type of table of
+contents is
+.SM ``\_\^\_.SYMDEF SORTED''.
+This type of table of contents can only be produced when the library does not
+have multiple members that define the same symbol.  This is the default.
+.TP
+.B \-a
+Produce the original type of table of contents who's order is based on the order
+of the members in the archive.  The library member name of this type of table of
+contents is
+.SM ``\_\^\_.SYMDEF''.
+This type of table of contents must be used when the library has
+multiple members that define the same symbol.
+.TP
+.B \-c
+Include common symbols as definitions with respect to the table of contents.
+This is seldom ever the behavior that is intended for linking from a library
+as it will force the linking of a library member just because it uses an
+uninitialized global that is undefined at that point in the linking.  This is
+only included as an option because this was the original behavior of
+.I ranlib.
+This is not the default.
+.TP
+.B \-t
+Only ``touch'' the archives and do not modify them.
+This is useful after copying an archive
+or using the
+.B \-t
+option of
+.IR make (1)
+in order to avoid having
+.IR ld (1)
+complain about
+an ``out of date'' symbol table.
+.SH "SEE ALSO"
+ld(1), ar(1), otool(1), lorder(1), make(1)
+.SH BUGS
+Because generation of a library by
+.I ar
+and randomization of the library by
+.I ranlib
+are separate processes, phase errors are possible.  The link editor,
+.IR ld ,
+warns when the modification date of a library is more recent than the
+creation date of its dictionary;  but this means that you get the
+warning even if you only copy the library.
+.PP
+The old (NeXT 1.0) version of
+.I ranlib
+will not correctly place the table of contents member
+.SM ``\_\^\_.SYMDEF''
+at the beginning of the archive if the archive has had it's table of contents
+built with the new
+.I ranlib
+.B \-s
+option.  This results in the link editor continuing to think the table of
+contents is out of date no matter how many times the old
+.I ranlib
+is run.  The fix is to remove the
+.SM ``\_\^\_SYMDEF SORTED''
+table of contents with
+.IR ar (1)
+directly or rebuild the archive.
+What happens is the table of contents built by
+.I ranlib
+.B \-s
+is not replaced by the member
+.SM ``\_\^\_.SYMDEF''
+because it's name is
+.SM ``\_\^\_SYMDEF SORTED''
+and
+.I ranlib
+uses a different method to detect that the member name is the table of
+contents than
+.IR ar (1)
+which 
+.I ranlib
+calls to do the replacement.  This is only a backwards compatibility
+problem in using an old
+.I ranlib
+on an archive that was processed by the new
+.I ranlib.

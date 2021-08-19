@@ -1,0 +1,268 @@
+
+
+Changes to get g++ to compile:
+
+	* Changed __inline to inline since NeXT's cc (1.34) doesn't 
+	recognize __inline.  Conditional on NeXT. 
+
+	cplus-parse.y, cplus-lex.c, cplus-method.c
+
+	* ansi atof() headbutt in cplus-lex.c. atof() was being expanded
+	from the macro in stdlib.h (which is bogus in a decl context).
+
+	* we do not have a <unistd.h> header...it is used in toplev.c.
+	uncommented out line in Makefile.
+
+	* Changed #include of <gvarargs.h> to <varargs.h>
+
+	expr.c, gcc.c, tree.c
+
+	* Commented out MALLOC in Makefile...our malloc is works fine.
+	
+Changes required to turn `g++' into `objc++':
+
+All changes specific to integrating with g++ are conditionally 
+compiled by defining `NeXT_CPLUS' and `NeXT_OBJC'.
+
+Modified the following files:
+	
+X	* Makefile...
+		
+		turn on `NeXT_CPLUS' and `NeXT_OBJC'.
+		define OBJCPLUS_OBJS macro.
+		define `objcc1plus' target.
+		define targets for objcplus-tab.o and objcplus-lex.o
+	
+X	* toplev.c
+X	* tree.h
+
+		added structure defs for `objc_tree_keyword_decl', 
+		`objc_tree_method_decl', and `objc_tree_class_type'.
+		modified union def for `tree_node'.
+
+X  	* tree.def
+X 	* tree.c
+
+x	* crt0.c (c runtime startup procedure).
+
+		should replace with gnulib3.c.
+
+		for now, just copied three routines from gnulib3...
+		__main(), __do_global_init(), and __do_global_cleanup().
+
+X	* gcc.c (compiler driver).
+
+		cc1plus -> objcc1plus
+		#define USE_COLLECT
+		-lg++ -> libg++.a%s (so -B will work)
+		added gnulib3.o%s to link_spec
+		recognize `.m' extension, pass `-ObjC'
+
+x 	* collect.c (pre-linker modifications to hack MachO object files).
+	
+		get a copy of `a.out.h' and `sys/exec.h' so that it will
+		compile.
+
+X	* cplus-tree.h
+
+		add `lang_objc' to enum language.
+		add `lang_name_objc' to list of languages we support.
+
+X	* cplus-class.c
+
+		change push_lang_context() and pop_lang_context() to
+		remove C++ keywords while parsing C.
+		add support for `lang_name_objc'.
+
+X	* tm.h 
+
+		#define FASCIST_ASSEMBLER (for cplus-decl2.c)
+
+Replaced the following files:
+
+X	* objcplus-lex.c 
+
+		added Objective-C keywords and Objective-C class name 
+		recognition.
+
+		started using gperf for keyword recognition.
+
+		created `objc++.gperf', the table of keywords that are
+		used as input to `gperf'.		
+
+		NOTE: extra `\n' at the end of this file cause gperf 
+		not to work!
+
+		added install_reserved_words() to be used in conjunction 
+		with push/pop_lang_context(). this simplifies #importing 
+		standard C/Objective-C headers.
+
+X 	* objcplus-parse.y (cplus-parse.y + objc-parse.y)
+  
+  		added Objective-C syntax and calls to appropriate actions.
+
+		modified the following productions:
+
+		extdef (add Objective-C top level declarations)
+		unary_expr (add Objective-C expressions)
+		component_decl_list (@defs support)
+		identifier, typespec, x_typespec (recognize class names)
+		primary (recognize instance variable references)
+		.pushlevel (add call to add_objc_decls())
+		
+		DONT USE build_decl_list() && decl_tree_cons(),
+		Objective-C nodes keep the `raw' types around,
+		these routines make sure they go away...use 
+		build_tree_list() && tree_cons() as usual.
+
+X 	* objcplus-typeck.c 
+
+		change comptypes() to work with Objective-C types.
+
+Added the following files:
+	
+X	* objc-actions.[hc]
+	
+
+---------------------------- 1.36 Headbutts ----------------------------------
+
+objc-actions.c: interface to start_decl() and start_function() in cplus-decl.c
+	changed to accommodate exception new handling scheme.
+
+	interface to build_component_ref() in cplus-typeck.c.
+
+	bracket prototype generation in synth_module_prologue() with
+	push_lang_context("C"), pop_lang_context()...so that the compiler
+	does not mangle the names for objc_msgSend(), etc.
+	
+tree.def: weird dependency...ERROR_MARK must be first (0).
+
+objcplus-typeck.c: convert_for_assignment() no longer calls comptypes()
+	when type check to pointers to aggregates. This caused the compiler
+	to generate an error when type checking Objective-C types.
+
+objc-actions.c: build_message_expr(). when overloading objc_msgSend(), 
+	set DECL_PRINT_NAME() = 0, since its name is meaningless.
+
+	fixed length type lists must end with `void_type_list',
+	this affects get_parm_info() and getArgTypeList().
+
+cplus-decl.c (pushdecl):  Post 1.36 bug fix from RMS.  Removes warning about 
+	an array being declared extern and later static, since this is the 
+	only way to forward declare a static array in ANSI-C.
+
+objcplus-parse.y: remove TYPE_QUAL rule from `reservedwords' production.
+	This causes the following `Tiemannism' to be ambiquous.  
+
+	class const_user_defined_type_conversion
+	{
+		operator int () const;
+    	};
+
+	In cplus-tab.out:
+
+	state 453
+
+	    type_quals  ->  type_quals . TYPE_QUAL   (346)
+	    absdcl1  ->  LEFT_RIGHT type_quals .   (414)
+
+	    TYPE_QUAL	shift  277
+
+	    $default	reduce  414  (absdcl1)
+
+	In objcplus-tab.out:
+
+	Conflict in state 571 between rule 422 and token TYPE_QUAL 
+		resolved as reduce!
+
+	state 571
+
+	    type_quals  ->  type_quals . TYPE_QUAL   (354)
+	    absdcl1  ->  LEFT_RIGHT type_quals .   (422)
+
+
+	    $default	reduce  422  (absdcl1)
+
+objcplus-lex.c:
+
+	deal with extern "C" properly...the code previously assumed TYPE_DECLS
+	are auto installed when processing an interface declaration...
+
+cplus-dem.c: 
+	
+	don't #include <memory.h>...
+
+cplus-decl.c, gnulib3.c: __main ??
+
+libg++.a: remove itoa(long long, ...) and itoa(unsigned long long, ...)
+	from builtin.cc...and references in stream.cc
+
+	Undefined symbols:
+	 __cmpdi2
+	 __divdi3
+	 __umoddi3
+	 __udivdi3
+	 __moddi3
+	 __ucmpdi2
+	 __negdi2
+
+cplus-class.c: convert_harshness(). Mike does not implicitly convert from
+	an integer to an enum. For example:
+
+	enum foo {a};
+
+	class Port
+	{
+	public:
+
+	void bad(enum foo);
+
+	void test() { bad(7); } 
+
+	};
+
+	Produces the following error:
+
+	 void Port::test ()
+	t.c:11: bad argument 0 for function `Port::bad (enum foo)' (type was int )
+
+	I allow this...
+
+---------------------------- 1.36.4 Headbutts ----------------------------------
+
+added file `make-links.objc++'
+
+scoped_identifier:
+	  TYPENAME_SCOPE
+/* causes an unfortunate ambiquity in objc - snaroff 3/10/90 */
+/*	| IDENTIFIER SCOPE */
+	| scoped_identifier TYPENAME_SCOPE
+		{ $$ = build_parse_node (SCOPE_REF, $1, $2); }
+	;
+
+
+Fix driver problem (3/29/90):
+
+	* gcc.c:  Copy changes from ../g++.  Don't use gnulib.
+
+Change Objective-C method symbols (4/17/90):
+
+	* objc-actions.c (reallyStartMethod):  Copy change from ../cc.
+
+Changes to bring cc++ up to speed with cc changes (7/23/90):
+
+	* objc-actions.c:  Many changes from ../cc.
+
+Changes to fix problems with linker options and double link (9/6/90):
+
+	* gcc.c:  Added support for FINAL_LINK_SPEC.
+
+CHanges to add the -fno-auto-overload flag (9/13/90):
+
+	* tree.h, toplev.c, objcplus-lex.c, cplus-decl.c, cplus-method.c,
+	cplus-method.c:  Added -fno-auto-overload, which is equivalent to
+	#define'ing NO_AUTO_OVERLOAD.
+
+Changes to fix stdarg bug (9/13/90):
+
+	* expr.c, expr.h, stmt.c, cplus-decl.c:  Propogated changes form cc.

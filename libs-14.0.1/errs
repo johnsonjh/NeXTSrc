@@ -1,0 +1,852 @@
+================= make all for usr.lib =================
+================= make all for lib.b =================
+sed -e "s/#PROGRAM.*/#`vers_string lib.b`/"  <lib.b >lib.b.NEW
+================= make all for libcurses =================
+cd STD_OBJS; make -f ../Makefile "COPTS=-O"  "LDOPTS=-x" LIBRARY=curses  "DIR=STD_OBJS" libcurses.a
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o addch.o ../addch.c
+ld  -x -r addch.o -o addch.o.out
+rm -f addch.o
+mv addch.o.out addch.o
+md -d -u Makedep addch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o addstr.o ../addstr.c
+ld  -x -r addstr.o -o addstr.o.out
+rm -f addstr.o
+mv addstr.o.out addstr.o
+md -d -u Makedep addstr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o box.o ../box.c
+ld  -x -r box.o -o box.o.out
+rm -f box.o
+mv box.o.out box.o
+md -d -u Makedep box.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o clear.o ../clear.c
+ld  -x -r clear.o -o clear.o.out
+rm -f clear.o
+mv clear.o.out clear.o
+md -d -u Makedep clear.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o clrtobot.o ../clrtobot.c
+ld  -x -r clrtobot.o -o clrtobot.o.out
+rm -f clrtobot.o
+mv clrtobot.o.out clrtobot.o
+md -d -u Makedep clrtobot.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o clrtoeol.o ../clrtoeol.c
+ld  -x -r clrtoeol.o -o clrtoeol.o.out
+rm -f clrtoeol.o
+mv clrtoeol.o.out clrtoeol.o
+md -d -u Makedep clrtoeol.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o cr_put.o ../cr_put.c
+ld  -x -r cr_put.o -o cr_put.o.out
+rm -f cr_put.o
+mv cr_put.o.out cr_put.o
+md -d -u Makedep cr_put.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o cr_tty.o ../cr_tty.c
+ld  -x -r cr_tty.o -o cr_tty.o.out
+rm -f cr_tty.o
+mv cr_tty.o.out cr_tty.o
+md -d -u Makedep cr_tty.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o curses.o ../curses.c
+ld  -x -r curses.o -o curses.o.out
+rm -f curses.o
+mv curses.o.out curses.o
+md -d -u Makedep curses.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o delch.o ../delch.c
+ld  -x -r delch.o -o delch.o.out
+rm -f delch.o
+mv delch.o.out delch.o
+md -d -u Makedep delch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o deleteln.o ../deleteln.c
+ld  -x -r deleteln.o -o deleteln.o.out
+rm -f deleteln.o
+mv deleteln.o.out deleteln.o
+md -d -u Makedep deleteln.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o delwin.o ../delwin.c
+ld  -x -r delwin.o -o delwin.o.out
+rm -f delwin.o
+mv delwin.o.out delwin.o
+md -d -u Makedep delwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o endwin.o ../endwin.c
+ld  -x -r endwin.o -o endwin.o.out
+rm -f endwin.o
+mv endwin.o.out endwin.o
+md -d -u Makedep endwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o erase.o ../erase.c
+ld  -x -r erase.o -o erase.o.out
+rm -f erase.o
+mv erase.o.out erase.o
+md -d -u Makedep erase.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o fullname.o ../fullname.c
+ld  -x -r fullname.o -o fullname.o.out
+rm -f fullname.o
+mv fullname.o.out fullname.o
+md -d -u Makedep fullname.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o getch.o ../getch.c
+ld  -x -r getch.o -o getch.o.out
+rm -f getch.o
+mv getch.o.out getch.o
+md -d -u Makedep getch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o getstr.o ../getstr.c
+ld  -x -r getstr.o -o getstr.o.out
+rm -f getstr.o
+mv getstr.o.out getstr.o
+md -d -u Makedep getstr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o id_subwins.o ../id_subwins.c
+ld  -x -r id_subwins.o -o id_subwins.o.out
+rm -f id_subwins.o
+mv id_subwins.o.out id_subwins.o
+md -d -u Makedep id_subwins.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o idlok.o ../idlok.c
+ld  -x -r idlok.o -o idlok.o.out
+rm -f idlok.o
+mv idlok.o.out idlok.o
+md -d -u Makedep idlok.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o initscr.o ../initscr.c
+ld  -x -r initscr.o -o initscr.o.out
+rm -f initscr.o
+mv initscr.o.out initscr.o
+md -d -u Makedep initscr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o insch.o ../insch.c
+ld  -x -r insch.o -o insch.o.out
+rm -f insch.o
+mv insch.o.out insch.o
+md -d -u Makedep insch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o insertln.o ../insertln.c
+ld  -x -r insertln.o -o insertln.o.out
+rm -f insertln.o
+mv insertln.o.out insertln.o
+md -d -u Makedep insertln.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o longname.o ../longname.c
+ld  -x -r longname.o -o longname.o.out
+rm -f longname.o
+mv longname.o.out longname.o
+md -d -u Makedep longname.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o move.o ../move.c
+ld  -x -r move.o -o move.o.out
+rm -f move.o
+mv move.o.out move.o
+md -d -u Makedep move.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o mvprintw.o ../mvprintw.c
+ld  -x -r mvprintw.o -o mvprintw.o.out
+rm -f mvprintw.o
+mv mvprintw.o.out mvprintw.o
+md -d -u Makedep mvprintw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o mvscanw.o ../mvscanw.c
+ld  -x -r mvscanw.o -o mvscanw.o.out
+rm -f mvscanw.o
+mv mvscanw.o.out mvscanw.o
+md -d -u Makedep mvscanw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o mvwin.o ../mvwin.c
+ld  -x -r mvwin.o -o mvwin.o.out
+rm -f mvwin.o
+mv mvwin.o.out mvwin.o
+md -d -u Makedep mvwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o newwin.o ../newwin.c
+ld  -x -r newwin.o -o newwin.o.out
+rm -f newwin.o
+mv newwin.o.out newwin.o
+md -d -u Makedep newwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o overlay.o ../overlay.c
+ld  -x -r overlay.o -o overlay.o.out
+rm -f overlay.o
+mv overlay.o.out overlay.o
+md -d -u Makedep overlay.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o overwrite.o ../overwrite.c
+ld  -x -r overwrite.o -o overwrite.o.out
+rm -f overwrite.o
+mv overwrite.o.out overwrite.o
+md -d -u Makedep overwrite.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o printw.o ../printw.c
+ld  -x -r printw.o -o printw.o.out
+rm -f printw.o
+mv printw.o.out printw.o
+md -d -u Makedep printw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o putchar.o ../putchar.c
+ld  -x -r putchar.o -o putchar.o.out
+rm -f putchar.o
+mv putchar.o.out putchar.o
+md -d -u Makedep putchar.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o refresh.o ../refresh.c
+ld  -x -r refresh.o -o refresh.o.out
+rm -f refresh.o
+mv refresh.o.out refresh.o
+md -d -u Makedep refresh.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o scanw.o ../scanw.c
+ld  -x -r scanw.o -o scanw.o.out
+rm -f scanw.o
+mv scanw.o.out scanw.o
+md -d -u Makedep scanw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o scroll.o ../scroll.c
+ld  -x -r scroll.o -o scroll.o.out
+rm -f scroll.o
+mv scroll.o.out scroll.o
+md -d -u Makedep scroll.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o standout.o ../standout.c
+ld  -x -r standout.o -o standout.o.out
+rm -f standout.o
+mv standout.o.out standout.o
+md -d -u Makedep standout.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o toucholap.o ../toucholap.c
+ld  -x -r toucholap.o -o toucholap.o.out
+rm -f toucholap.o
+mv toucholap.o.out toucholap.o
+md -d -u Makedep toucholap.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o touchwin.o ../touchwin.c
+ld  -x -r touchwin.o -o touchwin.o.out
+rm -f touchwin.o
+mv touchwin.o.out touchwin.o
+md -d -u Makedep touchwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o tstp.o ../tstp.c
+ld  -x -r tstp.o -o tstp.o.out
+rm -f tstp.o
+mv tstp.o.out tstp.o
+md -d -u Makedep tstp.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o unctrl.o ../unctrl.c
+ld  -x -r unctrl.o -o unctrl.o.out
+rm -f unctrl.o
+mv unctrl.o.out unctrl.o
+md -d -u Makedep unctrl.d
+vers_string -l curses > curses_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o curses_vers.o curses_vers.c
+ld  -x -r curses_vers.o -o curses_vers.o.out
+rm -f curses_vers.o
+mv curses_vers.o.out curses_vers.o
+md -d -u Makedep curses_vers.d
+ar cr libcurses.a `lorder addch.o addstr.o box.o clear.o clrtobot.o  clrtoeol.o cr_put.o cr_tty.o curses.o delch.o  deleteln.o delwin.o endwin.o erase.o fullname.o  getch.o getstr.o id_subwins.o idlok.o initscr.o  insch.o insertln.o longname.o move.o mvprintw.o  mvscanw.o mvwin.o newwin.o overlay.o overwrite.o  printw.o putchar.o refresh.o scanw.o scroll.o  standout.o toucholap.o touchwin.o tstp.o  unctrl.o   curses_vers.o | tsort`
+tsort: cycle in data
+tsort: refresh.o
+tsort: cr_put.o
+cd PROF_OBJS; make -f ../Makefile "COPTS=-pg -O"  "LDOPTS=-X" LIBRARY=curses_p  "DIR=PROF_OBJS" libcurses_p.a
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o addch.o ../addch.c
+ld  -X -r addch.o -o addch.o.out
+rm -f addch.o
+mv addch.o.out addch.o
+md -d -u Makedep addch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o addstr.o ../addstr.c
+ld  -X -r addstr.o -o addstr.o.out
+rm -f addstr.o
+mv addstr.o.out addstr.o
+md -d -u Makedep addstr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o box.o ../box.c
+ld  -X -r box.o -o box.o.out
+rm -f box.o
+mv box.o.out box.o
+md -d -u Makedep box.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o clear.o ../clear.c
+ld  -X -r clear.o -o clear.o.out
+rm -f clear.o
+mv clear.o.out clear.o
+md -d -u Makedep clear.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o clrtobot.o ../clrtobot.c
+ld  -X -r clrtobot.o -o clrtobot.o.out
+rm -f clrtobot.o
+mv clrtobot.o.out clrtobot.o
+md -d -u Makedep clrtobot.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o clrtoeol.o ../clrtoeol.c
+ld  -X -r clrtoeol.o -o clrtoeol.o.out
+rm -f clrtoeol.o
+mv clrtoeol.o.out clrtoeol.o
+md -d -u Makedep clrtoeol.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o cr_put.o ../cr_put.c
+ld  -X -r cr_put.o -o cr_put.o.out
+rm -f cr_put.o
+mv cr_put.o.out cr_put.o
+md -d -u Makedep cr_put.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o cr_tty.o ../cr_tty.c
+ld  -X -r cr_tty.o -o cr_tty.o.out
+rm -f cr_tty.o
+mv cr_tty.o.out cr_tty.o
+md -d -u Makedep cr_tty.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o curses.o ../curses.c
+ld  -X -r curses.o -o curses.o.out
+rm -f curses.o
+mv curses.o.out curses.o
+md -d -u Makedep curses.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o delch.o ../delch.c
+ld  -X -r delch.o -o delch.o.out
+rm -f delch.o
+mv delch.o.out delch.o
+md -d -u Makedep delch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o deleteln.o ../deleteln.c
+ld  -X -r deleteln.o -o deleteln.o.out
+rm -f deleteln.o
+mv deleteln.o.out deleteln.o
+md -d -u Makedep deleteln.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o delwin.o ../delwin.c
+ld  -X -r delwin.o -o delwin.o.out
+rm -f delwin.o
+mv delwin.o.out delwin.o
+md -d -u Makedep delwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o endwin.o ../endwin.c
+ld  -X -r endwin.o -o endwin.o.out
+rm -f endwin.o
+mv endwin.o.out endwin.o
+md -d -u Makedep endwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o erase.o ../erase.c
+ld  -X -r erase.o -o erase.o.out
+rm -f erase.o
+mv erase.o.out erase.o
+md -d -u Makedep erase.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o fullname.o ../fullname.c
+ld  -X -r fullname.o -o fullname.o.out
+rm -f fullname.o
+mv fullname.o.out fullname.o
+md -d -u Makedep fullname.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o getch.o ../getch.c
+ld  -X -r getch.o -o getch.o.out
+rm -f getch.o
+mv getch.o.out getch.o
+md -d -u Makedep getch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o getstr.o ../getstr.c
+ld  -X -r getstr.o -o getstr.o.out
+rm -f getstr.o
+mv getstr.o.out getstr.o
+md -d -u Makedep getstr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o id_subwins.o ../id_subwins.c
+ld  -X -r id_subwins.o -o id_subwins.o.out
+rm -f id_subwins.o
+mv id_subwins.o.out id_subwins.o
+md -d -u Makedep id_subwins.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o idlok.o ../idlok.c
+ld  -X -r idlok.o -o idlok.o.out
+rm -f idlok.o
+mv idlok.o.out idlok.o
+md -d -u Makedep idlok.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o initscr.o ../initscr.c
+ld  -X -r initscr.o -o initscr.o.out
+rm -f initscr.o
+mv initscr.o.out initscr.o
+md -d -u Makedep initscr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o insch.o ../insch.c
+ld  -X -r insch.o -o insch.o.out
+rm -f insch.o
+mv insch.o.out insch.o
+md -d -u Makedep insch.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o insertln.o ../insertln.c
+ld  -X -r insertln.o -o insertln.o.out
+rm -f insertln.o
+mv insertln.o.out insertln.o
+md -d -u Makedep insertln.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o longname.o ../longname.c
+ld  -X -r longname.o -o longname.o.out
+rm -f longname.o
+mv longname.o.out longname.o
+md -d -u Makedep longname.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o move.o ../move.c
+ld  -X -r move.o -o move.o.out
+rm -f move.o
+mv move.o.out move.o
+md -d -u Makedep move.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o mvprintw.o ../mvprintw.c
+ld  -X -r mvprintw.o -o mvprintw.o.out
+rm -f mvprintw.o
+mv mvprintw.o.out mvprintw.o
+md -d -u Makedep mvprintw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o mvscanw.o ../mvscanw.c
+ld  -X -r mvscanw.o -o mvscanw.o.out
+rm -f mvscanw.o
+mv mvscanw.o.out mvscanw.o
+md -d -u Makedep mvscanw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o mvwin.o ../mvwin.c
+ld  -X -r mvwin.o -o mvwin.o.out
+rm -f mvwin.o
+mv mvwin.o.out mvwin.o
+md -d -u Makedep mvwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o newwin.o ../newwin.c
+ld  -X -r newwin.o -o newwin.o.out
+rm -f newwin.o
+mv newwin.o.out newwin.o
+md -d -u Makedep newwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o overlay.o ../overlay.c
+ld  -X -r overlay.o -o overlay.o.out
+rm -f overlay.o
+mv overlay.o.out overlay.o
+md -d -u Makedep overlay.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o overwrite.o ../overwrite.c
+ld  -X -r overwrite.o -o overwrite.o.out
+rm -f overwrite.o
+mv overwrite.o.out overwrite.o
+md -d -u Makedep overwrite.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o printw.o ../printw.c
+ld  -X -r printw.o -o printw.o.out
+rm -f printw.o
+mv printw.o.out printw.o
+md -d -u Makedep printw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o putchar.o ../putchar.c
+ld  -X -r putchar.o -o putchar.o.out
+rm -f putchar.o
+mv putchar.o.out putchar.o
+md -d -u Makedep putchar.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o refresh.o ../refresh.c
+ld  -X -r refresh.o -o refresh.o.out
+rm -f refresh.o
+mv refresh.o.out refresh.o
+md -d -u Makedep refresh.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o scanw.o ../scanw.c
+ld  -X -r scanw.o -o scanw.o.out
+rm -f scanw.o
+mv scanw.o.out scanw.o
+md -d -u Makedep scanw.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o scroll.o ../scroll.c
+ld  -X -r scroll.o -o scroll.o.out
+rm -f scroll.o
+mv scroll.o.out scroll.o
+md -d -u Makedep scroll.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o standout.o ../standout.c
+ld  -X -r standout.o -o standout.o.out
+rm -f standout.o
+mv standout.o.out standout.o
+md -d -u Makedep standout.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o toucholap.o ../toucholap.c
+ld  -X -r toucholap.o -o toucholap.o.out
+rm -f toucholap.o
+mv toucholap.o.out toucholap.o
+md -d -u Makedep toucholap.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o touchwin.o ../touchwin.c
+ld  -X -r touchwin.o -o touchwin.o.out
+rm -f touchwin.o
+mv touchwin.o.out touchwin.o
+md -d -u Makedep touchwin.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o tstp.o ../tstp.c
+ld  -X -r tstp.o -o tstp.o.out
+rm -f tstp.o
+mv tstp.o.out tstp.o
+md -d -u Makedep tstp.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o unctrl.o ../unctrl.c
+ld  -X -r unctrl.o -o unctrl.o.out
+rm -f unctrl.o
+mv unctrl.o.out unctrl.o
+md -d -u Makedep unctrl.d
+vers_string -l curses_p > curses_p_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o curses_p_vers.o curses_p_vers.c
+ld  -X -r curses_p_vers.o -o curses_p_vers.o.out
+rm -f curses_p_vers.o
+mv curses_p_vers.o.out curses_p_vers.o
+md -d -u Makedep curses_p_vers.d
+ar cr libcurses_p.a `lorder addch.o addstr.o box.o clear.o clrtobot.o  clrtoeol.o cr_put.o cr_tty.o curses.o delch.o  deleteln.o delwin.o endwin.o erase.o fullname.o  getch.o getstr.o id_subwins.o idlok.o initscr.o  insch.o insertln.o longname.o move.o mvprintw.o  mvscanw.o mvwin.o newwin.o overlay.o overwrite.o  printw.o putchar.o refresh.o scanw.o scroll.o  standout.o toucholap.o touchwin.o tstp.o  unctrl.o   curses_p_vers.o | tsort`
+tsort: cycle in data
+tsort: refresh.o
+tsort: cr_put.o
+================= make all for libdbm =================
+cd STD_OBJS; make -f ../Makefile "COPTS=-O"  "LDOPTS=-x" LIBRARY=dbm  "DIR=STD_OBJS" libdbm.a
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o dbm.o ../dbm.c
+ld  -x -r dbm.o -o dbm.o.out
+rm -f dbm.o
+mv dbm.o.out dbm.o
+md -d -u Makedep dbm.d
+vers_string -l dbm > dbm_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o dbm_vers.o dbm_vers.c
+ld  -x -r dbm_vers.o -o dbm_vers.o.out
+rm -f dbm_vers.o
+mv dbm_vers.o.out dbm_vers.o
+md -d -u Makedep dbm_vers.d
+ar cr libdbm.a `lorder dbm.o   dbm_vers.o | tsort`
+cd PROF_OBJS; make -f ../Makefile "COPTS=-pg -O"  "LDOPTS=-X" LIBRARY=dbm_p  "DIR=PROF_OBJS" libdbm_p.a
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o dbm.o ../dbm.c
+ld  -X -r dbm.o -o dbm.o.out
+rm -f dbm.o
+mv dbm.o.out dbm.o
+md -d -u Makedep dbm.d
+vers_string -l dbm_p > dbm_p_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o dbm_p_vers.o dbm_p_vers.c
+ld  -X -r dbm_p_vers.o -o dbm_p_vers.o.out
+rm -f dbm_p_vers.o
+mv dbm_p_vers.o.out dbm_p_vers.o
+md -d -u Makedep dbm_p_vers.d
+ar cr libdbm_p.a `lorder dbm.o   dbm_p_vers.o | tsort`
+================= make all for libg =================
+as dbxxx.s -o libg.a
+================= make all for libln =================
+cd STD_OBJS; make -f ../Makefile "COPTS=-O"  "LDOPTS=-x" LIBRARY=l  "DIR=STD_OBJS" libl.a
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o allprint.o ../allprint.c
+ld  -x -r allprint.o -o allprint.o.out
+rm -f allprint.o
+mv allprint.o.out allprint.o
+md -d -u Makedep allprint.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o main.o ../main.c
+ld  -x -r main.o -o main.o.out
+rm -f main.o
+mv main.o.out main.o
+md -d -u Makedep main.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o reject.o ../reject.c
+ld  -x -r reject.o -o reject.o.out
+rm -f reject.o
+mv reject.o.out reject.o
+md -d -u Makedep reject.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o yyless.o ../yyless.c
+ld  -x -r yyless.o -o yyless.o.out
+rm -f yyless.o
+mv yyless.o.out yyless.o
+md -d -u Makedep yyless.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o yywrap.o ../yywrap.c
+ld  -x -r yywrap.o -o yywrap.o.out
+rm -f yywrap.o
+mv yywrap.o.out yywrap.o
+md -d -u Makedep yywrap.d
+vers_string -l l > l_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o l_vers.o l_vers.c
+ld  -x -r l_vers.o -o l_vers.o.out
+rm -f l_vers.o
+mv l_vers.o.out l_vers.o
+md -d -u Makedep l_vers.d
+ar cr libl.a `lorder allprint.o main.o reject.o yyless.o yywrap.o   l_vers.o | tsort`
+mkdirs PROF_OBJS
+cd PROF_OBJS; make -f ../Makefile "COPTS=-pg -O"  "LDOPTS=-X" LIBRARY=l_p  "DIR=PROF_OBJS" libl_p.a
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o allprint.o ../allprint.c
+ld  -X -r allprint.o -o allprint.o.out
+rm -f allprint.o
+mv allprint.o.out allprint.o
+md -d -u Makedep allprint.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o main.o ../main.c
+ld  -X -r main.o -o main.o.out
+rm -f main.o
+mv main.o.out main.o
+md -d -u Makedep main.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o reject.o ../reject.c
+ld  -X -r reject.o -o reject.o.out
+rm -f reject.o
+mv reject.o.out reject.o
+md -d -u Makedep reject.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o yyless.o ../yyless.c
+ld  -X -r yyless.o -o yyless.o.out
+rm -f yyless.o
+mv yyless.o.out yyless.o
+md -d -u Makedep yyless.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o yywrap.o ../yywrap.c
+ld  -X -r yywrap.o -o yywrap.o.out
+rm -f yywrap.o
+mv yywrap.o.out yywrap.o
+md -d -u Makedep yywrap.d
+vers_string -l l_p > l_p_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o l_p_vers.o l_p_vers.c
+ld  -X -r l_p_vers.o -o l_p_vers.o.out
+rm -f l_p_vers.o
+mv l_p_vers.o.out l_p_vers.o
+md -d -u Makedep l_p_vers.d
+ar cr libl_p.a `lorder allprint.o main.o reject.o yyless.o yywrap.o   l_p_vers.o | tsort`
+================= make all for libmp =================
+cd STD_OBJS; make -f ../Makefile "COPTS=-O"  "LDOPTS=-x" LIBRARY=mp  "DIR=STD_OBJS" libmp.a
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o gcd.o ../gcd.c
+ld  -x -r gcd.o -o gcd.o.out
+rm -f gcd.o
+mv gcd.o.out gcd.o
+md -d -u Makedep gcd.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o madd.o ../madd.c
+ld  -x -r madd.o -o madd.o.out
+rm -f madd.o
+mv madd.o.out madd.o
+md -d -u Makedep madd.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o mdiv.o ../mdiv.c
+ld  -x -r mdiv.o -o mdiv.o.out
+rm -f mdiv.o
+mv mdiv.o.out mdiv.o
+md -d -u Makedep mdiv.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o mout.o ../mout.c
+ld  -x -r mout.o -o mout.o.out
+rm -f mout.o
+mv mout.o.out mout.o
+md -d -u Makedep mout.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o msqrt.o ../msqrt.c
+ld  -x -r msqrt.o -o msqrt.o.out
+rm -f msqrt.o
+mv msqrt.o.out msqrt.o
+md -d -u Makedep msqrt.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o mult.o ../mult.c
+ld  -x -r mult.o -o mult.o.out
+rm -f mult.o
+mv mult.o.out mult.o
+md -d -u Makedep mult.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o pow.o ../pow.c
+ld  -x -r pow.o -o pow.o.out
+rm -f pow.o
+mv pow.o.out pow.o
+md -d -u Makedep pow.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o util.o ../util.c
+ld  -x -r util.o -o util.o.out
+rm -f util.o
+mv util.o.out util.o
+md -d -u Makedep util.d
+vers_string -l mp > mp_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o mp_vers.o mp_vers.c
+ld  -x -r mp_vers.o -o mp_vers.o.out
+rm -f mp_vers.o
+mv mp_vers.o.out mp_vers.o
+md -d -u Makedep mp_vers.d
+ar cr libmp.a gcd.o madd.o mdiv.o mout.o msqrt.o mult.o pow.o util.o   mp_vers.o
+mkdirs PROF_OBJS
+cd PROF_OBJS; make -f ../Makefile "COPTS=-pg -O"  "LDOPTS=-X" LIBRARY=mp_p  "DIR=PROF_OBJS" libmp_p.a
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o gcd.o ../gcd.c
+ld  -X -r gcd.o -o gcd.o.out
+rm -f gcd.o
+mv gcd.o.out gcd.o
+md -d -u Makedep gcd.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o madd.o ../madd.c
+ld  -X -r madd.o -o madd.o.out
+rm -f madd.o
+mv madd.o.out madd.o
+md -d -u Makedep madd.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o mdiv.o ../mdiv.c
+ld  -X -r mdiv.o -o mdiv.o.out
+rm -f mdiv.o
+mv mdiv.o.out mdiv.o
+md -d -u Makedep mdiv.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o mout.o ../mout.c
+ld  -X -r mout.o -o mout.o.out
+rm -f mout.o
+mv mout.o.out mout.o
+md -d -u Makedep mout.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o msqrt.o ../msqrt.c
+ld  -X -r msqrt.o -o msqrt.o.out
+rm -f msqrt.o
+mv msqrt.o.out msqrt.o
+md -d -u Makedep msqrt.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o mult.o ../mult.c
+ld  -X -r mult.o -o mult.o.out
+rm -f mult.o
+mv mult.o.out mult.o
+md -d -u Makedep mult.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o pow.o ../pow.c
+ld  -X -r pow.o -o pow.o.out
+rm -f pow.o
+mv pow.o.out pow.o
+md -d -u Makedep pow.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o util.o ../util.c
+ld  -X -r util.o -o util.o.out
+rm -f util.o
+mv util.o.out util.o
+md -d -u Makedep util.d
+vers_string -l mp_p > mp_p_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -pg -O -c -o mp_p_vers.o mp_p_vers.c
+ld  -X -r mp_p_vers.o -o mp_p_vers.o.out
+rm -f mp_p_vers.o
+mv mp_p_vers.o.out mp_p_vers.o
+md -d -u Makedep mp_p_vers.d
+ar cr libmp_p.a gcd.o madd.o mdiv.o mout.o msqrt.o mult.o pow.o util.o   mp_p_vers.o
+================= make all for libtermlib =================
+cd STD_OBJS; make -f ../Makefile "COPTS=-O"  "LDOPTS=-x" LIBRARY=termlib  "DIR=STD_OBJS" libtermlib.a
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -DCM_N -DCM_GT -DCM_B -DCM_D -O -c -o termcap.o ../termcap.c
+ld  -x -r termcap.o -o termcap.o.out
+rm -f termcap.o
+mv termcap.o.out termcap.o
+md -d -u Makedep termcap.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -DCM_N -DCM_GT -DCM_B -DCM_D -O -c -o tgoto.o ../tgoto.c
+ld  -x -r tgoto.o -o tgoto.o.out
+rm -f tgoto.o
+mv tgoto.o.out tgoto.o
+md -d -u Makedep tgoto.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -DCM_N -DCM_GT -DCM_B -DCM_D -O -c -o tputs.o ../tputs.c
+ld  -x -r tputs.o -o tputs.o.out
+rm -f tputs.o
+mv tputs.o.out tputs.o
+md -d -u Makedep tputs.d
+vers_string -l termlib > termlib_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -DCM_N -DCM_GT -DCM_B -DCM_D -O -c -o termlib_vers.o termlib_vers.c
+ld  -x -r termlib_vers.o -o termlib_vers.o.out
+rm -f termlib_vers.o
+mv termlib_vers.o.out termlib_vers.o
+md -d -u Makedep termlib_vers.d
+ar cr libtermlib.a `lorder termcap.o tgoto.o tputs.o   termlib_vers.o | tsort`
+mkdirs PROF_OBJS
+cd PROF_OBJS; make -f ../Makefile "COPTS=-pg -O"  "LDOPTS=-X" LIBRARY=termlib_p  "DIR=PROF_OBJS" libtermlib_p.a
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -DCM_N -DCM_GT -DCM_B -DCM_D -pg -O -c -o termcap.o ../termcap.c
+ld  -X -r termcap.o -o termcap.o.out
+rm -f termcap.o
+mv termcap.o.out termcap.o
+md -d -u Makedep termcap.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -DCM_N -DCM_GT -DCM_B -DCM_D -pg -O -c -o tgoto.o ../tgoto.c
+ld  -X -r tgoto.o -o tgoto.o.out
+rm -f tgoto.o
+mv tgoto.o.out tgoto.o
+md -d -u Makedep tgoto.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -DCM_N -DCM_GT -DCM_B -DCM_D -pg -O -c -o tputs.o ../tputs.c
+ld  -X -r tputs.o -o tputs.o.out
+rm -f tputs.o
+mv tputs.o.out tputs.o
+md -d -u Makedep tputs.d
+vers_string -l termlib_p > termlib_p_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -DCM_N -DCM_GT -DCM_B -DCM_D -pg -O -c -o termlib_p_vers.o termlib_p_vers.c
+ld  -X -r termlib_p_vers.o -o termlib_p_vers.o.out
+rm -f termlib_p_vers.o
+mv termlib_p_vers.o.out termlib_p_vers.o
+md -d -u Makedep termlib_p_vers.d
+ar cr libtermlib_p.a `lorder termcap.o tgoto.o tputs.o   termlib_p_vers.o | tsort`
+ar: filename termlib_p_vers.o truncated to termlib_p_vers.
+================= make all for liby =================
+mkdirs STD_OBJS
+cd STD_OBJS; make -f ../Makefile "COPTS=-O"  "LDOPTS=-x" LIBRARY=y  "DIR=STD_OBJS" liby.a
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o libmai.o ../libmai.c
+ld  -x -r libmai.o -o libmai.o.out
+rm -f libmai.o
+mv libmai.o.out libmai.o
+md -d -u Makedep libmai.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o libzer.o ../libzer.c
+ld  -x -r libzer.o -o libzer.o.out
+rm -f libzer.o
+mv libzer.o.out libzer.o
+md -d -u Makedep libzer.d
+vers_string -l y > y_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -O -c -o y_vers.o y_vers.c
+ld  -x -r y_vers.o -o y_vers.o.out
+rm -f y_vers.o
+mv y_vers.o.out y_vers.o
+md -d -u Makedep y_vers.d
+ar cr liby.a `lorder libmai.o libzer.o   y_vers.o | tsort`
+mkdirs PROF_OBJS
+cd PROF_OBJS; make -f ../Makefile "COPTS=-pg -O"  "LDOPTS=-X" LIBRARY=y_p  "DIR=PROF_OBJS" liby_p.a
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o libmai.o ../libmai.c
+ld  -X -r libmai.o -o libmai.o.out
+rm -f libmai.o
+mv libmai.o.out libmai.o
+md -d -u Makedep libmai.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o libzer.o ../libzer.c
+ld  -X -r libzer.o -o libzer.o.out
+rm -f libzer.o
+mv libzer.o.out libzer.o
+md -d -u Makedep libzer.d
+vers_string -l y_p > y_p_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -fwritable-strings -pg -O -c -o y_p_vers.o y_p_vers.c
+ld  -X -r y_p_vers.o -o y_p_vers.o.out
+rm -f y_p_vers.o
+mv y_p_vers.o.out y_p_vers.o
+md -d -u Makedep y_p_vers.d
+ar cr liby_p.a `lorder libmai.o libzer.o   y_p_vers.o | tsort`
+================= make all for librpcsvc =================
+cd STD_OBJS; make -f ../Makefile "COPTS=-O"  "LDOPTS=-x" LIBRARY=rpcsvc  "DIR=STD_OBJS" librpcsvc.a
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o etherxdr.o ../etherxdr.c
+ld  -x -r etherxdr.o -o etherxdr.o.out
+rm -f etherxdr.o
+mv etherxdr.o.out etherxdr.o
+md -d -u Makedep etherxdr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o klm_prot.o ../klm_prot.c
+ld  -x -r klm_prot.o -o klm_prot.o.out
+rm -f klm_prot.o
+mv klm_prot.o.out klm_prot.o
+md -d -u Makedep klm_prot.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o mountxdr.o ../mountxdr.c
+ld  -x -r mountxdr.o -o mountxdr.o.out
+rm -f mountxdr.o
+mv mountxdr.o.out mountxdr.o
+md -d -u Makedep mountxdr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o nlm_prot.o ../nlm_prot.c
+ld  -x -r nlm_prot.o -o nlm_prot.o.out
+rm -f nlm_prot.o
+mv nlm_prot.o.out nlm_prot.o
+md -d -u Makedep nlm_prot.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o rex_xdr.o ../rex_xdr.c
+ld  -x -r rex_xdr.o -o rex_xdr.o.out
+rm -f rex_xdr.o
+mv rex_xdr.o.out rex_xdr.o
+md -d -u Makedep rex_xdr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o rquotaxdr.o ../rquotaxdr.c
+ld  -x -r rquotaxdr.o -o rquotaxdr.o.out
+rm -f rquotaxdr.o
+mv rquotaxdr.o.out rquotaxdr.o
+md -d -u Makedep rquotaxdr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o rstatxdr.o ../rstatxdr.c
+ld  -x -r rstatxdr.o -o rstatxdr.o.out
+rm -f rstatxdr.o
+mv rstatxdr.o.out rstatxdr.o
+md -d -u Makedep rstatxdr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o rusersxdr.o ../rusersxdr.c
+ld  -x -r rusersxdr.o -o rusersxdr.o.out
+rm -f rusersxdr.o
+mv rusersxdr.o.out rusersxdr.o
+md -d -u Makedep rusersxdr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o rwallxdr.o ../rwallxdr.c
+ld  -x -r rwallxdr.o -o rwallxdr.o.out
+rm -f rwallxdr.o
+mv rwallxdr.o.out rwallxdr.o
+md -d -u Makedep rwallxdr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o sm_inter.o ../sm_inter.c
+ld  -x -r sm_inter.o -o sm_inter.o.out
+rm -f sm_inter.o
+mv sm_inter.o.out sm_inter.o
+md -d -u Makedep sm_inter.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o sprayxdr.o ../sprayxdr.c
+ld  -x -r sprayxdr.o -o sprayxdr.o.out
+rm -f sprayxdr.o
+mv sprayxdr.o.out sprayxdr.o
+md -d -u Makedep sprayxdr.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o util.o ../util.c
+ld  -x -r util.o -o util.o.out
+rm -f util.o
+mv util.o.out util.o
+md -d -u Makedep util.d
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o yppasswdxdr.o ../yppasswdxdr.c
+ld  -x -r yppasswdxdr.o -o yppasswdxdr.o.out
+rm -f yppasswdxdr.o
+mv yppasswdxdr.o.out yppasswdxdr.o
+md -d -u Makedep yppasswdxdr.d
+vers_string -l rpcsvc > rpcsvc_vers.c
+cc -MD -DNeXT_MOD -D__STRICT_BSD__ -O -c -o rpcsvc_vers.o rpcsvc_vers.c
+ld  -x -r rpcsvc_vers.o -o rpcsvc_vers.o.out
+rm -f rpcsvc_vers.o
+mv rpcsvc_vers.o.out rpcsvc_vers.o
+md -d -u Makedep rpcsvc_vers.d
+ar cr librpcsvc.a `lorder etherxdr.o klm_prot.o mountxdr.o nlm_prot.o rex_xdr.o rquotaxdr.o  rstatxdr.o rusersxdr.o rwallxdr.o sm_inter.o sprayxdr.o util.o  yppasswdxdr.o   rpcsvc_vers.o | tsort`
+================= make all for makewhatis =================
+sed -e "s/#PROGRAM.*/#`vers_string makewhatis`/"  <makewhatis.sh >makewhatis.NEW
+================= make all for getNAME =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ getNAME.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c getNAME.c
+vers_string -c getNAME > vers.c
+cc -O -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c vers.c
+cc -O -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o getNAME.NEW getNAME.o   vers.o 
+================= make all for makekey =================
+rm -f Makedep .depend_done
+cc -M makekey.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+touch .depend_done
+cc -O -DNeXT_MOD -fwritable-strings -D__STRICT_BSD__ -c makekey.c
+vers_string -c makekey > vers.c
+cc -O -DNeXT_MOD -fwritable-strings -D__STRICT_BSD__ -c vers.c
+cc -O -DNeXT_MOD -fwritable-strings -D__STRICT_BSD__ -o makekey.NEW makekey.o   vers.o 
+================= make install for usr.lib =================
+================= make install for lib.b =================
+mkdirs /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+install -xs -m 444 lib.b.NEW /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib/lib.b
+================= make install for libcurses =================
+mkdirs /private/Net/p1/BSD/LIBS/libs-11/root/usr/include
+CWD=`pwd`; cd /private/Net/p1/BSD/LIBS/libs-11/root; DSTROOT=`pwd`; cd $CWD;  cd STD_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-O"  "LDOPTS=-x"  LIBRARY=curses  "DIR=STD_OBJS" STDinstall 
+install -r -m 644 libcurses.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+CWD=`pwd`; cd /private/Net/p1/BSD/LIBS/libs-11/root; DSTROOT=`pwd`; cd $CWD;  cd PROF_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-pg -O"  "LDOPTS=-X"  LIBRARY=curses_p  "DIR=PROF_OBJS" PROFinstall 
+install -r -m 644 libcurses_p.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+install curses.h /private/Net/p1/BSD/LIBS/libs-11/root/usr/include
+================= make install for libdbm =================
+CWD=`pwd`; cd /private/Net/p1/BSD/LIBS/libs-11/root; DSTROOT=`pwd`; cd $CWD;  cd STD_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-O"  "LDOPTS=-x"  LIBRARY=dbm  "DIR=STD.install_OBJS" STDinstall 
+install -r -m 644 libdbm.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+CWD=`pwd`; cd /private/Net/p1/BSD/LIBS/libs-11/root; DSTROOT=`pwd`; cd $CWD;  cd PROF_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-pg -O"  "LDOPTS=-X"  LIBRARY=dbm_p  "DIR=PROF.install_OBJS" PROFinstall 
+install -r -m 644 libdbm_p.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+================= make install for libg =================
+install -c libg.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+================= make install for libln =================
+CWD=`pwd`; cd /private/Net/p1/BSD/LIBS/libs-11/root; DSTROOT=`pwd`; cd $CWD;  cd STD_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-O"  "LDOPTS=-x"  LIBRARY=l  "DIR=STD_OBJS" STDinstall 
+install -r -m 644 libl.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+CWD=`pwd`; cd /private/Net/p1/BSD/LIBS/libs-11/root; DSTROOT=`pwd`; cd $CWD;  cd PROF_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-pg -O"  "LDOPTS=-X"  LIBRARY=l_p  "DIR=PROF_OBJS" PROFinstall 
+install -r -m 644 libl_p.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+rm -f /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib/libln.a
+ln /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib/libl.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib/libln.a
+================= make install for libmp =================
+CWD=`pwd`; cd /private/Net/p1/BSD/LIBS/libs-11/root; DSTROOT=`pwd`; cd $CWD;  cd STD_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-O"  "LDOPTS=-x"  LIBRARY=mp  "DIR=STD_OBJS" STDinstall 
+install -r -m 644 libmp.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+CWD=`pwd`; cd /private/Net/p1/BSD/LIBS/libs-11/root; DSTROOT=`pwd`; cd $CWD;  cd PROF_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-pg -O"  "LDOPTS=-X"  LIBRARY=mp_p  "DIR=PROF_OBJS" PROFinstall 
+install -r -m 644 libmp_p.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+================= make install for libtermlib =================
+CWD=`pwd`; cd /private/Net/p1/BSD/LIBS/libs-11/root; DSTROOT=`pwd`; cd $CWD;  cd STD_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-O"  "LDOPTS=-x"  LIBRARY=termlib  "DIR=STD_OBJS" STDinstall 
+install -r -m 644 libtermlib.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+CWD=`pwd`; cd /private/Net/p1/BSD/LIBS/libs-11/root; DSTROOT=`pwd`; cd $CWD;  cd PROF_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-pg -O"  "LDOPTS=-X"  LIBRARY=termlib_p  "DIR=PROF_OBJS" PROFinstall 
+install -r -m 644 libtermlib_p.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+rm -f /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib/libtermcap.a
+ln /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib/libtermlib.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib/libtermcap.a
+================= make install for liby =================
+CWD=`pwd`; cd /private/Net/p1/BSD/LIBS/libs-11/root; DSTROOT=`pwd`; cd $CWD;  cd STD_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-O"  "LDOPTS=-x"  LIBRARY=y  "DIR=STD_OBJS" STDinstall 
+install -r -m 644 liby.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+CWD=`pwd`; cd /private/Net/p1/BSD/LIBS/libs-11/root; DSTROOT=`pwd`; cd $CWD;  cd PROF_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-pg -O"  "LDOPTS=-X"  LIBRARY=y_p  "DIR=PROF_OBJS" PROFinstall 
+install -r -m 644 liby_p.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+================= make install for librpcsvc =================
+CWD=`pwd`; cd /private/Net/p1/BSD/LIBS/libs-11/root; DSTROOT=`pwd`; cd $CWD;  cd STD_OBJS;  make -f ../Makefile DSTROOT=$DSTROOT  "COPTS=-O"  "LDOPTS=-x"  LIBRARY=rpcsvc  "DIR=STD_OBJS" STDinstall 
+install -r -m 644 librpcsvc.a /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib
+================= make install for makewhatis =================
+mkdirs /private/Net/p1/BSD/LIBS/libs-11/root/usr/bin
+install -xs -m 555 makewhatis.NEW /private/Net/p1/BSD/LIBS/libs-11/root/usr/bin/makewhatis
+================= make install for getNAME =================
+install -s getNAME.NEW /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib/getNAME
+================= make install for makekey =================
+install -s makekey.NEW /private/Net/p1/BSD/LIBS/libs-11/root/usr/lib/makekey

@@ -1,0 +1,1725 @@
+##
+## The shared library specification file for libsys
+##
+## WARNING: If the __TEXT address is changed, you also change
+##          _NXGetShlibVersion in the appkit project
+##
+#target /usr/shlib/libNeXT_s.C.shlib
+#address __TEXT 0x06000000
+#address __DATA 0x04030000
+## minor version is set on the command line via -minor_version mkshlib option
+
+## This is the branch table.  Symbols in it MUST remain in the same numbered
+## slot from version to version so that the versions are compatible.  Symbols
+## with ranges get assigned the HIGHEST slot.  So if new symbol is added and
+## a slot is taken from a symbol with a range of slots the orignial symbol must
+## remain using the HIGHEST slot.
+##
+## If you add a new routine, insert it at the end of the list in one of the
+## slots taken by a .empty_slot.  If you remove an old routine you WILL BREAK
+## ALL programs that use it but if you feel you can do this change its slot
+## to .empty_slot and don't reuse it (leave a comment to what it was).
+
+#branch
+## libappkit
+	_NXAdjustTextCache		0
+	_NXAlert			1
+	_NXAttachPopUpList		2
+	_NXBeep				3
+	_NXBeginTimer			4
+	.empty_slot			5	# was (errantly) _NXBreak
+	.empty_slot			6	# was (errantly) _NXCClasses
+	_NXChunkCopy			7
+	_NXChunkGrow			8
+	_NXChunkMalloc			9
+	_NXChunkRealloc			10
+	.empty_slot			11	# was (errantly) _NXClick
+	_NXContainRect			12
+	_NXConvertGlobalToWinNum	13
+	_NXConvertWinNumToGlobal	14
+	_NXCopyBits			15
+	_NXCopyCurrentGState		16
+	_NXCopyInputData		17
+	_NXCopyOutputData		18
+	_NXCountWindows			19
+	_NXCreatePopUpListButton	20
+	_NXDefaultTopLevelErrorHandler	21
+	_NXDivideRect			22
+	_NXDrawALine			23
+	_NXDrawButton			24
+	_NXDrawGrayBezel		25
+	_NXDrawRidge			26
+	_NXDrawTiledRects		27
+	_NXDrawWhiteBezel		28
+	_NXEditorFilter			29
+	_NXEmptyRect			30
+	_NXEndTimer			31
+	_NXEqualRect			32
+	_NXEraseRect			33
+	_NXFieldFilter			34
+	__NXFilePathSearch_old		35
+	_NXFindPaperSize		36
+	_NXFlushTextCache		37
+	_NXFrameRect			38
+	_NXFrameRectWithWidth		39
+	_NXFreeMsgVM			40
+	_NXFrontWindow			41
+	__NXGetDefaultValue_old		42
+	_NXGetNamedObject		43
+	_NXGetObjectName		44
+	_NXGetTIFFInfo			45
+	__NXGetTempFilename_old		46
+	_NXHighlightRect		47
+	_NXImageBitmap			48
+	_NXInsetRect			49
+	_NXIntegralRect			50
+	_NXIntersectionRect		51
+	_NXIntersectsRect		52
+	.empty_slot			53
+	.empty_slot			54	# was NXLoadPackage
+	_NXNameObject			55
+	_NXNextSequence			56
+	.empty_slot			57	# was (errantly) _NXNoBreak
+	_NXOffsetRect			58
+	_NXPing				59
+	_NXPointInRect			60
+	_NXPortFromName			61
+	_NXReadBitmap			62
+	__NXReadDefault_old		63
+	_NXReadPoint			64
+	_NXReadRect			65
+	_NXReadSize			66
+	_NXReadTIFF			67
+	_NXReceiveMessage		68
+	_NXRectClip			69
+	_NXRectClipList			70
+	_NXRectFill			71
+	_NXRectFillList			72
+	__NXRegisterDefaults_old	73
+	_NXRegisterErrorReporter	74
+	_NXRemoteMethodFromSel		75
+	__NXRemoveDefault_old		76
+	_NXRemoveErrorReporter		77
+	_NXReportError			78
+	_NXResetUserAbort		79
+	_NXResponsibleDelegate		80
+	_NXScanALine			81
+	_NXSendAcknowledge		82
+	__NXSetDefault_old		83
+	_NXSetGState			84
+	_NXSetRect			85
+	_NXSetTextCache			86
+	_NXSizeBitmap			87
+	.empty_slot			88	# was (errantly) _NXSmartLeft
+	.empty_slot			89	# was (errantly) _NXSmartRight
+	_NXTextFontInfo			90
+	_NXUnionRect			91
+	_NXUnnameObject			92
+	__NXUpdateDefault_old		93
+	__NXUpdateDefaults_old		94
+	_NXUserAborted			95
+	_NXValidMessage			96
+	_NXWaitForMessage		97
+	_NXWindowList			98
+	__NXWriteDefault_old		99
+	__NXWriteDefaults_old		100
+	_NXWritePoint			101
+	_NXWriteRect			102
+	_NXWriteSize			103
+	_NXWriteTIFF			104
+	_NXMouseInRect			105
+	__NXOrderStrings		106
+	__NXOrderStringsWithLength	107
+	_NXRectFillListWithGrays	108
+	_NXOrderStrings			109
+	_NXDefaultStringOrderTable	110
+	_NXSetServicesMenuItemEnabled	111
+	_NXIsServicesMenuItemEnabled	112
+	_NXUpdateDynamicServices	113
+	.empty_slot			114-138
+	_NXHomeDirectory		139
+	_NXUserName			140
+	_NXTitledAlert			141
+	_NXGetAlertPanel		142
+	_NXFreeAlertPanel		143
+	_NXRunAlertPanel		144
+	_NXLogError			145
+	_NXContainsRect			146
+	_NXDrawGroove			147
+	_NXWriteWordTable		148
+	_NXReadWordTable		149
+	__NXSetDefaultsUser_old		150
+	_NXGetWindowServerMemory	151
+	__NXGetDetailedWindowServerMemory	152
+	_NXCompleteFilename		153
+	_NXColorSpaceFromDepth		154
+	_NXBPSFromDepth			155
+	_NXNumberOfColorComponents	156
+	_NXGetBestDepth			157
+        _NXJournalMouse                 158
+        _NXGetOrPeekEvent               159
+	_NXChunkZoneMalloc		160
+	_NXChunkZoneRealloc		161
+	_NXChunkZoneGrow		162
+	_NXChunkZoneCopy		163
+	_NXPortNameLookup		164
+	.empty_slot			165-180
+## ADD NEW PUBLIC FUNCTIONS IN ABOVE EMPTY SLOTS
+## OR AFTER 800, BELOW
+## SPECIAL ROUTINES USED ONLY BY COPYPASTE UTILITY
+	__NXGetTypes 			181
+	__NXSetData 			182
+	__NXSetTypes 			183
+	__NXBlockingGetData 		184
+	__NXBlockingGetData 		185
+	__NXGetSession 			186
+	__NXPBSRendezVous 		187
+	.empty_slot			188-193
+## SPECIAL ROUTINES USED ONLY BY THE WORKSPACE
+	__NXDeactivateApp		194
+	__NXGetIconFrame 		195
+	__NXSetWindowLevel 		196
+	__NXSafeReceive 		197
+	__NXSafeSend 			198
+	__NXCreateRealWindow 		199
+	__NXSetIcon			200
+	__NXInitOtherOwner		201
+	__NXSetLastOpenFileTime		202
+	.empty_slot			203-216
+## SPECIAL ROUTINES USED ONLY BY NIB
+	__NXDrawTextCell		217
+	__NXEditTextCell		218
+	__NXReadBitmapBits		219
+	__NXResetOtherWindows		220
+	__NXSetOtherWindows		221
+	__NXWriteBitmapBits		222
+	__NXDoDragWindow		223
+	__NXCalcTextSizeInRect		224
+	.empty_slot			225-239
+## libdpsclient
+	_DPSAddFD			240
+	_DPSAddPort			241
+	_DPSAddTimedEntry		242
+	_DPSChainContext		243
+	_DPSCreateContext		244
+	_DPSCreateStreamContext		245
+	_DPSDefaultErrorProc		246
+	_DPSDefineUserObject		247
+	_DPSDiscardEvents		248
+	_DPSDoUserPath			249
+	_DPSGetCurrentContext		250
+	_DPSGetCurrentErrorBackstop	251
+	_DPSGetCurrentTextBackstop	252
+	_DPSMapNames			253
+	_DPSNameFromIndex		254
+	_DPSNameFromTypeAndIndex	255
+	_DPSPostEvent			256
+	_DPSPrintError			257
+	_DPSPrintf			258
+	_DPSRemoveFD			259
+	_DPSRemovePort			260
+	_DPSRemoveTimedEntry		261
+	_DPSSetContext			262
+	_DPSSetErrorBackstop		263
+	_DPSSetEventFunc		264
+	_DPSSetTextBackstop		265
+	_DPSSetTracking			266
+	_DPSTraceContext		267
+	_DPSUnchainContext		268
+	_PSFontDirectory		269
+	_PSISOLatin1Encoding		270
+	_PSSharedFontDirectory		271
+	_PSStandardEncoding		272
+	_PSabs				273
+	_PSadd				274
+	_PSadjustmouse			275
+	_PSaload			276
+	_PSalphaimage			277
+	_PSanchorsearch			278
+	_PSand				279
+	_PSarc				280
+	_PSarcn				281
+	_PSarct				282
+	_PSarcto			283
+	_PSarray			284
+	_PSashow			285
+	_PSastore			286
+	_PSatan				287
+	_PSawidthshow			288
+	_PSbanddevice			289
+	_PSbasetocurrent		290
+	_PSbasetoscreen			291
+	_PSbegin			292
+	_PSbind				293
+	_PSbitshift			294
+	_PSbuttondown			295
+	_PSbytesavailable		296
+	_PScachestatus			297
+	_PSceiling			298
+	_PScharpath			299
+	_PSclear			300
+	_PScleardictstack		301
+	_PScleartomark			302
+	_PScleartrackingrect		303
+	_PSclip				304
+	_PSclippath			305
+	_PSclosefile			306
+	_PSclosepath			307
+	_PScolorimage			308
+	_PScomposite			309
+	_PScompositerect		310
+	_PSconcat			311
+	_PSconcatmatrix			312
+	_PScondition			313
+	_PScopy				314
+	_PScopypage			315
+	_PScos				316
+	_PScount			317
+	_PScountdictstack		318
+	_PScountexecstack		319
+	_PScountscreenlist		320
+	_PScounttomark			321
+	_PScurrentalpha			322
+	_PScurrentblackgeneration	323
+	_PScurrentcacheparams		324
+	_PScurrentcmykcolor		325
+	_PScurrentcolorscreen		326
+	_PScurrentcolortransfer		327
+	_PScurrentcontext		328
+	_PScurrentdash			329
+	_PScurrentdeviceinfo		330
+	_PScurrentdict			331
+	_PScurrenteventmask		332
+	_PScurrentfile			333
+	_PScurrentflat			334
+	_PScurrentfont			335
+	_PScurrentgray			336
+	_PScurrentgstate		337
+	_PScurrenthalftone		338
+	_PScurrenthalftonephase		339
+	_PScurrenthsbcolor		340
+	_PScurrentlinecap		341
+	_PScurrentlinejoin		342
+	_PScurrentlinewidth		343
+	_PScurrentmatrix		344
+	_PScurrentmiterlimit		345
+	_PScurrentmouse			346
+	_PScurrentobjectformat		347
+	_PScurrentowner			348
+	_PScurrentpacking		349
+	_PScurrentpoint			350
+	_PScurrentrgbcolor		351
+	_PScurrentrusage		352
+	_PScurrentscreen		353
+	_PScurrentshared		354
+	_PScurrentstrokeadjust		355
+	_PScurrenttobase		356
+	_PScurrenttoscreen		357
+	_PScurrenttransfer		358
+	_PScurrentundercolorremoval	359
+	_PScurrentuser			360
+	_PScurrentwindow		361
+	_PScurrentwindowalpha		362
+	_PScurrentwindowbounds		363
+	_PScurrentwindowdict		364
+	_PScurveto			365
+	_PScvi				366
+	_PScvlit			367
+	_PScvn				368
+	_PScvr				369
+	_PScvrs				370
+	_PScvs				371
+	_PScvx				372
+	_PSdef				373
+	_PSdefaultmatrix		374
+	_PSdefinefont			375
+	_PSdefineusername		376
+	_PSdefineuserobject		377
+	_PSdeletefile			378
+	_PSdetach			379
+	_PSdeviceinfo			380
+	_PSdict				381
+	_PSdictstack			382
+	_PSdissolve			383
+	_PSdiv				384
+	_PSdtransform			385
+	_PSdumpwindow			386
+	_PSdumpwindows			387
+	_PSdup				388
+	_PSecho				389
+	_PSend				390
+	_PSeoclip			391
+	_PSeofill			392
+	_PSeoviewclip			393
+	_PSeq				394
+	_PSequals			395
+	_PSequalsequals			396
+	_PSerasepage			397
+	_PSerrordict			398
+	_PSexch				399
+	_PSexec				400
+	_PSexecstack			401
+	_PSexecuserobject		402
+	_PSexecuteonly			403
+	_PSexit				404
+	_PSexp				405
+	_PSfalse			406
+	_PSfile				407
+	_PSfilenameforall		408
+	_PSfileposition			409
+	_PSfill				410
+	_PSfindfont			411
+	_PSfindwindow			412
+	_PSflattenpath			413
+	_PSfloor			414
+	_PSflush			415
+	_PSflushfile			416
+	_PSflushgraphics		417
+	_PSfor				418
+	_PSforall			419
+	_PSfork				420
+	_PSframedevice			421
+	_PSfrontwindow			422
+	_PSge				423
+	_PSget				424
+	_PSgetboolean			425
+	_PSgetchararray			426
+	_PSgetfloat			427
+	_PSgetfloatarray		428
+	_PSgetint			429
+	_PSgetintarray			430
+	_PSgetinterval			431
+	_PSgetstring			432
+	_PSgrestore			433
+	_PSgrestoreall			434
+	_PSgsave			435
+	_PSgstate			436
+	_PSgt				437
+	_PShidecursor			438
+	_PShideinstance			439
+	_PSidentmatrix			440
+	_PSidiv				441
+	_PSidtransform			442
+	_PSif				443
+	_PSifelse			444
+	_PSimage			445
+	_PSimagemask			446
+	_PSindex			447
+	_PSineofill			448
+	_PSinfill			449
+	_PSinitclip			450
+	_PSiniteventtimes		451
+	_PSinitgraphics			452
+	_PSinitmatrix			453
+	_PSinitviewclip			454
+	_PSinstroke			455
+	_PSinueofill			456
+	_PSinufill			457
+	_PSinustroke			458
+	_PSinvertmatrix			459
+	_PSitransform			460
+	_PSjoin				461
+	_PSknown			462
+	_PSkshow			463
+	_PSle				464
+	_PSlength			465
+	_PSlineto			466
+	_PSln				467
+	_PSload				468
+	_PSlock				469
+	_PSlog				470
+	_PSloop				471
+	_PSlt				472
+	_PSmakefont			473
+	_PSmark				474
+	_PSmatrix			475
+	_PSmaxlength			476
+	_PSmod				477
+	_PSmonitor			478
+	_PSmoveto			479
+	_PSmovewindow			480
+	_PSmul				481
+	_PSne				482
+	_PSneg				483
+	_PSnewinstance			484
+	_PSnewpath			485
+	_PSnextrelease			486
+	_PSnoaccess			487
+	_PSnot				488
+	_PSnotify			489
+	_PSnull				490
+	_PSnulldevice			491
+	_PSobscurecursor		492
+	_PSor				493
+	_PSorderwindow			494
+	_PSosname			495
+	_PSostype			496
+	_PSpackedarray			497
+	_PSpathbbox			498
+	_PSpathforall			499
+	_PSplacewindow			500
+	_PSplaysound			501
+	_PSpop				502
+	_PSprint			503
+	.empty_slot			504	# was PSprinterdevice
+	_PSprinteventtimes		505
+	_PSprintobject			506
+	_PSprompt			507
+	_PSpstack			508
+	_PSput				509
+	_PSputinterval			510
+	_PSquit				511
+	_PSrand				512
+	_PSrcheck			513
+	_PSrcurveto			514
+	_PSread				515
+	_PSreadhexstring		516
+	_PSreadimage			517
+	_PSreadline			518
+	_PSreadonly			519
+	_PSreadstring			520
+	_PSrealtime			521
+	_PSrectclip			522
+	_PSrectfill			523
+	_PSrectstroke			524
+	_PSrectviewclip			525
+	_PSrenamefile			526
+	_PSrenderbands			527
+	_PSrepeat			528
+	_PSresetfile			529
+	_PSresetwait			530	# removed from API
+	_PSrestore			531
+	_PSrevealcursor			532
+	_PSreversepath			533
+	_PSrightbuttondown		534
+	_PSrightstilldown		535
+	_PSrlineto			536
+	_PSrmoveto			537
+	_PSroll				538
+	_PSrotate			539
+	_PSround			540
+	_PSrrand			541
+	_PSrun				542
+	_PSsave				543
+	_PSscale			544
+	_PSscalefont			545
+	_PSscheck			546
+	_PSscreenlist			547
+	_PSscreentobase			548
+	_PSscreentocurrent		549
+	_PSsearch			550
+	_PSselectfont			551
+	_PSsendboolean			552
+	_PSsendchararray		553
+	_PSsendfloat			554
+	_PSsendfloatarray		555
+	_PSsendint			556
+	_PSsendintarray			557
+	_PSsendstring			558
+	_PSsetalpha			559
+	_PSsetautofill			560
+	_PSsetbbox			561
+	_PSsetblackgeneration		562
+	_PSsetcachedevice		563
+	_PSsetcachelimit		564
+	_PSsetcacheparams		565
+	_PSsetcharwidth			566
+	_PSsetcmykcolor			567
+	_PSsetcolorscreen		568
+	_PSsetcolortransfer		569
+	_PSsetcursor			570
+	_PSsetdash			571
+	_PSseteventmask			572
+	_PSsetexposurecolor		573
+	_PSsetfileposition		574
+	_PSsetflat			575
+	_PSsetfont			576
+	_PSsetgray			577
+	_PSsetgstate			578
+	_PSsethalftone			579
+	_PSsethalftonephase		580
+	_PSsethsbcolor			581
+	_PSsetinstance			582
+	_PSsetlinecap			583
+	_PSsetlinejoin			584
+	_PSsetlinewidth			585
+	_PSsetmatrix			586
+	_PSsetmiterlimit		587
+	_PSsetmouse			588
+	_PSsetobjectformat		589
+	_PSsetowner			590
+	_PSsetpacking			591
+	_PSsetrgbcolor			592
+	_PSsetscreen			593
+	_PSsetsendexposed		594
+	_PSsetshared			595
+	_PSsetstrokeadjust		596
+	_PSsettrackingrect		597
+	_PSsettransfer			598
+	_PSsetucacheparams		599
+	_PSsetundercolorremoval		600
+	_PSsetvmthreshold		601
+	_PSsetwaitcursor		602	# removed from API
+	_PSsetwaitenabled		603	# removed from API
+	_PSsetwaittime			604	# removed from API
+	_PSsetwindowdict		605
+	_PSshareddict			606
+	_PSshow				607
+	_PSshowcursor			608
+	_PSshowpage			609
+	_PSsin				610
+	_PSsizeimage			611
+	_PSsqrt				612
+	_PSsrand			613
+	_PSstack			614
+	_PSstart			615
+	_PSstatus			616
+	_PSstatusdict			617
+	_PSstilldown			618
+	_PSstop				619
+	_PSstopped			620
+	_PSstore			621
+	_PSstring			622
+	_PSstringwidth			623
+	_PSstroke			624
+	_PSstrokepath			625
+	_PSsub				626
+	_PSsystemdict			627
+	_PStermwindow			628
+	_PStoken			629
+	_PStransform			630
+	_PStranslate			631
+	_PStrue				632
+	_PStruncate			633
+	_PStype				634
+	_PSuappend			635
+	_PSucache			636
+	_PSucachestatus			637
+	_PSueofill			638
+	_PSufill			639
+	_PSundef			640
+	_PSundefinefont			641
+	_PSundefineuserobject		642
+	_PSupath			643
+	_PSuserdict			644
+	_PSuserobject			645
+	_PSusertime			646
+	_PSustroke			647
+	_PSustrokepath			648
+	_PSversion			649
+	_PSviewclip			650
+	_PSviewclippath			651
+	_PSvmreclaim			652
+	_PSvmstatus			653
+	_PSwait				654
+	_PSwcheck			655
+	_PSwhere			656
+	_PSwidthshow			657
+	_PSwindow			658
+	_PSwindowdevice			659
+	_PSwindowdeviceround		660
+	_PSwrite			661
+	_PSwritehexstring		662
+	_PSwriteobject			663
+	_PSwritestring			664
+	_PSwtranslation			665
+	_PSxcheck			666
+	_PSxor				667
+	_PSxshow			668
+	_PSxyshow			669
+	_PSyield			670
+	_PSyshow			671
+	__DPSGetOrPeekEvent		672
+	_PSsetwriteblock                673
+	_PScurrentwriteblock            674
+	_DPSPrintErrorToStream		675
+	_DPSDoUserPathWithMatrix	676
+	_DPSUndefineUserObject		677
+	_DPSCreateContextWithTimeoutFromZone	678
+	_PSsetwindowtype		679
+	_PSmachportdevice		680
+	_PSposteventbycontext		681
+	_PSsetflushexposures		682
+	_PSsetpattern			683
+	_PSsetwindowlevel		684
+	_PScurrentwindowlevel		685
+	_PScountwindowlist		686
+	_PSwindowlist			687
+	_PScountframebuffers		688
+	_PSframebuffer			689
+	.empty_slot                     690-693		# color/mono accuracy ops
+	_DPSTraceEvents			694
+	_PSsetwaitcursorenabled		695
+	_DPSStartWaitCursorTimer	696
+	_DPSSetDeadKeysEnabled		697
+	_PScurrentwaitcursorenabled	698
+	_PSadjustcursor			699
+	_PSsetdefaultdepthlimit		700
+	_PScurrentdefaultdepthlimit	701
+	_PSsetwindowdepthlimit		702
+	_PScurrentwindowdepthlimit	703
+	_PScurrentwindowdepth		704
+	_PScurrentactiveapp		705
+	_PSsetactiveapp			706
+	__DPSCreateContext              707
+	.empty_slot                     708-799
+## libappkit cont'd
+	_NXConvertRGBAToColor		800
+	_NXConvertHSBAToColor		801	
+	_NXConvertCMYKAToColor		802	
+	_NXConvertColorToRGBA		803	
+	_NXConvertColorToHSBA		804	
+	_NXConvertColorToCMYKA		805	
+	_NXRedComponent			806	
+	_NXGreenComponent		807	
+	_NXBlueComponent		808	
+	_NXHueComponent			809	
+	_NXSaturationComponent		810	
+	_NXBrightnessComponent		811	
+	_NXCyanComponent		812	
+	_NXMagentaComponent		813	
+	_NXYellowComponent		814	
+	_NXBlackComponent		815	
+	_NXAlphaComponent		816	
+	_NXChangeRedComponent		817	
+	_NXChangeGreenComponent		818	
+	_NXChangeBlueComponent		819	
+	_NXChangeHueComponent		820	
+	_NXChangeSaturationComponent	821	
+	_NXChangeBrightnessComponent	822	
+	_NXChangeCyanComponent		823	
+	_NXChangeMagentaComponent	824	
+	_NXChangeYellowComponent	825	
+	_NXChangeBlackComponent		826	
+	_NXChangeAlphaComponent		827	
+	_NXWriteColor			828	
+	_NXReadColor			829	
+	_NXEqualColor			830	
+	_NXSetColor			831
+	_NXConvertColorToGrayAlpha	832
+	_NXConvertGrayAlphaToColor	833
+	_NXGrayComponent		834
+	_NXChangeGrayComponent		835
+	.empty_slot                     836-850
+## Currently external (but private) routines used by internal TIFF utilities
+## Most are used by tiffutil and no one else.
+	__NXTIFFClose			851
+	__NXTIFFGetField		852
+	__NXTIFFOpenStream		853
+	__NXTIFFRead			854
+	__NXTIFFReadDirectory		855
+	__NXTIFFSetDirectory		856
+	__NXTIFFSetField		857
+	__NXTIFFSize			858
+	__NXTIFFWrite			859
+	__NXTIFFWriteDirectory		860
+	__NXTIFFReadScanline		861
+	__NXTIFFScanlineSize		862
+	__NXTIFFWriteScanline		863
+	__NXTIFFFreeDirectory		864
+	__NXTIFFNumDirectories		865
+	__NXTIFFDefaultDirectory	866
+	__NXTIFFOpenStreamWithMode	867
+	__NXTIFFWriteRawStrip		868
+	__NXTIFFReadRawStrip		869
+	__NXTIFFReadFromZone		870
+	__NXTIFFWriteJPEG		871
+	__NXTIFFReadJPEG		872
+	.empty_slot                     873-1249
+## libsoundkit
+	.empty_slot			1250-1350
+## Branch table slots are a jmp	0x0:l instruction that is 6 bytes long. So to
+## just fill a 8192 byte page it takes 1350 slots plus the 90 byte shlib header
+## that goes before the branch table.  The assembler will round the text section
+## of the branch table object file to a multiple of 4 bytes so (1350 * 6) + 90
+## rounded up to a multiple of 4 is 8192.
+
+#private_externs
+	__libNeXT_pointers_pad
+## libappkit
+	__appkit_data_pad
+	_app_server		# bad public symbol from MIG
+	__NXActivateContext
+	__NXActivateNextApp
+	__NXActivateSelf
+	__NXAllocateImageCache	
+	__NXAppKitDomainName
+	__NXAppKitFilesPath
+	__NXAppkitReporter
+	__NXAppkitUnused1	# suppresses cmpshlib messages about these
+	__NXAppkitUnused4	# suppresses cmpshlib messages about these
+	__NXAppkitUnused5	# suppresses cmpshlib messages about these
+	__NXBackspace
+	__NXBigEnough
+	__NXBlinkCaret
+	__NXBlinkCaretTE
+	__NXBuildBitmapFromMacho
+	__NXBuildFontDirectory
+	__NXBuildSharedWindows
+	__NXCBreakTable
+	__NXCCharCatTable
+	__NXCClickTable
+	__NXCSmartLeftChars
+	__NXCSmartRightChars
+	__NXCalcPageOffsetOnSheet
+	__NXCalcPageSubset
+	__NXCalcTargetForAction
+	__NXCallPanelSuper
+	__NXCallPanelSuperFromZone
+	__NXCanAllocInZone
+	__NXCheckSelector
+	__NXCheckWordTableSizes
+	__NXClearClickState
+	__NXClearTimeMarkers
+	__NXClearWhite
+	__NXClickBounds
+	__NXClipWindow
+	__NXComplement
+	__NXComputeRealBBox
+	__NXConvertAfmByteOrder
+	__NXConvertJPEGToBitmap
+	__NXConvertBitmapToJPEG
+	__NXConvertAfmByteOrder
+	__NXCopyText
+	__NXCoverRect
+	__NXCoverWindow
+	__NXCreateAndSetScratchWindow
+	__NXCurrentActive
+	__NXCurrentEventMask
+	__NXCurrentWindowBounds	
+	__NXDeactivateSelf	
+	__NXDelegateFeatures
+	__NXDiacritical
+	__NXDiscardCursorRect
+	__NXDoHighlight	
+	__NXDoSetServicesMenuItemEnabled
+	__NXDpsReporter
+	__NXDrawButton
+	__NXDragJnlWindow
+	__NXDrawGrayBezel
+	__NXDrawGrooveExceptTop
+	__NXDrawGroove
+	__NXDrawIcon
+	__NXDrawTiledRects
+	__NXDrawWhiteBezel
+	__NXDumpTimeMarkers
+	__NXEnglishBreakTable
+	__NXEnglishCharCatTable
+	__NXEnglishClickTable
+	__NXEnglishNoBreakTable
+	__NXEnglishSmartLeftChars
+	__NXEnglishSmartRightChars
+	__NXEnsureEdgeWindows
+	__NXEPSBeginDocument
+	__NXEPSEndDocument
+	__NXEPSDeclareDocumentFonts
+	__NXEPSGetBoundingBox
+	__NXExecDetached
+	__NXExtractDouble
+	__NXFigureScale
+	__NXFindFont
+	__NXFindIconNamed
+	__NXFindPaperName
+	__NXFindRTFStyle
+	__NXFinishOverride
+	__NXFlushGraphics
+	__NXFlushPmonEvents
+	__NXFocus
+	__NXForgetWord
+	__NXFreeBList
+	__NXFreeFontData
+	__NXFreeImageCache
+	__NXFreePasteboard
+	__NXFromTextRGBColor
+	__NXGetAFMInfo
+	__NXGetAFMFileContents
+	__NXGetActiveApp
+	__NXGetButtonParam
+	__NXGetCellParam
+	__NXGetDefaultDepthLimit
+	__NXGetDepthLimitOfCurrentWindow
+	__NXGetFileExtensions
+	__NXGetFileSuffix
+	__NXGetFiles
+	__NXGetFocus
+	__NXGetFontDirectory
+	__NXGetFullAFMInfoBigE
+	__NXGetFullAFMInfoLittleE
+	__NXGetIconNumber
+	__NXGetMenuLocation
+	__NXGetMouse
+	__NXGetPrevious
+	__NXGetPrintingUserName
+	__NXGetRTFStyles
+	__NXGetRTFToken
+	__NXGetRequestMenuData
+	__NXGetRequestMenuServers
+	__NXGetScreenInfo
+	__NXGetServerTime
+	__NXGetServicesMenuData
+	__NXGetSharedWindows
+	__NXGetShlibVersion
+	__NXGetSpoolFileName
+	__NXGetWinAndOrigin
+	__NXGetWindowAndOrigin
+	__NXGuess
+	__NXHSBToRGB
+	__NXHideEdgeWindows
+	__NXHostName
+	__NXIconHasAlpha
+	__NXImageBitmapWithFlip
+	__NXImageRequestDone
+	__NXImageServerOK
+	__NXIndexToCursorRect
+	__NXInitFrameFonts	
+	__NXInitGState	
+	__NXInitGStateWithClip	
+	__NXInitGetServerTime
+	__NXInitMatrixClip
+	__NXInitPmon
+	__NXInitTimeMarker
+	__NXInitialPStat
+	__NXIsActiveApp	
+	__NXIsFaxType	
+	__NXIsMemoryStream	
+	__NXIsPureGray
+	__NXIsServicesMenuItemEnabled
+	__NXIsTextFile
+	__NXIsValidColor
+	__NXJustFillRects
+	__NXKitAlert
+	__NXKitString
+	__NXKitString2
+	__NXLearnWord
+	__NXLeftMargin		
+	__NXLineStart
+	__NXLittleEndianGetAFMInfo
+	__NXLoadFileExtensions
+	__NXLoadNib
+	__NXLoadNibPanel
+	__NXLoadPackage
+	__NXLoadTypeTable
+	__NXLookupAppkitServer
+	__NXMakeDefaultStyle
+	__NXMakeFileStream
+	__NXMakeMemStream
+	__NXMakePopUpList
+	__NXMakeResizeWindow	
+	__NXMatchFamily
+	__NXMatchFlags
+	__NXMatchFont
+	__NXMinSize
+	__NXMoveWindow	
+	__NXMsgError
+	__NXNeedsExtraTurn
+	__NXNoColor
+	__NXNonBlockingGetData
+	__NXNpdSend
+	__NXNullifyGState
+	__NXOldOrderwindow
+	__NXOncePerGrow
+	__NXOpenSpelling
+	__NXOpenStreamOnMacho
+	__NXOpenStreamOnMachoOfFile
+	__NXOpenStreamOnSection
+	__NXOpenTextStream
+	__NXOrderKeyAndMain
+	__NXOrderPanelIfActive
+	__NXOverrideButtonDown
+	__NXPSEndCustom
+	__NXPSStartCopyingCustom
+	__NXPSStartDrawingCustom
+	__NXPSscreenlist
+	__NXPSgetwindowbelow
+	__NXMagnifyColors
+	__NXPagePStat
+	__NXPaperSizeComment
+	__NXPerLineGrow
+	__NXPlaceEdgeWindows
+	__NXPlaceWindow
+	__NXPrepareToOverride
+	__NXPosNewline
+	__NXPosToPoint
+	__NXProfileMarker
+	__NXPureConvertSize		
+	__NXQEraseRect
+	__NXQuickCaret
+	__NXReadPixels
+	__NXRGBToHSB
+	__NXRTFError
+	__NXReSel
+	__NXReadBitmapWithFlippedness
+	__NXReadRTF
+	__NXRectPageToSheet
+	__NXRectPath
+	__NXRefreshSize
+	__NXRemoveAlpha
+	__NXReplaceRange
+	__NXReplaceRunRange
+	__NXRequestData
+	__NXResetCursorState
+	__NXResetDrawCache
+	__NXResizeImageCache
+	__NXRestoreDrawCache
+	__NXRightMargin
+	__NXSSError
+	__NXSafeOrderFront
+	__NXSafeOrderFrontDuringOpenFile
+	__NXScreenMouse
+	__NXScreenSize		
+	__NXScroll	
+	__NXSelectFontNS	
+	__NXSelectFontNSM
+	__NXSendFileToPS	
+	__NXSendPmonEvent
+	__NXSendWindowNotification
+	__NXSetButtonParam
+	__NXSetCellParam
+	__NXSetCursor
+	__NXSetCursorRect
+	__NXSetDefaultRun
+	__NXSetDepthLimit
+	__NXSetDepthLimitFromDepthName
+	__NXSetDrawBounds
+	__NXSetEventMask	
+	__NXSetFrameFont
+	__NXSetGrayUsingPattern
+	__NXSetHideOnDeactivate	
+	__NXSetIconFont		
+	__NXSetJournalRecording
+	__NXSetLastEventSentTime
+	__NXSetMouse	
+	__NXSetNullGState
+	__NXSetOutWindowLevel
+	__NXSetProcessID
+	__NXSetProp
+	__NXSetJrnMDownEvtNum
+	__NXSetTimeMarker
+	__NXSetTimeMarkerWithArgs
+	__NXSetTitle	
+	__NXSetupImagePrinting
+	__NXSetupPriorities
+	__NXShift
+	__NXShowEdgeWindows
+	__NXShowKeyAndMain
+	__NXSmartPaste
+	__NXSmartSelect
+	__NXSpellCheck
+	__NXSpellCheckAndGuess
+	__NXStreamsReporter
+	__NXStringRectFill
+	__NXSubclassSel
+	__NXTIFFBitTable
+	__NXTIFFError
+	__NXTIFFFlush
+	__NXTIFFFlushData
+	__NXTIFFFlushData1
+	__NXTIFFGetWithExtraInfo
+	__NXTIFFSetCompressionScheme
+	__NXTIFFSwabArrayOfLong
+	__NXTIFFSwabArrayOfShort
+	__NXTIFFWarning
+	__NXTIFFWriteCheck
+	__NXTermWindow
+	__NXTextBackgroundRect
+	__NXTextFontInfoInView	
+	__NXTopMargin		
+	__NXToTextRGBColor
+	__NXTrimRuns
+	__NXTypedStreamsReporter
+	__NXUncoverWindow
+	__NXUndoButtonDownOverride
+	__NXUnusedGlobalString
+	__NXUpdateApplicationInfo
+	__NXUpdateBBox
+	__NXUpdateDynamicServices
+	__NXUpdateFileExtensions
+	__NXUpdatePrinterInfo
+	__NXUpdateRequestServers
+	__NXUseZonesCompatibly
+	__NXValidateTextStream
+	__NXWindow	
+	__NXWindowActivate
+	__NXWriteBBoxComment
+	__NXWriteLongComment
+	__NXWriteRTF
+	__NXhidecaret	
+	__NXlmdToPackages
+	__NXquickcaret	
+	__NXshow	
+	__NXshowat	
+	__NXshowcaret
+	__NXstringxyshow
+	__NXtMargin
+	
+	__NXAsciiPboardType		# old versions that were const
+	__NXFilenamePboardType
+	__NXFontPboardType
+	__NXPostScriptPboardType
+	__NXRTFPboardType
+	__NXRulerPboardType
+	__NXTabularTextPboardType
+	__NXTIFFPboardType
+
+## libdpsclient
+	__dpsclient_data_pad
+	__DPSAddListItem
+	__DPSAddNotifyToSet
+	__DPSAssemblePorts
+	__DPSConvertBinArray
+	__DPSCreateSpace
+	__DPSDefaultTextProc
+	__DPSFindListItemByItem	
+	__DPSFindListItemByKey
+	__DPSFlushStream
+	__DPSFreeQ
+	__DPSGetNextAvail
+	__DPSGetQEntry
+	__DPSHandleMsg
+	__DPSInitMainPortSet
+	__DPSInitQ
+	__DPSLeanCreateStreamContext
+	__DPSListenToNewContexts
+	__DPSLocalMalloc
+	__DPSLocalRealloc
+	__DPSLocalSetMsgReceive
+	__DPSMachBinObjSeqWrite 
+	__DPSMachCallTokenProc
+	__DPSMachPrepareToParseMsg
+	__DPSMsgSend
+	__DPSNewListItem
+	__DPSNop
+	__DPSNotImplemented
+	__DPSOpenStream
+	__DPSOutputBinObjSeqWrite
+	__DPSOutputFlushContext	
+	__DPSOutputPrintf
+	__DPSOutputUpdateNameMap
+	__DPSOutputWriteData
+	__DPSOutputWritePostScript
+	__DPSOutputWriteStringChars
+	__DPSOutputWriteTypedObjectArray
+	__DPSPingStream
+	__DPSPostQElement
+	__DPSPrintEvent
+	__DPSProcessError
+	__DPSRemoveListItem
+	__DPSRemoveQEntry
+	__DPSReprocessError
+	__DPSResetStream
+	__DPSStreamBinObjSeqWrite 
+	__DPSTokenProc
+	__DPSTraceOutput
+	__DPSTracingOn
+	__DPSEventTracingOn
+## libsoundkit
+	__soundkit_data_pad
+	__SNDMovetoRlinetoStroke
+	__NXSoundPboardType
+## These are the assembly language stubs to get around the symbols that can't
+## have a layer of indirection put in by a macro because they are generated
+## directly by the compiler.  These are in alias.o .
+	.libNeXT_objc_msgSend
+	.libNeXT_objc_msgSendSuper
+	.libNeXT_objc_getClass
+	.libNeXT_objc_getMetaClass
+	.libNeXT_bcopy
+	.libNeXT__fixunsdfsi
+	.libNeXT__fixdfsi
+
+#alias
+	_objc_msgSend		.libNeXT_objc_msgSend
+	_objc_msgSendSuper	.libNeXT_objc_msgSendSuper
+	_objc_getClass		.libNeXT_objc_getClass
+	_objc_getMetaClass	.libNeXT_objc_getMetaClass
+	_bcopy			.libNeXT_bcopy
+	__fixunsdfsi		.libNeXT__fixunsdfsi
+	__fixdfsi		.libNeXT__fixdfsi
+
+## These symbols are global const data (which appears in the text section).
+
+#nobranch_text
+## libappkit
+	_NXCBreakTable
+	_NXCBreakTableSize
+	_NXCCharCatTable
+	_NXCClickTable
+	_NXCClickTableSize
+	_NXCSmartLeftChars
+	_NXCSmartRightChars
+	_NXEnglishBreakTable
+	_NXEnglishBreakTableSize
+	_NXEnglishCharCatTable
+	_NXEnglishClickTable
+	_NXEnglishClickTableSize
+	_NXEnglishNoBreakTable
+	_NXEnglishNoBreakTableSize
+	_NXEnglishSmartLeftChars
+	_NXEnglishSmartRightChars
+	_NXFindPboardType
+	_NXSystemDomainName
+	_NXWorkspaceName
+	_NXWorkspaceReplyName
+
+## This is the order objects get loaded in the shared library.  All global data
+## CANT CHANGE IN SIZE or LOCATION.  Any new global data must added to the last
+## file in this list at the end of the file or added in a new file and put at
+## the end of this list.  There can be no common data, instead it must be
+## initialized data so that it will remain in a fixed place.  All files must
+## have all their static data declared and initialized before all global data
+## in the file.  This is because when the loader builds a shared library it
+## moves all global data to the beginning and all static data to the end.  With
+## this static data can be added changed or deleted to ANY file.
+
+#objects
+## global const data (text) and global data
+	libappkit/shlib_obj/appkit_globals.o	# text size 2048  data size 4096
+	libdpsclient/shlib_obj/globals.o	# text size 256   data size 256
+	libsoundkit/shlib_obj/soundkit_globals.o # text size 256   data size 256
+
+## only global data (no const data)
+	pointers.o				# global data size 2048
+
+## no global data
+	libappkit/shlib_obj/ActionCell.o
+	libappkit/shlib_obj/Alert.o
+	libappkit/shlib_obj/Application.o
+	libappkit/shlib_obj/Bitmap.o
+	libappkit/shlib_obj/Box.o
+	libappkit/shlib_obj/Button.o
+	libappkit/shlib_obj/ButtonCell.o
+	libappkit/shlib_obj/Cell.o
+	libappkit/shlib_obj/ClipView.o
+	libappkit/shlib_obj/ColumnCell.o
+	libappkit/shlib_obj/Control.o
+	libappkit/shlib_obj/Cursor.o
+	libappkit/shlib_obj/CustomObject.o
+	libappkit/shlib_obj/CustomView.o
+	libappkit/shlib_obj/FocusState.o
+	libappkit/shlib_obj/Font.o
+	libappkit/shlib_obj/TaggedCell.o
+	libappkit/shlib_obj/FontFile.o
+	libappkit/shlib_obj/FontPanel.o
+	libappkit/shlib_obj/FontManager.o
+	libappkit/shlib_obj/Form.o
+	libappkit/shlib_obj/FormCell.o
+	libappkit/shlib_obj/FrameView.o
+	libappkit/shlib_obj/Listener.o
+	libappkit/shlib_obj/Matrix.o
+	libappkit/shlib_obj/Menu.o
+	libappkit/shlib_obj/MenuCell.o
+	libappkit/shlib_obj/MenuTemplate.o
+	libappkit/shlib_obj/NameTable.o
+	libappkit/shlib_obj/NibData.o
+	libappkit/shlib_obj/NXBrowser.o
+	libappkit/shlib_obj/NXBrowserCell.o
+	libappkit/shlib_obj/NXColorCell.o
+	libappkit/shlib_obj/NXColorCustom.o
+	libappkit/shlib_obj/NXColorPalette.o
+	libappkit/shlib_obj/NXColorPanel.o
+	libappkit/shlib_obj/NXColorPicker.o
+	libappkit/shlib_obj/NXColorSlider.o
+	libappkit/shlib_obj/NXColorSwatch.o
+	libappkit/shlib_obj/NXColorWell.o
+	libappkit/shlib_obj/NXColorWheel.o
+	libappkit/shlib_obj/NXFaxCoverView.o
+	libappkit/shlib_obj/NXFaxPanel.o
+	libappkit/shlib_obj/NXFaxPaperBox.o
+	libappkit/shlib_obj/NXFaxText.o
+	libappkit/shlib_obj/NXLazyBrowserCell.o
+	libappkit/shlib_obj/NXImage.o
+	libappkit/shlib_obj/NXImageRep.o
+	libappkit/shlib_obj/NXJournaler.o
+	libappkit/shlib_obj/NXJournalListener.o
+	libappkit/shlib_obj/NXJournalSpeaker.o
+	libappkit/shlib_obj/NXRulerView.o
+	libappkit/shlib_obj/NXSplitView.o
+	libappkit/shlib_obj/NXXYShow.o
+	libappkit/shlib_obj/OpenPanel.o
+	libappkit/shlib_obj/PSMatrix.o
+	libappkit/shlib_obj/PageLayout.o
+	libappkit/shlib_obj/Panel.o
+	libappkit/shlib_obj/PaperView.o
+	libappkit/shlib_obj/Pasteboard.o
+	libappkit/shlib_obj/PopUpList.o
+	libappkit/shlib_obj/PrintInfo.o
+	libappkit/shlib_obj/PrintPanel.o
+	libappkit/shlib_obj/QueryCell.o
+	libappkit/shlib_obj/QueryText.o
+	libappkit/shlib_obj/Responder.o
+	libappkit/shlib_obj/SavePanel.o
+	libappkit/shlib_obj/ScrollView.o
+	libappkit/shlib_obj/Scroller.o
+	libappkit/shlib_obj/ChoosePrinter.o
+	libappkit/shlib_obj/SelectionCell.o
+	libappkit/shlib_obj/Slider.o
+	libappkit/shlib_obj/SliderCell.o
+	libappkit/shlib_obj/Speaker.o
+	libappkit/shlib_obj/Text.o
+	libappkit/shlib_obj/TextField.o
+	libappkit/shlib_obj/TextFieldCell.o
+	libappkit/shlib_obj/View.o
+	libappkit/shlib_obj/Window.o
+	libappkit/shlib_obj/WindowTemplate.o
+	libappkit/shlib_obj/appCache.o
+	libappkit/shlib_obj/appServicesMenu.o
+	libappkit/shlib_obj/appWindows.o
+	libappkit/shlib_obj/epsUtil.o
+	libappkit/shlib_obj/errors.o
+	libappkit/shlib_obj/graphicOps.o
+	libappkit/shlib_obj/image.o
+	libappkit/shlib_obj/objectDelayedPerform.o
+	libappkit/shlib_obj/printSupport.o
+	libappkit/shlib_obj/systemUtils.o
+	libappkit/shlib_obj/textEdit.o
+	libappkit/shlib_obj/textEvent.o
+	libappkit/shlib_obj/textLayout.o
+	libappkit/shlib_obj/textPublic.o
+	libappkit/shlib_obj/textRTF.o
+	libappkit/shlib_obj/textReplace.o
+	libappkit/shlib_obj/textReplaceUtil.o
+	libappkit/shlib_obj/textScanDraw.o
+	libappkit/shlib_obj/textSelect.o
+	libappkit/shlib_obj/textSelectUtil.o
+	libappkit/shlib_obj/textSpell.o
+	libappkit/shlib_obj/textStream.o
+	libappkit/shlib_obj/textTabs.o
+	libappkit/shlib_obj/textUtil.o
+	libappkit/shlib_obj/appkit_vers.o
+	libappkit/shlib_obj/appServer.o
+	libappkit/shlib_obj/color.o
+	libappkit/shlib_obj/graphicArchiving.o
+	libappkit/shlib_obj/imageClient.o
+	libappkit/shlib_obj/imageWraps.o
+	libappkit/shlib_obj/pbsUser.o
+	libappkit/shlib_obj/privateWraps.o
+	libappkit/shlib_obj/publicWraps.o
+	libappkit/shlib_obj/rect.o
+	libappkit/shlib_obj/ssUser.o
+	libappkit/shlib_obj/textWraps.o
+	libappkit/shlib_obj/tiff.o
+	libappkit/shlib_obj/tiffCompress.o
+	libappkit/shlib_obj/tiffDir.o
+	libappkit/shlib_obj/tiffIO.o
+	libappkit/shlib_obj/tiffJpeg.o
+	libappkit/shlib_obj/timer.o
+	libappkit/shlib_obj/packagesWraps.o
+	libappkit/shlib_obj/viewDrag.o
+	libappkit/shlib_obj/wordTables.o
+	libappkit/shlib_obj/wsMemoryWraps.o
+
+	libdpsclient/shlib_obj/PSevent.o
+	libdpsclient/shlib_obj/PSgraphics.o
+	libdpsclient/shlib_obj/PSmisc.o
+	libdpsclient/shlib_obj/PSmousekey.o
+	libdpsclient/shlib_obj/PSwindow.o
+	libdpsclient/shlib_obj/dpsclient_vers.o
+	libdpsclient/shlib_obj/generic.o
+	libdpsclient/shlib_obj/input.o
+	libdpsclient/shlib_obj/list.o
+	libdpsclient/shlib_obj/machContext.o
+	libdpsclient/shlib_obj/PSNotSingleOps.o
+	libdpsclient/shlib_obj/namecode.o
+	libdpsclient/shlib_obj/outputContext.o
+	libdpsclient/shlib_obj/pmon.o
+	libdpsclient/shlib_obj/pscolorops.o
+	libdpsclient/shlib_obj/pscontrolops.o
+	libdpsclient/shlib_obj/psctxtops.o
+	libdpsclient/shlib_obj/psdataops.o
+	libdpsclient/shlib_obj/psfontops.o
+	libdpsclient/shlib_obj/psgstateops.o
+	libdpsclient/shlib_obj/psioops.o
+	libdpsclient/shlib_obj/psmathops.o
+	libdpsclient/shlib_obj/psmatrixops.o
+	libdpsclient/shlib_obj/psmiscops.o
+	libdpsclient/shlib_obj/psopstack.o
+	libdpsclient/shlib_obj/pspaintops.o
+	libdpsclient/shlib_obj/pspathops.o
+	libdpsclient/shlib_obj/pssysops.o
+	libdpsclient/shlib_obj/pswinops.o
+	libdpsclient/shlib_obj/queues.o
+	libdpsclient/shlib_obj/scanner.o
+	libdpsclient/shlib_obj/stream.o
+	libdpsclient/shlib_obj/streamContext.o
+	libdpsclient/shlib_obj/utils.o
+
+	libsoundkit/shlib_obj/Sound.o
+	libsoundkit/shlib_obj/SoundView.o
+	libsoundkit/shlib_obj/SoundMeter.o
+	libsoundkit/shlib_obj/soundkit_vers.o
+	libsoundkit/shlib_obj/soundWraps.o
+
+	defaultsstubs.o
+	alias.o
+	vers.o
+
+## These undefined symbols are expected since they are super classes of objects
+## in here and are defined in libsys.
+#undefined
+	.objc_class_name_Object
+	.objc_class_name_HashTable
+	.objc_class_name_List
+	.objc_class_name_StreamTable
+	.objc_class_name_Storage
+	.objc_class_name_NXStringTable
+
+
+#init pointers.o
+	__libNeXT_NXArgc			_NXArgc
+	__libNeXT_NXArgv			_NXArgv
+
+	__libNeXT_objc_msgSend			_objc_msgSend
+	__libNeXT_objc_msgSendSuper		_objc_msgSendSuper
+	__libNeXT_objc_getClass			_objc_getClass
+	__libNeXT_objc_getMetaClass		_objc_getMetaClass
+	__libNeXT_bcopy				_bcopy
+	__libNeXT__fixunsdfsi			__fixunsdfsi
+	__libNeXT__fixdfsi			__fixdfsi
+
+	__libNeXT_NXAllocErrorData		_NXAllocErrorData
+	__libNeXT_NXResetErrorData		_NXResetErrorData
+	__libNeXT_NXClose			_NXClose
+	__libNeXT_NXCloseMemory			_NXCloseMemory
+	__libNeXT_NXCloseTypedStream		_NXCloseTypedStream
+	__libNeXT_NXDefaultRead			_NXDefaultRead
+	__libNeXT_NXDefaultWrite		_NXDefaultWrite
+	__libNeXT_NXEndOfTypedStream		_NXEndOfTypedStream
+	__libNeXT_NXFlush			_NXFlush
+	__libNeXT_NXFlushTypedStream		_NXFlushTypedStream
+	__libNeXT_NXFreeObjectBuffer		_NXFreeObjectBuffer
+	__libNeXT_NXGetMemoryBuffer		_NXGetMemoryBuffer
+	__libNeXT_NXMapFile			_NXMapFile
+	__libNeXT_NXOpenFile			_NXOpenFile
+	__libNeXT_NXOpenMemory			_NXOpenMemory
+	__libNeXT_NXOpenTypedStream		_NXOpenTypedStream
+	__libNeXT_NXOpenTypedStreamForFile	_NXOpenTypedStreamForFile
+	__libNeXT_NXPrintf			_NXPrintf
+	__libNeXT_NXReadArray			_NXReadArray
+	__libNeXT_NXReadObject			_NXReadObject
+	__libNeXT_NXReadObjectFromBuffer	_NXReadObjectFromBuffer
+	__libNeXT_NXReadType			_NXReadType
+	__libNeXT_NXReadTypes			_NXReadTypes
+	__libNeXT_NXSaveToFile			_NXSaveToFile
+	__libNeXT_NXScanf			_NXScanf
+	__libNeXT_NXSeek			_NXSeek
+	__libNeXT_NXStreamCreate		_NXStreamCreate
+	__libNeXT_NXSystemVersion		_NXSystemVersion
+	__libNeXT_NXTell			_NXTell
+	__libNeXT_NXUngetc			_NXUngetc
+	__libNeXT_NXVPrintf			_NXVPrintf
+	__libNeXT_NXWriteArray			_NXWriteArray
+	__libNeXT_NXWriteObject			_NXWriteObject
+	__libNeXT_NXWriteObjectReference	_NXWriteObjectReference
+	__libNeXT_NXWriteRootObject		_NXWriteRootObject
+	__libNeXT_NXWriteRootObjectToBuffer	_NXWriteRootObjectToBuffer
+	__libNeXT_NXWriteType			_NXWriteType
+	__libNeXT_NXWriteTypes			_NXWriteTypes
+	__libNeXT_SNDAlloc			_SNDAlloc
+	__libNeXT_SNDBytesToSamples		_SNDBytesToSamples
+	__libNeXT_SNDCompactSamples		_SNDCompactSamples
+	__libNeXT_SNDConvertSound		_SNDConvertSound
+	__libNeXT_SNDCopySamples		_SNDCopySamples
+	__libNeXT_SNDCopySound			_SNDCopySound
+	__libNeXT_SNDDeleteSamples		_SNDDeleteSamples
+	__libNeXT_SNDFree			_SNDFree
+	__libNeXT_SNDInsertSamples		_SNDInsertSamples
+	__libNeXT_SNDGetMute			_SNDGetMute
+	__libNeXT_SNDGetVolume			_SNDGetVolume
+	__libNeXT_SNDMulaw			_SNDMulaw
+	__libNeXT_SNDReadSoundfile		_SNDReadSoundfile
+	__libNeXT_SNDSampleCount		_SNDSampleCount
+	__libNeXT_SNDSamplesProcessed		_SNDSamplesProcessed
+	__libNeXT_SNDSetMute			_SNDSetMute
+	__libNeXT_SNDSetVolume			_SNDSetVolume
+	__libNeXT_SNDStartPlaying		_SNDStartPlaying
+	__libNeXT_SNDStartRecording		_SNDStartRecording
+	__libNeXT_SNDStop			_SNDStop
+	__libNeXT_SNDWait			_SNDWait
+	__libNeXT_SNDWriteSoundfile		_SNDWriteSoundfile
+	__libNeXT_SNDiMulaw			_SNDiMulaw
+	__libNeXT__NXAddAltHandler		__NXAddAltHandler
+	__libNeXT__NXAddHandler			__NXAddHandler
+	__libNeXT__NXRaiseError			__NXRaiseError
+	__libNeXT__NXRemoveAltHandler		__NXRemoveAltHandler
+	__libNeXT__NXRemoveHandler		__NXRemoveHandler
+	__libNeXT__NXStreamChangeBuffer		__NXStreamChangeBuffer
+	__libNeXT__NXStreamFillBuffer		__NXStreamFillBuffer
+	__libNeXT__NXStreamFlushBuffer		__NXStreamFlushBuffer
+	__libNeXT__NXUncaughtExceptionHandler	__NXUncaughtExceptionHandler
+	__libNeXT__alloc			__alloc
+	__libNeXT__ctype_			__ctype_
+	__libNeXT__cvtToId			__cvtToId
+	__libNeXT__cvtToSel			__cvtToSel
+	__libNeXT__error			__error
+	__libNeXT__filbuf			__filbuf
+	__libNeXT__flsbuf			__flsbuf
+	__libNeXT__iob				__iob
+	__libNeXT__longjmp			__longjmp
+	__libNeXT__mh_execute_header		__mh_execute_header
+	__libNeXT__setjmp			__setjmp
+	__libNeXT__strhash			__strhash
+	__libNeXT_abort				_abort
+	__libNeXT_abs				_abs
+	__libNeXT_access			_access
+	__libNeXT_alarm				_alarm
+	__libNeXT_alphasort			_alphasort
+	__libNeXT_atoi				_atoi
+	__libNeXT_bootstrap_look_up		_bootstrap_look_up
+	__libNeXT_calloc			_calloc
+	__libNeXT_ceil				_ceil
+	__libNeXT_chdir				_chdir
+	__libNeXT_close				_close
+	__libNeXT_closedir			_closedir
+	__libNeXT_connect			_connect
+	__libNeXT_cthread_detach		_cthread_detach
+	__libNeXT_cthread_fork			_cthread_fork
+	__libNeXT_cthread_init			_cthread_init
+	__libNeXT_cthread_name			_cthread_name
+	__libNeXT_cthread_set_name		_cthread_set_name
+	__libNeXT_ctime				_ctime
+	__libNeXT_dbClose			_dbClose
+	__libNeXT_dbDelete			_dbDelete
+	__libNeXT_dbFetch			_dbFetch
+	__libNeXT_dbOpen			_dbOpen
+	__libNeXT_dbStore			_dbStore
+	__libNeXT_dbUnlock			_dbUnlock
+	__libNeXT_dbWaitLock			_dbWaitLock
+	__libNeXT_endpwent			_endpwent
+	__libNeXT_errno				_errno
+	__libNeXT_execl				_execl
+	__libNeXT_execv				_execv
+	__libNeXT_exit				_exit
+	__libNeXT_fclose			_fclose
+	__libNeXT_fcntl				_fcntl
+	__libNeXT_fflush			_fflush
+	__libNeXT_fgets				_fgets
+	__libNeXT_floor				_floor
+	__libNeXT_fopen				_fopen
+	__libNeXT_fork				_fork
+	__libNeXT_fprintf			_fprintf
+	__libNeXT_fputc				_fputc
+	__libNeXT_fread				_fread
+	__libNeXT_free				_free
+	__libNeXT_fseek				_fseek
+	__libNeXT_fstat				_fstat
+	__libNeXT_ftruncate			_ftruncate
+	__libNeXT_fwrite			_fwrite
+	__libNeXT_getdtablesize			_getdtablesize
+	__libNeXT_getenv			_getenv
+	__libNeXT_geteuid			_geteuid
+	__libNeXT_gethostbyname			_gethostbyname
+	__libNeXT_gethostname			_gethostname
+	__libNeXT_getlogin			_getlogin
+	__libNeXT_getpid			_getpid
+	__libNeXT_getpwent			_getpwent
+	__libNeXT_getpwnam			_getpwnam
+	__libNeXT_getpwuid			_getpwuid
+	__libNeXT_getrusage			_getrusage
+	__libNeXT_getsectbyname			_getsectbyname
+	__libNeXT_getsectbynamefromheader	_getsectbynamefromheader
+	__libNeXT_getsectdata			_getsectdata
+	__libNeXT_getsectdatafromheader		_getsectdatafromheader
+	__libNeXT_getsectdatafromlib		_getsectdatafromlib
+	__libNeXT_gettimeofday			_gettimeofday
+	__libNeXT_getuid			_getuid
+	__libNeXT_getwd				_getwd
+	__libNeXT_ioctl				_ioctl
+	__libNeXT_kern_timestamp		_kern_timestamp
+	__libNeXT_link				_link
+	__libNeXT_longjmp			_longjmp
+	__libNeXT_lseek				_lseek
+	__libNeXT_lstat				_lstat
+	__libNeXT_mach_error			_mach_error
+	__libNeXT_mach_error_string		_mach_error_string
+	__libNeXT_mach_ports_lookup		_mach_ports_lookup
+	__libNeXT_mach_ports_register		_mach_ports_register
+	__libNeXT_malloc			_malloc
+	__libNeXT_malloc_error			_malloc_error
+	__libNeXT_malloc_debug			_malloc_debug
+	__libNeXT_map_fd			_map_fd
+	__libNeXT_memmove			_memmove
+	__libNeXT_memset			_memset
+	__libNeXT_memcmp			_memcmp
+	__libNeXT_mig_dealloc_reply_port	_mig_dealloc_reply_port
+	__libNeXT_mig_get_reply_port		_mig_get_reply_port
+	__libNeXT_mkdir				_mkdir
+	__libNeXT_moncontrol			_moncontrol
+	__libNeXT_msg_receive			_msg_receive
+	__libNeXT_msg_rpc			_msg_rpc
+	__libNeXT_msg_send			_msg_send
+	__libNeXT_mstats			_mstats
+	__libNeXT_mutex_try_lock		_mutex_try_lock
+	__libNeXT_mutex_wait_lock		_mutex_wait_lock
+	__libNeXT_name_server_port		_name_server_port
+	__libNeXT_netname_check_in		_netname_check_in
+	__libNeXT_netname_check_out		_netname_check_out
+	__libNeXT_netname_look_up		_netname_look_up
+	__libNeXT_object_setInstanceVariable	_object_setInstanceVariable
+	__libNeXT_openlog			_openlog
+	__libNeXT_open				_open
+	__libNeXT_opendir			_opendir
+	__libNeXT_pclose			_pclose
+	__libNeXT_pipe				_pipe
+	__libNeXT_popen				_popen
+	__libNeXT_port_allocate			_port_allocate
+	__libNeXT_port_deallocate		_port_deallocate
+	__libNeXT_port_set_add			_port_set_add
+	__libNeXT_port_set_allocate		_port_set_allocate
+	__libNeXT_port_set_backlog		_port_set_backlog
+	__libNeXT_port_set_deallocate		_port_set_deallocate
+	__libNeXT_port_set_remove		_port_set_remove
+	__libNeXT_port_status			_port_status
+	__libNeXT_pow				_pow
+	__libNeXT_prdb_end			_prdb_end
+	__libNeXT_prdb_get			_prdb_get
+	__libNeXT_prdb_getbyname		_prdb_getbyname
+	__libNeXT_prdb_set			_prdb_set
+	__libNeXT_printf			_printf
+	__libNeXT_qsort				_qsort
+	__libNeXT_read				_read
+	__libNeXT_readdir			_readdir
+	__libNeXT_realloc			_realloc
+	__libNeXT_scandir			_scandir
+	__libNeXT_seekdir			_seekdir
+	__libNeXT_select			_select
+	__libNeXT_setpwent			_setpwent
+	__libNeXT_signal			_signal
+	__libNeXT_sigvec			_sigvec
+	__libNeXT_sleep				_sleep
+	__libNeXT_socket			_socket
+	__libNeXT_sprintf			_sprintf
+	__libNeXT_sscanf			_sscanf
+	__libNeXT_stat				_stat
+	__libNeXT_strcat			_strcat
+	__libNeXT_strchr			_strchr
+	__libNeXT_strcmp			_strcmp
+	__libNeXT_strcpy			_strcpy
+	__libNeXT_strlen			_strlen
+	__libNeXT_strncat			_strncat
+	__libNeXT_strncmp			_strncmp
+	__libNeXT_strncpy			_strncpy
+	__libNeXT_strrchr			_strrchr
+	__libNeXT_strtod			_strtod
+	__libNeXT_strtok			_strtok
+	__libNeXT_syslog			_syslog
+	__libNeXT_system			_system
+	__libNeXT_task_notify			_task_notify
+	__libNeXT_task_self_			_task_self_
+	__libNeXT_task_get_special_port		_task_get_special_port
+	__libNeXT_task_set_special_port		_task_set_special_port
+	__libNeXT_thread_abort			_thread_abort
+	__libNeXT_thread_info			_thread_info
+	__libNeXT_thread_policy			_thread_policy
+	__libNeXT_thread_priority		_thread_priority
+	__libNeXT_thread_self			_thread_self
+	__libNeXT_time				_time
+	__libNeXT_umask				_umask
+	__libNeXT_unlink			_unlink
+	__libNeXT_valloc			_valloc
+	__libNeXT_vfork				_vfork
+	__libNeXT_vfprintf			_vfprintf
+	__libNeXT_vm_allocate			_vm_allocate
+	__libNeXT_vm_copy			_vm_copy
+	__libNeXT_vm_deallocate			_vm_deallocate
+	__libNeXT_vm_page_size			_vm_page_size
+	__libNeXT_vm_protect			_vm_protect
+	__libNeXT_wait				_wait
+	__libNeXT_wait3				_wait3
+	__libNeXT_write				_write
+
+	__libNeXT_NXCreateHashTable		_NXCreateHashTable
+	__libNeXT_NXFreeHashTable		_NXFreeHashTable
+	__libNeXT_NXEmptyHashTable		_NXEmptyHashTable
+	__libNeXT_NXCopyHashTable		_NXCopyHashTable
+	__libNeXT_NXCountHashTable		_NXCountHashTable
+	__libNeXT_NXHashMember			_NXHashMember
+	__libNeXT_NXHashGet			_NXHashGet
+	__libNeXT_NXHashInsert			_NXHashInsert
+	__libNeXT_NXHashRemove			_NXHashRemove
+	__libNeXT_NXInitHashState		_NXInitHashState
+	__libNeXT_NXNextHashState		_NXNextHashState
+	__libNeXT_NXPtrHash			_NXPtrHash
+	__libNeXT_NXStrHash			_NXStrHash
+	__libNeXT_NXPtrIsEqual			_NXPtrIsEqual
+	__libNeXT_NXStrIsEqual			_NXStrIsEqual
+	__libNeXT_NXNoEffectFree		_NXNoEffectFree
+	__libNeXT_NXReallyFree			_NXReallyFree
+	__libNeXT_NXUniqueString		_NXUniqueString
+	__libNeXT_NXUniqueStringWithLength	_NXUniqueStringWithLength
+	__libNeXT_NXUniqueStringNoCopy		_NXUniqueStringNoCopy
+	__libNeXT_NXCopyStringBuffer		_NXCopyStringBuffer
+	__libNeXT_NXStrPrototype		_NXStrPrototype
+
+	__libNeXT_sel_isMapped			_sel_isMapped
+	__libNeXT_sel_getName			_sel_getName
+	__libNeXT_sel_getUid			_sel_getUid
+	__libNeXT_object_getClassName		_object_getClassName
+	__libNeXT_NXTypedStreamClassVersion	_NXTypedStreamClassVersion
+	__libNeXT_vsprintf			_vsprintf
+
+	__libNeXT_getgid			_getgid
+	__libNeXT_getegid			_getegid
+	__libNeXT_chown				_chown
+	__libNeXT_dbExists			_dbExists
+	__libNeXT_dbInit			_dbInit
+	__libNeXT_dbCreate			_dbCreate
+
+	__libNeXT_snddriver_stream_start_reading _snddriver_stream_start_reading
+	__libNeXT_snddriver_stream_setup	 _snddriver_stream_setup
+	__libNeXT_snddriver_reply_handler	 _snddriver_reply_handler
+	__libNeXT_snddriver_stream_control	 _snddriver_stream_control
+	__libNeXT_snddriver_set_sndin_owner_port _snddriver_set_sndin_owner_port
+
+	__libNeXT_SNDBootDSP			_SNDBootDSP
+	__libNeXT_snddriver_dsp_write		_snddriver_dsp_write
+	__libNeXT_SNDReadDSPfile		_SNDReadDSPfile
+	__libNeXT_snddriver_set_dsp_owner_port	_snddriver_set_dsp_owner_port
+	__libNeXT_snddriver_get_dsp_cmd_port	_snddriver_get_dsp_cmd_port
+	__libNeXT_snddriver_dsp_protocol	_snddriver_dsp_protocol
+        __libNeXT_SNDStartRecordingFile         _SNDStartRecordingFile
+
+	__libNeXT_getdirentries			_getdirentries
+
+	__libNeXT_atan				_atan
+	__libNeXT_cos				_cos
+	__libNeXT_sin				_sin
+	__libNeXT_sqrt				_sqrt
+	__libNeXT_fabs				_fabs
+
+	__libNeXT_NXCreateHashTableFromZone	_NXCreateHashTableFromZone
+	__libNeXT_NXCopyStringBufferFromZone	_NXCopyStringBufferFromZone
+	__libNeXT_NXSetTypedStreamZone		_NXSetTypedStreamZone
+	__libNeXT_NXCreateZone			_NXCreateZone
+	__libNeXT_NXCreateChildZone		_NXCreateChildZone
+	__libNeXT_NXMergeZone			_NXMergeZone
+	__libNeXT_NXZoneCalloc			_NXZoneCalloc
+	__libNeXT_NXZoneFromPtr			_NXZoneFromPtr
+	__libNeXT_NXZonePtrInfo			_NXZonePtrInfo
+	__libNeXT_NXDefaultMallocZone		_NXDefaultMallocZone
+	__libNeXT_NXStreamCreateFromZone	_NXStreamCreateFromZone
+	__libNeXT__zoneAlloc			__zoneAlloc
+	__libNeXT_NXNameZone			_NXNameZone
+
+	__libNeXT_setlocale			_setlocale
+	__libNeXT_usleep			_usleep
+
+        __libNeXT_condition_wait              _condition_wait
+        __libNeXT_cond_signal                 _cond_signal
+
+	__libNeXT_NXRegisterDefaults		_NXRegisterDefaults
+	__libNeXT_NXGetDefaultValue		_NXGetDefaultValue
+	__libNeXT_NXSetDefault			_NXSetDefault
+	__libNeXT_NXWriteDefault		_NXWriteDefault
+	__libNeXT_NXWriteDefaults		_NXWriteDefaults
+	__libNeXT_NXRemoveDefault		_NXRemoveDefault
+	__libNeXT_NXReadDefault			_NXReadDefault
+	__libNeXT_NXUpdateDefaults		_NXUpdateDefaults
+	__libNeXT_NXUpdateDefault		_NXUpdateDefault
+	__libNeXT_NXSetDefaultsUser		_NXSetDefaultsUser
+	__libNeXT_NXFilePathSearch		_NXFilePathSearch
+	__libNeXT_NXGetTempFilename		_NXGetTempFilename
+
+	__libNeXT_NXToLower			_NXToLower
+	__libNeXT_NXIsLower			_NXIsLower
+	__libNeXT_NXIsDigit			_NXIsDigit
+	__libNeXT_NXToAscii			_NXToAscii

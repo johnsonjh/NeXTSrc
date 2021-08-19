@@ -1,0 +1,28 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    osdev:1.1; strict;
+comment  @ * @;
+
+
+1.1
+date     89.06.11.17.33.13;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@char SGS_VERS[160] = "@@(#)PROGRAM:nu  PROJECT:cmds-13  DEVELOPER:mmeyer  BUILT:Thu Jun 8 21:06:58 PDT 1989\n";
+char VERS_NUM[10] = "13";
+@

@@ -1,0 +1,393 @@
+/* 
+ * Mach Operating System
+ * Copyright (c) 1987 Carnegie-Mellon University
+ * All rights reserved.  The CMU software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ */
+/*
+ * network.c
+ *
+ * $Source: /private/Net/p1/BSD/mmeyer/CMDS/cmds-13/usr.etc/nmserver/server/RCS/network.c,v $
+ *
+ */
+#ifndef	lint
+char network_rcsid[] = "$Header: network.c,v 1.2 89/06/07 14:50:37 mmeyer Locked $";
+#endif not lint
+/*
+ * Random things for the network level.
+ */
+
+/*
+ * HISTORY:
+ * 23-Jun-88  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Obtain the broadcast address from a network interface when possible.
+ *
+ * 25-Oct-87  Daniel Julin (dpj) at Carnegie-Mellon University
+ *	Redone network_init() to check for the presence of a network
+ *	and obtain the broadcast address from /etc/nmbroadcast if needed.
+ *
+ * 29-Apr-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Replaced fprintf by ERROR macro.
+ *
+ * 22-Dec-86  Robert Sansom (rds) at Carnegie Mellon University
+ *	Added udp_checksum and last_ip_id.
+ *
+ *  3-Nov-86  Robert Sansom (rds) at Carnegie Mellon University
+ *	Started.
+ *
+ */
+
+#include "netmsg.h"
+
+#ifndef	KERNEL_FEATURES
+#define	KERNEL_FEATURES	1
+#endif	KERNEL_FEATURES
+
+#include <mach.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <errno.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
+#include <sys/file.h>
+
+#include "network.h"
+#include "nm_defs.h"
+#include "nm_extra.h"
+#include "uid.h"
+
+char		my_host_name[HOST_NAME_SIZE];
+netaddr_t	my_host_id;
+netaddr_t	broadcast_address;
+short		last_ip_id;
+
+extern int	errno;
+
+
+/*
+ * init_network
+ *	Initialises some things for the network-level interface.
+ *
+ * Returns:
+ *	TRUE or FALSE.
+ *
+ * Side effects:
+ *	Sets up my_host_name, my_host_id, last_ip_id and broadcast_address.
+ *
+ */
+PUBLIC boolean_t network_init()
+BEGIN("network_init")
+	struct hostent		*hp;
+	ip_addr_t		temp_address;
+	int			s;
+	char			buf[1000];
+	struct ifconf		ifc;
+        struct ifreq		*ifr;
+	netaddr_t		cur_if_addr;
+	struct sockaddr_in	*cur_if_sockaddr;
+	int			n;
+	boolean_t		found_bcast = FALSE;
+	char			outstr[100];
+	FILE			*nm_fp;
+
+	/*
+	 * Make sure all important variables get a sensible value no
+	 * matter what happens.
+	 */
+	my_host_id = 1;
+	broadcast_address = 2;
+	last_ip_id = (short)uid_get_new_uid();
+
+	/*
+	 * Find the local IP address.
+	 */
+	if ((gethostname(my_host_name, HOST_NAME_SIZE)) != 0) {
+		panic("network_init.gethostname");
+	}
+
+#if	NeXT
+#else	NeXT
+	/*
+	 * Do not call gethostbyname() to get our own address, because
+	 * it may invoke services that are not running yet.
+	 */
+	hp = gethostbyname(my_host_name);
+
+	if (hp == 0) {
+		ERROR((msg, "network_init.gethostbyname fails, errno=%d",errno));
+		RETURN(FALSE);
+	} else {
+		my_host_id = *(netaddr_t *)(hp->h_addr);
+	}
+#endif	NeXT
+
+	/*
+	 * Check that the network is up.
+	 */
+	s = socket(AF_INET,SOCK_DGRAM,0);
+	if (s <= 0) {
+		ERROR((msg,"network_init.socket fails, errno=%d",errno));
+		RETURN(FALSE);
+	}
+	ifc.ifc_len = sizeof(buf);
+	ifc.ifc_buf = buf;
+	if (ioctl(s,SIOCGIFCONF,(char *)&ifc) < 0 ) {
+		ERROR((msg,
+			"network_init.ioctl(SIOCGIFCONF) fails, errno=%d",errno));
+		close(s);
+		RETURN(FALSE);
+	}
+	DEBUG1(TRUE,0,2700,(ifc.ifc_len / sizeof(struct ifreq)));
+	ifr = ifc.ifc_req;
+	for (n = ifc.ifc_len / sizeof(struct ifreq); n > 0; n--) {
+		cur_if_sockaddr = (struct sockaddr_in *)&(ifr->ifr_addr);
+#if	NeXT
+		if (cur_if_sockaddr->sin_family != AF_INET) {
+			ifr++;
+			continue;
+		}
+#endif	NeXT
+		cur_if_addr = cur_if_sockaddr->sin_addr.s_addr;
+		if (ioctl(s,SIOCGIFFLAGS,ifr) < 0) {
+			ERROR((msg,
+				"network_init.ioctl(SIOCGIFFLAGS) fails, errno=%d",
+									errno));
+			RETURN(FALSE);
+		}
+		sprintf(outstr,"   interface \"%.50s\" flags=0x%x, addr=0x%x",
+					ifr->ifr_name,ifr->ifr_flags,cur_if_addr);
+		DEBUG_STRING(TRUE,0,2701,outstr);
+#if	NeXT
+		/*
+		 * If this address looks like it is associated with a
+		 * real IP network interface, then use it as our
+		 * primary host address.
+		 */
+		if ((ifr->ifr_flags & (IFF_UP|IFF_LOOPBACK)) == (IFF_UP|IFF_LOOPBACK)) {
+			my_host_id  = cur_if_addr;
+		} else if ((ifr->ifr_flags & IFF_UP) && 
+		    !(ifr->ifr_flags & IFF_LOOPBACK)) {
+			n = -1;
+			my_host_id = cur_if_addr;
+			break;
+		} else {
+			ifr++;
+		}
+#else	NeXT
+		if ((ifr->ifr_flags & IFF_UP) && (cur_if_addr == my_host_id)) {
+			n = -1;
+			break;
+		} else {
+			ifr++;
+		}
+#endif	NeXT
+	}
+	if (n != -1) {
+		ERROR((msg,
+	"Could not find a working network interface - disabling the network"));
+		close(s);
+		RETURN(FALSE);
+	}
+
+#ifdef SIOCGIFBRDADDR
+	/*
+	 * Find the socket broadcast address.
+	 */
+	if (ioctl( s, SIOCGIFBRDADDR, (char *)ifr) < 0) {
+		ERROR((msg,"Cannot get the socket broadcast address for interface %s: %m", ifr->ifr_name));
+	} else {
+		found_bcast = TRUE;
+		cur_if_sockaddr = (struct sockaddr_in *)&(ifr->ifr_broadaddr);
+		broadcast_address = cur_if_sockaddr->sin_addr.s_addr;
+	}
+#endif SIOCGIFBRDADDR
+
+	close(s);
+
+	/*
+	 * Decide on the broadcast address.
+	 */
+	nm_fp = fopen("nmbroadcast","r");
+	if (nm_fp == NULL) {
+		nm_fp = fopen("/etc/nmbroadcast","r");
+	}
+	if (nm_fp != NULL) {
+		int	a,b,c,d;
+		int	ret;
+
+		ret = fscanf(nm_fp,"%d.%d.%d.%d\n",&a,&b,&c,&d);
+		temp_address.ia_bytes.ia_net_owner = a;
+		temp_address.ia_bytes.ia_net_node_type = b;
+		temp_address.ia_bytes.ia_host_high = c;
+		temp_address.ia_bytes.ia_host_low = d;
+		fclose(nm_fp);
+		if (ret != 4) {
+			ERROR((msg,"** Invalid format for nmbroadcast file."));
+			RETURN(FALSE);
+		}
+		broadcast_address = temp_address.ia_netaddr;
+		found_bcast = TRUE;
+	}
+
+	if (found_bcast == FALSE) {
+		/*
+		 * Use the CMU default.
+		 */
+		ERROR((msg,
+  "Warning: could not find a useful broadcast address, using 255.255.255.255"));
+		temp_address.ia_bytes.ia_net_owner = 255;
+		temp_address.ia_bytes.ia_net_node_type = 255;
+		temp_address.ia_bytes.ia_host_high = 255;
+		temp_address.ia_bytes.ia_host_low = 255;
+		broadcast_address = temp_address.ia_netaddr;
+	}
+
+#if	NeXT
+	{
+		char buf [BUFSIZ];
+		sprintf (buf, "Broadcast address: 0x%x", broadcast_address);
+		DEBUG0(TRUE,3, buf);
+    		DEBUG1(TRUE,0,2702,broadcast_address);
+	}
+#else	NeXT
+	DEBUG1(TRUE,0,2702,broadcast_address);
+#endif	NeXT
+
+	RETURN(TRUE);
+END
+
+
+
+
+/*
+ * udp_checksum
+ *	Calculate a UDP checksum.
+ *
+ * Parameters:
+ *	base	: pointer to data to be checksummed.
+ *	length	: number of bytes to be checksummed.
+ *
+ * Returns:
+ *	The checksum.
+ *
+ */
+
+#ifdef vax
+/*
+ * Checksum routine for Internet Protocol family headers (VAX Version).
+ *
+ * This routine is very heavily used in the network
+ * code and should be modified for each CPU to be as fast as possible.
+ */
+
+udp_checksum(base, length)
+	register unsigned short *base;	/* r11 */
+	register int length;		/* r10 */
+{
+	register int sum = 0;		/* r9 */
+
+	/*
+	 * Force to long boundary so we do longword aligned
+	 * memory operations.  It is too hard to do byte
+	 * adjustment, do only word adjustment.
+	 */
+	if (((int)base&0x2) && length >= 2) {
+		sum += *base++;
+		length -= 2;
+	}
+	/*
+	 * Do as much of the checksum as possible 32 bits at at time.
+	 * In fact, this loop is unrolled to make overhead from
+	 * branches &c small.
+	 *
+	 * We can do a 16 bit ones complement sum 32 bits at a time
+	 * because the 32 bit register is acting as two 16 bit
+	 * registers for adding, with carries from the low added
+	 * into the high (by normal carry-chaining) and carries
+	 * from the high carried into the low on the next word
+	 * by use of the adwc instruction.  This lets us run
+	 * this loop at almost memory speed.
+	 *
+	 * Here there is the danger of high order carry out, and
+	 * we carefully use adwc.
+	 */
+	while ((length -= 32) >= 0) {
+#define ADD	asm("adwc (r11)+,r9;")
+		ADD; ADD; ADD; ADD; ADD; ADD; ADD; ADD;
+		asm("adwc $0,r9");
+	}
+	length += 32;
+	while ((length -= 8) >= 0) {
+		ADD; ADD;
+		asm("adwc $0,r9");
+	}
+	length += 8;
+	/*
+	 * Now eliminate the possibility of carry-outs by
+	 * folding back to a 16 bit number (adding high and
+	 * low parts together.)  Then mop up trailing words
+	 * and maybe an odd byte.
+	 */
+	{ asm("ashl $-16,r9,r0; addw2 r0,r9");
+	  asm("adwc $0,r9; movzwl r9,r9"); }
+	while ((length -= 2) >= 0) {
+		asm("movzwl (r11)+,r0; addl2 r0,r9");
+	}
+	if (length == -1) {
+		sum += *(unsigned char *)base;
+	}
+	/*
+	 * Add together high and low parts of sum
+	 * and carry to get cksum.
+	 * Have to be careful to not drop the last
+	 * carry here.
+	 */
+	{ asm("ashl $-16,r9,r0; addw2 r0,r9; adwc $0,r9");
+	  asm("mcoml r9,r9; movzwl r9,r9"); }
+	return sum;
+}
+
+#else
+
+#ifdef romp
+udp_checksum(base, length)
+	register char	*base;
+	register int	length;
+{
+	return (0xffff ^ scksum(base, length));
+}
+
+#else
+
+/*
+ * Checksum routine for Internet Protocol family headers (NON-VAX Version).
+ *
+ * This routine is very heavily used in the network
+ * code and should be modified for each CPU to be as fast as possible.
+ * This particular version is a quick hack which needs to be rewritten.
+ */
+
+udp_checksum(base, length)
+	register unsigned short *base;
+	register int length;
+{
+	register int sum = 0;
+
+	while (length >= 2) {
+		sum += *base++;
+		if (sum > 0xffff)
+			sum -= 0xffff;
+		length -= 2;
+	}
+	if (length == 1) {
+		sum += *(unsigned char *)base;
+		if (sum > 0xffff)
+			sum -= 0xffff;
+	}
+	return sum ^ 0xffff;
+}
+#endif !(defined romp)
+#endif !(defined vax)

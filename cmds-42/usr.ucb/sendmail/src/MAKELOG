@@ -1,0 +1,31 @@
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c deliver.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c main.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c parseaddr.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c err.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c alias.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c savemail.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c sysexits.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c util.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c bmove.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c arpadate.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c version.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c collect.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c macro.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c headers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c readcf.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c stab.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c recipient.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c stats.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c daemon.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c usersmtp.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c srvrsmtp.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c queue.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c clock.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c trace.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c envelope.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c convtime.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c remote.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c domain.c
+vers_string -c sendmail > vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -c vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -I../include -I/usr/include/arpa  -DVMUNIX -DMXDOMAIN -DYELLOWPAGES -DDEBUG -DNETINFO -o sendmail.NEW conf.o deliver.o main.o parseaddr.o err.o alias.o savemail.o  sysexits.o util.o bmove.o arpadate.o version.o collect.o  macro.o headers.o readcf.o stab.o recipient.o stats.o daemon.o  usersmtp.o srvrsmtp.o queue.o clock.o trace.o envelope.o  convtime.o remote.o domain.o   vers.o -ldbm

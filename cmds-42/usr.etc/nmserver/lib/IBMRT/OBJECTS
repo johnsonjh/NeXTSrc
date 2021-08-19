@@ -1,0 +1,2 @@
+IBMRTVPATH=	IBMRT
+IBMRTOBJS=	vmtpsys.o scksum.o

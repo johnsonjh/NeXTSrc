@@ -1,0 +1,12 @@
+savecore.o: savecore.c /usr/include/stdio.h /usr/include/stddef.h
+savecore.o: /usr/include/stdarg.h /usr/include/nlist.h /usr/include/sys/param.h
+savecore.o: /usr/include/sys/features.h /usr/include/machine/machparam.h
+savecore.o: /usr/include/sys/assert.h /usr/include/next/vm_param.h
+savecore.o: /usr/include/sys/types.h /usr/include/next/eventc.h
+savecore.o: /usr/include/sys/signal.h /usr/include/machine/signal.h
+savecore.o: /usr/include/sys/types.h /usr/include/sys/dir.h
+savecore.o: /usr/include/sys/types.h /usr/include/sys/stat.h
+savecore.o: /usr/include/sys/types.h /usr/include/sys/fs.h
+savecore.o: /usr/include/sys/time.h /usr/include/time.h /usr/include/stddef.h
+savecore.o: /usr/include/sys/file.h /usr/include/sys/fcntl.h
+savecore.o: /usr/include/sys/syslog.h

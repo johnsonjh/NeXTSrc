@@ -1,0 +1,127 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    osdev:1.1; strict;
+comment  @ * @;
+
+
+1.1
+date     89.06.11.17.39.10;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@Original version
+.
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#include "piduid.h"
+
+#define CONFIGFILE "/etc/nu.cf"		/* configuration info from here */
+#define	ALIASES	   "/etc/aliases"	/* sendmail alias file */
+#define MAXSYMBOLS 100			/* limit of configuration symbols */
+#define MAXGROUPS  100			/* limit of GroupHome symbols */
+#define CR		'\n'
+#define BUF_LINE	250		/* line length buffer */
+#define BUF_WORD	40		/* word length buffer */
+#define	OK		0
+
+ /* DoCommand codes ... */
+#define	FATAL		1		/* Errors during System calls exit */
+#define	NONFATAL	0		/* Errors just print message */
+#define SAFE		1		/* Safe to execute during debugging */
+#define	UNSAFE		0		/* Must not execute while debugging */
+
+#define NOT		!
+#define MAXUID		99999		/* assumed to be higher than any
+					   userid */
+#define MAXMODS		50		/* max. modifications in session */
+
+
+/* This is a copy of the passwd structure, values are copied into this
+    structure because getpw--- returns a pointer to a STATIC area that is
+    overwritten on each call. */
+struct cpasswd {
+    char    cpw_name[BUF_WORD];
+    char    cpw_passwd[BUF_WORD];
+    char    cpw_asciipw[BUF_WORD];	/* Extra field: Ascii password */
+    int     cpw_uid;
+    int     cpw_gid;
+    char    cpw_group[BUF_WORD];	/* Extra field: Ascii group name */
+    char    cpw_person[BUF_WORD];
+    char    cpw_dir[BUF_WORD];
+    char    cpw_linkdir[BUF_WORD];	/* Extra field: top-level link dir */
+    char    cpw_shell[BUF_WORD];
+};
+/* This structure is used to hold the configuration statements from nu.cf
+   Note that no error checking of any kind is done! */
+
+typedef struct{
+    char   *SymbName;			/* Variable name goes here */
+    char   *Svalue;			/* String argument goes here OR */
+    long    ivalue;			/* Integer argument goes here */
+} Symb;
+Symb Symbols[MAXSYMBOLS];
+
+/* Definitions for using dbm (to access alias database) */
+typedef struct {
+    char   *dptr;
+    int     dsize;
+}  datum;
+
+struct topnode {
+    int     gid;			/* login group number */
+    char   *topnodename;		/* what comes after /usr */
+};
+
+
+/* True global variables */
+
+void   *niHandle;   /* handle for domain being used by nu */
+ni_id   userDir;    /* netinfo directory for the users directory */
+ni_id   groupDir;   /* netinfo directory for the groups directory */
+ni_id   aliasDir;   /* netinfo directory for the aliases directory */
+
+/* All routines, some may not work outside of nu.c */
+void *ncpy (char *to, char *from, int len);
+int YesNo (char defaultans);
+int UseDefault (char *str, char *def);
+int GetUserID ();
+int GetGroupID (char *group);
+void *MapLowerCase (char *b);
+void *MapUpperCase (char *b);
+int HasBadChars (char *b);
+void *GetLoginName (char *buf);
+int GetLoginDir (struct cpasswd *np);
+void *GetLoginSH (char *buf);
+int System (char *cmdstring);
+int CallSys (char *cmd);
+void *DoCommand (char *cmd, int fatal, int safe);
+void *AddToPasswd (struct cpasswd *userrec, int caps, char *argv[]);
+ni_status ReplaceInPasswd (struct cpasswd *userrec, ni_id whatDir);
+void *LogAddition (char *buf);
+void *CreateDir (struct cpasswd *np, int clobber);
+void *InstallFiles (struct cpasswd *np);
+void *PwPrint (struct cpasswd *cpw);
+int Verified (struct cpasswd *np);
+int Catch();
+void *Additions (int allCaps, char *argv[]);
+void *Xfer(struct passwd *pwd, struct cpasswd *cpw);
+struct passwd  *PromptForID ();
+void *GetMod (int allCaps, int uid, char *argv[]);
+void *Modify(int allCaps, int uid, char *argv[]);
+void *KillUser (int where, char *argv[]);
+void *DeleteAccounts(int allCaps, char *argv[]);
+int GetDel (struct cpasswd *ent, struct cpasswd *stack, int size, int allCaps, int theuid);
+void *ReadCf();
+int IntV (char *name);
+char *StrV (char *name);
+@

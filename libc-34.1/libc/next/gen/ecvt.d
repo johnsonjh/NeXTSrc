@@ -1,0 +1,1 @@
+ecvt.o : ecvt.c 

@@ -1,0 +1,30 @@
+gcore.o: gcore.c /usr/include/stdio.h /usr/include/stddef.h
+gcore.o: /usr/include/stdarg.h /usr/include/nlist.h /usr/include/sys/param.h
+gcore.o: /usr/include/sys/features.h /usr/include/machine/machparam.h
+gcore.o: /usr/include/sys/assert.h /usr/include/next/vm_param.h
+gcore.o: /usr/include/sys/types.h /usr/include/next/eventc.h
+gcore.o: /usr/include/sys/signal.h /usr/include/machine/signal.h
+gcore.o: /usr/include/sys/types.h /usr/include/sys/dir.h
+gcore.o: /usr/include/sys/types.h /usr/include/sys/user.h
+gcore.o: /usr/include/sys/types.h /usr/include/sys/lock.h
+gcore.o: /usr/include/sys/features.h /usr/include/sys/boolean.h
+gcore.o: /usr/include/machine/boolean.h /usr/include/sys/param.h
+gcore.o: /usr/include/sys/features.h /usr/include/machine/machparam.h
+gcore.o: /usr/include/sys/signal.h /usr/include/machine/signal.h
+gcore.o: /usr/include/sys/types.h /usr/include/machine/pcb.h
+gcore.o: /usr/include/next/pmap.h /usr/include/sys/zalloc.h
+gcore.o: /usr/include/machine/vm_types.h /usr/include/sys/lock.h
+gcore.o: /usr/include/sys/queue.h /usr/include/sys/lock.h
+gcore.o: /usr/include/machine/vm_types.h /usr/include/next/mmu.h
+gcore.o: /usr/include/vm/vm_statistics.h /usr/include/nextdev/video.h
+gcore.o: /usr/include/next/reg.h /usr/include/next/fpc.h
+gcore.o: /usr/include/sys/time.h /usr/include/time.h /usr/include/stddef.h
+gcore.o: /usr/include/sys/resource.h /usr/include/sys/time.h
+gcore.o: /usr/include/sys/errno.h /usr/include/stddef.h /usr/include/sys/proc.h
+gcore.o: /usr/include/sys/time.h /usr/include/sys/time.h
+gcore.o: /usr/include/sys/types.h /usr/include/sys/lock.h
+gcore.o: /usr/include/sys/boolean.h /usr/include/machine/pte.h
+gcore.o: /usr/include/sys/vm.h /usr/include/sys/vmparam.h
+gcore.o: /usr/include/machine/vmparam.h /usr/include/sys/vmmac.h
+gcore.o: /usr/include/sys/vmmeter.h /usr/include/sys/vmsystm.h
+gcore.o: /usr/include/setjmp.h

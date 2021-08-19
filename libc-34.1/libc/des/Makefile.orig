@@ -1,0 +1,59 @@
+#
+#    @(#)Makefile	1.6 88/08/01 4.0NFSSRC SMI;	from 1.6 86/12/24 (C) 1986 SMI
+#
+CFLAGS= -O -I.. 
+SRCS= des_crypt.c des_soft.c
+OBJS= des_crypt.o des_soft.o
+DESLIBS= deslib deslib_p
+HDRS= des_crypt.h softdes.h
+LD = ld
+
+.c.o:
+	${CC} -p ${CFLAGS} -c $*.c
+	${LD} -x -r $*.o
+	mv a.out profiled/$*.o
+	${CC} ${CFLAGS} -c $*.c
+	${LD} -x -r $*.o
+	mv a.out $*.o
+
+${DESLIBS}: profiled ${OBJS}
+	@echo "building profiled deslib"
+	@cd profiled; ar cru ../deslib_p ${OBJS}
+	@echo "buiding normal deslib"
+	@ar cru deslib ${OBJS}
+
+profiled:
+	-mkdir $@
+
+international: ${DESLIBS} ${OBJS}
+	ar d ${DESTDIR}/lib/libc.a ${OBJS}
+	ar d ${DESTDIR}/usr.lib/libc_p.a ${OBJS}
+	rm ${DESTDIR}/usr/man/man3/des_crypt.3
+	rm ${DESTDIR}/usr/include/des_crypt.h
+
+install: des_crypt.h
+	install -c -m 644 des_crypt.h ${DESTDIR}/usr/include/des_crypt.h
+
+clean:
+	rm -f ${DESLIBS}
+	rm -fr ${OBJS} profiled
+
+depend: $(SRCS) $(HDRS)
+	@${CC} ${CFLAGS} -M ${SRCS} > makedep
+	@echo '/^# DO NOT DELETE THIS LINE/+1,$$d' >eddep
+	@echo '$$r makedep' >>eddep
+	@echo 'w' >>eddep
+	@cp Makefile makefile.bak
+	@ed - Makefile < eddep
+	@rm eddep makedep makefile.bak
+
+# DO NOT DELETE THIS LINE
+des_crypt.o: des_crypt.c
+des_crypt.o: /usr/include/sys/types.h
+des_crypt.o: /usr/include/des_crypt.h
+des_crypt.o: /usr/include/sys/des.h
+des_soft.o: des_soft.c
+des_soft.o: /usr/include/sys/types.h
+des_soft.o: /usr/include/sys/des.h
+des_soft.o: ../des/softdes.h
+des_soft.o: ../des/softdesdata.c

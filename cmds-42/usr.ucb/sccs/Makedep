@@ -1,0 +1,8 @@
+sccs.o: sccs.c /usr/include/stdio.h /usr/include/sys/param.h
+sccs.o: /usr/include/sys/features.h /usr/include/machine/machparam.h
+sccs.o: /usr/include/sys/assert.h /usr/include/next/vm_param.h
+sccs.o: /usr/include/sys/types.h /usr/include/next/eventc.h
+sccs.o: /usr/include/sys/signal.h /usr/include/sys/types.h
+sccs.o: /usr/include/sys/stat.h /usr/include/sys/dir.h /usr/include/sys/types.h
+sccs.o: /usr/include/errno.h /usr/include/sys/errno.h /usr/include/signal.h
+sccs.o: /usr/include/sys/signal.h /usr/include/sysexits.h /usr/include/pwd.h

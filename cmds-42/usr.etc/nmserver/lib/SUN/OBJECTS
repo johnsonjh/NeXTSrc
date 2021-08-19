@@ -1,0 +1,4 @@
+SUNVPATH=	SUN
+SUNOBJS=	forward.o invoke.o recvreq.o getreply.o \
+		probeentity.o sendreply.o
+

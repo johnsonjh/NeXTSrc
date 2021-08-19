@@ -1,0 +1,578 @@
+
+	* ChangeLog-NeXT:  This file.
+
+	* INSTALL-NeXT:  New file.  Run before installing patches.  Moves
+	documentation files to new doc directory, vms related files to new vms
+	directory, and GNU versions of ANSI header files to include directory
+	(so the system versions are used).  Also changes all occurences of "__"
+	to "_" in optabs.c, so the system libraries will be used instead of
+	gnulib.
+
+	* Makefile:  New file.  The Makefile now makes heavy use of the VPATH
+	mechanism to keep object files out of the source area.  Isn't it nice
+	to be able to use "ls" again?  Also changed GCC_INCLUDE_DIR and
+	GPLUSPLUS_INCLUDE_DIR to be "" since they do not exist on a NeXT, and
+	this speeds up file inclusion (see below).
+
+	* README-NeXT:  Help for installing these changes.
+
+	* c-decl.c (pushdecl):  Post 1.36 bug fix from RMS.  Removes warning
+	about an array being declared extern and later static, since this is
+	the only way to forward declare a static array in ANSI-C, and
+	Objective-C needs to do this.
+
+	* c-decl.c (pushdecl):  Use copy from 1.37.
+
+	* c-parse.y (hash, is_reserved_word):  Changed "__inline" to "inline"
+	since NeXT's 1.0 compiler doesn't recognize "__inline".  These should
+	be changed to "inline", since there is no point in using "__inline"
+	except in header files.  Your program is not ANSI compatible whether
+	you use "inline" or "__inline", so it doesn't matter which you use!
+	Header files are different, because they may be included in both ANSI
+	compliant or non-compliant programs, and need to work in both cases.
+	Conditional on NeXT.
+
+	* c-parse.y (combine_strings):  Build array types in permanent area.
+	This fixes an elusive bug which we were never able to track down where
+	a type was being prematurely freed.  Conditional on NeXT_PARANOIA.
+
+	* c-parse.y (check_newline, do_pragma), toplev.c (main):  Added code to
+	support #pragma's to turn optimization on and off, etc.  New variable
+	initial_optimize_flag records whether optimization was requested on the
+	command line for #pragma CC_OPT_RESTORE. I don't like these #pragma's,
+	but they were in the 1.0 compiler and documentation, so we're stuck
+	with them for a while.  Conditional on NeXT.
+
+	* c-typeck.c (comptypes):  This is a change to fix a serious error in
+	the ANSI standard which makes const nearly useless.  Pointers are now
+	considered compatible if they point to types which are equivalent,
+	ignoring const and volatile.  Thus a const char ** is now compatible
+	with a char **.  Since people may have to port to ANSI compilers which
+	haven't fixed this brokenness, -pedantic still gives the old warnings.
+	This should be supported as a GNU extension since it is so useful.
+	Conditional on NeXT.
+
+	* cccp.c (mdflag, main):  Added support for Mach -MD and -MMD switches.
+	These write dependency information like -M and -MM, but to a ".d" file
+	rather than to stdout.  This is a really neat feature.  It avoids
+	having to do a separate "make depend" pass, because the pre-processor
+	generates the dependencies while it is processing the file anyway.
+	Conditional on MACH_MAKE_DEPEND.
+
+	* cccp.c (cplusplus_include_defaults):  Added /usr/local/include to C++
+	include directory search.  I think this was an oversight.  Conditional
+	on NeXT.
+
+	* cccp.c (do_include):  Skip search path entries which are the null
+	string entirley.  This permits GCC_INCLUDE_DIR to be defined to be "",
+	so as to save trying to open lots of non-existent files when
+	GCC_INCLUDE_DIR isn't actually used (for example, NeXT does not use
+	gnulib).
+
+	* config.gcc:  Added "NeXT" as synonym for "next".  Unconditionasl
+	change.
+
+	* emit-trl.c, expr.c, gcc.c, tree.c:  Changed #include of "gvarargs.h"
+	to <varargs.h>.  It would be more sensible to rename "./gvarargs.h" to
+	"./varargs.h" and rely on "-I." to pick up "./varargs.h" rather than
+	<varargs.h>.  This would make it easier to use the system version (if
+	you want to), and would be consistent with how <stddef.h> is handled
+	(see the comment in symout.c).  Conditional on NeXT.
+
+	* expmed.c:  Use copy from 1.36.9 which fixes bitfield bug.
+
+	* gcc.c (WORD_SWITCH_TAKES_ARG):  Added -A loader switch.
+	Unconditional change.
+
+	* gcc.c (compilers[], link_spec):  Changed usage of %{M*} to %{M} %{MM}
+	to avoid conflict with -MD and -MMD options which do not imply -E.
+	Unconditional change.
+
+	* gcc.c (compilers[]):  Removed file types .cc, .i, and .S which NeXT
+	does not support.  Conditional on NeXT.
+
+	* gcc.c (compilers[]):  Run pre-processor for .s files, defining
+	__ASSEMBELER__.  Do not define __GNUC__ for .s files.  Do define
+	__GNU__ for .c, .m, and .s files.  Include <ctype.h>.  Unconditional
+	change.
+
+	* gcc.c ():  Remove -b option so that -bsd works!  It is best to avoid
+	switches which have arguments embedded in them.  It is better for them
+	to take an explicit argument, so you don't pollute the switch namespace
+	so badly!
+
+	* gcc.c (struct switchstr, process_command,  give_switch):  Added two
+	new fields for second and third arguments of switch.  This needs to be
+	replaced with a more general mechanism for handling switches which take
+	multiple arguments.  Conditional on NeXT.
+
+	* gcc.c (do_spec_1):  In %P spec, don't add "__" before and after name
+	if it is already a standard pre-define.  This just avoids some clutter,
+	but still results in predefines which are already standard being
+	defined twice.  Perhaps it would be better to have
+	STANDARD_CPP_PREDEFINES and NON_STANDARD_CPP_PREDEFINES, and only use
+	%P for the non-standard ones.  Conditional on NeXT.
+
+	* gcc.c (execute):  Clarified fatal error message.
+
+	* gcc.c (main):  Changed version message to include information about
+	NeXT version numbers.
+
+	* gnulib.c, gnulib2.c:  New version from Veriosn 2 (dated Jan 2 15:57).
+	All functions which can be compiled with gcc have been moved to
+	gnulib2.  (Also changed #include of "limits.h" to <limits.h>.)
+
+	* hard-params.c:  Removed test of malloc'able memory since it causes a
+	crash in NeXT's malloc (to be fixed).  Conditional on NeXT.
+
+	* hard-params.c:  Declared signal handler (overflow) to return void
+	rather than int.  Conditional on NeXT.
+
+	* obstack.c (_obstack_begin):  Increased default chunk size to be
+	one page (8192), since malloc uses vm_allocate directly for these
+	requests.  Conditional on NeXT.
+
+	* obstack.[ch] (obstack_size):  New function.  Returns total size of
+	all objects in obstack.  Used with -dm option.  Conditional on NeXT.
+
+	* obstack.c (_obstack_newchunk):  Replaced word at a time optimization
+	with a simple bcopy.  This fixed some weird bugs we were seeing, and
+	isn't much slower.  Conditional on NeXT_PARANOIA.
+
+	* stor-layout.c:  Use copy of file from 1.36.9 which fixes bug relating
+	to structures.  Unconditional change.
+
+	* toplev.c (main):  Do not use sbrk () to print memory usage info,
+	since NeXT does not support it.  Instead, print number of nodes
+	allocated, size of each obstack, and malloc () statistics using 
+	mstats().  Also	print info using ps, but only for this process.
+	Conditional on NeXT.
+
+	* tree.c ():  Use bzero rather than writing words of zero to avoid
+	zeroing	past the end of malloc'ed objects.  Conditional on
+	NeXT_PARANOIA.
+
+	* config/tm-next.h (CPP_SPEC, MACH_MAKE_DEPEND):  Turn on support for
+	Mach -MD and -MMD cpp options.  Unconditional change.
+
+	* config/tm-next.h (LINK_SPEC):  Removed * from -segcreate option,
+	which was a typo.  Unconditional change.
+
+	* config/tm-next.h:  Deleted code inside #if 0.  Unconditional change.
+
+	* config/tm-next.h:  Add -shLib linker option, which is for NeXT
+	internal use only.  Unconditional change.
+	
+	* config/tm-next.h (OVERRIDE_OPTIONS):  Warn that -gg symbols are no
+	longer supported and use -g format instead   Unconditional change.
+
+Elimination of commons (1/23/89):
+
+	* varasm.c (assemble_variable):  Don't output a common if
+	flag_no_common is set, or if pedantic.
+	
+	* flags.h (flag_no_common):  Declare new flag.
+
+	* toplev.c (flag_no_common, f_options[]):  Define new flag (initially
+	off).  Add to machine independent options.  This creates two new flags,
+	-fcommon, and -fno-common.
+
+Changes for wchar_t being unsigned short rather than unsigned int (1/29/90):
+
+	* c-tree.h: declare short_unsigned_array_type_node.
+
+	* c-decl.c (init_decl_processing): define and initialize
+	short_unsigned_array_type_node.
+
+	* objc-parse.y (combine_strings, wide_buffer, init_lex, yylex):
+	Use short_unsigned_type_node rather than integer_type_node for
+	wide character strings.  Still to do:  don't allow concatenation
+	of wide and normal string constants;  perform mbtowc conversions in
+	wide character and string constants;  check overflow of hex escape
+	sequences better;  allow localization of mbtowc conversion.
+
+Changes to improve stabs (1/29/90):
+
+	* config/tm-next.h:  Define DBX_CONTIN_LENGTH to be 0 so as to avoid
+	stab continuation altogether.  This saves a significant amount of space
+	in debug files, and eases the loader's job quite a bit.
+
+	* dbxout.c (dbxout_symbol):  Output 'l' rather than no letter at all.
+	gdb already knows how to grok this.
+
+	* dbxout.c (current_sym_lineno):  New variable to communicate decl
+	source line to dbxout_finish_symbol.
+
+	* dbxout.c (dbxout_symbol):  Switch source files, if neccesary, and
+	record line number for later use.
+
+	* dbxout.c (dbxout_finish_symbol):  Output line number in n_desc field
+	and reset for next symbol.  Default is zero, which is what we used to
+	output all the time.
+
+	* final.c (lastfile):  Make symbol global so it can be used in
+	dbxout.c.
+
+Change to eliminate .gcc_compiled symbols (1/30/90):
+
+	* config/tm-next.h:  Define ASM_IDENTIFY_GCC to be null to avoid
+	.gcc_compiled symbols.  They interfere with numerically sorted symbol
+	lists.  It is never a good idea to have two symbols with the same
+	value.  On the NeXT, GDB always assumes the code was compiled with GCC.
+	We need a proper way to store version info and compiler option info
+	in object files.
+
+Change to fix -Wimplicit crasher (2/6/90):
+
+	* c-decl.c (implicitly_declare):  Always use permanent allocation for
+	implicit decls, until pushdecl is fixed.
+
+Change to driver to fix -segcreate bug (2/6/90):
+
+	* tm-next.h (WORD_SWITCH_TAKES_TWO_ARGS, WORD_SWITCH_TAKES_THREE_ARGS):
+	New macros for linker switches.
+	
+	* gcc.c (process_command): Use new macros rather than hardwiring in
+	-segcreate.
+	
+	* tm-next.h (LINK_SPEC):  Use * for most linke switches, since
+	otherwise cc will unique them, which is no good.
+
+Changes to fix cpp comment bug (2/9/90):
+
+	* cccp.c:  Two changes from rms (will be in 1.37).
+
+Changes to fix problems with .o symbols going away (2/12/90):
+
+	* dbxout.c (dbxout_finish):  New function.  Writes an N_SO symbol with
+	no name to mark the end of the module.
+
+	* toplev.c (compile_file):  Call new function dbxout_finish.
+
+Change to fix driver not finding as or ld (2/21/90):
+
+	* Makefile:  When compiling gcc.c, define STANDARD_EXEC_PREFIX to be
+	"$(BINDIR)/".
+
+Change to fix debug problems with qualified struct types (2/22/90):
+
+	* dbxout.c (dbxout_type):  Always use main variant of type.
+
+Change to avoid problem installing g++ (2/26/90):
+
+	* c-decl.c (init_decl_processing):  Declare __builtin_alloca () to take
+	an unsigned long rather than an int, since this is how <stdlib.h>
+	declares it.
+
+Don't use /usr/tmp (3/6/90):
+
+	* gcc.c (choose_temp_base):  Never use /usr/tmp.  Always use /tmp.
+
+Use gnulib again (3/7/90):
+
+	* gnulib2.c:  Fix bug in _fixunsdfsi() where '-' and '+' were
+	interchanged.
+
+Fix for debugging Objective-C because of .o symbols going away (3/14/90):
+
+	* dbxout.c (dbxout_finish):  Make sure the N_SO symbol is in the text
+	section!.  Output ".text" first!
+
+Makefile enhancements (3/21/90):
+
+	* move-if-change:  Remove the target before moving onto it to avoid SGS
+	headbutts.
+
+	* Makefile:  Remove stamp-md before touching it....
+
+OD driver bit-field bug from Stallman's 1.37.1(3/21/90):
+
+	* expmed.c (extract_bit_field, store_bit_field):
+	When changing mode of a reg to SImode, also do big-endian correction.
+	Consistently use BYTES_BIG_ENDIAN to decide how bits are numbered.
+	Fix stray ref to CODE_FOR_extzv in case for extv.
+
+Fix for color struct return bug from Stallman's 1.37.1 (3/21/90):
+
+	* expr.c (expand_call): Don't reuse pending_stack_adjust for argblock
+	if inhibit_defer_pop.
+
+Pass -whyload switch to loader (3/21/90):
+
+	* config/tm-next.h:  Pass -whyload switch to loader.  Takes no args.
+
+Lookup class methods in local implementation (3/21/90):
+
+	* objc-actions.c (build_message_expr):  Check current implementation
+	before looking up in interfaces seen so far.
+
+Fix for further debugger problems (3/22/90):
+
+	* c-decl.c:  Back out changes by rms in 1.37 to add LET_STMT's since
+	no NOTE_INSN_BLOCK_BEG's are written.  This makes final.c and dbxout.c
+	get out of sync about the LBBE local symbols.  This in turn screws up
+	gdb very badly.  Here is rms's ChangeLog entry for the change I backed
+	out.
+
+	* Always make a LET_STMT and notes for the top level of a function
+	if it has any subblocks.
+	* c-decl.c (struct binding_level): New field keep_if_subblocks.
+	(poplevel): Obey the new field.
+	(keep_next_if_subblocks): New variable.
+	(pushlevel): Use that variable.
+	(store_parm_decls): Set that variable.
+	(compstmt): Pass nonzero to expand_end_bindings
+	for the new kept binding levels.
+	(kept_level_p): New function.
+
+Fix for spin loop for "@interface Foo : Foo" (4/12/90):
+
+	* objc-actions.c (build_ivar_chain):  Check that interface of super is
+	not equal to interface of self.  No higher order loops are possible.
+
+Changes to make -seglinkedit the default (4/16/90):
+
+	* config/tm-next.h:  Pass -noseglinkedit as well as -seglinkedit so
+	as to be able to turn the default off.
+
+Fix to avoid inline C++ bug (4/17/90):
+
+	* obstack.c, obstack.h (obstack_free):  Fixed bug in obstack_free() for
+	border case when obstack_alloc(0) has returned chunk_limit of the
+	previous chunk.  In this case we should free our chunk rather than
+	setting object_base to that value.  This bug was only exposed because
+	of the previous change to obstack.c to make chunks whole pages.
+
+Changes to remove libc.a from Release 2.0 (4/40/90):
+
+	* config/tm-next.h (LIB_SPEC):  Make libsys_s.a the default library
+	rather than libc.a.
+
+Change for new loader feature (5/10/90):
+
+	* config/tm-next.h (LINK_SPEC):  Pass -w to loader.
+
+Change to remove -p profiling option (5/10/90):
+
+	* gcc.c (compilers[]), config/tm-next.h (LIB_SPEC, STARTFILE_SPEC):
+	Warn that -p is no longer supported, and that -pg should be used
+	instead.
+
+Bug fix for driver error messages (5/10/90):
+
+	* gcc.c (do_spec_1):  Put a null at end of error message.
+
+Change for new loader feature (5/23/90):
+
+	* config/tm-next.h (WORD_SWITCH_TAKES_THREE_ARGS, LINK_SPEC):
+	Pass -sectorder and -sectorder_detail to loader.
+
+Change to support scattered loading (5/23/90):
+
+	* config/m68k.md (call,  call_value):  Ouput jsr rather than jbsr,
+	since this prevents the assembler from using a short branch without
+	a relocation entry.  In the future this change should probably be made
+	in the assembler rather than the compiler.
+
+Released cc-24.
+
+Changes to fix stdarg bug when last fixed arg is a short (6/22/90):
+
+	* c-decl.c (init_decl_processing):  Added builtin function
+	__builtin_next_arg.
+
+	* tree.h (enum built_in_function): Added code BUILT_IN_NEXT_ARG.
+
+	* expr.c (expand_builtin):  Added builtin function BUILT_IN_NEXT_ARG.
+
+	* expr.h (current_function_arg_offset_rtx):  Declared.
+
+	* stmt.c (current_function_arg_offset_rtx, assign_parms):
+	Defined and set.
+
+	* include/stdarg.h (va_start):  Use version from 1.38.  These changes
+	must be propogated out to <stdarg.h>.
+
+Change for new loader feature (6/22/90):
+
+	* config/tm-next.h (LINK_SPEC):
+	Pass -whatsloaded to loader.
+
+Change to fix cc1 crasher (6/22/90):
+	
+	* recog.c (next_insns_test_no_inequality):  Use version from 1.37.
+
+Removed change to support scattered loading (6/22/90):
+
+	* config/m68k.md (call,  call_value): We're back to using jbsr again,
+	since the assembler has been fixed!
+
+Lots of changes for new assembler sections! (7/16/90):
+
+	* config/tm-next.h (EXTRA_SECTIONS, EXTRA_SECTION_FUNCTIONS,
+	SELECT_SECTION, SELECT_RTX_SECTION)  Output literal strings in
+	the cstring section, 4-byte and 8-byte literals in the literal4 and
+	literal8 sections, and other constants in the const section.
+	The flag flag_no_mach_text_sections causes supresses the use of these
+	new sections, and uses the text section instead.  Output Objective-C
+	symbols in the new Objective-C sections based on the decl's name.
+
+	* flags.h:  Declare new flag flag_no_mach_text_sections.
+
+	* toplev.c: (f_options[]):  Turn flag_no_mach_text_sections off
+	by default.
+
+	* objc-actions.c (generate_dispatch_tables):  Use new internal names
+	for category class and instance methods:
+	__OBJC_CATEGORY_CLASS_METHODS_{ClassName}_{CategoryName} and
+	__OBJC_CATEGORY_INSTANCE_METHODS_{ClassName}_{CategoryName}.
+	This fixes an old bug where there was a class Foo_Bar and a category
+	Bar of Foo in the same source file.  It also permits SELECT_SECTION
+	to distinguish between the two unambiguously.
+
+	* objc-parse.y (do_pragma):  Added #pragma CC_NO_MACH_TEXT_SECTIONS
+	which is equivalent to the flag -fno-mach-text-sections.
+
+Changes to remove instructions not implemented on the 68040 (7/16/90):
+
+	* config/tm-m68k.h (TARGET_68040, TARGET_SWITCHES):  Add new target
+	for 68040.  Add -m68040 and -mno68040 flags.
+
+	* config/tm-m68k.h (OUTPUT_JUMP):  Use while (0) in macro.
+
+	* config/out-m68k.h (standard_68881_constant_p):  Always return 0
+	for TARGET_68040 since fmovecr is no longer implemented in hardware.
+
+	* config/m68k.md (iorsi3):  Don't use bset, since it is slower than
+	ori.
+
+	* config/m68k.md (ftruncdf2):  Don't emit for fintrz TARGET_68040,
+	since it is no longer implemented in hardware.
+
+	* config/m68k.md (ftruncdf2, ftruncsf2):  Don't emit fintrz for
+	TARGET_68040, since it is no longer implemented in hardware.
+
+	* config/m68k.md (mulsf3, divsi3):  Don't emit fsglmul or fsgldiv for
+	TARGET_68040, since they are no longer implemented in hardware, and
+	mul and div are much faster now.
+
+	* config/tm-next.h (TARGET_DEFAULT):  Changed to 0207 for 68040.
+
+Changes to move branch tables to the const section (7/17/90):
+
+	* config/tm-next.h (ASM_OUTPUT_CASE_LABEL,ASM_OUTPUT_CASE_END):
+	Put the branch table in the const section.  This breaks assumptions
+	that the table immediately precedes the first case, and immediately
+	follows the jump instruction.
+
+	* config/tm-next.h (CASE_VECTOR_PC_RELATIVE, CASE_VECTOR_MODE):
+	Use absolute branch tables rather than relative ones.
+
+	* config/m68k.md (casesi, tablejump):  Don't use casesi insn, since it
+	assumes relative branch tables are being used.  Use new tablejump insn
+	instead.  This idea was taken from i860.md.
+
+	* config/tm-next.h (GO_IF_INDEXABLE_BASE):  Don't use pc relative
+	addressing for LABEL_REF's.  Since branch tables are in the const
+	section, we treat LABEL_REF's like SYMBOL_REF's here.  Otherwise
+	invalid addresses were being generated.
+
+Change to help keep stack aligned (7/17/90):
+
+	* config/tm-next.h (STACK_BOUNDARY):  Changed to 32 from 16.  This
+	doesn't appear to affect the calling convention, since all args are
+	rounded to 32-bits already.  It does affect the alignment enforced by
+	alloca, however.  With this change, all stack frames should be 32-bit
+	aligned	at all times (although their contents may not be).
+
+Change to avoid bug #6705 crasher (7/18/90):
+
+	* jump.c (delete_insn):  Take NULL pointer fix from 1.37.1
+
+Changes to fix new Objective-C sections (7/20/90):
+
+	* objc-actions.c (finish_objc):  Don't output ".data" or ".align 2".
+	Do switch to all Objective-C sections in order, so that the assembler
+	will output all of them in the correct order.
+
+Changes to reduce symbol table space usage for Objective-C (8/7/90):
+
+	* config/tm-next.h (ASM_OUTPUT_LABELREF):  Make internal Objective-C
+	labels local to the assembler by prefixing with 'L' instead of '_'.
+
+Changes to unique selector references (8/8/90):
+
+	* objc-actions.c (_OBJC_SELECTOR_REFERENCES_decl,
+	_OBJC_SELECTOR_REFERENCES_id):  Removed.
+
+	* objc-actions.c (synth_module_prologue):  Eliminated code to forward
+	declare the selector references array.
+
+	* objc-actions.c (init_objc_symtab):  Eliminated code to initialize
+	"refs" filed in objc_symtab structure.
+
+	* objc-actions.c (build_selector_translation_table):  Rewrote.
+
+	* objc-actions.c (build_selector_reference):  New routine.
+
+	* objc-actions.c (build_message_expr, build_selector_expr):  Use new
+	routine.
+
+	* c-decl.c (pushdecl_top_level):  New function.
+
+Changes to support latest evolution of the 68040 (8/17/90):
+
+	* config/m68k.h (mulsf3, divsf3):  We are back to using the
+	fsglmul and fsgldiv instructions, on the assumption that Motorola
+	will actually implement these in hardware.
+
+Fix for Ashton-Tate code generation bug (8/30/90):
+
+	* config/tm-m68k.h (NOTICE_UPDATE_CC):  Make ZERO_EXTEND clause also
+	apply for ZERO_EXTRACT.  This fixes a bug where comparing an unsigned
+	bit-field against zero gets the wrong answer.
+
+Fix for Lotus code generation bug (8/30/90):
+
+	* reload1.c:  Use version from 1.37.1.  Fixes bug where return result
+	from inline function returning short trashes other stack slots when it
+	is reloaded.
+
+Fix for NWU code generation bug (8/30/90):
+
+	* expr.c (expand_increment):  Pick up Stallman's fix from 1.37.1.
+	Always copy the returned rtx.
+
+Fix for SAS compiler crasher (8/30/90):
+
+	* cse.c (cse_insn):  Pick up Stallman's fix from post 1.37.1.
+	Don't create REG_EQUIV notes where there were none before.
+	Use REG_EQUAL (which doesn't imply the reg will never change).
+
+Don't put out stabs for Objective-C internal symbols (9/6/90):
+
+	* dbxout.c (dbxout_symbol):  Don't out put stabs for symbols which
+	begin with "_OBJC_".
+
+Fix for Dave Jaffe's inline bug (9/10/90):
+
+	* conbine.c (try_combine):  Picked up Stallman's fix from 1.37.1.
+	Don't install a subreg relating two modes that aren't tieable.
+
+Fix for problem with static access to ivars in categories (9/10/90):
+
+	* objc-actions.c (is_public):  Check that category's my_name
+	matches implementation, not super_name.
+
+Fix for preprocessor bug (9/13/90):
+
+	* cccp.c (discard_comments):  Handle backslash-newline.  Picked up
+	Stallman's fix from post 1.37.1.
+
+Fix for varargs-inline bug (9/19/90):
+
+	* expr.c (expand_builtin):  Give hard error for varargs.
+
+Fix for preprocessor alloca() bug (9/19/90):
+
+	* cccp.c (finclude):  Use malloc() instead of alloca().

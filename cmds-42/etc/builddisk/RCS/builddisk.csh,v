@@ -1,0 +1,711 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    mmeyer:1.2; strict;
+comment  @# @;
+
+
+1.2
+date     89.05.25.12.12.00;  author mmeyer;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     89.05.25.12.10.43;  author mmeyer;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@original version
+@
+
+
+1.2
+log
+@New version from Mike DeMoney
+@
+text
+@#! /bin/csh -f
+#PROGRAM
+# builddisk [-n] [-q] [-h HOSTNAME] [-l LABEL] [-t DISKTYPE] [-s SCRIPT] DEV
+#
+set path=( /usr/etc /bin /usr/bin /usr/ucb /etc $path )
+set hostname=`hostname`
+set scriptdir=/etc
+set exitstatus=0
+set mounted=""
+set mountlist=""
+while ( $#argv > 0 )
+	switch ( $argv[1] )
+	case -n:
+		set noinit
+		shift
+		breaksw
+	case -q:
+		set noquestions
+		shift
+		breaksw
+	case -h:
+		if ( $#argv < 2 ) then
+			echo ${0}: -h requires hostname
+			exit(1)
+		endif
+		set hostname=$argv[2]
+		shift; shift
+		breaksw
+	case -l:
+		if ( $#argv < 2 ) then
+			echo ${0}: -l requires disklabel
+			exit(1)
+		endif
+		set label=$argv[2]
+		shift; shift
+		breaksw
+	case -t:
+		if ( $#argv < 2 ) then
+			echo ${0}: -t requires disktab type
+			exit(1)
+		endif
+		set dtype=$argv[2]
+		shift; shift
+		breaksw
+	case -s:
+		if ( $#argv < 2 ) then
+			echo ${0}: -s requires builddisk script name
+			exit(1)
+		endif
+		set script=$argv[2]
+		shift; shift
+		breaksw
+	case -*:
+		echo ${0}: Unknown option: $argv[1]
+		exit(1)
+	default:
+		break
+	endsw
+end
+set noglob
+umask 022
+if ( `whoami` != "root" ) then
+	echo You must be root to run $0
+	exit(1)
+endif
+if ( $#argv != 1 ) then
+	echo Usage: $0 [-n] [-q] [-h HOSTNAME] [-l LABEL] [-t DISKTYPE] [-s SCRIPT] DEV
+	exit(1)
+endif
+switch ( $argv[1] )
+case od[01]:
+	set type=od
+	breaksw
+case sd[01234567]:
+	set type=sd
+	breaksw
+default:
+	echo ${0}: Device must be of form \"od0\", \"sd0\", etc
+	exit(1)
+endsw
+set dev="/dev/$argv[1]"
+set rdev = "/dev/r"$argv[1]
+if ( ! $?script ) then
+	switch ( $type )
+	case 'sd':
+		set mb=( `scsimodes -C ${rdev}a` )
+		if ( $status ) then
+			echo ${0}: Can\'t determine SCSI capacity
+			echo ${0}: Use -s SCRIPT option to specify script
+			echo Known scripts are:
+			unset noglob
+			ls $scriptdir/BLD.* | sed -e 's/.*\/BLD\.//'
+			exit(1)
+		endif
+		if ( $mb > 500 ) then
+			set script=sd660
+		else
+			set script=sd330
+		endif
+		breaksw
+	case 'od':
+		set script=od
+		breaksw
+	endsw
+endif
+if ( ! $?label ) then
+	set label="MyDisk"
+endif
+if ( -e BLD.$script ) then
+	set desc=BLD.$script
+else if ( -e $scriptdir/BLD.$script ) then
+	set desc=$scriptdir/BLD.$script
+else
+	echo ${0}: can\'t find builddisk script BLD.$script
+	echo Known scripts are:
+	unset noglob
+	ls $scriptdir/BLD.* | sed -e 's/.*\/BLD\.//'
+	exit(1)
+endif
+set mtab=( `mount | grep ^${dev}` )
+if ( $#mtab > 0 ) then
+	mount | grep ^${dev}
+	echo ${0}: ${dev} is mounted, unmount it before running $0
+	exit(1)
+endif
+set mtab=( `mount | grep '/mnt[abc]' ` )
+if ( $#mtab > 0 ) then
+	mount | grep '/mnt[abc]'
+	echo ${0}: /mnta, /mntb, or /mntc is in use
+	echo ${0} must use these mount points
+	exit(1)
+endif
+if ( ! $?noinit ) then
+	if ( ! $?noquestions ) then
+		echo -n "builddisk destroys previous contents of $dev, ok? "
+		set rsp=$<
+		if ( $rsp !~ [yY]* ) then
+			echo $0 aborted
+			exit(1)
+		endif
+	endif
+	if ( $?dtype ) then
+		disk -i -t $dtype -h $hostname -l $label ${rdev}a
+		if ( $status != 0 ) then
+			echo ${0}: Disk initialization failed
+			goto abort
+		endif
+	else
+		disk -i -h $hostname -l $label ${rdev}a
+		if ( $status != 0 ) then
+			echo ${0}: Disk initialization failed
+			goto abort
+		endif
+	endif
+else
+	if ( ! $?noquestions ) then
+		echo -n "builddisk overwrites contents of $dev, ok? "
+		set rsp=$<
+		if ( $rsp !~ [yY]* ) then
+			echo $0 aborted
+			exit(1)
+		endif
+		dd if=${rdev}a of=/dev/null count=1 bs=1k
+	endif
+endif
+onintr abort
+@@ line = 1
+while (1)
+	set cmdline = ( `sed -n -e ${line}p $desc` )
+	if ( $#cmdline < 1 ) goto done
+	if ( "$cmdline[1]" =~ \#* ) then
+		echo $cmdline
+		goto nextline
+	endif
+	if ( $#cmdline < 2 ) then
+		echo ${0}: Bad command line \"$cmdline\"
+		goto abort
+	endif
+	echo Doing: $cmdline
+	set cmd = $cmdline[1]
+	set part = $cmdline[2]
+	if ( $cmd != mount && "$mounted" !~ *\:$part\:* ) then
+		if ( ! { fsck ${rdev}$part } ) then
+			echo ${0}: fsck of ${rdev}$part failed
+			goto abort
+		endif
+		umount /mnt$part >& /dev/null
+		if ( ! { mount ${dev}$part /mnt$part } ) then
+			echo ${0}: mount ${dev}$part /mnt$part failed
+			goto abort
+		endif
+		set mounted=($mounted \:$part\: )
+		set mountlist=($mountlist $part)
+	endif
+	switch ( $cmd )
+	case "load":
+		if ( $#cmdline != 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set local = $cmdline[3]
+		set target = $cmdline[4]
+		mkdirs /mnt$part/$target
+		(cd $local; tar cf - .)|(cd /mnt$part/$target; tar xfpB - )
+		if ( $status != 0 ) then
+			echo ${0}: load of $target from $local failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "cload":
+		if ( $#cmdline != 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set local = $cmdline[3]
+		set target = $cmdline[4]
+		if ( -d $local ) then
+			mkdirs /mnt$part/$target
+			(cd $local; tar cf - .)|(cd /mnt$part/$target; tar xfpB - )
+			if ( $status != 0 ) then
+				echo ${0}: load of $target from $local failed
+				set exitstatus=1
+			endif
+		endif
+		breaksw
+	case "symlink":
+		if ( $#cmdline != 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set dest = $cmdline[3]
+		set src = $cmdline[4]
+		rm -f /mnt$part/$src
+		ln -s $dest /mnt$part/$src
+		if ( $status != 0 ) then
+			echo ${0}: symlink of $src to $dest failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "link":
+		if ( $#cmdline != 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set dest = $cmdline[3]
+		set src = $cmdline[4]
+		rm -f /mnt$part/$src
+		ln /mnt$part/$dest /mnt$part/$src
+		if ( $status != 0 ) then
+			echo ${0}: link of $src to $dest failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "copy":
+		if ( $#cmdline != 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set src = $cmdline[3]
+		set dest = $cmdline[4]
+		rm -f /mnt$part/$dest
+		if ( ! { cp -p $src /mnt$part/$dest } ) then
+			echo ${0}: copy of $src to $dest failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "ccopy":
+		if ( $#cmdline != 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set src = $cmdline[3]
+		set dest = $cmdline[4]
+		if ( -f $src ) then
+			rm -f /mnt$part/$dest
+			if ( ! { cp -p $src /mnt$part/$dest } ) then
+				echo ${0}: copy of $src to $dest failed
+				set exitstatus=1
+			endif
+		endif
+		breaksw
+	case "move":
+		if ( $#cmdline != 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set src = $cmdline[3]
+		set dest = $cmdline[4]
+		rm -f /mnt$part/$dest
+		if ( ! { mv $src /mnt$part/$dest } ) then
+			echo ${0}: move of $src to $dest failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "mount":
+		if ( $#cmdline != 3 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set src = $cmdline[2]
+		set dest = $cmdline[3]
+		umount $dest
+		if ( ! { mount $src $dest } ) then
+			echo ${0}: mount of $src on $dest failed
+			goto abort
+		endif
+		breaksw
+	case "mkdirs":
+		if ( $#cmdline != 3 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set dirs = $cmdline[3]
+		if ( ! { mkdirs /mnt$part/$dirs } ) then
+			echo ${0}: mkdirs of $dirs failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "rrm":
+		if ( $#cmdline != 3 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set dirs = $cmdline[3]
+		if ( ! { rm -rf /mnt$part/$dirs } ) then
+			echo ${0}: rm -rf of $dirs failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "rm":
+		if ( $#cmdline != 3 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set file = $cmdline[3]
+		if ( ! { rm /mnt$part/$file } ) then
+			echo ${0}: rm of $file failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "chmod":
+		if ( $#cmdline != 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set mode = $cmdline[3]
+		set file = $cmdline[4]
+		if ( ! { chmod $mode /mnt$part/$file } ) then
+			echo ${0}: chmod $mode $file failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "chown":
+		if ( $#cmdline != 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set owner = $cmdline[3]
+		set file = $cmdline[4]
+		if ( ! { chown $owner /mnt$part/$file } ) then
+			echo ${0}: chown $owner $file failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "chgrp":
+		if ( $#cmdline != 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set group = $cmdline[3]
+		set file = $cmdline[4]
+		if ( ! { chgrp $group /mnt$part/$file } ) then
+			echo ${0}: chgrp $group $file failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "rchmod":
+		if ( $#cmdline != 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set mode = $cmdline[3]
+		set file = $cmdline[4]
+		if ( ! { chmod -R $mode /mnt$part/$file } ) then
+			echo ${0}: chmod -R $mode $file failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "rchown":
+		if ( $#cmdline != 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set owner = $cmdline[3]
+		set file = $cmdline[4]
+		if ( ! { chown -R $owner /mnt$part/$file } ) then
+			echo ${0}: chown -R $owner $file failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "rchgrp":
+		if ( $#cmdline != 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set group = $cmdline[3]
+		set file = $cmdline[4]
+		if ( ! { chgrp -R $group /mnt$part/$file } ) then
+			echo ${0}: chgrp -R $group $file failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "exec":
+		if ( $#cmdline < 4 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set dir = $cmdline[3]
+		set command = ( $cmdline[4-] )
+		( cd /mnt$part/$dir; $command )
+		if ( $status != 0 ) then
+			echo ${0}: $command failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "touch":
+		if ( $#cmdline != 3 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		set file = $cmdline[3]
+		if ( ! { touch /mnt$part/$file } ) then
+			echo ${0}: touch $file failed
+			set exitstatus=1
+		endif
+		breaksw
+	case "remove":
+		if ( $#cmdline != 3 ) then
+			echo ${0}: Bad command \"$cmdline\"
+			goto abort
+		endif
+		rm -f /mnt$part/$cmdline[3]
+		breaksw
+	default:
+		echo ${0}: Unknown command \"$cmdline\"
+		goto abort
+	endsw
+nextline:
+	@@ line++
+end
+
+abort:
+echo Build of $dev aborted
+while ( $#mountlist > 0 )
+	umount /mnt$mountlist[1]
+	shift mountlist
+end
+set exitstatus=1
+goto ejectit
+
+done:
+while ( $#mountlist > 0 )
+	umount /mnt$mountlist[1]
+	if ( ! { fsck -y ${rdev}$mountlist[1] } ) then
+		echo ${0}: fsck of ${rdev}$mountlist[1] failed
+		set exitstatus=1
+	endif
+	shift mountlist
+end
+if ( $exitstatus != 0 ) then
+	echo ${0}: BUILD OF $dev HAD ERRORS
+	echo DISK MAY NOT BE USABLE, REVIEW ERROR LOG
+else
+	echo Build of $dev complete
+endif
+
+ejectit:
+if ( $type =~ od ) then
+	disk -e ${rdev}a
+endif
+exit($exitstatus)
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d2 1
+a2 1
+#
+d9 2
+d91 2
+a92 1
+			ls $scriptdir/BLD.* | sed -e 's/BLD\.//'
+d114 1
+a114 1
+	echo $0 can\'t find builddisk script BLD.$script
+d116 2
+a117 1
+	ls $scriptdir/BLD.* | sed -e 's/BLD\.//'
+d146 1
+a146 1
+			exit(1)
+d152 1
+a152 1
+			exit(1)
+d163 1
+a165 2
+set mounted=""
+set mountlist=""
+d176 2
+a177 2
+		echo $0 Bad command line \"$cmdline\"
+		exit(1)
+d184 2
+a185 2
+			echo $0 fsck of ${rdev}$part failed
+			exit(1)
+d189 2
+a190 2
+			echo $0 mount ${dev}$part /mnt$part failed
+			exit(1)
+d198 2
+a199 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d206 1
+a206 1
+			echo $0 load of $target from $local failed
+d212 2
+a213 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d221 1
+a221 1
+				echo $0 load of $target from $local failed
+d228 2
+a229 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d236 1
+a236 1
+			echo $0 symlink of $src to $dest failed
+d242 2
+a243 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d250 1
+a250 1
+			echo $0 link of $src to $dest failed
+d256 2
+a257 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d263 1
+a263 1
+			echo $0 copy of $src to $dest failed
+d269 2
+a270 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d277 1
+a277 1
+				echo $0 copy of $src to $dest failed
+d284 2
+a285 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d291 1
+a291 1
+			echo $0 move of $src to $dest failed
+d297 2
+a298 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d304 2
+a305 2
+			echo $0 mount of $src on $dest failed
+			exit(1)
+d310 2
+a311 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d315 1
+a315 1
+			echo $0 mkdirs of $dirs failed
+d321 2
+a322 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d326 1
+a326 1
+			echo $0 rm -rf of $dirs failed
+d332 2
+a333 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d337 1
+a337 1
+			echo $0 rm of $file failed
+d343 2
+a344 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d349 1
+a349 1
+			echo $0 chmod $mode $file failed
+d355 2
+a356 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d361 1
+a361 1
+			echo $0 chown $owner $file failed
+d367 2
+a368 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d373 1
+a373 1
+			echo $0 chgrp $group $file failed
+d379 2
+a380 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d385 1
+a385 1
+			echo $0 chmod -R $mode $file failed
+d391 2
+a392 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d397 1
+a397 1
+			echo $0 chown -R $owner $file failed
+d403 2
+a404 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d409 1
+a409 1
+			echo $0 chgrp -R $group $file failed
+d415 2
+a416 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d422 1
+a422 1
+			echo $0 $command failed
+d428 2
+a429 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d433 1
+a433 1
+			echo $0 touch $file failed
+d439 2
+a440 2
+			echo $0 Bad command \"$cmdline\"
+			exit(1)
+d445 2
+a446 2
+		echo $0 Unknown command \"$cmdline\"
+		exit(1)
+d458 2
+a459 1
+exit(1)
+a461 1
+echo Disk $dev built
+d464 2
+a465 2
+	if ( ! { fsck -p ${rdev}$mountlist[1] } ) then
+		echo $0 fsck of ${rdev}$mountlist[1] failed
+d471 1
+a471 1
+	echo $0 BUILD OF $dev HAD ERRORS
+d473 2
+a474 1
+	exit(1)
+d476 6
+@

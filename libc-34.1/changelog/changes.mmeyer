@@ -1,0 +1,16 @@
+CHANGES FOR LIBC-21
+libc/compat-sys5/Makefile	Removed C versions of memchr(), memcmp(),
+				memcpy(), and memset().
+libc/gen/Makefile		Added debug_malloc.c
+libc/stdio/fopen.c		Fixed bug in fopen().
+libc/next/csu/Makefile		Moved gmon.o into shlib.
+libc/next/gen/Makefile		New home for gmon.o
+libc/mach/mach_error.c		Removed ipcx interface.			
+libc/mach/exception.c		Removed ipcx interface.
+libc/ansi/strerror.c		Fixed bug in strerror().
+usr.include/arpa/telnet.h	New version of this file.
+usr.include/math.h		(Temporarily?) removed inline math functions.
+usr.include/memory.h		Fixed header file headbutt
+usr.include/libc.h		Added prototype for profil().
+usr.include/mach_error.h	Corrected existing prototypes.
+usr.include/mach_init.h		New prototypes for functions.

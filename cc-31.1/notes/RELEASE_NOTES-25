@@ -1,0 +1,355 @@
+Release notes for the -25 compiler release (link editor, shlibs and tools)
+by Kevin Enderby
+
+Additions to the release notes "Link Editor, Shared Libraries, and Tools":
+"Major Changes" section:
+
+    The ability to do "scattered loading" with ld(1) is now working correctly
+	The ld(1) option "-sectorder <segname> <sectname> <orderfile> has been
+	added to allow a section to be loaded in the order specified.  The
+	serious limitation because of the way the relocation entries worked
+	has been fixed and use of this feature produces correct programs.
+
+    Current limitations (3 of them)
+      1)Currently programs that have had their (__TEXT,__text) section scattered
+	loaded can NOT be debugged symbolicly with gdb(1).  Gdb(1) can only be
+	used on these programs when they have been stripped of debugging symbols
+	(with the use of the -S option to ld(1) or strip(1)).  Correcting this
+	serious limitation is under way in the compiler group.  We feel it is
+	needed to correct this problem because core files will have to be
+	debugged that have been scattered.
+
+      2)In part to implement scattered loading a new type of relocation entry
+	is now used (see the comments in <reloc.h>).  To use the -sectorder
+	feature all object files must be recompiled so the resulting program
+	will work correctly.  Unfortunately if this is not the case the new link
+	editor can't detect that an object file was not compiled with the
+	correct compiler and will produce a program that will not execute
+	correctly if (and only if) the -sectorder feature is used.  Also by the
+	same token objects compiled with the new compiler are not backward
+	compatible to previous warpX (or 1.0) releases of the link editor.  If
+	such an object file were linked with an old warpX link editor it would
+	result in an error message like the following:
+
+	    ld: hello.o r_address (0xa000005e) field of relocation entry 4 in
+	    section (__TEXT,__text) out of range
+
+	The key here to notice is that the high bit of the r_address field, bit
+	0x80000000, is set (which means it is one of the new scattered
+	relocation entries).
+
+      3)For hand coded assembly code there is only one minor limitation that
+	will result in an incorrect program (not linked correctly and will fail
+	to execute correctly).  This is if there is a branch to a temporary
+	label (a d: label where d is a digit or a label that starts with 'L')
+	that branches over a non-temporary label.  For example:
+
+		foo: bra 1f
+		     ...
+		bar: ...
+		1:   ...
+
+	The problem here is that there is no relocation entry generated for the
+	instruction "bra 1f".  Only the symbols foo and bar make it into the
+	object file's symbol table and if the link editor does not place the
+	block associated with the symbol bar directly after the block for foo
+	the branch to 1f will not go the the correct place (since their is no
+	relocation entry and thus the link editor does not know to fix up the
+	branch).  The source code change to fix this problem is to change the
+	label 1: to a non-temporary label (call it anything, like bar1).  To
+	make this work automaticly the assembler would have to make all branch
+	displacements long (32 bits) to allow to arbitrary motion by the link
+	editor and generate relocation entries for all of them.  Since this
+	never happens in compiler generated code and that it would bloat the
+	code it was chosen to live with this limitation.  I have not gone
+	through the 169 object files in libsys that come from assembly source
+	to find all of these if any exist (but since there are only 200 symbols
+	in these files very few cases of this problem could exist).
+
+    General description of scattered loading
+	Any regular (non-zerofill and not a 'C' string literal) section can be
+	ordered in the output file by specifying the following option to ld(1)
+	(or mkshlib(l)) (this option is currently NOT on the ld(1) man page
+	since this feature may not be documented outside of software pending
+	the gdb(1) limitation and a needed CCC approval):
+
+	    -sectorder SEGMENT_NAME section_name order_file
+
+	where (SEGMENT_NAME,section_name) specifies the section to be ordered
+	and order_file is a file that contains lines of object name and symbol
+	name pairs (exactly one per line separated by a single ':' with no other
+	white space).  The link editor then constructs the output file so that
+	the contents of the specified section in the output file is constructed
+	from blocks of the input file's sections.  For each input file that has
+	the specified section the link editor breaks up the contents of the
+	section in to blocks at the values of the symbols defined in that
+	section and associates the symbol name with the block.  Then the link
+	editor arranges the blocks the output file in the order listed in the
+	order_file.  These blocks are aligned to the output file's section
+	alignment for the specific section (see the ld(1) man page for more
+	information).  This can make the resulting section slightly larger than
+	if linked normally.  (For shlibs see the notes below on literal stings
+	in the files that contain global data).
+
+	Object file symbol name pairs found in the loaded objects not listed in
+	the order_file appear last in the output file's section ordered by
+	object file (as they appear on the command line) and then by symbol in
+	that object file ordered by increasing symbol value.  By default the
+	link editor prints a summary of number of symbol names in the loaded
+	objects not in the order_file and the number of symbol names listed in
+	the order_file not in the loaded objects if both values are not zero.
+	To produce a detailed list of these symbols the -sectorder_detail flag
+	can be specified.  Object file symbol name pairs listed multiple times
+	always generate a warning and the first occurrence is used.
+
+	The lines in the order file can most easily be produced with ld(1) and
+	nm(1).  For an executable first run the link editor with the
+	-whatsloaded option.  For example:
+
+	    cc -o hello hello.o -whatsloaded > whatsloaded
+
+	Then with the file produced above run nm(1) with the following options
+	using the section name, in this example (__TEXT,__text), to produce what
+	would be the default load order:
+
+	    nm -onjls __TEXT __text `cat whatsloaded` > text_order
+
+	Then the lines of text_order can be reordered to produce the desired
+	load order using the following command line:
+	
+	    cc -o hello hello.o -sectorder __TEXT __text text_order -e start
+
+	With executables the entry point must be preserved.  The best way to do
+	this is use the ld(1) option "-e start".  The symbol "start" (no leading
+	'_') is in crt0.o and is the first text address in your program when you
+	link normally and thus the default entry point for ld(1) (the first
+	address in the first section) works fine.  With scattered loading you
+	have to make sure to get this right.  The other way to do this is to put
+	the line "/lib/crt0.o:start" as the first line in your text_order file.
+
+    The pseudo symbol .section_start
+	If the specified section in any input file has a non-zero size and there
+	is not a symbol with the value of the beginning of it's section the
+	pseudo symbol ".section_start" is used by the link editor as the symbol
+	name it associates with the first block in the section.  This is common
+	in the (__TEXT,__text) section which contains the storage for literal
+	strings and floating point constants which do not have symbols that
+	normally appears in the output file.  For example the 'C' code:
+
+	    foo()
+	    {
+		double d;
+		float f;
+		    printf("Hello world\n");
+		    f = 1.0;
+		    d = 2.0;
+	    }
+
+	produces the following assembly code:
+
+	    #NO_APP
+	    .text
+	    LC0:
+		    .ascii "Hello world\12\0"
+		    .even
+	    LC1:
+		    .single 0r1.00000000000000000000e+00
+		    .even
+	    LC2:
+		    .double 0r2.00000000000000000000e+00
+		    .even
+	    .globl _foo
+	    _foo:
+		    link a6,#-12
+		    pea LC0
+		    jbsr _printf
+		    movel LC1,a6@(-12)
+		    movel LC2,a6@(-8)
+		    movel LC2+4,a6@(-4)
+	    L1:
+		    unlk a6
+		    rts
+
+	The compiler generated labels (the L* labels) get stripped by the
+	assembler by default (they are kept with the -L as(1) option).  So the
+	resulting object file for this example will only have the one symbol
+	"_foo" in the object file defined in the (__TEXT,__text) section.
+	So to place these first constants in the output file ld(1) makes up the
+	symbol ".section_start" to refer to the first block in the
+	(__TEXT,__text) section.
+
+    More about compiler generated constants
+	As the example above shows the compiler generated constants are emitted
+	for each procedure before the code for the procedure is emitted but with
+	no labels that appear in the object file.  Since ld(1) breaks the
+	section into blocks at labels that appear in the object file if the
+	(__TEXT,__text) section is ordered the constants for a procedure
+	are in the block preceding the procedure.  The user must currently
+	be aware of this because if two adjacent procedures in an input file are
+	order apart in the output file the procedure's constants and code will
+	end up apart in the output file (and may produce unexpected paging
+	performance).  One work around to this problem is to create static const
+	symbols for your constants.  The above example could be written as
+	follows:
+
+	    static const char foo_string1[] = "Hello world\n";
+	    static const float foo1_0 = 1.0;
+	    static const double foo2_0 = 2.0;
+	    foo()
+	    {
+		double d;
+		float f;
+		    printf(foo_string1);
+		    f = foo1_0;
+		    d = foo2_0;
+	    }
+
+	As one of our customers if this is causing difficulty please let us
+	know as we have ways to address this problem depending on the nature
+	of your constants (type and frequency).  Solutions involve creating a
+	literal sections for these constants (so they are uniqued across all
+	objects) or generating labels for them that show up in the output
+	object file so you can control exactly where they go with scattered
+	loading.
+
+    Ordering other sections besides the (__TEXT,__text) section
+	This same process can be used to order the blocks in any regular section
+	(non-zerofill sections like (__DATA,__bss) or non-cstring literal
+	sections like (__OBJC,__selector_strs)).  
+
+	For the objective-C runtime sections the only section that should be
+	ordered is the (__OBJC,__symbol_table) section.  If the size of this
+	section is greater than a page then it is worth while to order it to
+	minimize the number private data pages (those written on by the
+	objective-C runtime).  The (__OBJC,__symbol_table) section should be
+	ordered so that the same static symbols from all the object files are
+	grouped together and are in the following order:
+
+	    __OBJC_CLASS_{ClassName}
+	    __OBJC_METACLASS_{ClassName}
+	    __OBJC_CLASS_METHODS_{ClassName}_{CategoryName}
+	    __OBJC_INSTANCE_METHODS_{ClassName}_{CategoryName}
+
+	    __OBJC_CLASS_METHODS_{ClassName}
+	    __OBJC_INSTANCE_METHODS_{ClassName}
+	    __OBJC_SELECTOR_REFERENCES_{ClassName}
+
+	    __OBJC_SYMBOLS_{ClassName}
+	    __OBJC_CATEGORY_{ClassName}_{CategoryName}
+	    __OBJC_CLASS_VARIABLE_{ClassName}
+	    __OBJC_INSTANCE_VARIABLES_{ClassName}
+
+	This order reflects how the objective-C runtime uses these structures.
+	The first group is always written on, the second group is not written
+	on for the largest shlib (or the executable) typicly libNeXT, and the
+	last group is never written on and not used for messaging.  An order
+	file can be generated as above with the use of nm(1) (specifying the
+	(__OBJC,__symbol_table) section) and sort(1).  Then some simple cut and
+	paste editing will get the file in the proper order.  The command line
+
+	    nm -jos __OBJC __symbol_table `cat whatloaded` | 
+							sort -t: +1 > objc_order
+
+	Will get you a file you can start to edit.  If you do this you must get
+	it exactly right to get the savings.  If just one symbol which is
+	written on is left out or placed in the wrong order it will cause your
+	program to have a private copy of the page that symbol ended up on.
+	When you order this section the link editor should not print any values
+	for symbol's left out (use -sectorder_detail to get the symbols you are
+	missing some).
+
+	The other section that can be ordered is the (__DATA,__data) section.
+	There currently are no tools to measure references to data symbols.
+	The programmer may however know the patterns of how the program uses
+	it's data and could provide some savings if the data that is used to
+	support a seldom used feature is separated from other data.  One thing
+	to try is to sort the data by size so that all of the small things end
+	up on as few pages so if any large data item is not used it does not
+	cause two small things to reside on different pages.  Since this data
+	is private per-process and would have to be written to the swap file
+	this could be a major savings in some programs.
+
+	The two zerofill sections that can't currently be ordered are the
+	(__DATA,__bss) and (__DATA,__common) sections.  To allow this would not
+	be hard.  If you have a need for this please let us know.
+
+    Special notes for shared libraries
+	Since the shared libraries use fixed virtual addresses some of the
+	addresses must not change after they have been scatter loaded.  These
+	addresses include all branch table slots global const data and global
+	data.  Since all of these items are in a very few files this is not
+	difficult.  To do this I suggest you create a file that contains the
+	list of the objects that contain the symbols that must remain fixed.
+	For example for libNeXT this list is:
+
+	    branch.o
+	    libappkit/shlib_obj/appkit_globals.o
+	    libdpsclient/shlib_obj/globals.o
+	    libsoundkit/shlib_obj/soundkit_globals.o
+	    pointers.o
+
+	(basicly the thist objects in the #objects list in the spec_NeXT file).
+	The first file, branch.o, is created by mkshlib(1) and contains the
+	branch table and other associated shlib symbols created by mkshlib(1).
+	So if the (__TEXT,__text) section of libNeXT is to be ordered and the
+	above list is in the file head_objects the following command would be
+	used to create the first lines in the order file:
+
+	    nm -njosl __TEXT __text `cat head_objects` > head_text_order
+
+	By using the -n option and producing the list of symbols in numeric
+	order this assures the order will be correct.  If any of the object
+	files change this has to be redone.  This includes adding or changing
+	the spec_* file which effects the branch.o object file. 
+
+	The other problem I have found is that since the link editor rounds the
+	size of each block to the section alignment it can cause blocks to grow
+	in size.  For the (__TEXT,__text) section the alignment is 2 byte
+	boundaries.  So only blocks with that end up with odd sizes are
+	effected.  Since the only thing the compiler will put on an odd byte
+	boundary is character strings it is limited to this.  This problem was
+	found in the files that contain literal strings in the objects with
+	global data.  The fix is quite easy given how carefully we handle these
+	files.  Take for example the file soundkit_globals.m:
+
+	    #ifdef SHLIB
+	    #include "shlib.h"
+	    #endif SHLIB
+
+	    /* Global const data (in the text section) */
+	    extern const char _literal1[];
+	    const char * const NXSoundPboard = _literal1;
+	    static const char _soundkit_constdata_pad1[124] = { 0 }; 
+
+	    /* Literal const data (in the text section) */
+	    static const char _literal1[] = "NeXT sound pasteboard type";
+	    static const char _soundkit_constdata_pad2[101] = { 0 }; 
+
+	    /* Global data (in the data section) */
+	    char _soundkit_data_pad[256] = { 0 };
+
+	The symbol _literal1 is 27 bytes long (including the null added by the
+	compiler).  So when this block is scattered the block following it will
+	be rounded to the next 2 byte (the (__TEXT,__text) section alignment)
+	boundary and effectively adding 1 byte to the size of the block that
+	contains _literal1.  This would move all symbols in the output file
+	after it.  To correct this problem the two lines changed would be:
+
+	    static const char _literal1[] = "NeXT sound pasteboard type\0";
+	    static const char _soundkit_constdata_pad2[100] = { 0 }; 
+
+	Note the addition of the \0 to the end of _literal1 and the change in
+	size of _soundkit_constdata_pad2 from 101 to 100.  Since both of these
+	symbols are static their addresses need not remain fixed just so that
+	their sizes don't change in a way that would cause any global symbols to
+	not remain at fixed addresses.  I have found all of these problems for
+	libNeXT and libsys through the warp2G update and will pass them on to
+	their project owners.
+
+	Cmpshlib has be enhanced to check that the global const symbol address
+	also have not changed.  To do this it takes the spec_* file as input
+	and checks that all #nobranch_text symbols that are not #private_externs
+	have not changed in address.  With this change it points out bugs in the
+	spec_* file for symbols that are #nobranch_text which should have been
+	#private_externs. It also correctly does not check data symbols that
+	are #private_externs. 

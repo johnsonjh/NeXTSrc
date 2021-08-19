@@ -1,0 +1,147 @@
+# LINEMODE		Turns on support for the linemode option.
+#
+# KLUDGELINEMODE	The old linemode code.
+#
+# USE_TERMIO		Use a termios structure.
+#
+# SYSV_TERMIO		Use the System V termio structure. (implies USE_TERMIO)
+#
+# NEWINIT		Turns on the new init code for UNICOS systems.
+#
+# NO_GETTYTAB		This system does not have gettytab source.
+#
+# STREAMS		This system needs <sys/stream.h> for <sys/tty.h>
+#			(Sun 4.0.3)
+#
+# FILIO_H		This system should use <sys/fileo.h> instead
+#			of <sys/ioctl.h> (Sun 4.0.3)
+#
+# NO_CC_T		This system does not have a typedef for "cc_t"
+#
+# HAVE_fd_set		This system has a typedef for fd_set, but does
+#			not have FDSET() defined.
+#
+# NO_SETENV		If you don't have setenv(3) and unsetenv(3)
+#			in your library.
+#
+# NO_SETSID		If you don't have the POSIX setsid() call
+#
+# NO_STRERROR		If you don't have strerror(3)
+#
+# NO_STRING_H		If you don't have <string.h>, but have <strings.h>
+#
+# NO_LOGIN_P		If /bin/login doesn't understand the "-p"
+#			(preserve environment) option.
+#
+# DIAGNOSTICS		Turns on diagnostic code; adds extra logic and
+#			checks and debuging output if started with the
+#			-D option.
+#
+# STREAMS		If the system has streams; causes <sys/stream.h>
+#			to be included instead of <sys/tty.h>
+#
+# HAS_IP_TOS		Define this if you have the setsockopt() option for
+#			setting the IP Type of Service bit (IP_TOS) and you
+#			have the gettosbyname() function.
+#
+# NEED_GETTOS		Define this if you have the setsockopt() option for
+#			setting the IP Type Of Service bits, but you don't
+#			have the gettosbyname() function.  If you define
+#			this, you don't need to define HAS_IP_TOS.
+
+# LIBS		Libraries to be included.  This will include
+#		either -lcurses or -ltermcap, -lutil for 4.4bsd,
+#		and -lnet for UNICOS5.0 and earlier.
+#
+# GETTYSRC	source picked up from getty(1). (get_date.c and gettytab.c)
+# VPATH		Where to find ${GETTYSRC}
+# GETTYOBJ	get_date.o and gettytab.o if ${GETTYSRC} is set.
+# LIBEXEC	Where to install the executable
+# LIBC		Where the C library is, for dependencies.
+
+all:
+	@echo "you must specify what type of system you are on,"
+	@echo "or modify the makefile for your system."
+	@echo "Known system types are:"
+	@echo "	4.4bsd 4.3bsd unicos5.0 unicos6.0 sun3.5 sun4.0 sun4.1 dynix"
+	exit 1
+
+4.4bsd:
+	make -f Makefile.generic ${WHAT} \
+		LIBS="-lutil -ltermcap" \
+		GETTYOBJ="get_date.o gettytab.o" \
+		GETTYSRC="get_date.c gettytab.c" \
+		VPATH=/usr/src/libexec/getty \
+		LIBEXEC=${DESTDIR}/usr/libexec \
+		DEFINES="-DLINEMODE -DKLUDGELINEMODE -DUSE_TERMIO \
+			-DDIAGNOSTICS" \
+		LIBC=/lib/libc.a
+
+4.3bsd:
+	make -f Makefile.generic ${WHAT} \
+		LIBS=-ltermcap \
+		GETTYOBJ="get_date.o gettytab.o" \
+		GETTYSRC="get_date.c gettytab.c" \
+		VPATH=/usr/src/etc/getty
+		LIBEXEC=${DESTDIR}/etc
+		DEFINES="-DDIAGNOSTICS"
+		LIBC=/lib/libc.a
+
+unicos5.0 unicos5.1:
+	make -f Makefile.generic ${WHAT} \
+		LIBS="-lnet -lcurses" \
+		LIBEXEC=${DESTDIR}/etc \
+		DEFINES="-DUNICOS5 -DLINEMODE -DKLUDGELINEMODE -DSYSV_TERMIO \
+			-DNEWINIT -DNO_GETTYTAB -DNO_CC_T -Dsignal=sigset \
+			-DDIAGNOSTICS -DNO_SETSID -DNO_STRERROR" \
+		LIBC=/lib/libc.a
+
+unicos6.0:
+	make -f Makefile.generic ${WHAT} \
+		LIBS=-lcurses \
+		LIBEXEC=${DESTDIR}/etc \
+		DEFINES="-DLINEMODE -DKLUDGELINEMODE -DSYSV_TERMIO -DNEWINIT \
+			-DNO_GETTYTAB -Dsignal=bsdsignal -DDIAGNOSTICS \
+			-DHAS_IP_TOS" \
+		LIBC=/lib/libc.a
+
+sun3.5:
+	make -f Makefile.generic ${WHAT} \
+		LIBS=-ltermcap \
+		LIBEXEC=${DESTDIR}/usr/etc/in.telnetd \
+		DEFINES="-DHAVE_fd_set -DNO_GETTYTAB -DDIAGNOSTICS \
+			-DNO_SETENV -DNO_SETSID -DNO_STRERROR -DNO_LOGIN_P" \
+		LIBC=/lib/libc.a
+
+sun4.0.3c sun4.0:
+	make -f Makefile.generic ${WHAT} \
+		LIBS=-ltermcap \
+		LIBEXEC=${DESTDIR}/usr/etc/in.telnetd \
+		DEFINES="-DNO_GETTYTAB -DUSE_TERMIO -DNO_CC_T -DFILIO_H \
+			-DSTREAMS -DDIAGNOSTICS -DNO_SETENV -DNO_SETSID \
+			-DNO_STRERROR" \
+		LIBC=/lib/libc.a
+
+sun4.1:
+	make -f Makefile.generic ${WHAT} \
+		LIBS=-ltermcap \
+		LIBEXEC=${DESTDIR}/usr/etc/in.telnetd \
+		DEFINES="-DNO_GETTYTAB -DUSE_TERMIO -DFILIO_H -DSTREAMS\
+			-DDIAGNOSTICS -DNO_SETENV -DNO_STRERROR" \
+		LIBC=/lib/libc.a
+
+dynix3.0.12 dynix:
+	make -f Makefile.generic ${WHAT} \
+		LIBS=-ltermcap \
+		LIBEXEC=${DESTDIR}/usr/etc \
+		DEFINES="-DNO_GETTYTAB -DDIAGNOSTICS -DNO_STRING_H \
+		-DNO_SETENV -DNO_STRERROR -DNO_SETSID" \
+		LIBC=/lib/libc.a
+
+ultrix3.1:
+	make -f Makefile.generic ${WHAT} \
+		LIBS=-ltermcap \
+		LIBEXEC=${DESTDIR}/usr/etc \
+		DEFINES="-DNO_GETTYTAB -DDIAGNOSTICS -DUSE_TERMIO \
+			-DNO_STRERROR -DNO_SETENV -YPOSIX" \
+		LIBC=/lib/libc.a

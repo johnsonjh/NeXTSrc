@@ -1,0 +1,18 @@
+Makefile	1.3 06/14/88 16:28:03
+Added "make depend" target, and remade dependencies.
+
+Makefile	1.2 03/08/88 10:52:45
+Revised Makefile to BSD style.
+
+Makefile	1.1 03/08/88 10:50:25
+date and time created 88/03/08 10:50:25 by sxn
+
+getname.c	1.2 05/18/88 14:12:09
+Fixed a typo.
+
+getname.c	1.1 03/07/88 13:21:14
+date and time created 88/03/07 13:21:14 by sxn
+
+mknetid.c	1.1 03/07/88 13:21:17
+date and time created 88/03/07 13:21:17 by sxn
+

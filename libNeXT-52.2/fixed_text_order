@@ -1,0 +1,4 @@
+branch.o:.section_all
+libappkit/shlib_obj/appkit_globals.o:.section_all
+libdpsclient/shlib_obj/globals.o:.section_all
+libsoundkit/shlib_obj/soundkit_globals.o:.section_all

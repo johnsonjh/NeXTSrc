@@ -1,0 +1,121 @@
+
+currentshared true setshared
+  % allocate all of these procs in shared VM and leave previous state on 
+  % stack for restore
+
+windowPackage1.0 begin
+
+/printCallStack {	%			printCallStack
+  % prints our trace of call stack
+    /userdict load /_NXCallStack known {
+	(Call Stack:\n) print
+	_NXCallStack _NXCallStackTop
+	1 sub -1 0 {
+						% Stack index
+	    1 index exch			% Stack Stack index
+	    get
+	    (    ) print =
+	} for					% Stack
+	pop flush
+    } if
+} bind def
+
+/newhandleerror {
+  % new and improved error handler to printout opstack on error
+    $error begin
+    currentwriteblock mark false setwriteblock 
+    {
+	newerror {
+	    /newerror false def
+	    (%%[ Error: ) print
+	    errorname
+	    {
+		dup type /stringtype ne {
+		    =string  cvs
+		} if
+		print
+	    } exec
+	    (; OffendingCommand: ) print
+	    /command load
+	    {
+		dup type /stringtype ne {
+		    { =string cvs } stopped {
+			pop pop (<long object>)
+		    } if
+		} if
+		print
+	    } exec
+	    (; Context: ) print
+	    currentcontext systemdict /= get exec
+	    (OpStack:) print
+	    ostack length 0 gt {
+		(\n) print
+	    } if
+	    ostack
+	    aload length				% opArray1-n n
+	    {
+		(    ) print systemdict /== get exec
+	    } repeat
+	    //printCallStack exec
+	    /_NXCallStackTop 0 store
+	    (]%%\n) print
+	    flush
+	} if
+    } stopped pop
+    cleartomark setwriteblock
+    end
+} bind def
+
+_NXDebug {
+/debugmsg {		%			debugmsg
+    currentwindowdict begin
+    nextdict /debugging get
+    {
+        nextdict /errfile known not
+	{
+	    currentshared true setshared	%allocate string from shared VM
+	    nextdict /errfile (/tmp/pserr) (w) file put
+	    setshared			%restore previous VM allocation mode
+	} if
+	errfile exch writestring 
+	errfile flushfile
+    }{
+        pop
+    }
+    ifelse 
+    end
+} _NXDefProc
+}if
+
+nextdict begin
+
+/_NXInstallDebugErrorHandler {	%		_NXInstallDebugErrorHandler
+  % installs our special error handler for the current context.  We do this
+  % by turning on stack recording for every error, and setting the handleerror
+  % proc to our own error handler.  Finally, we install a nop version of
+  % ourselves in userdict to prevent our being called again.
+    $error /recordstacks true put
+    errordict /handleerror /newhandleerror //pkget exec put
+    userdict /_NXInstallDebugErrorHandler {} put
+} _NXDefProc
+
+_NXDebug {
+/_NXTrace {		%		  <msg> _NXTrace
+    (--------- ) print
+    print
+    ( ---------\n) print
+    (Context: ) print
+    currentcontext =
+    (OpStack:\n) print
+    0 1 count 3 sub {
+	(    ) print index ==
+    } for
+    //printCallStack exec
+} bind def
+} if
+
+end			% close nextdict
+end			% close window dict
+
+setshared		% restore VM allocation mode
+

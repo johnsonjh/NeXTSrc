@@ -1,0 +1,34 @@
+alias.o:.libNeXT_objc_msgSend
+alias.o:.libNeXT_objc_msgSendSuper
+alias.o:.libNeXT_objc_getClass
+alias.o:.libNeXT_objc_getMetaClass
+alias.o:.libNeXT_bcopy
+alias.o:.libNeXT__fixunsdfsi
+alias.o:.libNeXT__fixdfsi
+Application.o:+[Application new]
+Application.o:-[Application _setUp]
+Application.o:-[Application _commonAppInit]
+Window.o:__NXBuildSharedWindows
+Cursor.o:+[NXCursor _makeCursors]
+privateWraps.o:__NXScreenSize
+Application.o:_makeAppIconBitmap
+privateWraps.o:__NXLoadPackage
+Application.o:_initGlobals
+packagesWraps.o:__NXSetProcessID
+Window.o:_initShared
+packagesWraps.o:__NXGetSharedWindows
+Cursor.o:+[NXCursor _buildCursor:cursorData:]
+psctxtops.o:_PSsetobjectformat
+privateWraps.o:_dictKnown
+privateWraps.o:_linkPackage
+Application.o:_workSpaceFeedBack
+Application.o:_initListener
+Application.o:-[Application _replyToLaunch]
+appRequest.o:-[Application(RequestMenu) _initRequestMenu]
+Menu.o:-[Menu _makeRequestMenu]
+MenuTemplate.o:+[MenuTemplate initialize]
+Application.o:+[Application initialize]
+Window.o:-[Window _wsmIconInitFor:]
+Font.o:+[Font initialize]
+appRequest.o:-[Application(RequestMenu) _initRequestMenu:]
+privateWraps.o:__NXGetScreenInfo

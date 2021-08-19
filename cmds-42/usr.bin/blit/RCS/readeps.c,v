@@ -1,0 +1,143 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    mmeyer:1.1; strict;
+comment  @ * @;
+
+
+1.1
+date     89.05.11.23.26.48;  author mmeyer;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@works in corner and left side.  x offsetting wrong
+@
+
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#include <stdio.h>
+#include <sys/types.h>
+#include <sys/file.h>
+#include <sys/stat.h>
+#include <sys/param.h>
+#include <sys/mman.h>
+#include <sys/ioctl.h>
+#include <nextdev/video.h>
+
+#define TRUE  1
+#define FALSE 0
+
+main (argc, argv)
+	int argc;
+    	char *argv[];
+{
+	FILE *fp, *fopen();
+	int vidfd, fd, imagesize;
+	char *image, *bufp, *ip;
+	char line [128], junk [100];
+	struct stat stbuf;
+	int width, height, count, xval, yval, xstart, ystart;
+	int addr, bm;
+	int in_eps = FALSE;
+	int next_line_important = FALSE;
+
+	if (argc <  2)	{	    
+		fprintf (stderr, "Usage: %s filename x-start y-start\n", 
+			 argv[0]);
+		exit (1);
+	}
+	if (argc == 4)  {
+		xstart = atoi (argv [2]);
+		ystart = atoi (argv [3]);
+	} else 
+		xstart = ystart = 0;
+	
+
+	fp = fopen (argv[1], "r");
+	if (fp == (FILE *)NULL)  {
+		perror (argv[1]);
+		exit (1);
+	}
+	if ((vidfd = open ("/dev/vid0", O_RDWR)) < 0)  {
+		perror ("/dev/vid0");
+		exit (1);
+	}
+	if (ioctl (vidfd, DKIOCGADDR, &bm) < 0) {
+		perror ("ioctl: DKIOCGADDR");
+		exit (1);
+	}
+	printf ("bitmap is at 0x%x\n", bm);
+	
+
+	fstat (fileno (fp), &stbuf);
+
+	bufp = (char *) malloc (stbuf.st_size);
+	printf ("size %d\n", stbuf.st_size);
+
+	while (fgets (line, 128, fp) != NULL)  {
+		if (strncmp (line, "image", 5) == 0)  {
+		    	in_eps = TRUE;
+			continue;
+		}
+		if (strncmp (line, "1.000 1.000 scale", 17) == 0)  {
+			next_line_important = TRUE;
+			continue;
+		}
+		if (in_eps)
+		    	strncat (bufp, line, strlen (line) -1);
+		if (next_line_important)  {
+			next_line_important = FALSE;
+			sscanf (line, "%d %d %s", &width, &height, junk);
+		}
+
+	}
+	bufp[strlen (bufp) - strlen("grestore")] = '\0';
+	/* 2 is number of bits per character */
+	imagesize = strlen (bufp) / 2;
+	image = (char *) malloc (imagesize);
+	printf ("IMAGESIZE %d WIDTH %d HEIGHT %d\n", 
+		imagesize, width, height);
+	
+	ip = image;
+	for (count = 0; count < imagesize; count++)  {
+		char first, second;
+		first = *bufp++;
+		second = *bufp++;
+		if (first >= '0' && first <= '9')
+		    	first -= '0';
+		else
+		    	first -= 'A' - '9' + '0' - 1;
+		if (second >= '0' && second <= '9')
+		    	second -= '0';
+		else
+		    	second -= 'A' - '9' + '0' - 1;
+		*(unsigned char *)ip++ =  first << 4 | second;
+
+	}
+
+	ip = image;
+	for (yval = ystart; yval < (ystart + height); yval++)  {
+	    count = 0;
+	    /* change to roundup */
+	    /* comment the heck outta this */
+	    for (xval = xstart; 
+		 xval < (((xstart + width + 7)& ~0x3 - 8) / 4); 
+		 xval++)  {
+	       	count++;
+        *(unsigned char *)(bm + ((1152  * 2 / 8) * yval) + xval) = ~(*ip++);
+	    }
+	    *ip++;
+	    printf ("(%d,%d) ", yval, count);
+
+        }
+
+	(void) close (vidfd);		
+}
+@

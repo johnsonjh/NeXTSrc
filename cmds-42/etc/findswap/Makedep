@@ -1,0 +1,11 @@
+findswap.o: findswap.c /usr/include/sys/types.h /usr/include/sys/param.h
+findswap.o: /usr/include/sys/features.h /usr/include/machine/DEFAULT.h
+findswap.o: /usr/include/machine/machparam.h /usr/include/sys/assert.h
+findswap.o: /usr/include/next/vm_param.h /usr/include/next/eventc.h
+findswap.o: /usr/include/sys/signal.h /usr/include/machine/signal.h
+findswap.o: /usr/include/sys/types.h /usr/include/sys/ioctl.h
+findswap.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
+findswap.o: /usr/include/errno.h /usr/include/sys/errno.h /usr/include/fcntl.h
+findswap.o: /usr/include/nextdev/disk.h /usr/include/machine/vm_types.h
+findswap.o: /usr/include/machine/boolean.h /usr/include/sys/time.h
+findswap.o: /usr/include/time.h /usr/include/sys/disktab.h

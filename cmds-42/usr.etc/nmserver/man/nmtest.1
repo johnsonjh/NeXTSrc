@@ -1,0 +1,26 @@
+.TH NMTEST 1 2/22/88
+.CM 4
+.SH NAME
+nmtest \- Generic test program for the Mach network server.
+.SH SYNOPSIS
+.B nmtest
+.SH DESCRIPTION
+.I nmtest
+can be used to test all kinds of message and port transactions with a
+.I network server. 
+It contains two threads, one to display each message received, and one
+to send various messages under control of the user. 
+
+.I nmtest
+is interactive; all commands can be listed by entering 
+.I ?
+or
+.I h
+at the prompt.
+Commands can be in upper or lower case; several commands
+can be typed on the same line, provided that spaces are used to 
+disambiguate the end of string arguments.
+.SH HISTORY
+.TP 
+22-Feb-88  Daniel Julin (dpj) at Carnegie-Mellon University
+Created.

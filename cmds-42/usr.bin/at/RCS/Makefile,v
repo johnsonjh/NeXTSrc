@@ -1,0 +1,197 @@
+head     1.2;
+access   ;
+symbols  ;
+locks    ; strict;
+comment  @# @;
+
+
+1.2
+date     88.10.03.00.23.49;  author gk;  state Exp;
+branches ;
+next     1.1;
+
+1.1
+date     88.10.02.19.30.56;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@NeXT, Inc.
+@
+
+
+1.2
+log
+@New Version.
+@
+text
+@#
+# Generic top-level makefile for multi-file commands
+# (c) NeXT, Inc.  1987
+#
+CFLAGS=	-O -DNeXT_MOD -fwritable-strings -D__STRICT_BSD__
+IFLAGS= -s -o daemon -m 4755
+LIBS=
+
+DSTDIR= /bootdisk/NeXT/Unix
+BINDIR=	$(DSTDIR)/usr/bin
+LIBDIR=	$(DSTDIR)/usr/lib
+SPOOLDIR= $(DSTDIR)/usr/spool/at
+PASTDIR= $(DSTDIR)/usr/spool/at/past
+SPOOLFILE= lasttimedone
+PRODUCTS= at atrm atq atrun
+
+DSTDIRS= ${DSTROOT}${BINDIR} ${DSTROOT}${LIBDIR}
+DSTSPOOLDIRS= ${DSTROOT}${SPOOLDIR} ${DSTROOT}${PASTDIR}
+LCLDIRS= ${LCLROOT}${BINDIR} ${LCLROOT}${LIBDIR} ${LCLROOT}${SPOOLDIRS}
+LCLSPOOLDIRS= ${LCLROOT}${SPOOLDIR} ${LCLROOT}${PASTDIR}
+
+HFILES=
+CFILES= at.c atrm.c atq.c atrun.c
+SFILES=
+YFILES=
+SRCS=	${HFILES} ${YFILES} ${CFILES} ${SFILES}
+
+FILES=	${SRCS} Makefile Makedep
+INTERMEDIATES=
+DERIVED=
+GARBAGE= TAGS tags *_vers.c
+
+all:	${PRODUCTS}
+
+#
+# Building at
+#
+AT_OBJS= at.o
+
+at.NEW:	${AT_OBJS} at_vers.o
+	$(CC) $(CFLAGS) -o $@@ ${AT_OBJS} at_vers.o ${LIBS}
+
+at_vers.c: ${DOVERS} ${AT_OBJS}
+	@@rm -f $@@
+	vers_string -c at > $@@
+
+#
+# Building atq
+#
+ATQ_OBJS= atq.o
+
+atq.NEW:	${ATQ_OBJS} atq_vers.o
+	$(CC) $(CFLAGS) -o $@@ ${ATQ_OBJS} atq_vers.o ${LIBS}
+
+atq_vers.c: ${DOVERS} ${ATQ_OBJS}
+	@@rm -f $@@
+	vers_string -c atq > $@@
+
+#
+# Building atrm
+#
+ATRM_OBJS= atrm.o
+
+atrm.NEW:	${ATRM_OBJS} atrm_vers.o
+	$(CC) $(CFLAGS) -o $@@ ${ATRM_OBJS} atrm_vers.o ${LIBS}
+
+atrm_vers.c: ${DOVERS} ${ATRM_OBJS}
+	@@rm -f $@@
+	vers_string -c atrm > $@@
+
+#
+# Building atrun
+#
+ATRUN_OBJS= atrun.o
+
+atrun.NEW:	${ATRUN_OBJS} atrun_vers.o
+	$(CC) $(CFLAGS) -o $@@ ${ATRUN_OBJS} atrun_vers.o ${LIBS}
+
+atrun_vers.c: ${DOVERS} ${ATRUN_OBJS}
+	@@rm -f $@@
+	vers_string -c atrun > $@@
+
+#
+# Standard targets
+#
+${PRODUCTS}:	.depend_done $$@@.NEW
+
+clean:	ALWAYS
+	-rm -f *.o *.NEW
+	-rm -f ${PRODUCTS} ${DERIVED} ${INTERMEDIATES} ${GARBAGE}
+	-rm -f Makedep .depend_done
+	touch Makedep
+
+install: DSTROOT ${DSTDIRS} ${DSTSPOOLDIRS} $(DSTROOT)$(SPOOLDIR)/${SPOOLFILE} all
+	install -s atrun.NEW $(DSTROOT)$(LIBDIR)/atrun
+	install ${IFLAGS} atq.NEW $(DSTROOT)$(BINDIR)/atq
+	install ${IFLAGS} at.NEW $(DSTROOT)$(BINDIR)/at
+	install ${IFLAGS} atrm.NEW $(DSTROOT)$(BINDIR)/atrm
+
+local: LCLROOT ${LCLDIRS} ${LCLSPOOLDIRS} $(LCLROOT)$(SPOOLDIR)/${SPOOLFILE} all
+	install -s atrun.NEW ${DSTROOT}${LIBDIR}/atrun
+	install ${IFLAGS} atq.NEW ${DSTROOT}${BINDIR}/atq
+	install ${IFLAGS} at.NEW ${DSTROOT}${BINDIR}/at
+	install ${IFLAGS} atrm.NEW ${DSTROOT}${BINDIR}/atrm
+
+DSTROOT LCLROOT:
+	@@if [ -n "${$@@}" ]; \
+	then \
+		exit 0; \
+	else \
+		echo Must define $@@; \
+		exit 1; \
+	fi
+
+${DSTDIRS} ${LCLDIRS}:
+	mkdirs $@@
+
+${DSTSPOOLDIRS} ${LCLSPOOLDIRS}:
+	mkdirs $@@
+	-chown daemon $@@
+	-chgrp daemon $@@
+	-chmod 755 $@@
+
+${DSTROOT}${SPOOLDIR}/${SPOOLFILE}:
+	mkdirs ${DSTROOT}/${SPOOLDIR}
+	echo 0 > $@@
+	-chown daemon $@@
+	-chgrp daemon $@@
+
+${LCLROOT}${SPOOLDIR}/${SPOOLFILE}:
+	mkdirs ${LCLROOT}/${SPOOLDIR}
+	echo 0 > $@@
+	-chown daemon $@@
+	-chgrp daemon $@@
+
+depend .depend_done: ${DERIVED}
+	rm -f Makedep
+	${CC} -M ${CFILES} ${SFILES} ${DERIVED} | \
+	    awk '{ if ($$1 != prev) { if (rec != "") print rec; \
+		rec = $$0; prev = $$1; } \
+		else { if (length(rec $$2) > 78) { print rec; rec = $$0; } \
+		else rec = rec " " $$2 } } \
+		END { print rec }' >Makedep
+	-touch .depend_done
+
+tags:	ALWAYS
+	etags ${SRCS}
+	ctags ${SRCS}
+
+ALWAYS:
+
+-include Makedep
+@
+
+
+1.1
+log
+@Initial NeXT version
+@
+text
+@d97 2
+a98 2
+	install ${IFLAGS} at.NEW $(DSTROOT)$(LIBDIR)/at
+	install ${IFLAGS} atrm.NEW $(DSTROOT)$(LIBDIR)/atrm
+d103 2
+a104 2
+	install ${IFLAGS} at.NEW ${DSTROOT}${LIBDIR}/at
+	install ${IFLAGS} atrm.NEW ${DSTROOT}${LIBDIR}/atrm
+@

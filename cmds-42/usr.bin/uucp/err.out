@@ -1,0 +1,123 @@
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c subdir.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c systat.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c ulockf.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uucpname.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c versys.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c xqt.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uucpdefs.c
+vers_string -l uulib > uulib_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uulib_vers.c
+rm -f uulib.a
+ar cr uulib.a `lorder anlwrk.o anyread.o assert.o cfgets.o chkpth.o  cpmv.o expfile.o gename.o getargs.o getprm.o  getpwinfo.o gnamef.o gnxseq.o lastpart.o logent.o mailst.o  prefix.o setline.o strpbrk.o subdir.o sysacct.o systat.o  ulockf.o uucpname.o versys.o xqt.o uucpdefs.o uulib_vers.o | tsort`
+ranlib uulib.a
+cd aculib; make 
+cc -O   -DNeXT_MOD -bsd -c bsdtcp.c
+In function bsdtcpopn:
+bsdtcp.c:52: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c df2.c
+In function df2opn:
+df2.c:37: warning: argument passing between incompatible pointer types
+df2.c:67: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c df12.c
+In function df12opn:
+df12.c:54: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c dk.c
+cc -O   -DNeXT_MOD -bsd -c dn.c
+In function dnopn:
+dn.c:40: warning: argument passing between incompatible pointer types
+dn.c:67: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c hys.c
+In function hysopn:
+hys.c:64: warning: argument passing between incompatible pointer types
+hys.c:110: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c hysq.c
+cc -O   -DNeXT_MOD -bsd -c mic.c
+cc -O   -DNeXT_MOD -bsd -c nov.c
+In function novopn:
+nov.c:40: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c pen.c
+In function penopn:
+pen.c:28: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c pnet.c
+cc -O   -DNeXT_MOD -bsd -c rvmacs.c
+In function rvmacsopn:
+rvmacs.c:75: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c sy.c
+cc -O   -DNeXT_MOD -bsd -c unet.c
+cc -O   -DNeXT_MOD -bsd -c va212.c
+In function va212opn:
+va212.c:27: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c va811.c
+In function va811opn:
+va811.c:45: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c va820.c
+In function va820opn:
+va820.c:47: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c vad.c
+In function vadopn:
+vad.c:34: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c vent.c
+In function ventopn:
+vent.c:25: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c vmacs.c
+In function vmacsopn:
+vmacs.c:77: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c hys24.c
+In function hysopn24:
+hys24.c:52: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c cds224.c
+In function cdsopn224:
+cds224.c:36: warning: argument passing between incompatible pointer types
+cc -O   -DNeXT_MOD -bsd -c att2224.c
+In function attopn:
+att2224.c:25: warning: argument passing between incompatible pointer types
+att2224.c:47: warning: argument passing between incompatible pointer types
+att2224.c:70: warning: argument passing between incompatible pointer types
+ar cr aculib.a bsdtcp.o df2.o df12.o dk.o dn.o hys.o hysq.o mic.o nov.o pen.o pnet.o  rvmacs.o sy.o unet.o va212.o va811.o va820.o vad.o vent.o vmacs.o  hys24.o cds224.o att2224.o
+ranlib aculib.a 2>&1 | sed '/no symbol table/d'
+vers_string -c uucico > uucico_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uucico_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o uucico.NEW cico.o cntrl.o conn.o condevs.o gnsys.o pk0.o chksum.o  pk1.o tio.o fio.o gio.o imsg.o uulib.a aculib/aculib.a uucico_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uucp.c
+vers_string -c uucp > uucp_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uucp_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o uucp.NEW uucp.o uulib.a uucp_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uux.c
+vers_string -c uux > uux_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uux_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o uux.NEW uux.o uulib.a uux_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uuxqt.c
+vers_string -c uuxqt > uuxqt_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uuxqt_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o uuxqt.NEW uuxqt.o uulib.a uuxqt_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uulog.c
+vers_string -c uulog > uulog_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uulog_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o uulog.NEW uulog.o uulib.a uulog_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uuclean.c
+vers_string -c uuclean > uuclean_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uuclean_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o uuclean.NEW uuclean.o uulib.a uuclean_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uuname.c
+vers_string -c uuname > uuname_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uuname_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o uuname.NEW uuname.o uulib.a uuname_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uupoll.c
+vers_string -c uupoll > uupoll_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uupoll_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o uupoll.NEW uupoll.o uulib.a uupoll_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uusnap.c
+vers_string -c uusnap > uusnap_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uusnap_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o uusnap.NEW uusnap.o uusnap_vers.o -lsys_s
+vers_string -c uusend > uusend_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uusend_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o uusend.NEW uusend.o uulib.a uusend_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uucpd.c
+vers_string -c uucpd > uucpd_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uucpd_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o uucpd.NEW uucpd.o uucpd_vers.o -lsys_s
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uuq.c
+vers_string -c uuq > uuq_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c uuq_vers.c
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -o uuq.NEW uuq.o uulib.a uuq_vers.o -lsys_s

@@ -1,0 +1,3 @@
+symorder.o: symorder.c /usr/include/stdio.h /usr/include/sys/types.h
+symorder.o: /usr/include/sys/stat.h /usr/include/a.out.h
+symorder.o: /usr/include/sys/exec.h

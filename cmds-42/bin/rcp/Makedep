@@ -1,0 +1,12 @@
+rcp.o: rcp.c /usr/include/sys/param.h /usr/include/sys/features.h
+rcp.o: /usr/include/machine/machparam.h /usr/include/sys/assert.h
+rcp.o: /usr/include/next/vm_param.h /usr/include/sys/types.h
+rcp.o: /usr/include/next/eventc.h /usr/include/sys/signal.h
+rcp.o: /usr/include/machine/signal.h /usr/include/sys/types.h
+rcp.o: /usr/include/sys/stat.h /usr/include/sys/types.h /usr/include/sys/time.h
+rcp.o: /usr/include/time.h /usr/include/sys/ioctl.h /usr/include/sys/ttychars.h
+rcp.o: /usr/include/sys/ttydev.h /usr/include/netinet/in.h /usr/include/stdio.h
+rcp.o: /usr/include/signal.h /usr/include/sys/signal.h
+rcp.o: /usr/include/machine/signal.h /usr/include/pwd.h /usr/include/ctype.h
+rcp.o: /usr/include/netdb.h /usr/include/errno.h /usr/include/sys/errno.h
+rcp.o: /usr/include/sys/dir.h /usr/include/sys/types.h

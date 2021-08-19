@@ -1,0 +1,2 @@
+rm -f *.o IEEE/*.o profiled/*.o libm.a libm_p.a tags
+rm -rf shlib_obj

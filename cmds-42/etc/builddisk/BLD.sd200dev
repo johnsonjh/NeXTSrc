@@ -1,0 +1,46 @@
+# NeXT File System build procedure
+# Build 200MB developer's hard disk from booted file system
+# Release 1.0
+#
+# Build the read-write partition (a)
+# First fill in the root directory
+symlink	a $BOOTFILE			/mach
+copy	a /.places			/.places
+chmod	a 666				/.places
+copy	a /.hidden			/.hidden
+copy	a /.login			/.login
+copy	a /.cshrc			/.cshrc
+copy	a /.profile			/.profile
+load	a /.NeXT			/.NeXT
+# Build the "private" symlinks
+symlink	a private/etc			/etc
+symlink	a private/dev			/dev
+symlink	a private/tmp			/tmp
+# Lay down the files we need most at boot
+load	a /usr/template			/usr/template
+load	a /usr/etc			/usr/etc
+load	a /bin				/bin
+exec	a /usr/etc			./newclient -p sd330 /mnta/usr/template/client /mnta/private
+# Now lay down what we want close together after boot
+load	a /usr/shlib			/usr/shlib
+load	a /usr/lib/NextStep		/usr/lib/NextStep
+load	a /NextApps			/NextApps
+load	a /lib				/lib
+load	a /usr				/usr
+load	a /NextDeveloper		/NextDeveloper
+load	a /NextAdmin			/NextAdmin
+load	a /NextLibrary/Documentation	/NextLibrary/Documentation
+load	a /NextLibrary/Fonts		/NextLibrary/Fonts
+load	a /NextLibrary/Images		/NextLibrary/Images
+load	a /NextLibrary/Mathematica	/NextLibrary/Mathematica
+load	a /NextLibrary/Music		/NextLibrary/Music
+load	a /NextLibrary/Sounds		/NextLibrary/Sounds
+mkdirs	a /Net
+# Put kernels on the disk
+copy	a /odmach			/odmach
+chmod	a 555				/odmach
+link	a /odmach			/sdmach
+# Build the home directory
+load	a /usr/template/user		/me
+rchown	a me				/me
+chmod	a 777				/me

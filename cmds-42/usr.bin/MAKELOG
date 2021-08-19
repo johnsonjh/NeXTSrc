@@ -1,0 +1,9 @@
+################# make all for usr.bin ###################
+================= make all for ar11 =================
+rm -f Makedep
+cc -M -DNeXT_MOD -D__STRICT_BSD__ ar11.c   |  awk '{ if ($1 != prev) { if (rec != "") print rec;  rec = $0; prev = $1; }  else { if (length(rec $2) > 78) { print rec; rec = $0; }  else rec = rec " " $2 } }  END { print rec }' >Makedep
+cc -O -g -fwritable-strings -DNeXT_MOD -D__STRICT_BSD__ -c ar11.c
+*** Interrupt
+Stop.
+*** Exit 1
+Stop.

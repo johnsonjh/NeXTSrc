@@ -1,0 +1,436 @@
+/*
+	imageWraps.pswm
+	Copyright 1990, NeXT, Inc.
+	Responsibility: Ali Ozer
+    
+	This file contains wraps & other functions used by NXImage.
+	Interesting functions in this file include:
+
+	    _NXAllocateImageCache --- create window space to cache image
+	    _NXResizeImageCache --- resize such a cache
+	    _NXFreeImageCacge --- free it
+
+	    _NXGetFocus --- get focus information
+	    _NXFocus --- set focus information
+*/
+
+
+#import "privateWraps.h"
+#import "packagesWraps.h"
+#import "appkitPrivate.h"
+#import "nextstd.h"
+#import <defaults.h>
+#import "NXImage_Private.h"
+#import <math.h>
+#import <dpsclient/dpsclient.h>
+#import <dpsclient/wraps.h>
+#import <appkit/View.h>
+#import <appkit/Window.h>
+
+static CacheWindow _NXCreateImageWindow (NXCoord w, NXCoord h, NXZone *zone)
+{
+    NXRect wFrame = {{0.0, 0.0}, {w, h}};
+    CacheWindow window = [[Window allocFromZone:zone] initContent:&wFrame
+			    style:NX_PLAINSTYLE
+			    backing:NX_RETAINED
+			    buttonMask:0
+			    defer:NO
+			    screen:NULL];
+    [[window contentView] setOpaque:YES];
+    [window reenableDisplay];
+    return window;
+}
+
+static void _NXResizeImageWindow (float width, float height, CacheWindow window)
+{
+    NXRect newFrame;
+    PScurrentwindowbounds ([window windowNum],
+	&NX_X(&newFrame), &NX_Y(&newFrame), &NX_WIDTH(&newFrame), &NX_HEIGHT(&newFrame));
+    NX_WIDTH(&newFrame) = width;
+    NX_HEIGHT(&newFrame) = height;
+    [window placeWindow:&newFrame];
+}
+
+
+static void _NXTerminateImageWindow (CacheWindow window)
+{
+    [window free];
+}
+
+/*
+ * Create & initialize a new cache window structure pointing to a new window
+ * of size width by height.
+ */
+static CacheWindowInfo *newCacheWindow(CacheCoord width, CacheCoord height, NXZone *zone)
+{
+    CacheWindowInfo *wInfo;
+
+    NX_ZONEMALLOC (zone, wInfo, CacheWindowInfo, 1);
+    wInfo->window = _NXCreateImageWindow ((NXCoord)width, (NXCoord)height, zone);
+    wInfo->height = height;
+    wInfo->width = width;
+    wInfo->sharedList = NULL;
+    return wInfo;
+}
+
+
+
+/*
+ * Shared windows come in NUMSHAREDWINDOWSIZES sizes, in width increments of
+ * SHAREDWINDOWWIDTHINCREMENT. They also come in NUMSHAREDWINDOWTYPES, a number
+ * mostly determined by the different number of window depth types the 
+ * window server supports.
+ */
+#define NUMSHAREDWINDOWSIZES 8
+#define SHAREDWINDOWWIDTHINCREMENT 16
+#define NUMSHAREDWINDOWTYPES 6
+
+/*
+ * Maximum shared window height, maximum image height to be put in a shared
+ * window, and maximum width or height of a cache window.
+ */
+#define MAXSHAREDWINDOWHEIGHT 1000
+#define MAXSHAREDREQUESTHEIGHT 400
+#define MAXCACHESIZE	16000
+
+typedef struct _FreeSpace {
+    CacheWindowInfo *cache;
+    short height;
+    short location;
+} FreeSpace;
+
+typedef struct _FreeSpaceList {
+    FreeSpace *spaces;
+    short maxElements;
+    short numElements;
+} FreeSpaceList;
+
+static FreeSpaceList
+	freeSpaceList[NUMSHAREDWINDOWSIZES][NUMSHAREDWINDOWTYPES] = {0};
+
+/*
+ * Return a pointer to the appropriate shared window list, or NULL if the
+ * requested size cannot be put in a shared window.
+ */
+static FreeSpaceList *freeSpaceListFor (NXWindowDepthType depth, BOOL alpha, CacheCoord width, CacheCoord height)
+{
+    int depthNum;
+    unsigned int sizeNum = (width - 1) / SHAREDWINDOWWIDTHINCREMENT;
+
+    if (sizeNum >= NUMSHAREDWINDOWSIZES || height > MAXSHAREDREQUESTHEIGHT) {
+	return NULL;
+    }
+
+    if (depth == NX_TwoBitGrayDepth) depthNum = 0 + alpha ? 1 : 0;
+    else if (depth == NX_EightBitGrayDepth) depthNum = 2 + alpha ? 1 : 0;
+    else if (depth == NX_TwelveBitRGBDepth) depthNum = 4;
+    else if (depth == NX_TwentyFourBitRGBDepth) depthNum = 5; 
+    else {
+	return NULL;
+    }
+
+    return &(freeSpaceList[sizeNum][depthNum]);
+}
+
+static void removeSpace (FreeSpaceList *list, FreeSpace *space)
+{
+    list->numElements--;
+    *space = *(list->spaces + list->numElements);	
+}
+
+static FreeSpace *addSpace (FreeSpaceList *list, CacheWindowInfo *wInfo, CacheCoord location, CacheCoord height)
+{
+    FreeSpace *space;
+    if (list->numElements == list->maxElements) {
+	list->spaces = NXZoneRealloc (SHAREDIMAGEZONE, list->spaces,
+			    sizeof(FreeSpace) * (list->maxElements += 4));
+    }
+    space = list->spaces + (list->numElements++);
+    space->cache = wInfo;
+    space->location = location;
+    space->height = height;
+    return space;
+}
+
+/*
+ * Find space in a shared window for the specified width & height.
+ * Returns YES if successful, with windowInfo & location properly set up.
+ * Otherwise returns NO.
+ */
+static BOOL getSharedSpaceFor (NXWindowDepthType depth, BOOL alpha, CacheCoord width, CacheCoord height, CacheWindowInfo **windowInfo, CacheCoord *location)
+{
+    FreeSpaceList *list;
+    FreeSpace *space, *virSpace = NULL;
+    int cnt;
+
+#ifdef DISABLESHAREDSPACE
+    static int allowSharedSpace = -1;
+
+    if (allowSharedSpace == -1) {
+	allowSharedSpace = 
+	    NXGetDefaultValue([NXApp appName], "NXAllowSharedImages") ? 1 : 0;
+    }
+
+    if (!allowSharedSpace) return NO;
+#endif
+
+    /*
+	First map from desired window type to one of the cache types.
+	The shared windows come in NUMSHAREDWINDOWSIZES sizes, in
+	increments of SHAREDWINDOWWIDTHINCREMENT. They also come in six
+	types: The four bitmap types exported by the window server,
+	and two to optimize for alpha/no alpha in the grayscale cases.
+	The static array freeSpaceList[][] stores the structures
+	that remember the free space information.
+    */
+
+    if (!(list = freeSpaceListFor(depth, alpha, width, height))) {
+	return NO;
+    }
+
+    /*
+     * Look for space from the end of the list; that way we'll go through real
+     * (allocated and recently freed) spaces before the virtual ones.
+     * If we find some virtual space, remember it in virSpace; we will
+     * use it only if we can't find any real space. If we find two virtual
+     * spaces, use the one which is better.
+     */
+    space = list->spaces + list->numElements;
+    for (cnt = 0; cnt < list->numElements; cnt++) {
+	space--;
+	if (space->height >= height) {
+	    if (space->cache->height >= space->location + height) {
+		break;	/* We found good, solid real space. Use it! */
+	    } else if (!virSpace ||
+		     ((virSpace->cache->width < width) &&
+		      (space->cache->width > virSpace->cache->width))) {
+		virSpace = space;  /* Virtual space. Remember & look more. */
+	    }
+	}
+    }
+
+    /*
+     * If cnt == list->numElements, couldn't find any real space.
+     * If a virtual space was found, use that; otherwise allocate a new window.
+     */
+    if (cnt == list->numElements) {
+	if (virSpace) {
+	    space = virSpace;
+	} else {	
+	    space = addSpace (list,
+			newCacheWindow(width, height, SHAREDIMAGEZONE),
+			0, MAXSHAREDWINDOWHEIGHT);
+	    space->cache->sharedList = list;
+	}
+    }
+
+    *windowInfo = space->cache;
+    *location = space->location;
+
+    /*
+     * If the allocated space is virtual (ie, the actual window was not big
+     * enough), grow it...
+     */
+    if ((space->cache->height < space->location + height) ||
+	(space->cache->width < width)) {
+	if (space->cache->width < width) {
+	    space->cache->width = width;
+	}
+	if (space->cache->height < space->location + height) {
+	    space->cache->height = space->location + height;
+	}
+
+	_NXResizeImageWindow ((float)(space->cache->width), 
+			      (float)(space->cache->height),
+			      space->cache->window);
+    }
+
+    space->location += height;
+    space->height -= height;
+
+    if (space->height == 0) {
+	removeSpace (list, space);
+    }
+
+    return YES;
+}
+
+BOOL _NXResizeImageCache (BOOL unique, float fWidth, float fHeight,
+			int bps, int numColors, BOOL alpha, BOOL forceDepth,
+			CacheWindowInfo **windowInfo, CacheRect *rect) 
+{
+    if ((*windowInfo)->sharedList == NULL) {
+	_NXResizeImageWindow (ceil(fWidth), ceil(fHeight), (*windowInfo)->window);
+	rect->w = ceil(fWidth);
+	rect->h = ceil(fHeight);
+    } else {
+	NXLogError ("Can't resize non-unique NXImage cache.\n");
+    }
+    return YES;
+}
+
+void _NXFreeImageCache (CacheWindowInfo *windowInfo, CacheRect *rect)
+{
+    FreeSpaceList *list;
+    FreeSpace *space;
+    BOOL mergeUp = NO, mergeDown = NO;
+
+    if (!(list = windowInfo->sharedList)) {
+	_NXTerminateImageWindow (windowInfo->window);
+	NX_FREE (windowInfo);
+	return;
+    }
+
+    space = list->spaces;
+    while (space < list->spaces + list->numElements) {
+	if (space->cache == windowInfo) {
+	    if (!mergeDown && (rect->y == space->location + space->height)) {
+		rect->y = space->location;
+		rect->h += space->height;
+		removeSpace (list, space);
+		if (mergeUp) break;
+		mergeDown = YES;
+	    } else if (!mergeUp && (rect->y + rect->h == space->location)) {
+		rect->h += space->height;
+		removeSpace (list, space);
+		if (mergeDown) break;
+		mergeUp = YES;
+	    } else {
+		space++;
+	    }
+	} else {
+	    space++;
+	}
+    }
+
+    if (rect->h == MAXSHAREDWINDOWHEIGHT) {
+	_NXTerminateImageWindow (windowInfo->window);
+    } else {
+	addSpace (list, windowInfo, rect->y, rect->h);
+    }
+}
+
+
+
+BOOL _NXAllocateImageCache (NXZone *zone,
+			BOOL unique, float fWidth, float fHeight,
+			int bps, int numColors, BOOL alpha, BOOL forceDepth,
+			CacheWindowInfo **windowInfo, CacheRect *rect) 
+{
+    CacheCoord width = ceil(fWidth);
+    CacheCoord height = ceil(fHeight);
+
+    if (width > MAXCACHESIZE || height > MAXCACHESIZE) {
+	return NO;
+    }
+
+    bps = (bps < 1) ? 8 : bps;
+    numColors = (numColors < 1) ? 3 : numColors;
+    *windowInfo = NULL;
+ 
+    if (!forceDepth && !unique) {
+	NXWindowDepthType depth;
+	NXGetBestDepth (&depth, numColors, bps);
+        getSharedSpaceFor(depth, alpha, width, height, windowInfo, &(rect->y));
+    }
+
+    if (*windowInfo == NULL) {
+	*windowInfo = newCacheWindow (width, height, zone);
+	rect->y = 0;
+    } else { /* We were able to get shared space; make sure it's all clear */
+	PSgsave();
+	PSsetgstate ([(*windowInfo)->window gState]);
+	PSsetgray (NX_WHITE);
+	PSrectfill (0.0, rect->y, width, height);
+	PSgrestore ();
+    }	
+    
+    rect->x = 0;
+    rect->w = width;
+    rect->h = height;
+
+    if (forceDepth) {
+	NXWindowDepthType depth;
+	NXGetBestDepth (&depth, numColors, bps);
+	[(*windowInfo)->window setDepthLimit:depth];
+    }
+
+    return YES;
+}
+
+
+
+/*
+ * Misc routines for NXImage...
+ */
+
+defineps _NXGetWinAndOrigin (| unsigned int *win; float *x; float *y)
+    currentwindow win
+    0 0 currenttoscreen y x
+endps
+
+// Stuff to do with EPS files in NXImage...
+// _NXGetFocus gets the bbox of the current clippath, the ctm, and 
+// current win number. _NXFocus focuses given these values.
+// These were taken pretty much verbatim from Preview.
+
+defineps _NXGetFocus(|float *llx; float *lly, *urx, *ury, ctm[6]; int *win)
+    gsave clippath pathbbox ury urx lly llx grestore
+    matrix currentmatrix {ctm} forall
+    currentwindow win
+endps
+
+defineps _NXFocus(int win; float ctm[6]; float llx, lly, urx, ury)
+    win windowdeviceround
+    ctm setmatrix
+    newpath
+	llx lly moveto
+	llx ury lineto
+	urx ury lineto
+	urx lly lineto
+    closepath clip
+    newpath
+endps
+
+/*
+
+85
+--
+ 6/2/90 aozer	Added resizing capability (_NXResizeImageWindow())
+
+86
+--
+ 6/6/90 aozer	Added _NXGetWinAndOrigin() to get the window and the location
+		in the window of an NXImage cache
+
+87
+--
+ 7/9/90 aozer	Some temporary code to deal with _NXShowAllWindows.
+
+89
+--
+ 7/16/90 aozer	Removed use of fixedwindow in anticipation of new server API.
+		Still need some cleaning up.  (Some code can be removed
+		after Warp4.)
+ 7/29/90 aozer	Added code for management of multiple image caches per window.
+ 7/30/90 aozer	Renamed the file: imageWraps.pswm -> imageUtils.pswm
+
+90
+--
+ 8/4/90 aozer	Zonified.
+ 8/10/90 aozer	Made cache windows Retained.
+
+93
+--
+ 9/6/90 aozer	Call reenableDisplay after cache window is created to allow
+		drawing by Kit objects.
+
+94
+--
+ 9/25/90 aozer	In _NXCreateImageWindow declare the content view of image
+		windows as opaque in order to prevent
+		FrameView from filling it.
+ 9/25/90 aozer	Fill shared caches with white after they're allocated. (Unique
+		ones get created with white backgrounds by the server.)
+
+*/

@@ -1,0 +1,51 @@
+head     1.1;
+access   ;
+symbols  ;
+locks    gk:1.1; strict;
+comment  @ * @;
+
+
+1.1
+date     88.09.30.15.42.12;  author osdev;  state Exp;
+branches ;
+next     ;
+
+
+desc
+@NeXT, Inc.
+@
+
+
+
+1.1
+log
+@Initial NeXT version
+@
+text
+@/* 
+ * Mach Operating System
+ * Copyright (c) 1987 Carnegie-Mellon University
+ * All rights reserved.  The CMU software License Agreement specifies
+ * the terms and conditions for use and redistribution.
+ */
+/*
+ * name.c
+ *
+ * $Source: /afs/cs.cmu.edu/project/mach/member/dpj/netmsg/server/RCS/skel.c,v $
+ *
+ */
+#ifndef	lint
+char skel_rcsid[] = "$Header: skel.c,v 1.5 88/06/27 14:47:25 dpj Exp $";
+#endif not lint
+/*
+ *
+ */
+
+/*
+ * HISTORY: 
+ */
+
+
+#include	"netmsg.h"
+#include	"nm_defs.h"
+@

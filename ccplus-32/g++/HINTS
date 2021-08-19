@@ -1,0 +1,230 @@
+Convex GNU C++ users:
+
+Return-Path: csmith@convex.com
+Date: Thu, 18 Jan 90 19:09:01 -0600
+From: csmith@convex.com (Chris Smith)
+To: ngo%tammy@harvard (Tom Ngo)
+In-Reply-To: ngo%tammy@HARVARD.HARVARD.EDU's message of 17 Jan 90 22:12:19 GMT
+Subject: How to use collect2... my conjecture
+
+Sorry, I've been neglecting my netnews reading and didn't see your
+earlier messages. 
+
+The secret of collect2.c is to install it as "/usr/local/lib/gcc-ld"
+--- it then does its thing with the constructors & destructors and
+runs the real ld.
+----------------------------------------------------------------
+Return-Path: <@nsfnet-relay.ac.uk,@computer-lab.cambridge.ac.uk:balen@camscan.uucp>
+From: henry Balen <balen%camscan.uucp@nsfnet-relay.ac.uk>
+Date: Wed, 17 Jan 90 09:35:21 GMT
+
+I have managed to get g++ 1.36.2 up and running on the sun386. I had a lot of problems with 1.36.1 in that when I did get the compiler to work it produced code that crashed!
+I have listed the changes that I found necessary for 1.36.2 below. I hope that these are of some help.
+
+Henry Balen <balen%camscan.uucp@uk.ac.ukc>
+Camscan, Saxon Way, Bar Hill, Cambridge CB3 0JE, United Kingdom.
+
+--------------------------------------------------------------------------
+In xm-sun386i.h at line 47
+
+	#define LINK_SPEC "%{!e*:-e _start} -dc -dp %{g:-Bstatic}"
+
+to
+
+	#define LINK_SPEC "%{!e*:}  -Bstatic "
+
+--------------------------------------------------------------------------
+In crt0.c
+
+the
+	__do_global_init()
+and
+	__do_global_cleanup()
+
+needed to be removed (I put ifndef COFF round them).
+
+--------------------------------------------------------------------------
+In tm-sun386i.h at line 34
+
+	#define STARTFILE_SPEC  \
+	  "%{pg:gcrt0.o%s}%{!pg:%{p:mcrt0.o%s}%{!p:crt0.o%s}}"
+
+to
+
+	#define STARTFILE_SPEC  \
+	  "%{pg:gcrt0.o%s}%{!pg:%{p:mcrt0.o%s}%{!p:crt0+.o%s}}"
+
+--------------------------------------------------------------------------
+In gcc.c at line 306
+
+	ld %{o*} %g.R %g.O
+
+to
+
+	ld -Bstatic -e _start %{o*} %g.R %g.O -L/vol/local/lib.sun386\n\
+
+and at line 310
+
+	char *link_spec = "%{!c:%{!M*:%{!E:%{!S:ld -r -o %g.R %l\
+
+to
+
+	char *link_spec = "%{!c:%{!M*:%{!E:%{!S:ld -r -L/vol/local/lib.sun386 -o %g.R %l\
+================================================================
+Patch kit for GCC 1.36.92:
+
+tiemann@apple-gunkies>diff -c2 loop.c~ loop.c
+*** loop.c~	Wed Dec 27 18:59:23 1989
+--- loop.c	Wed Jan 10 14:58:52 1990
+***************
+*** 1357,1361 ****
+        if (GET_CODE (p) != INSN || sets_cc0_p (PATTERN (p)))
+  	break;
+!   if (p == 0)
+      return 0;
+    endtest = p;
+--- 1357,1361 ----
+        if (GET_CODE (p) != INSN || sets_cc0_p (PATTERN (p)))
+  	break;
+!   if (p == 0 || GET_CODE (p) == CODE_LABEL)
+      return 0;
+    endtest = p;
+tiemann@apple-gunkies>
+================================================================
+If you have an AT&T UNIX PC, here are some patches which may be of
+some consolation.  They are from:
+
+Ronald Cole               | uucp:     cvms!ronald       voice: +1 916 895 8321
+Senior Software Engineer  | internet: cvms!ronald@csuchico.edu
+CVM Systems               +----------------------------------------------------
+
+diff -rc2 g++-1.36.0-/config/tm-att386.h g++/config/tm-att386.h
+*** g++-1.36.0-/config/tm-att386.h	Wed Feb 22 09:28:08 1989
+--- g++/config/tm-att386.h	Wed Oct 18 22:46:58 1989
+***************
+*** 23,26 ****
+--- 23,29 ----
+  /* Define the syntax of instructions and addresses.  */
+  
++ /* G++: ATT assemblers *do not* allow '$' in symbol names. (u3b, i386, etc.) */
++ #define NO_DOLLAR_IN_LABEL 1
++ 
+  /* Define some concatenation macros to concatenate an opcode
+     and one, two or three operands.  In other assembler syntaxes
+================================================================
+Beginning with g++ version 1.36 the GNU G++ library, libg++, is no
+longer automatically linked with your object code when running the
+linker.  In order to link libg++ you need to explicity add -lg++ to
+your compilation command line or Makefile, e.g.,
+
+% g++ -g -O foobar.c -lg++
+
+The easiest way to make this change transparent to you is simply to
+make an alias for g++ that automagically appends -lg++ to the end.
+
+Douglas C. Schmidt
+schmidt@ics.uci.edu
+
+-----------------------------------------------------------------------------
+	Sun3 SunOS 4.0: ld++ cannot find Mcrt0.o:
+
+	Turns out that gcc.c as distributed allows you to redefine
+	STANDARD_STARTFILE_PREFIX to be any directory you want.  It
+	will check there and in /usr/local/lib 	for startup files, not
+	in /usr/lib.  Unfortunately, most system startup files live in
+	/usr/lib, so unless you define STANDARD_STARTFILE_PREFIX to be
+	/usr/lib, you'll lose.  I changed the line in gcc.c
+
+	char *standard_startfile_prefix_1 = "/usr/local/lib/";
+
+	to read 
+
+	char *standard_startfile_prefix_1 = "/usr/lib/";
+
+	This way I can specify my own startfile directory, without
+	losing access to the system startup files.
+
+						Moises
+
+-----------------------------------------------------------------------------
+Internet/CSnet:   mlm@cs.brown.edu		BITNET:  mlm@browncs.BITNET
+UUCP:    ...!uunet!brunix!mlm			Phone:	 (401)863-7664
+USmail:  Moises Lejter, Box 1910 Brown University, Providence RI 02912
+
+	If you are using a non-Sun machine, and use the native
+	assembler instead of GAS, you will need to #define FASCIST_ASSEMBLER
+	when compiling cplus-decl.c.  This is because Sun's as and GAS
+	appear to be the only assemblers out there which assemble stabs
+	instead of checking them.  If you don't remember to do
+	this, the assembler will remind you by telling you that it did
+	not understand a stab which the compiler is trying to pass to
+	the linker.
+
+Michael Tiemann
+tiemann@lurch.stanford.edu
+
+----------------------------------------------------------------
+The 2.0 C++ language specification provides many new features which
+can trip up the novice user.  All of these features are being
+implemented in GNU C++, and most of them work right now.  However,
+this does not mean that they are all that easily used.  Perhaps on of
+the toughest new features to take advantage of right now is extern "C".
+What makes this hard is that up until now, C and C++ really looked
+like they had about the same langauge linkage.  Member functions had
+their names mangled, but non-overloaded global functions did not.
+In 2.0, all functions declared in C++ scope are automatically
+overloaded, and all such functions all get mangled names.  So if you
+declare, e.g., `int printf (const char *, ...)' in C++ language scope,
+and you get printf from libc.a, you will lose, since the compiler will
+assume that you are looking for e.g., "_printf_PQI", when you are
+really looking for "_printf".  To get around this problem, you can use
+extern "C" to tell the compiler which names should be mangled and how.
+There is a macro called NO_AUTO_OVERLOAD, which if defined, will provide
+the standard cfront 1.2 and old GNU C++ behavior.  If not defined, it
+provides the cfront 2.0 behavior.  One should move from the old to the
+new carefully, and if you get lots of new undefined symbols from the
+linker where such did not exist before, the first question you should
+ask yourself is `how is extern "C" or extern "C++" doing me in?'
+
+Michael Tiemann
+tiemann@lurch.stanford.edu
+----------------------------------------------------------------
+There is a bug in the GNU CC 1.35 optimizer.  Currently, this shows up
+only when compiling libg++/src/BitString.cc and libg++/tests/tBitString.cc
+If you get failed assertions in the bitfield code, you have been
+bitten by this bug, and you should turn off optimization.
+Optimization does work for all the OOPS code, and for all other libg++
+code, so you probably don't want to turn it off unless you need to run
+BitString code.
+
+Michael Tiemann
+tiemann@lurch.stanford.edu
+----------------------------------------------------------------
+The default LINK_SPEC in gcc.c tells the linker to link
+with crt0+.o.  Many machine-specific files define their own
+LINK_SPECs.  A strategy which worked until tm-sun?-nfp-os? came along
+was to edit the tm-*.h file into tm-*+.h, and replace the string
+"crt0.o" with "crt0+.o".  This strategy is defeated with one tm-*.h
+file includes a file defining LINK_SPEC.  I will fix this in release
+1.35.1.  In the mean time, copy LINK_SPEC from the file that is being
+included, #undef it and redef it in the top level tm-*.h file.
+
+
+Michael Tieman
+tieman@lurch.stanford.edu
+----------------------------------------------------------------
+I have successfully built G++ 1.35.0 on Sun3's and Sun4's running
+OS4.0.3. I have to make one change to the newld complation: -Dsun3 and
+-Dsun4 respectively in order to get the a.out.h info included
+correctly.  This is apparently a change in the header files from Sun.
+It shouldn't hurt earlier releases of the OS.  Also a similar problem
+occurs in libg++ compilation with the exec struct not being defined
+from the a.out.h file.  I had to add -D_CROSS_TARGET_ARCH=SUN4 to the
+compile line for test.hello.cc to get the dynamic linking to work.
+
+David Forslund
+MS E531
+Los Alamos National Laboratory
+Los Alamos, NM 87545
+dwf@lanl.gov
+================================================================

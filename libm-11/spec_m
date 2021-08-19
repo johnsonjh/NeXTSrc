@@ -1,0 +1,117 @@
+##
+## The shared library specification file for the C library
+##
+#target /usr/shlib/libc_m.A.shlib
+#address __TEXT 0x0A700000
+#address __DATA 0x0A070000
+#minor_version 1
+
+## This is the branch table.  Symbols in it MUST remain in the same numbered
+## slot from version to version so that the versions are compatible.  Symbols
+## with ranges get assigned the HIGHEST slot.  So if new symbol is added and
+## a slot is taken from a symbol with a range of slots the original symbol must
+## remain using the HIGHEST slot.
+
+#branch
+## THESE NUMBERINGS REMAIN FIXED FOR ALL TIME!!!
+## IF YOU ADD A NEW ROUTINE, INSERT IT AT THE END OF THE LIST.
+## IF YOU REMOVE AN OLD ROUTINE, LEAVE ITS SLOT OPEN!
+	_acos 0
+	_acosh 1
+	_asin 2
+	_asinh 3
+	_atan 4
+	_atan2 5
+	_atanh 6
+	_cabs 7
+	_cbrt 8
+	_ceil 9
+	_copysign 10
+	_cos 11
+	_cosh 12
+	_drem 13
+	_erf 14
+	_erfc 15
+	_exp 16
+	_expm1 17
+	_finite 18
+	_floor 19
+	_fmod 20
+	_hypot 21
+	_j0 22
+	_j1 23
+	_jn 24
+	_lgamma 25
+	_log 26
+	_log10 27
+	_log1p 28
+	_logb 29
+	_pow 30
+	_rint 31
+	_scalb 32
+	_sin 33
+	_sinh 34
+	_sqrt 35
+	_tan 36
+	_tanh 37
+	_y0 38
+	_y1 39
+	_yn 40
+	.empty_slot 41-1200
+## INSERT NEW BRANCH TABLES ENTRIES ABOVE THIS LINE.  The last slot must remain
+## 1200 forever because the global const data must not move.
+##
+## These are the const global data symbols that are text symbols but do not have
+## branch table entries since they are really data.
+#nobranch_text
+
+## routines which are only used internally to libm
+#private_externs
+	_exp__E
+	_log__L
+
+#objects
+## GLOBAL DATA: ORDER CANNOT CHANGE, INSERT ONLY AT END OF LIST
+## const global data (these are in the text segment just after the branch table)
+
+## global data
+	signgam.o
+## INSERT NEW GLOBAL DATA MODULES JUST ABOVE THIS LINE
+##
+## GLOBAL TEXT: ORDER INDEPENDENT (BUT IS CAREFULLY ARRANGED TO
+## PUT THE THINGS WITH THE GREATEST BSS SIZES AT THE END)
+##
+## bss=0
+	acosh.o
+	asincos.o
+	asinh.o
+	atan.o
+	atan2.o
+	atanh.o
+	cabs.o
+	cbrt.o
+	cosh.o
+	erf.o
+	exp.o
+	exp__E.o
+	expm1.o
+	floor.o
+	fmod.o
+	jn.o
+	lgamma.o
+	log.o
+	log10.o
+	log1p.o
+	log__L.o
+	pow.o
+	sinh.o
+	sqrt.o
+	support.o
+	tanh.o
+	trig.o
+
+## bss=16
+	j0.o
+	j1.o
+
+

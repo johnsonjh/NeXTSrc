@@ -1,0 +1,387 @@
+#
+# Generic top-level makefile for simple commands
+# (c) NeXT, Inc.  1987
+#
+#	Makefile	5.11	85/12/12
+#
+# This version expects the 4.2BSD directory reading routines to
+# located in libc.a.  If they aren't, augment LIBS.  Also, LIBS
+# can be set to reference other object modules and libraries needed
+# by uucico, such as -lunet (needed when UNET is defined).
+#
+# Common object files are assembled into a library {uulib.a}
+#
+
+PRODUCTS= uucico uucp uux uuxqt uulog uuclean uuname uupoll uusnap \
+	uuencode uudecode uusend uucpd uuq
+# this is a gawdawful hack
+#	acucntrl
+
+BINDIR=	$(DSTROOT)/usr/bin
+CONFDIR= $(DSTROOT)/private/etc/uucp
+ULIBDIR=$(DSTROOT)/usr/lib/uucp
+ETCDIR=	$(DSTROOT)/usr/etc
+SPOOLDIR= $(DSTROOT)/private/spool
+
+DSTDIRS777= \
+	${SPOOLDIR}/uucppublic \
+	${SPOOLDIR}/uucp/LCK \
+	${SPOOLDIR}/uucp/STATS
+
+DSTDIRS755= \
+	${ULIBDIR} \
+	${SPOOLDIR}/uucp \
+	${SPOOLDIR}/uucp/CORRUPT \
+	${SPOOLDIR}/uucp/AUDIT \
+	${SPOOLDIR}/uucp/STST \
+	${SPOOLDIR}/uucp/C. \
+	${SPOOLDIR}/uucp/D. \
+	${SPOOLDIR}/uucp/X. \
+	${SPOOLDIR}/uucp/TM.
+
+DSTDIRSMISC= \
+	${ETCDIR} \
+	${BINDIR} \
+	${CONFDIR}/UUAIDS \
+	${SPOOLDIR}
+
+DSTDIRS= $(DSTDIRSMISC) $(DSTDIRS755) $(DSTDIRS777)
+
+CDEFS=	-DNeXT_MOD -D__STRICT_BSD__
+CFLAGS=	-O -g -fwritable-strings $(CDEFS)
+LDFLAGS= -object
+IFLAGS= -s
+LIBS= -lsys_s
+
+OWNER=	uucp
+GROUP=	daemon
+
+HFILES= condevs.h pk.h uucp.h uust.h uusub.h
+CFILES= anlwrk.c anyread.c assert.c cfgets.c chkpth.c \
+	chksum.c cico.c cntrl.c condevs.c conn.c cpmv.c expfile.c \
+	fio.c gename.c getargs.c getprm.c getpwinfo.c getwd.c gio.c \
+	gnamef.c gnsys.c gnxseq.c imsg.c ioctl.c lastpart.c \
+	logent.c mailst.c mkdir.c pk0.c pk1.c prefix.c setline.c strpbrk.c \
+	subdir.c sysacct.c systat.c tio.c ulockf.c uuclean.c uucp.c \
+	uucpd.c uucpdefs.c uucpname.c uudecode.c uuencode.c uulog.c \
+	uuname.c uupoll.c uuq.c uusend.c uusnap.c uux.c uuxqt.c versys.c \
+	xqt.c
+#	acucntrl.c
+SFILES=
+YFILES=
+
+DERIVED=
+GARBAGE= uulib.a
+
+SRCS= $(HFILES) $(YFILES) $(CFILES) $(SFILES)
+OBJS= $(CFILES:.c=.o) $(YFILES:.y=.o) $(SFILES:.s=.o)
+
+
+all:	$(PRODUCTS)
+
+install: DSTROOT ${DSTDIRS} all symlinks
+	install -m 600 -o ${OWNER} -g ${GROUP} UUAIDS/USERFILE $(CONFDIR)/USERFILE
+	install -m 600 -o ${OWNER} -g ${GROUP} UUAIDS/L.aliases $(CONFDIR)/L.aliases
+	install -m 600 -o ${OWNER} -g ${GROUP} UUAIDS/L.sys $(CONFDIR)/L.sys
+	install -m 600 -o ${OWNER} -g ${GROUP} UUAIDS/L.cmds $(CONFDIR)/L.cmds
+	install -m 600 -o ${OWNER} -g ${GROUP} UUAIDS/L-devices $(CONFDIR)/L-devices
+	install -m 600 -o ${OWNER} -g ${GROUP} UUAIDS/L-dialcodes $(CONFDIR)/L-dialcodes
+	install -m 755 -o ${OWNER} -g ${GROUP} UUAIDS/uucp.day.sh $(CONFDIR)/uucp.day.sh
+	install -s -m 6111 -o ${OWNER} -g ${GROUP} uucico.NEW ${ULIBDIR}/uucico
+	install -s -m 6111 -o ${OWNER} -g ${GROUP} uuclean.NEW ${ULIBDIR}/uuclean
+	install -s -m 6111 -o ${OWNER} -g ${GROUP} uucp.NEW ${BINDIR}/uucp
+	install -s -m 6111 -o ${OWNER} -g ${GROUP} uux.NEW ${BINDIR}/uux
+	install -s -m 6111 -o ${OWNER} -g ${GROUP} uulog.NEW ${BINDIR}/uulog
+	install -s -m 6111 -o ${OWNER} -g ${GROUP} uuname.NEW ${BINDIR}/uuname
+	install -s -m 6111 -o ${OWNER} -g ${GROUP} uusnap.NEW ${BINDIR}/uusnap
+	install -s -m 6111 -o ${OWNER} -g ${GROUP} uupoll.NEW ${BINDIR}/uupoll
+	install -s -m 6111 -o ${OWNER} -g ${GROUP} uuq.NEW ${BINDIR}/uuq
+	install -s -m 6111 -o ${OWNER} -g ${GROUP} uusend.NEW ${BINDIR}/uusend
+	rm -f ${BINDIR}/ruusend
+	ln ${BINDIR}/uusend ${BINDIR}/ruusend
+	install -s -m 6110 -o ${OWNER} -g ${GROUP} uuxqt.NEW ${ULIBDIR}/uuxqt
+	install -s -m 500  -o ${OWNER} -g ${GROUP} uucpd.NEW ${ETCDIR}/uucpd
+	install -s -m 755  -o ${OWNER} -g ${GROUP} uuencode.NEW ${BINDIR}/uuencode
+	install -s -m 755  -o ${OWNER} -g ${GROUP} uudecode.NEW ${BINDIR}/uudecode
+	cp UUAIDS/* ${CONFDIR}/UUAIDS
+	chmod a=r ${CONFDIR}/UUAIDS/*
+	touch ${SPOOLDIR}/uucppublic/.hushlogin ${SPOOLDIR}/uucp/ERRLOG
+	chown -R ${OWNER}.${GROUP} ${CONFDIR}/UUAIDS ${SPOOLDIR}/uucppublic/.hushlogin
+	chown -R ${OWNER}.${GROUP} ${SPOOLDIR}/uucp/ERRLOG
+
+symlinks:
+	@if [ ! -h ${DSTROOT}/etc ] ; \
+	then \
+		echo "ln -s private/etc ${DSTROOT}/etc" ; \
+		ln -s private/etc ${DSTROOT}/etc ; \
+	fi
+	@if [ ! -h ${DSTROOT}/usr/spool ] ; \
+	then \
+		echo "ln -s ../private/spool ${DSTROOT}/usr/spool" ; \
+		ln -s ../private/spool ${DSTROOT}/usr/spool ; \
+	fi
+
+#
+# Building uucp
+#
+UUCP_OBJS= uucp.o uulib.a
+
+uucp.NEW:	${UUCP_OBJS} uucp_vers.o
+	$(CC) $(CFLAGS) -o $@ ${UUCP_OBJS} uucp_vers.o ${LIBS}
+
+uucp_vers.c: ${DOVERS} ${UUCP_OBJS}
+	@rm -f $@
+	vers_string -c uucp > $@
+
+#
+# Building uux
+#
+UUX_OBJS= uux.o uulib.a
+
+uux.NEW:	${UUX_OBJS} uux_vers.o
+	$(CC) $(CFLAGS) -o $@ ${UUX_OBJS} uux_vers.o ${LIBS}
+
+uux_vers.c: ${DOVERS} ${UUX_OBJS}
+	@rm -f $@
+	vers_string -c uux > $@
+
+#
+# Building uuxqt
+#
+UUXQT_OBJS= uuxqt.o uulib.a
+
+uuxqt.NEW:	${UUXQT_OBJS} uuxqt_vers.o
+	$(CC) $(CFLAGS) -o $@ ${UUXQT_OBJS} uuxqt_vers.o ${LIBS}
+
+uuxqt_vers.c: ${DOVERS} ${UUXQT_OBJS}
+	@rm -f $@
+	vers_string -c uuxqt > $@
+
+#
+# Building uucico
+#
+UUCICO_OBJS= cico.o cntrl.o conn.o condevs.o gnsys.o pk0.o chksum.o \
+	pk1.o tio.o fio.o gio.o imsg.o uulib.a aculib/aculib.a
+
+uucico.NEW:	${UUCICO_OBJS} uucico_vers.o
+	$(CC) $(CFLAGS) -o $@ ${UUCICO_OBJS} uucico_vers.o ${LIBS}
+
+uucico_vers.c: ${DOVERS} ${UUCICO_OBJS}
+	@rm -f $@
+	vers_string -c uucico > $@
+
+#
+# Building uulog
+#
+UULOG_OBJS= uulog.o uulib.a
+
+uulog.NEW:	${UULOG_OBJS} uulog_vers.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ ${UULOG_OBJS} uulog_vers.o ${LIBS}
+
+uulog_vers.c: ${DOVERS} ${UULOG_OBJS}
+	@rm -f $@
+	vers_string -c uulog > $@
+
+#
+# Building uuclean
+#
+UUCLEAN_OBJS= uuclean.o uulib.a
+
+uuclean.NEW:	${UUCLEAN_OBJS} uuclean_vers.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ ${UUCLEAN_OBJS} uuclean_vers.o ${LIBS}
+
+uuclean_vers.c: ${DOVERS} ${UUCLEAN_OBJS}
+	@rm -f $@
+	vers_string -c uuclean > $@
+
+#
+# Building uuname
+#
+UUNAME_OBJS= uuname.o uulib.a
+
+uuname.NEW:	${UUNAME_OBJS} uuname_vers.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ ${UUNAME_OBJS} uuname_vers.o ${LIBS}
+
+uuname_vers.c: ${DOVERS} ${UUNAME_OBJS}
+	@rm -f $@
+	vers_string -c uuname > $@
+
+#
+# Building uupoll
+#
+UUPOLL_OBJS= uupoll.o uulib.a
+
+uupoll.NEW:	${UUPOLL_OBJS} uupoll_vers.o
+	$(CC) $(CFLAGS) -o $@ ${UUPOLL_OBJS} uupoll_vers.o ${LIBS}
+
+uupoll_vers.c: ${DOVERS} ${UUPOLL_OBJS}
+	@rm -f $@
+	vers_string -c uupoll > $@
+
+#
+# Building uusnap
+#
+UUSNAP_OBJS= uusnap.o
+
+uusnap.NEW:	${UUSNAP_OBJS} uusnap_vers.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ ${UUSNAP_OBJS} uusnap_vers.o ${LIBS}
+
+uusnap_vers.c: ${DOVERS} ${UUSNAP_OBJS}
+	@rm -f $@
+	vers_string -c uusnap > $@
+
+#
+# Building uuencode
+#
+UUENCODE_OBJS= uuencode.o
+
+uuencode.NEW:	${UUENCODE_OBJS} uuencode_vers.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ ${UUENCODE_OBJS} uuencode_vers.o ${LIBS}
+
+uuencode_vers.c: ${DOVERS} ${UUENCODE_OBJS}
+	@rm -f $@
+	vers_string -c uuencode > $@
+
+uudecode: uudecode.o
+	${CC} $(LDFLAGS) $(CFLAGS) -o uudecode uudecode.o ${LIBS}
+#
+# Building uudecode
+#
+UUDECODE_OBJS= uudecode.o
+
+uudecode.NEW:	${UUDECODE_OBJS} uudecode_vers.o
+	$(CC) $(CFLAGS) -o $@ ${UUDECODE_OBJS} uudecode_vers.o ${LIBS}
+
+uudecode_vers.c: ${DOVERS} ${UUDECODE_OBJS}
+	@rm -f $@
+	vers_string -c uudecode > $@
+
+#
+# Building uusend
+#
+UUSEND_OBJS= uusend.o uulib.a
+
+uusend.NEW:	${UUSEND_OBJS} uusend_vers.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ ${UUSEND_OBJS} uusend_vers.o ${LIBS}
+
+uusend_vers.c: ${DOVERS} ${UUSEND_OBJS}
+	@rm -f $@
+	vers_string -c uusend > $@
+
+#
+# Building uucpd
+#
+UUCPD_OBJS= uucpd.o
+
+uucpd.NEW:	${UUCPD_OBJS} uucpd_vers.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ ${UUCPD_OBJS} uucpd_vers.o ${LIBS}
+
+uucpd_vers.c: ${DOVERS} ${UUCPD_OBJS}
+	@rm -f $@
+	vers_string -c uucpd > $@
+
+#
+# Building uuq
+#
+UUQ_OBJS= uuq.o uulib.a
+
+uuq.NEW:	${UUQ_OBJS} uuq_vers.o
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ ${UUQ_OBJS} uuq_vers.o ${LIBS}
+
+uuq_vers.c: ${DOVERS} ${UUQ_OBJS}
+	@rm -f $@
+	vers_string -c uuq > $@
+
+#
+# Building acucntrl
+#
+ACUCNTRL_OBJS= acucntrl.o
+
+acucntrl.NEW:	${ACUCNTRL_OBJS} acucntrl_vers.o
+	$(CC) $(CFLAGS) -o $@ ${ACUCNTRL_OBJS} acucntrl_vers.o ${LIBS}
+
+acucntrl_vers.c: ${DOVERS} ${ACUCNTRL_OBJS}
+	@rm -f $@
+	vers_string -c acucntrl > $@
+
+#
+# Building uulib.a
+#
+# The lorder...tsort below is for systems w/o ranlib
+# But it doesnt hurt to use it. Ignore the spurious "cycle" messages
+#
+UULIB_OBJS= anlwrk.o anyread.o assert.o cfgets.o chkpth.o \
+	cpmv.o expfile.o gename.o getargs.o getprm.o \
+	getpwinfo.o gnamef.o gnxseq.o lastpart.o logent.o mailst.o \
+	prefix.o setline.o subdir.o sysacct.o systat.o \
+	ulockf.o uucpname.o versys.o xqt.o uucpdefs.o
+
+uulib.a: ${UULIB_OBJS} uulib_vers.o
+	rm -f $@
+	ar cr $@ `lorder ${UULIB_OBJS} uulib_vers.o | tsort`
+	ranlib $@
+
+uulib_vers.c: ${DOVERS} ${UULIB_OBJS}
+	@rm -f $@
+	vers_string -l uulib > $@
+
+#
+# Building aculib.a
+#
+aculib/aculib.a: ALWAYS
+	cd aculib; $(MAKE) $(MFLAGS)
+
+#
+# Standard targets
+#
+$(PRODUCTS):	Makedep $$@.NEW
+
+clean:	ALWAYS
+	-rm -f *.o *.NEW TAGS tags vers.c Makedep $(PRODUCTS) $(DERIVED) \
+		$(GARBAGE)
+	cd aculib; make clean
+
+DSTROOT:
+	@if [ -n "$($@)" ]; \
+	then \
+		exit 0; \
+	else \
+		echo Must define $@; \
+		exit 1; \
+	fi
+
+${DSTDIRSMISC}:
+	mkdirs $@
+	chown ${OWNER}.${GROUP} $@
+
+${DSTDIRS777}:
+	mkdirs $@
+	chmod 777 $@
+	chown ${OWNER}.${GROUP} $@
+
+#
+# Note: mode 700 on ${ULIBDIR} would be safer.
+# Also,  L.sys etc should be 600.
+#
+
+${DSTDIRS755}:
+	mkdirs $@
+	chmod 755 $@
+	chown ${OWNER}.${GROUP} $@
+
+depend Makedep: $(DERIVED)
+	rm -f Makedep
+	$(CC) -M $(CDEFS) $(CFILES) $(SFILES) $(DERIVED) | \
+	    awk '{ if ($$1 != prev) { if (rec != "") print rec; \
+		rec = $$0; prev = $$1; } \
+		else { if (length(rec $$2) > 78) { print rec; rec = $$0; } \
+		else rec = rec " " $$2 } } \
+		END { print rec }' >Makedep
+
+tags:	ALWAYS
+	etags $(SRCS)
+	ctags $(SRCS)
+
+ALWAYS:
+
+-include Makedep

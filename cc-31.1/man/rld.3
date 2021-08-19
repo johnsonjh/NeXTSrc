@@ -1,0 +1,231 @@
+.TH RLD 3  "June 26, 1990" "NeXT, Inc."
+.SH NAME
+rld_load, rld_load_from_memory, rld_unload, rld_lookup, rld_unload_all, rld_load_basefile, rld_address_func \- dynamicly link edit and load object files
+.SH SYNOPSIS
+.nf
+.PP
+#include <rld.h>
+extern long rld_load(
+	NXStream *stream,
+	struct mach_header **header_addr,
+	const char * const *object_filenames,
+	const char *output_filename);
+.sp .5
+extern long rld_load_from_memory(
+	NXStream *stream,
+	struct mach_header **header_addr,
+	const char *object_name,
+	char *object_addr,
+	long *object_size,
+	const char *output_filename);
+.sp .5
+extern long rld_unload(
+	NXStream *stream);
+.sp .5
+extern long rld_lookup(
+	NXStream *stream,
+	const char *symbol_name,
+	unsigned long *value);
+.sp .5
+extern long rld_unload_all(
+	NXStream *stream,
+	long deallocate_sets);
+.sp .5
+extern long rld_load_basefile(
+	NXStream *stream,
+	const char *base_filename);
+.sp.5
+extern void rld_address_func(
+	unsigned long (*func)(unsigned long size, unsigned long headers_size));
+.fi
+.SH DESCRIPTION
+.I rld_load
+link edits and loads the specified object filenames in the NULL
+terminated array of object file names,
+.I object_filenames,
+into the program that called it (or can be use to load into another program).
+An object name can be an archive and if so only those members defining undefined
+symbols will be loaded.
+.PP
+If the program wishes to allow the loaded
+object files to use symbols from itself it must be built with the
+.B \-seglinkedit
+link editor,
+.IR ld (1),
+option to have its symbol table mapped into memory.
+.PP
+The symbol table may be trimmed to exactly which symbols are allowed to be
+referenced by loaded objects with the use of the
+.B "\-s filename"
+option to
+.IR strip (1).
+For the routines described here only global symbols are used so the
+.B \-x
+option to the link editor,
+.IR ld (1),
+or
+.IR strip (1)
+can be used to save space in the final program and vastly decrease the time
+the first call to
+.I rld_load
+takes (and all first calls after
+.IR rld_unload_all).
+This is because 
+.I rld_load
+must go through all the symbols of the program and if the program has been
+compiled for debugging for example it can take orders of magnitude longer
+because of the great number of symbols.
+.PP
+Since only the symbols that appear in the executable program can be used by the
+objects loaded with
+.I rld_load
+if the program uses a shared library and wants to make all the symbols in that
+shared library available to the objects it loads it must force all of those
+symbols into the executable.  The way this can be done easily is to have the
+executable program reference the shared library reference symbol for each of
+the shared libraries it uses.  The shared library reference symbol has the name
+base name of the target library up to the first '.'.  For the target
+shared library /usr/shlib/libsys_s.B.shlib the shared library reference symbol
+name is
+.I libsys_s.
+This name intentionally does not start with an underscore,
+'_', so to be out of the normal name space for 'C' external symbols.  So
+to reference the above symbol for example the 
+.IR ld (1)
+.BI \-u " libsys_s"
+option would be used when linking the program and this option would appear on
+the link edit command line before the library.
+If the target shared library changes and new routines and data are added
+and the program wishes to make them available to the objects it loads with
+.I rld_load
+the program must be relinked against the host shared library that matches the
+target shared library.  This must be done this way to avoid link editing and
+loading object that would otherwise fail to run correctly in very hard to
+detect ways.
+.PP
+The set of object files being
+loaded will only be successful if there are no link edit errors (undefined
+symbols, etc.).  If an error occurs the set of object files is unloaded
+automaticly.  If errors occur and the value specified for
+.I stream
+is not NULL error messages are printed on that stream.  If the link editing and
+loading is successful the address of the header of what was loaded is returned
+through the pointer
+.I header_addr
+it if is not NULL.
+If
+.I rld_load
+is successful and the parameter
+.I output_filename
+is not NULL then an object file is written to that filename and can be used
+with the
+.IR gdb (1)
+.I add-file
+command to debug the code in the dynamicly loaded set of objects.
+.I rld_load
+returns 1 for success and 0 for failure.  If a fatal system error (out of
+memory, etc.) occurs then all future calls of this and all routines described
+here will fail.
+.PP
+.I rld_load_from_memory()
+provides a similar function as
+.I rld_load()
+but works on memory rather than a file.  The argument object_name is the name
+of associated with the memory and is used for messages (must not be NULL). The
+arguments object_addr and object_size are the memory address the object file is
+at and the size of that object file.  
+.I rld_load_from_memory()
+only allows one object file (not an archive) to be loaded.
+.PP
+.I rld_unload()
+unlinks and unloads that last object set that was loaded.
+It returns 1 if it is successful and 0 otherwise.  If any errors occur
+and the specified stream,
+.I stream,
+is not zero the error messages are printed
+on that stream.  It is the caller's responsibility not to have any pointers
+into the data areas of the object set and to deallocate any memory that set
+of objects may have allocated.
+.PP
+.I rld_lookup()
+looks up the specified symbol name,
+.I symbol_name,
+and returns its value indirectly through the pointer specified,
+.I value.
+It returns 1 if it finds the symbol and 0 otherwise.  If any errors occur and
+the specified stream,
+.I stream,
+is not zero the error messages are printed on
+that stream (for this routine only internal errors could result).
+.PP
+.I rld_unload_all()
+clears out all allocated data structures used by these routines.  If the
+parameter
+.I deallocate_sets
+is non-zero it also unloads all object sets that were loaded.  
+If
+.I deallocate_sets
+is zero the object sets are not unloaded and the program can continue to use
+the code and data loaded but further calls routines here will no longer know
+about symbols in those sets.  If objects sets are not to be allowed access
+to each others symbols an
+.I rld_unload_all
+call between calls to
+.I rld_load
+allows objects sets to be loaded without them worrying about global symbol
+names clashing.
+.I rld_unload_all
+returns 1 if it is successful and 0 otherwise.  If any errors occur
+and the specified stream,
+.I stream,
+is not zero the error messages are printed
+on that stream.
+.PP
+.I rld_load_basefile
+is passed a file name,
+.I base_filename,
+that is to be used as the base file, that is it's symbol table is taken as the
+basis for subsequent
+.I rld_load's.
+This must be done before any call to 
+.I rld_load.
+Or can be done after a call to
+.I rld_unload_all
+which unloads the base file.  This call is intended to be used when a program
+is dynamicly loading object sets into a program other than itself were 
+.I base_filename
+contains the symbol table of the target program.  The routine
+.I rld_address_func
+described next would also be used.
+.PP
+.I rld_address_func
+is passed a pointer to a function,
+.I func,
+that is called from
+.I rld_load
+with the size of the memory required to for the object set being loaded
+and the size of the headers included in that size.
+.I func
+returns the address where the output is to link edited to.  This call is
+intended to be used when a program is dynamicly loading object sets into a
+program other than itself and allows it to pick the place in the address
+space of the target program.
+
+.SH "SEE ALSO"
+ld(1), strip(1), gdb(1)
+
+.SH BUGS
+There exist one semantic link edit problem with respect to common symbols.
+If a set of object files are loaded that have common symbols left after the
+symbols have been merged
+.I rld_load
+then has to allocate storage for these symbols
+for the code to run without error.  The problem occurs if on a later call to
+.I rld_load
+one of the common symbols that 
+.I rld_load
+allocated appears in an object
+file as a defining symbol (not a common or an undefined).  In this case
+.I rld_load
+will report the symbol as being multiply defined.  However if this combination
+of object files were staticly linked no error would occur.

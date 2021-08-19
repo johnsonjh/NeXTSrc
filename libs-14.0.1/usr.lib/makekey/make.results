@@ -1,0 +1,27 @@
+	/release/sun_root/bin/make machine=next DOVERS=ALWAYS SRCROOT=/rele\
+	ase/NeXT_root LCLROOT=/os/osdev/NeXT_root DSTROOT=/release/NeXT_roo\
+	t local
+mkdirs /os/osdev/NeXT_root/bin
+vers_string -c makekey > vers.c
+cc -O -DNeXT_MOD -c vers.c
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -DNeXT_MOD -c vers.c -I/os/osdev/LIBS/libs1.0b/mach.\
+	include -I/os/osdev/LIBS/libs1.0b/include -I/os/osdev/NeXT_root/usr\
+	/mach/include -I/os/osdev/NeXT_root/usr/include -I/release/NeXT_roo\
+	t/usr/mach/include -I/release/NeXT_root/usr/include -L/os/osdev/NeX\
+	T_root/lib -L/os/osdev/NeXT_root/usr/lib -L/release/NeXT_root/lib -\
+	L/release/NeXT_root/usr/lib
+cc -O -DNeXT_MOD -o makekey.NEW makekey.o   vers.o 
+	/release/sun_root/bin/cc-0.3.3.SUN -fwritable-strings -P/release/su\
+	n_root -Dunix -Dmc68000 -Dmc68020 -D__GNU__ -DCMU -DCMUCS -DNeXT_MO\
+	D -DNeXT -Z -O -DNeXT_MOD -o makekey.NEW makekey.o vers.o -I/os/osd\
+	ev/LIBS/libs1.0b/mach.include -I/os/osdev/LIBS/libs1.0b/include -I/\
+	os/osdev/NeXT_root/usr/mach/include -I/os/osdev/NeXT_root/usr/inclu\
+	de -I/release/NeXT_root/usr/mach/include -I/release/NeXT_root/usr/i\
+	nclude -L/os/osdev/NeXT_root/lib -L/os/osdev/NeXT_root/usr/lib -L/r\
+	elease/NeXT_root/lib -L/release/NeXT_root/usr/lib
+install -s makekey.NEW /os/osdev/NeXT_root/bin/makekey
+	/release/sun_root/usr/bin/install -u -s makekey.NEW /os/osdev/NeXT_\
+	root/bin/makekey
+cp makekey.NEW /os/osdev/NeXT_root/bin/makekey

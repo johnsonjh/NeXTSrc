@@ -1,0 +1,784 @@
+
+
+
+call graph profile:
+          The sum of self and descendents is the major sort
+          for this listing.
+
+          function entries:
+
+index     the index of the function in the call graph
+          listing, as an aid to locating it (see below).
+
+%time     the percentage of the total time of the program
+          accounted for by this function and its
+          descendents.
+
+self      the number of seconds spent in this function
+          itself.
+
+descendents
+          the number of seconds spent in the descendents of
+          this function on behalf of this function.
+
+called    the number of times this function is called (other
+          than recursive calls).
+
+self      the number of times this function calls itself
+          recursively.
+
+name      the name of the function, with an indication of
+          its membership in a cycle, if any.
+
+index     the index of the function in the call graph
+          listing, as an aid to locating it.
+
+
+
+          parent listings:
+
+self*     the number of seconds of this function's self time
+          which is due to calls from this parent.
+
+descendents*
+          the number of seconds of this function's
+          descendent time which is due to calls from this
+          parent.
+
+called**  the number of times this function is called by
+          this parent.  This is the numerator of the
+          fraction which divides up the function's time to
+          its parents.
+
+total*    the number of times this function was called by
+          all of its parents.  This is the denominator of
+          the propagation fraction.
+
+parents   the name of this parent, with an indication of the
+          parent's membership in a cycle, if any.
+
+index     the index of this parent in the call graph
+          listing, as an aid in locating it.
+
+
+
+          children listings:
+
+self*     the number of seconds of this child's self time
+          which is due to being called by this function.
+
+descendent*
+          the number of seconds of this child's descendent's
+          time which is due to being called by this
+          function.
+
+called**  the number of times this child is called by this
+          function.  This is the numerator of the
+          propagation fraction for this child.
+
+total*    the number of times this child is called by all
+          functions.  This is the denominator of the
+          propagation fraction.
+
+children  the name of this child, and an indication of its
+          membership in a cycle, if any.
+
+index     the index of this child in the call graph listing,
+          as an aid to locating it.
+
+
+
+          * these fields are omitted for parents (or
+          children) in the same cycle as the function.  If
+          the function (or child) is a member of a cycle,
+          the propagated times and propagation denominator
+          represent the self time and descendent time of the
+          cycle as a whole.
+
+          ** static-only parents and children are indicated
+          by a call count of 0.
+
+
+
+          cycle listings:
+          the cycle as a whole is listed with the same
+          fields as a function entry.  Below it are listed
+          the members of the cycle, and their contributions
+          to the time and call counts of the cycle.
+
+
+granularity: each sample hit covers 4 byte(s) for 1.52% of 1.03 seconds
+
+                                  called/total       parents 
+index  %time    self descendents  called+self    name    	index
+                                  called/total       children
+
+                                                     <spontaneous>
+[1]     49.1    0.05        0.46                 _srr_main [1]
+                0.08        0.23    1000/1000        _srr_handle_response [6]
+                0.06        0.09    1001/1007        _netipc_receive [12]
+
+-----------------------------------------------
+
+                0.08        0.41    2076/2076        _netname_main [3]
+[2]     47.7    0.08        0.41    2076         _netname_server [2]
+                0.05        0.35    2055/2055        __Xnetname_look_up [4]
+                0.01        0.00      19/19          __Xnetname_check_in [22]
+                0.00        0.00       2/2           __Xnetname_check_out [38]
+
+-----------------------------------------------
+
+                                                     <spontaneous>
+[3]     47.7    0.00        0.49                 _netname_main [3]
+                0.08        0.41    2076/2076        _netname_server [2]
+
+-----------------------------------------------
+
+                0.05        0.35    2055/2055        _netname_server [2]
+[4]     39.3    0.05        0.35    2055         __Xnetname_look_up [4]
+                0.09        0.26    2055/2055        __netname_look_up [5]
+
+-----------------------------------------------
+
+                0.09        0.26    2055/2055        __Xnetname_look_up [4]
+[5]     34.0    0.09        0.26    2055         __netname_look_up [5]
+                0.02        0.23    1000/1000        _nn_network_look_up [7]
+                0.02        0.00    1055/1081        _lq_find_in_queue [19]
+                0.00        0.00    2000/2000        _nn_host_address [42]
+
+-----------------------------------------------
+
+                0.08        0.23    1000/1000        _srr_main [1]
+[6]     29.8    0.08        0.23    1000         _srr_handle_response [6]
+                0.03        0.14    1000/1005        _disp_indata_simple [10]
+                0.03        0.00    1000/1000        _srr_dequeue [17]
+                0.03        0.00    1000/2001        _srr_hash_lookup [16]
+
+-----------------------------------------------
+
+                0.02        0.23    1000/1000        __netname_look_up [5]
+[7]     24.2    0.02        0.23    1000         _nn_network_look_up [7]
+                0.03        0.20    1000/1000        _srr_send [8]
+
+-----------------------------------------------
+
+                0.03        0.20    1000/1000        _nn_network_look_up [7]
+[8]     22.7    0.03        0.20    1000         _srr_send [8]
+                0.05        0.12    1000/1000        _srr_process_queued_request [11]
+                0.03        0.00    1000/2001        _srr_hash_lookup [16]
+                0.01        0.00       1/1           _srr_hash_enter [29]
+                0.00        0.00    1000/1000        _srr_enqueue [47]
+
+-----------------------------------------------
+
+                0.09        0.00    1001/2006        _netipc_send [14]
+                0.09        0.00    1005/2006        _netipc_receive [12]
+[9]     17.4    0.18        0.00    2006         _udp_checksum [9]
+
+-----------------------------------------------
+
+                0.00        0.00       5/1005        _datagram_main [31]
+                0.03        0.14    1000/1005        _srr_handle_response [6]
+[10]    16.7    0.03        0.14    1005         _disp_indata_simple [10]
+                0.08        0.06    1000/1000        _nn_handle_reply [13]
+                0.00        0.00       4/4           _pc_handle_startup_hint [55]
+                0.00        0.00       1/1           _po_handle_nport_death [66]
+
+-----------------------------------------------
+
+                0.05        0.12    1000/1000        _srr_send [8]
+[11]    16.2    0.05        0.12    1000         _srr_process_queued_request [11]
+                0.02        0.09    1000/1001        _netipc_send [14]
+                0.02        0.00    1000/1009        _timer_start [20]
+
+-----------------------------------------------
+
+                0.00        0.00       6/1007        _datagram_main [31]
+                0.06        0.09    1001/1007        _srr_main [1]
+[12]    14.8    0.06        0.09    1007         _netipc_receive [12]
+                0.09        0.00    1005/2006        _udp_checksum [9]
+
+-----------------------------------------------
+
+                0.08        0.06    1000/1000        _disp_indata_simple [10]
+[13]    13.6    0.08        0.06    1000         _nn_handle_reply [13]
+                0.05        0.02    1000/1000        _pr_ntran [15]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1001        _datagram_send [35]
+                0.02        0.09    1000/1001        _srr_process_queued_request [11]
+[14]    10.2    0.02        0.09    1001         _netipc_send [14]
+                0.09        0.00    1001/2006        _udp_checksum [9]
+
+-----------------------------------------------
+
+                0.05        0.02    1000/1000        _nn_handle_reply [13]
+[15]     6.1    0.05        0.02    1000         _pr_ntran [15]
+                0.02        0.00     999/999         _nport_test [21]
+                0.00        0.00       1/1           _pr_create [70]
+
+-----------------------------------------------
+
+                0.00        0.00       1/2001        _srr_retry [40]
+                0.03        0.00    1000/2001        _srr_send [8]
+                0.03        0.00    1000/2001        _srr_handle_response [6]
+[16]     5.3    0.05        0.00    2001         _srr_hash_lookup [16]
+
+-----------------------------------------------
+
+                0.03        0.00    1000/1000        _srr_handle_response [6]
+[17]     3.0    0.03        0.00    1000         _srr_dequeue [17]
+
+-----------------------------------------------
+
+                                                     <spontaneous>
+[18]     1.5    0.02        0.00                 _timer_run [18]
+                0.00        0.00       8/8           _pc_do_checkups [33]
+                0.00        0.00       1/1           _srr_retry [40]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1081        _lu_port_set [41]
+                0.00        0.00       2/1081        __netname_check_out [39]
+                0.00        0.00      23/1081        __netname_check_in [32]
+                0.02        0.00    1055/1081        __netname_look_up [5]
+[19]     1.5    0.02        0.00    1081         _lq_find_in_queue [19]
+                0.00        0.00    2075/2075        _nn_name_test [46]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1009        _pc_init [34]
+                0.00        0.00       8/1009        _pc_do_checkups [33]
+                0.02        0.00    1000/1009        _srr_process_queued_request [11]
+[20]     1.5    0.02        0.00    1009         _timer_start [20]
+
+-----------------------------------------------
+
+                0.02        0.00     999/999         _pr_ntran [15]
+[21]     1.5    0.02        0.00     999         _nport_test [21]
+
+-----------------------------------------------
+
+                0.01        0.00      19/19          _netname_server [2]
+[22]     0.8    0.01        0.00      19         __Xnetname_check_in [22]
+                0.00        0.00      19/23          __netname_check_in [32]
+
+-----------------------------------------------
+
+                0.00        0.01       1/1           _main [24]
+[23]     0.8    0.00        0.01       1         _nm_init [23]
+                0.01        0.00       1/1           _network_init [28]
+                0.00        0.00       1/1           _pc_init [34]
+                0.00        0.00       1/1           _ls_init_2 [37]
+                0.00        0.00       1/1           _netname_init [43]
+                0.00        0.00       1/1           _mem_init [64]
+                0.00        0.00       1/1           _lock_queue_init [61]
+                0.00        0.00       1/1           _uid_init [81]
+                0.00        0.00       1/1           _timer_init [78]
+                0.00        0.00       1/1           _disp_init [58]
+                0.00        0.00       1/1           _transport_init [79]
+                0.00        0.00       1/1           _pr_init [71]
+                0.00        0.00       1/1           _datagram_init [57]
+                0.00        0.00       1/1           _srr_init [74]
+                0.00        0.00       1/1           _tcp_init [76]
+                0.00        0.00       1/1           _ipc_init [59]
+                0.00        0.00       1/1           _po_init [67]
+                0.00        0.00       1/1           _ps_init [73]
+
+-----------------------------------------------
+
+                                                     <spontaneous>
+[24]     0.8    0.00        0.01                 _main [24]
+                0.00        0.01       1/1           _nm_init [23]
+                0.00        0.00       1/1           _ls_init_1 [62]
+                0.00        0.00       1/1           _ls_read_config_file [63]
+
+-----------------------------------------------
+
+                0.00        0.01     576/576         _nn_remove_entries [27]
+[25]     0.8    0.00        0.01     576         _lq_cond_delete_from_queue [25]
+                0.01        0.00     267/267         _nn_port_test [26]
+
+-----------------------------------------------
+
+                0.01        0.00     267/267         _lq_cond_delete_from_queue [25]
+[26]     0.8    0.01        0.00     267         _nn_port_test [26]
+
+-----------------------------------------------
+
+                0.00        0.01      18/18          _po_notify_main [30]
+[27]     0.8    0.00        0.01      18         _nn_remove_entries [27]
+                0.00        0.01     576/576         _lq_cond_delete_from_queue [25]
+
+-----------------------------------------------
+
+                0.01        0.00       1/1           _nm_init [23]
+[28]     0.8    0.01        0.00       1         _network_init [28]
+                0.00        0.00       1/1           _uid_get_new_uid [80]
+
+-----------------------------------------------
+
+                0.01        0.00       1/1           _srr_send [8]
+[29]     0.8    0.01        0.00       1         _srr_hash_enter [29]
+
+-----------------------------------------------
+
+                                                     <spontaneous>
+[30]     0.8    0.00        0.01                 _po_notify_main [30]
+                0.00        0.01      18/18          _nn_remove_entries [27]
+                0.00        0.00      18/18          _pr_lportlookup [50]
+
+-----------------------------------------------
+
+                                                     <spontaneous>
+[31]     0.2    0.00        0.00                 _datagram_main [31]
+                0.00        0.00       6/1007        _netipc_receive [12]
+                0.00        0.00       5/1005        _disp_indata_simple [10]
+
+-----------------------------------------------
+
+                0.00        0.00       1/23          _netname_init [43]
+                0.00        0.00       3/23          _ls_init_2 [37]
+                0.00        0.00      19/23          __Xnetname_check_in [22]
+[32]     0.0    0.00        0.00      23         __netname_check_in [32]
+                0.00        0.00      23/1081        _lq_find_in_queue [19]
+                0.00        0.00      22/22          _lq_enqueue [49]
+
+-----------------------------------------------
+
+                0.00        0.00       8/8           _timer_run [18]
+[33]     0.0    0.00        0.00       8         _pc_do_checkups [33]
+                0.00        0.00       8/1009        _timer_start [20]
+                0.00        0.00       8/12          _pr_list [54]
+                0.00        0.00       8/12          _lq_dequeue [53]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[34]     0.0    0.00        0.00       1         _pc_init [34]
+                0.00        0.00       1/1           _pc_send_startup_hint [36]
+                0.00        0.00       1/1009        _timer_start [20]
+                0.00        0.00       1/16          _mem_initobj [51]
+                0.00        0.00       1/79          _lq_init [48]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _pc_send_startup_hint [36]
+[35]     0.0    0.00        0.00       1         _datagram_send [35]
+                0.00        0.00       1/1001        _netipc_send [14]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _pc_init [34]
+[36]     0.0    0.00        0.00       1         _pc_send_startup_hint [36]
+                0.00        0.00       1/1           _datagram_send [35]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[37]     0.0    0.00        0.00       1         _ls_init_2 [37]
+                0.00        0.00       3/23          __netname_check_in [32]
+
+-----------------------------------------------
+
+                0.00        0.00       2/2           _netname_server [2]
+[38]     0.0    0.00        0.00       2         __Xnetname_check_out [38]
+                0.00        0.00       2/2           __netname_check_out [39]
+
+-----------------------------------------------
+
+                0.00        0.00       2/2           __Xnetname_check_out [38]
+[39]     0.0    0.00        0.00       2         __netname_check_out [39]
+                0.00        0.00       2/1081        _lq_find_in_queue [19]
+                0.00        0.00       2/2           _lq_remove_from_queue [56]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _timer_run [18]
+[40]     0.0    0.00        0.00       1         _srr_retry [40]
+                0.00        0.00       1/2001        _srr_hash_lookup [16]
+
+-----------------------------------------------
+
+                0.00        0.00    2000/2000        _nn_host_address [42]
+[41]     0.0    0.00        0.00    2000         _lu_port_set [41]
+                0.00        0.00       1/1081        _lq_find_in_queue [19]
+
+-----------------------------------------------
+
+                0.00        0.00    2000/2000        __netname_look_up [5]
+[42]     0.0    0.00        0.00    2000         _nn_host_address [42]
+                0.00        0.00    2000/2000        _lu_port_set [41]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[43]     0.0    0.00        0.00       1         _netname_init [43]
+                0.00        0.00       1/23          __netname_check_in [32]
+                0.00        0.00       1/16          _mem_initobj [51]
+                0.00        0.00       1/1           _nn_procs_init [65]
+
+-----------------------------------------------
+
+                0.00        0.00    2075/2075        _lq_find_in_queue [19]
+[46]     0.0    0.00        0.00    2075         _nn_name_test [46]
+
+-----------------------------------------------
+
+                0.00        0.00    1000/1000        _srr_send [8]
+[47]     0.0    0.00        0.00    1000         _srr_enqueue [47]
+
+-----------------------------------------------
+
+                0.00        0.00       1/79          _timer_init [78]
+                0.00        0.00       1/79          _pc_init [34]
+                0.00        0.00       1/79          _po_init [67]
+                0.00        0.00      12/79          _lq_alloc [52]
+                0.00        0.00      32/79          _nn_procs_init [65]
+                0.00        0.00      32/79          _pr_init [71]
+[48]     0.0    0.00        0.00      79         _lq_init [48]
+
+-----------------------------------------------
+
+                0.00        0.00      22/22          __netname_check_in [32]
+[49]     0.0    0.00        0.00      22         _lq_enqueue [49]
+
+-----------------------------------------------
+
+                0.00        0.00      18/18          _po_notify_main [30]
+[50]     0.0    0.00        0.00      18         _pr_lportlookup [50]
+
+-----------------------------------------------
+
+                0.00        0.00       1/16          _lock_queue_init [61]
+                0.00        0.00       1/16          _timer_init [78]
+                0.00        0.00       1/16          _netname_init [43]
+                0.00        0.00       1/16          _pc_init [34]
+                0.00        0.00       1/16          _ps_init [73]
+                0.00        0.00       1/16          _po_init [67]
+                0.00        0.00       1/16          _srr_init [74]
+                0.00        0.00       1/16          _transport_init [79]
+                0.00        0.00       1/16          _tcp_init [76]
+                0.00        0.00       2/16          _pr_init [71]
+                0.00        0.00       5/16          _ipc_init [59]
+[51]     0.0    0.00        0.00      16         _mem_initobj [51]
+
+-----------------------------------------------
+
+                0.00        0.00      12/12          _pr_list [54]
+[52]     0.0    0.00        0.00      12         _lq_alloc [52]
+                0.00        0.00      12/79          _lq_init [48]
+
+-----------------------------------------------
+
+                0.00        0.00       4/12          _pc_handle_startup_hint [55]
+                0.00        0.00       8/12          _pc_do_checkups [33]
+[53]     0.0    0.00        0.00      12         _lq_dequeue [53]
+
+-----------------------------------------------
+
+                0.00        0.00       4/12          _pc_handle_startup_hint [55]
+                0.00        0.00       8/12          _pc_do_checkups [33]
+[54]     0.0    0.00        0.00      12         _pr_list [54]
+                0.00        0.00      12/12          _lq_alloc [52]
+
+-----------------------------------------------
+
+                0.00        0.00       4/4           _disp_indata_simple [10]
+[55]     0.0    0.00        0.00       4         _pc_handle_startup_hint [55]
+                0.00        0.00       4/12          _pr_list [54]
+                0.00        0.00       4/12          _lq_dequeue [53]
+
+-----------------------------------------------
+
+                0.00        0.00       2/2           __netname_check_out [39]
+[56]     0.0    0.00        0.00       2         _lq_remove_from_queue [56]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[57]     0.0    0.00        0.00       1         _datagram_init [57]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[58]     0.0    0.00        0.00       1         _disp_init [58]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[59]     0.0    0.00        0.00       1         _ipc_init [59]
+                0.00        0.00       5/16          _mem_initobj [51]
+                0.00        0.00       1/1           _ipc_rpc_init [60]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _ipc_init [59]
+[60]     0.0    0.00        0.00       1         _ipc_rpc_init [60]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[61]     0.0    0.00        0.00       1         _lock_queue_init [61]
+                0.00        0.00       1/16          _mem_initobj [51]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _main [24]
+[62]     0.0    0.00        0.00       1         _ls_init_1 [62]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _main [24]
+[63]     0.0    0.00        0.00       1         _ls_read_config_file [63]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[64]     0.0    0.00        0.00       1         _mem_init [64]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _netname_init [43]
+[65]     0.0    0.00        0.00       1         _nn_procs_init [65]
+                0.00        0.00      32/79          _lq_init [48]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _disp_indata_simple [10]
+[66]     0.0    0.00        0.00       1         _po_handle_nport_death [66]
+                0.00        0.00       1/1           _pr_np_puid_lookup [72]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[67]     0.0    0.00        0.00       1         _po_init [67]
+                0.00        0.00       1/16          _mem_initobj [51]
+                0.00        0.00       1/79          _lq_init [48]
+                0.00        0.00       1/1           _po_notify_init [68]
+                0.00        0.00       1/1           _po_utils_init [69]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _po_init [67]
+[68]     0.0    0.00        0.00       1         _po_notify_init [68]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _po_init [67]
+[69]     0.0    0.00        0.00       1         _po_utils_init [69]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _pr_ntran [15]
+[70]     0.0    0.00        0.00       1         _pr_create [70]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[71]     0.0    0.00        0.00       1         _pr_init [71]
+                0.00        0.00      32/79          _lq_init [48]
+                0.00        0.00       2/16          _mem_initobj [51]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _po_handle_nport_death [66]
+[72]     0.0    0.00        0.00       1         _pr_np_puid_lookup [72]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[73]     0.0    0.00        0.00       1         _ps_init [73]
+                0.00        0.00       1/16          _mem_initobj [51]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[74]     0.0    0.00        0.00       1         _srr_init [74]
+                0.00        0.00       1/16          _mem_initobj [51]
+                0.00        0.00       1/1           _srr_utils_init [75]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _srr_init [74]
+[75]     0.0    0.00        0.00       1         _srr_utils_init [75]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[76]     0.0    0.00        0.00       1         _tcp_init [76]
+                0.00        0.00       1/16          _mem_initobj [51]
+                0.00        0.00       1/1           _tcp_init_conn [77]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _tcp_init [76]
+[77]     0.0    0.00        0.00       1         _tcp_init_conn [77]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[78]     0.0    0.00        0.00       1         _timer_init [78]
+                0.00        0.00       1/16          _mem_initobj [51]
+                0.00        0.00       1/79          _lq_init [48]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[79]     0.0    0.00        0.00       1         _transport_init [79]
+                0.00        0.00       1/16          _mem_initobj [51]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _network_init [28]
+[80]     0.0    0.00        0.00       1         _uid_get_new_uid [80]
+
+-----------------------------------------------
+
+                0.00        0.00       1/1           _nm_init [23]
+[81]     0.0    0.00        0.00       1         _uid_init [81]
+
+-----------------------------------------------
+
+
+
+
+
+flat profile:
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+
+granularity: each sample hit covers 4 byte(s) for 1.52% of 1.03 seconds
+
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 17.4       0.18     0.18     2006     0.09     0.09  _udp_checksum [9]
+  8.3       0.27     0.09     2055     0.04     0.17  __netname_look_up [5]
+  7.6       0.34     0.08     2076     0.04     0.24  _netname_server [2]
+  7.6       0.42     0.08     1000     0.08     0.14  _nn_handle_reply [13]
+  7.6       0.50     0.08     1000     0.08     0.31  _srr_handle_response [6]
+  6.1       0.56     0.06     1007     0.06     0.15  _netipc_receive [12]
+  5.3       0.62     0.05     2055     0.03     0.20  __Xnetname_look_up [4]
+  5.3       0.67     0.05     2001     0.03     0.03  _srr_hash_lookup [16]
+  4.5       0.72     0.05     1000     0.05     0.06  _pr_ntran [15]
+  4.5       0.77     0.05     1000     0.05     0.17  _srr_process_queued_request [11]
+  4.5       0.81     0.05                             _srr_main [1]
+  3.0       0.84     0.03     1005     0.03     0.17  _disp_indata_simple [10]
+  3.0       0.88     0.03     1000     0.03     0.03  _srr_dequeue [17]
+  3.0       0.91     0.03     1000     0.03     0.23  _srr_send [8]
+  1.5       0.92     0.02     1081     0.01     0.01  _lq_find_in_queue [19]
+  1.5       0.94     0.02     1009     0.02     0.02  _timer_start [20]
+  1.5       0.95     0.02     1001     0.02     0.11  _netipc_send [14]
+  1.5       0.97     0.02     1000     0.02     0.25  _nn_network_look_up [7]
+  1.5       0.98     0.02      999     0.02     0.02  _nport_test [21]
+  1.5       1.00     0.02                             _timer_run [18]
+  0.8       1.01     0.01      267     0.03     0.03  _nn_port_test [26]
+  0.8       1.02     0.01       19     0.41     0.43  __Xnetname_check_in [22]
+  0.8       1.02     0.01        1     7.81     7.81  _network_init [28]
+  0.8       1.03     0.01        1     7.81     7.81  _srr_hash_enter [29]
+  0.0       1.03     0.00     2075     0.00     0.00  _nn_name_test [46]
+  0.0       1.03     0.00     2000     0.00     0.00  _lu_port_set [41]
+  0.0       1.03     0.00     2000     0.00     0.00  _nn_host_address [42]
+  0.0       1.03     0.00     1000     0.00     0.00  _srr_enqueue [47]
+  0.0       1.03     0.00      576     0.00     0.01  _lq_cond_delete_from_queue [25]
+  0.0       1.03     0.00       79     0.00     0.00  _lq_init [48]
+  0.0       1.03     0.00       23     0.00     0.01  __netname_check_in [32]
+  0.0       1.03     0.00       22     0.00     0.00  _lq_enqueue [49]
+  0.0       1.03     0.00       18     0.00     0.43  _nn_remove_entries [27]
+  0.0       1.03     0.00       18     0.00     0.00  _pr_lportlookup [50]
+  0.0       1.03     0.00       16     0.00     0.00  _mem_initobj [51]
+  0.0       1.03     0.00       12     0.00     0.00  _lq_alloc [52]
+  0.0       1.03     0.00       12     0.00     0.00  _lq_dequeue [53]
+  0.0       1.03     0.00       12     0.00     0.00  _pr_list [54]
+  0.0       1.03     0.00        8     0.00     0.02  _pc_do_checkups [33]
+  0.0       1.03     0.00        4     0.00     0.00  _pc_handle_startup_hint [55]
+  0.0       1.03     0.00        2     0.00     0.01  __Xnetname_check_out [38]
+  0.0       1.03     0.00        2     0.00     0.01  __netname_check_out [39]
+  0.0       1.03     0.00        2     0.00     0.00  _lq_remove_from_queue [56]
+  0.0       1.03     0.00        1     0.00     0.00  _datagram_init [57]
+  0.0       1.03     0.00        1     0.00     0.11  _datagram_send [35]
+  0.0       1.03     0.00        1     0.00     0.00  _disp_init [58]
+  0.0       1.03     0.00        1     0.00     0.00  _ipc_init [59]
+  0.0       1.03     0.00        1     0.00     0.00  _ipc_rpc_init [60]
+  0.0       1.03     0.00        1     0.00     0.00  _lock_queue_init [61]
+  0.0       1.03     0.00        1     0.00     0.00  _ls_init_1 [62]
+  0.0       1.03     0.00        1     0.00     0.04  _ls_init_2 [37]
+  0.0       1.03     0.00        1     0.00     0.00  _ls_read_config_file [63]
+  0.0       1.03     0.00        1     0.00     0.00  _mem_init [64]
+  0.0       1.03     0.00        1     0.00     0.01  _netname_init [43]
+  0.0       1.03     0.00        1     0.00     7.99  _nm_init [23]
+  0.0       1.03     0.00        1     0.00     0.00  _nn_procs_init [65]
+  0.0       1.03     0.00        1     0.00     0.12  _pc_init [34]
+  0.0       1.03     0.00        1     0.00     0.11  _pc_send_startup_hint [36]
+  0.0       1.03     0.00        1     0.00     0.00  _po_handle_nport_death [66]
+  0.0       1.03     0.00        1     0.00     0.00  _po_init [67]
+  0.0       1.03     0.00        1     0.00     0.00  _po_notify_init [68]
+  0.0       1.03     0.00        1     0.00     0.00  _po_utils_init [69]
+  0.0       1.03     0.00        1     0.00     0.00  _pr_create [70]
+  0.0       1.03     0.00        1     0.00     0.00  _pr_init [71]
+  0.0       1.03     0.00        1     0.00     0.00  _pr_np_puid_lookup [72]
+  0.0       1.03     0.00        1     0.00     0.00  _ps_init [73]
+  0.0       1.03     0.00        1     0.00     0.00  _srr_init [74]
+  0.0       1.03     0.00        1     0.00     0.03  _srr_retry [40]
+  0.0       1.03     0.00        1     0.00     0.00  _srr_utils_init [75]
+  0.0       1.03     0.00        1     0.00     0.00  _tcp_init [76]
+  0.0       1.03     0.00        1     0.00     0.00  _tcp_init_conn [77]
+  0.0       1.03     0.00        1     0.00     0.00  _timer_init [78]
+  0.0       1.03     0.00        1     0.00     0.00  _transport_init [79]
+  0.0       1.03     0.00        1     0.00     0.00  _uid_get_new_uid [80]
+  0.0       1.03     0.00        1     0.00     0.00  _uid_init [81]
+
+Index by function name
+
+  [22] __Xnetname_check_in  [51] _mem_initobj         [54] _pr_list           
+  [38] __Xnetname_check_ou  [12] _netipc_receive      [50] _pr_lportlookup    
+   [4] __Xnetname_look_up   [14] _netipc_send         [72] _pr_np_puid_lookup 
+  [32] __netname_check_in   [43] _netname_init        [15] _pr_ntran          
+  [39] __netname_check_out   [2] _netname_server      [73] _ps_init           
+   [5] __netname_look_up    [28] _network_init        [17] _srr_dequeue       
+  [57] _datagram_init       [23] _nm_init             [47] _srr_enqueue       
+  [35] _datagram_send       [13] _nn_handle_reply      [6] _srr_handle_respons
+  [10] _disp_indata_simple  [42] _nn_host_address     [29] _srr_hash_enter    
+  [58] _disp_init           [46] _nn_name_test        [16] _srr_hash_lookup   
+  [59] _ipc_init             [7] _nn_network_look_up  [74] _srr_init          
+  [60] _ipc_rpc_init        [26] _nn_port_test         [1] _srr_main          
+  [61] _lock_queue_init     [65] _nn_procs_init       [11] _srr_process_queued
+  [52] _lq_alloc            [27] _nn_remove_entries   [40] _srr_retry         
+  [25] _lq_cond_delete_fro  [21] _nport_test           [8] _srr_send          
+  [53] _lq_dequeue          [33] _pc_do_checkups      [75] _srr_utils_init    
+  [49] _lq_enqueue          [55] _pc_handle_startup_  [76] _tcp_init          
+  [19] _lq_find_in_queue    [34] _pc_init             [77] _tcp_init_conn     
+  [48] _lq_init             [36] _pc_send_startup_hi  [78] _timer_init        
+  [56] _lq_remove_from_que  [66] _po_handle_nport_de  [18] _timer_run         
+  [62] _ls_init_1           [67] _po_init             [20] _timer_start       
+  [37] _ls_init_2           [68] _po_notify_init      [79] _transport_init    
+  [63] _ls_read_config_fil  [69] _po_utils_init        [9] _udp_checksum      
+  [41] _lu_port_set         [70] _pr_create           [80] _uid_get_new_uid   
+  [64] _mem_init            [71] _pr_init             [81] _uid_init          

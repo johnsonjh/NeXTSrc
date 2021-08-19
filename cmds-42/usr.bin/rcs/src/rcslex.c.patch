@@ -1,0 +1,37 @@
+*** rcslex.c	Mon Jun 25 23:15:57 1990
+--- rcslex.c.orig	Thu Dec  7 10:31:38 1989
+***************
+*** 662,669 ****
+          return result;
+  }
+  
+! #if	NeXT
+! #else
+  fputs(s, iop)
+  register char *s;
+  register FILE *iop;
+--- 662,668 ----
+          return result;
+  }
+  
+! 
+  fputs(s, iop)
+  register char *s;
+  register FILE *iop;
+***************
+*** 705,711 ****
+  	va_end(ap);
+  	return value;
+  }
+! #endif	NeXT
+  
+  
+  #ifdef LEXDB
+--- 704,710 ----
+  	va_end(ap);
+  	return value;
+  }
+! 
+  
+  
+  #ifdef LEXDB

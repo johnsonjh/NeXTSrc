@@ -1,0 +1,105 @@
+\initial {.}
+\entry {\code {.DEFAULT}}{101}
+\entry {\code {.IGNORE}}{44}
+\entry {\code {.PHONY}}{31}
+\entry {\code {.PRECIOUS}}{45}
+\entry {\code {.SILENT}}{41}
+\entry {\code {.SUFFIXES}}{103}
+\initial {A}
+\entry {\code {addprefix}}{74}
+\entry {\code {addsuffix}}{73}
+\entry {AR}{92}
+\entry {ARFLAGS}{93}
+\entry {AS}{92}
+\entry {ASFLAGS}{93}
+\initial {B}
+\entry {\code {basename}}{73}
+\initial {C}
+\entry {C{@fam @ttfam @tentt @char 43}{@fam @ttfam @tentt @char 43}}{92}
+\entry {C{@fam @ttfam @tentt @char 43}{@fam @ttfam @tentt @char 43}FLAGS}{93}
+\entry {CC}{92}
+\entry {CFLAGS}{93}
+\entry {CO}{92}
+\entry {COFLAGS}{93}
+\entry {CPP}{92}
+\entry {CPPFLAGS}{93}
+\entry {CTANGLE}{93}
+\entry {CWEAVE}{92}
+\initial {D}
+\entry {\code {define}}{61}
+\entry {\code {dir}}{73}
+\initial {E}
+\entry {EC}{92}
+\entry {EFLAGS}{93}
+\entry {\code {else}}{66}
+\entry {\code {endef}}{61}
+\entry {\code {endif}}{66}
+\initial {F}
+\entry {FC}{92}
+\entry {FFLAGS}{93}
+\entry {\code {filter}}{71}
+\entry {\code {filter-out}}{71}
+\entry {\code {findstring}}{71}
+\entry {\code {firstword}}{74}
+\entry {\code {foreach}}{75}
+\initial {G}
+\entry {GET}{92}
+\entry {GFLAGS}{93}
+\initial {I}
+\entry {\code {ifdef}}{66}
+\entry {\code {ifeq}}{66}
+\entry {\code {ifndef}}{66}
+\entry {\code {ifneq}}{66}
+\entry {\code {include}}{18}
+\initial {J}
+\entry {\code {join}}{74}
+\initial {L}
+\entry {LDFLAGS}{93}
+\entry {LEX}{92}
+\entry {LFLAGS}{93}
+\initial {M}
+\entry {MAKE}{46}
+\entry {MAKEFILES}{19, 47}
+\entry {MAKEFLAGS}{48}
+\entry {MAKEINFO}{92}
+\entry {MAKELEVEL}{47}
+\entry {MFLAGS}{48}
+\initial {N}
+\entry {\code {notdir}}{73}
+\initial {O}
+\entry {objects}{13}
+\entry {\code {origin}}{76}
+\entry {\code {override}}{61}
+\initial {P}
+\entry {\code {patsubst}}{70}
+\entry {PC}{92}
+\entry {PFLAGS}{93}
+\initial {R}
+\entry {RC}{92}
+\entry {RFLAGS}{93}
+\entry {RM}{93}
+\initial {S}
+\entry {\code {shell}}{78}
+\entry {SHELL}{42}
+\entry {\code {sort}}{71}
+\entry {\code {strip}}{71}
+\entry {\code {subst}}{70}
+\entry {\code {suffix}}{73}
+\entry {SUFFIXES}{103}
+\initial {T}
+\entry {TANGLE}{92}
+\entry {TEX}{92}
+\entry {TEXINDEX}{92}
+\initial {V}
+\entry {\code {vpath}}{27}
+\entry {VPATH}{27}
+\initial {W}
+\entry {WEAVE}{92}
+\entry {\code {wildcard}}{26, 74}
+\entry {\code {word}}{74}
+\entry {\code {words}}{74}
+\initial {Y}
+\entry {YACC}{92}
+\entry {YACCE}{92}
+\entry {YACCR}{92}
+\entry {YFLAGS}{93}
